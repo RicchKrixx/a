@@ -1,8 +1,8 @@
 	<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale="1">
-    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale="1.0"/>
+    <meta charset="UTF-8"/>
     <title>BizMAX</title>
 
 	
@@ -14,20 +14,20 @@
     box-sizing: border-box;
 }
 
-body {	
-    background-color: lightblue;	
-	background-size: cover;
 	
-}
 html, body {
   height: 100%;
   width: 100%;
+  font-family: arial, sans-serif;
+	overflow-x: hidden;
+  background-color: lightblue;	
+  background-size: cover;
 }
 
 .container {
-	width: 100%;
+	max-width: 100%;
 	margin; auto;
-	padding:20px;
+	padding:16px;
 	border-radius:16px;
 	border: solid 5px rgb(255, 255, 255, 0.1);
         backdrop-filter: blur(25px);
@@ -35,7 +35,7 @@ html, body {
 	color: white;
 	display: flex;
 	flex-direction: column;
-	align-items:center;
+	text-align: center;
 }
 
 header {
@@ -87,6 +87,7 @@ header {
 
 }
 .item img {
+	max-width: 100%;
 	background-color: #666;
 	display: flex;
     border-radius: 20px;
