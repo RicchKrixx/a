@@ -7,10 +7,7 @@
     <title>BizMAX</title>
 
 	
-	<style>
-	/*mobile Responsive*/
-@media (max-width: 480px) {
-	
+	<style>	
 /* Reset & Base Styles */
 * {
     margin: 0;
@@ -128,6 +125,19 @@ header {
   font-size: 22px;
   font-weight: bold;
 }
+		/*mobile Responsive*/
+@media (max-width: 480px) {
+	.item {
+		width: 90%;
+	}
+	.payment-method {
+		flex-direction: column;
+		align-items: center;
+	}
+	.button {
+		flex-direction: column;
+	}
+}
 
 /* Newsletter */
 .newsletter {
@@ -207,6 +217,28 @@ nav ul li a {
     font-weight: bold;
 }
 
+		/* Responsive */
+@media (max-width: 480px) {
+    nav ul {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .search-container input {
+        width: 90%;
+    }
+
+    .food-grid {
+        flex-direction: column;
+        align-items: center;
+    }
+	.newsletter {
+	width: 100%;
+	}
+	header {
+	width: 100%;
+	}
+}
 
 /* Hero Section */
 .hero {
@@ -274,8 +306,6 @@ nav ul li a {
   .checkout-btn:hover {
     background-color: #218838;
   }
-}
-
 	</style>
 
 	</head>
