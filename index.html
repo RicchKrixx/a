@@ -30,7 +30,7 @@ html, body {
 	padding:20px;
 	border-radius:16px;
 	border: solid 5px rgb(255, 255, 255, 0.1);
-    backdrop-filter: blur(25px);
+        backdrop-filter: blur(25px);
 	box-shadow: 0px 0px 30px 20px rgb(0,0,0,0.1);
 	color: white;
 	display: flex;
@@ -40,11 +40,11 @@ html, body {
 
 header {
 	background: rgb(0,0,0,0.1);
-	width:90%;
+	width:100%;
 	padding:24px;
 	border-radius:16px;
 	border: solid 5px rgb(255, 255, 255, 0.1);
-    backdrop-filter: blur(25px);
+        backdrop-filter: blur(25px);
 	box-shadow: 0px 0px 30px 20px rgb(0,0,0,0.1);
 	color: white;
 	display: flex;
@@ -87,12 +87,12 @@ header {
 
 }
 .item img {
-	background-color: #666;
-	display: flex;
-    border-radius: 20px;
-    margin-bottom: 10px;
-	flex-shrink: 0;
-    border-radius: 20px; 
+background-color: #666;
+display: flex;
+border-radius: 20px;
+margin-bottom: 10px;
+flex-shrink: 0;
+border-radius: 20px; 
 }
 
 .quantity {
@@ -195,12 +195,7 @@ footer {
 h1, h2, h3 {
     margin-bottom: 10px;
 }
-header {
-    background-color: #2d2d2d;
-    color: white;
-    padding: 20px;
-    text-align: center;
-}
+
 
 nav ul {
     list-style: none;
@@ -229,8 +224,9 @@ nav ul li a {
     }
 
     .food-grid {
-        flex-direction: column;
-        align-items: center;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 20px;
     }
 	.newsletter {
 	width: 100%;
