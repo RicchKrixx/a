@@ -98,11 +98,9 @@
     }
      /* -------------  BizMAX Root Variables ------------- */
 :root {
-  --clr-1: #00ffff;   /* cyan            */
-  --clr-2: #FFA500;   /* orange            */
-  --clr-3: #62d4ff;   /* light-blue      */
-  --clr-4: #FFFF00;   /* yello            */
-  --clr-5: #001529;   /* dark background */
+  --clr-1: #FFA500;   /* orange            */
+  --clr-2: #62d4ff;   /* light-blue      */
+  --clr-3: #001529;   /* dark background */
   --blur-strength: 60px;
 }
 
@@ -115,7 +113,7 @@ html,body{height:100%;font-family:system-ui,Segoe UI,Roboto,sans-serif;overflow-
   position:fixed;
   inset:0;                     /* top:0, right:0, bottom:0, left:0 */
   z-index:-1;                  /* behind everything */
-  background:linear-gradient(115deg,var(--clr-1),var(--clr-2),var(--clr-3)var(--clr-4),var(--clr-5));
+  background:linear-gradient(115deg,var(--clr-1),var(--clr-2),var(--clr-3));
   background-size:300% 300%;
   animation:shift 10s ease-in-out infinite;
   filter:blur(var(--blur-strength));     /* softens the color transitions */
@@ -124,9 +122,7 @@ html,body{height:100%;font-family:system-ui,Segoe UI,Roboto,sans-serif;overflow-
 /* Keyframes drive the “flow” of the gradient */
 @keyframes shift{
   0%  {background-position:0% 50%}
-  25% {background-position:100% 50%}
-  50% {background-position:0% 50%}
-  75% {background-position:100% 50%}
+  50% {background-position:100% 50%}
   100% {background-position:0% 50%}
 }
 
@@ -172,7 +168,7 @@ html,body{height:100%;font-family:system-ui,Segoe UI,Roboto,sans-serif;overflow-
 
 const colorSets = [
   ['#00ffff', '#62d4ff', '#001529'], // original BizMAX trio
-  ['#12d3cf', '#40e9ff', '#002542'],
+  ['#FFA500', '#40e9ff', '#002542'],
   ['#22c1c3', '#7af3ff', '#001d33'],
   ['#00b7ff', '#1ae3ff', '#000c1a']
 ];
@@ -186,8 +182,6 @@ function cycleColors(){
   root.style.setProperty('--clr-1', colorSets[idx][0]);
   root.style.setProperty('--clr-2', colorSets[idx][1]);
   root.style.setProperty('--clr-3', colorSets[idx][2]);
-  root.style.setProperty('--clr-4', colorSets[idx][3]);
-  root.style.setProperty('--clr-5', colorSets[idx][4]);
 }
 
 setInterval(cycleColors, period);
