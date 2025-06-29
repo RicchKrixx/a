@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BizMAX</title>
-	<link rel="icon" href="pp.png" type="image/png">
     <style>
 	/* Reset & Base Styles */
 * {
@@ -127,25 +126,21 @@ nav ul li a {
     justify-content: center;
     gap: 5px;
     flex-wrap: wrap;
-    margin-top: 5px;
 
 }
 
 
 
 .item {
-	width: 45%;
-    background-color: #eee;
-    padding: 15px 20px;
-    border-radius: 10px;
-    font-weight: bold;
-    text-decoration: none;
+	min-width: 250px;
+	max-width: 300px;
+        flex: 1;
 }
 .item img {
 	width: 100%;
-	display: flex;
+	height: auto;
+	display: block;
     border-radius: 20px;
-    margin-bottom: 10px;
     
 }
 
@@ -215,7 +210,8 @@ footer {
         align-items: center;
     }
 	.item {
-		wwidth: 45%;
+		min-width: 100%;
+		max-width: 100%;
 	}
 }
 
