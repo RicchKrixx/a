@@ -94,14 +94,95 @@
         transform: scale(1);
         opacity: 1;
       }
+      /* -------------  BizMAX Root Variables ------------- */
+:root {
+  --clr-1: #00ffff;   /* cyan            */
+  --clr-2: #62d4ff;   /* light-blue      */
+  --clr-3: #001529;   /* dark background */
+  --blur-strength: 60px;
+}
+
+/* -------------  Reset & Layout ------------- */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:system-ui,Segoe UI,Roboto,sans-serif;overflow-x:hidden}
+
+/* -------------  Animated Gradient Layer ------------- */
+.bg{
+  position:fixed;
+  inset:0;                     /* top:0, right:0, bottom:0, left:0 */
+  z-index:-1;                  /* behind everything */
+  background:linear-gradient(115deg,var(--clr-1),var(--clr-2),var(--clr-3));
+  background-size:300% 300%;
+  animation:shift 15s ease-in-out infinite;
+  filter:blur(var(--blur-strength));     /* softens the color transitions */
+}
+
+/* Keyframes drive the “flow” of the gradient */
+@keyframes shift{
+  0%  {background-position:0% 50%}
+  50% {background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+
+/* -------------  Demo Content Card ------------- */
+.content{
+  min-height:100vh;            /* centers the card vertically */
+  display:grid;
+  place-items:center;
+  text-align:center;
+}
+
+.card{
+  background:rgba(255,255,255,0.08);   /* translucent glass effect */
+  backdrop-filter:blur(10px) saturate(150%);
+  border-radius:1rem;
+  padding:2.5rem clamp(1.5rem,4vw,4rem);
+  box-shadow:0 20px 30px -10px rgba(0,0,0,0.4);
+  color:#fff;
+}
+
+/* Responsive tweaks */
+@media(max-width:480px){
+  .card{padding:1.75rem 1.25rem}
+  h1{font-size:1.75rem}
+}
     }
   </style>
 </head>
 <body>
+  <div class="bg"></div>
   <div class="welcome-box">
     <h1>Welcome to BixMAX</h1>
     <p>Your All-in-One Online Shop</p>
     <a href="BixMax home.html" class="enter-btn">Enter Now</a>
   </div>
+  
 </body>
+  <script>
+    /*
+  Every n seconds swap the root CSS variables with a new
+  triad pulled from an array.  Keeps the gradient fresh
+  without re-painting the DOM with oversized elements.
+*/
+
+const colorSets = [
+  ['#00ffff', '#62d4ff', '#001529'], // original BizMAX trio
+  ['#12d3cf', '#40e9ff', '#002542'],
+  ['#22c1c3', '#7af3ff', '#001d33'],
+  ['#00b7ff', '#1ae3ff', '#000c1a']
+];
+
+let idx = 0;
+const root = document.documentElement;
+const period = 12000; // 12 s between shifts
+
+function cycleColors(){
+  idx = (idx + 1) % colorSets.length;
+  root.style.setProperty('--clr-1', colorSets[idx][0]);
+  root.style.setProperty('--clr-2', colorSets[idx][1]);
+  root.style.setProperty('--clr-3', colorSets[idx][2]);
+}
+
+setInterval(cycleColors, period);
+  </script>
 </html>
