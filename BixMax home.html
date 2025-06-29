@@ -245,7 +245,10 @@ div#slider figure {
   transform: translateX(-20px);
   animation: slideIn 0.4s forwards;
 }
-
+body.noscroll {
+  overflow: hidden;
+  height: 100vh;
+}
 /* Animate each menu item with a delay */
 .menu-overlay.show ul li:nth-child(1) { animation-delay: 0.2s; }
 .menu-overlay.show ul li:nth-child(2) { animation-delay: 0.4s; }
@@ -359,22 +362,23 @@ body {
 <br>
         <footer>&copy; BixMAX 2025. All rights reserved.</footer>
 
-	<script>
 function toggleMenu() {
   const menu = document.getElementById('fullMenu');
   const toggle = document.querySelector('.menu-toggle');
   const bottomBar = document.getElementById('bottomBar');
+  const body = document.body;
 
   if (menu.classList.contains('show')) {
     menu.classList.remove('show');
     toggle.style.display = 'block';
     bottomBar.style.display = 'flex';
+    body.classList.remove('noscroll');
   } else {
     menu.classList.add('show');
     toggle.style.display = 'none';
     bottomBar.style.display = 'none';
+    body.classList.add('noscroll');
   }
 }
-</script>
 </body>
 </html>
