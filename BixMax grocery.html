@@ -243,7 +243,6 @@ h1, h2, h3 {
   font-size: 30px;
   cursor: pointer;
   padding: 10px 15px;
-  background: #111;
   color: white;
   z-index: 1001;
   border-radius: 10px;
@@ -254,15 +253,17 @@ h1, h2, h3 {
   position: fixed;
   top: 0;
   left: -100%; /* Hide initially */
-  width: 100%;
+  width: 60%;
   height: 100%;
-  background-color: #2d2d2d;
+        border: solid 5px rgb(255, 255, 255, 0.1);
+        backdrop-filter: blur(25px);
+	box-shadow: 0px 0px 30px 20px rgb(0,0,0,0.1);
   color: white;
   z-index: 1000;
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: left 0.3s ease-in-out;
+  transition: left 0.2s ease-in-out;
 }
 
 .menu-overlay.show {
@@ -443,6 +444,7 @@ function toggleMenu() {
   } else {
     menu.classList.add('show');
     toggle.style.display = 'none';
+	  bottom-bar.display = 'none';
   }
 }
 </script>
