@@ -247,7 +247,8 @@ div#slider figure {
 }
 body.noscroll {
   overflow: hidden;
-  height: 100vh;
+	position: fixed;
+  width: 100%;
 }
 /* Animate each menu item with a delay */
 .menu-overlay.show ul li:nth-child(1) { animation-delay: 0.2s; }
@@ -369,11 +370,13 @@ function toggleMenu() {
   const body = document.body;
 
   if (menu.classList.contains('show')) {
+    // CLOSE MENU
     menu.classList.remove('show');
     toggle.style.display = 'block';
     bottomBar.style.display = 'flex';
     body.classList.remove('noscroll');
   } else {
+    // OPEN MENU
     menu.classList.add('show');
     toggle.style.display = 'none';
     bottomBar.style.display = 'none';
