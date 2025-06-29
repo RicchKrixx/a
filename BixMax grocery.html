@@ -149,7 +149,6 @@ header {
 
 }
 .checkout-btn {
-	position: fixed;
   color:#fff;
   border: solid 5px rgb(255, 255, 255, 0.1);
   backdrop-filter: blur(25px);
@@ -452,7 +451,7 @@ function toggleMenu() {
   if (menu.classList.contains('show')) {
     menu.classList.remove('show');
     toggle.style.display = 'block';
-    bottomBar.style.display = 'block';
+    bottomBar.style.display = 'flex';
   } else {
     menu.classList.add('show');
     toggle.style.display = 'none';
