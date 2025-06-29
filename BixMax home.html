@@ -74,22 +74,6 @@ nav ul li a {
 }
 
 
-/* Categories */
-.categories {
-    background: #efc  blur(25px);
-	width:100%;
-	 max-width: 1100px;
-	padding: 5px;
-	border-radius: 30px;
-	border: solid 5px rgb(255, 255, 255, 0.1);
-	box-shadow: 0px 0px 30px 20px rgb(0,0,0,0.1);
-	display: flex;
-	flex-direction: column;
-	align-items:center;
-	color: black;
-	text-decoration: none;
-}
-
 
 /* Products */
 .products {
@@ -304,7 +288,21 @@ body {
   transition: background-color 1s ease;
 }  
     
-    
+    .home {
+	border-radius: 20px
+        border: solid 5px rgb(255, 255, 255, 0.1);
+        backdrop-filter: blur(25px);
+	box-shadow: 0px 0px 30px 20px rgb(0,0,0,0.1);
+	align-items: center;
+	font-weight:bold;
+        justify-content:space-between;
+	color: white;
+	display: flex;
+	margin-top: 20px;
+        margin-bottom: 20px;
+	width: 100%;
+	padding: 24px;
+    }
     </style>
 
 </head>
@@ -332,6 +330,7 @@ body {
 	    <h1>BixMAX</h1>
         <h3>All-in-One Online Shop</h3>
     </header>
+	<section class ="home">HOME</section>
 
     <div class="products" id="slider">
 	    
