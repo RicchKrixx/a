@@ -235,78 +235,73 @@ h1, h2, h3 {
 		padding: 6px 12px;
 	}
 }
- .menu-toggle {
-    position: fixed;
-	 top: 10px;
-	 left: 10px;
-    font-size: 28px;
-    cursor: pointer;
-    border-radius: 8px;
-    color: white;  
-	 border: solid 5px rgb(255, 255, 255, 0.1);
-        backdrop-filter: blur(25px);
-	box-shadow: 0px 0px 30px 20px rgb(0,0,0,0.1);
-    display: none;
-    margin-bottom: 10px;
-	z-index: 999; 
-  }
+/* Menu toggle button */
+.menu-toggle {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  font-size: 30px;
+  cursor: pointer;
+  padding: 10px 15px;
+  background: #111;
+  color: white;
+  z-index: 1001;
+  border-radius: 10px;
+}
 
-  nav.menu-nav ul {
-    list-style: none;
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    flex-wrap: wrap;
-    padding: 10px;
-       border-radius: 10px;
-      margin-top: 60px; 
-      position: fixed;
-      top: 50px;
-      left: 10px;
-      z-index: 998;
-	   text-decoration: none;
-  }
+/* Full-screen overlay menu */
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: -100%; /* Hide initially */
+  width: 100%;
+  height: 100%;
+  background-color: #2d2d2d;
+  color: white;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: left 0.3s ease-in-out;
+}
 
-  nav.menu-nav ul li a {
-    text-decoration: none;
-    color: white;
-    font-weight: bold;
-  }
+.menu-overlay.show {
+  left: 0;
+}
 
-  @media (max-width: 768px) {
-    .menu-toggle {
-      display: inline-block;
-    }
+.menu-overlay ul {
+  list-style: none;
+  text-align: center;
+  padding: 0;
+}
 
-    nav.menu-nav ul {
-      display: none;
-      flex-direction: column;
-      background-color: #2d2d2d;
-      padding: 10px;
-      border-radius: 10px;
-      margin-top: 10px;
-    }
+.menu-overlay ul li {
+  margin: 20px 0;
+}
 
-    nav.menu-nav ul.show {
-      display: flex;
-    }
-  }
+.menu-overlay ul li a {
+  color: white;
+  font-size: 24px;
+  text-decoration: none;
+}
 	
 	</style>
 
 	</head>
 	<body class="container">
-			<div class="menu-toggle" onclick="toggleMenu()">☰</div>
-		        <nav class="main-nav">
-            <ul id="mainMenu">
-                <li><a href="BixMax home.html">Home</a></li>
-                <li><a href="#">Electronics</a></li>
-                <li><a href="#">Fashion</a></li>
-                <li><a href="#">Groceries</a></li>
-                <li><a href="#">Food Menu</a></li>
-	        <li><a href="tel:+233536345825" class="call-button">Call To Order</a></li>
-            </ul>
-        </nav>
+<!-- Menu Toggle Button -->
+<div class="menu-toggle" onclick="toggleMenu()">☰</div>
+
+<!-- Fullscreen Menu -->
+<div id="fullMenu" class="menu-overlay">
+  <ul>
+    <li><a href="#">Home</a></li>
+    <li><a href="#">Groceries</a></li>
+    <li><a href="#">Electronics</a></li>
+    <li><a href="#">Contact</a></li>
+    <li><a href="#" onclick="toggleMenu()">Close ✖</a></li>
+  </ul>
+</div>
 		</div>
 	  <header>
 		  <h1>BixMAX</h1>
@@ -439,15 +434,15 @@ function updateGrandTotal() {
 	 </script>
 <script>
 function toggleMenu() {
-  const menu = document.getElementById('mainMenu');
+  const menu = document.getElementById('fullMenu');
   const toggle = document.querySelector('.menu-toggle');
-  
+
   if (menu.classList.contains('show')) {
     menu.classList.remove('show');
-    toggle.classList.remove('hidden');
+    toggle.style.display = 'block';
   } else {
     menu.classList.add('show');
-    toggle.classList.add('hidden');
+    toggle.style.display = 'none';
   }
 }
 </script>
