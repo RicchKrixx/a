@@ -156,9 +156,10 @@ header {
   border-radius:25px;
   font-weight:bold;
   text-decoration:none;
-  transition:background .3s;
 }
-
+#bottomBar {
+	transition: all 0.2s ease;
+}
 /* ========== FOOTER ========== */
 footer {
         color:#fff;
@@ -258,7 +259,7 @@ h1, h2, h3 {
         backdrop-filter: blur(25px);
 	box-shadow: 0px 0px 30px 20px rgb(0,0,0,0.1);
   color: white;
-	bacground: C0C0C0;
+	background: C0C0C0;
 	opacity: 0.8;
   z-index: 1000;
   display: flex;
@@ -400,12 +401,12 @@ h1, h2, h3 {
 
   </div>
 </section>
-  
-	         <div class="bottom-bar">
+  <div id="bottomBar">
+	         <div class="grand-total">
     <span>Total: $<span id="grand-total">0.00</span></span>
- 
+ </div>
       <a href="#" class="checkout-btn" onclick="alert('Checkout coming soon!')">CHECKOUT</a>
-  </div>
+  
      </div>
  <footer>&copy; BixMAX 2025. All rights reserved.</footer>
 	 <script>function updateQuantity(button, change) {
@@ -438,13 +439,16 @@ function updateGrandTotal() {
 function toggleMenu() {
   const menu = document.getElementById('fullMenu');
   const toggle = document.querySelector('.menu-toggle');
+  const bottomBar = document.getElementById('bottomBar');
 
   if (menu.classList.contains('show')) {
     menu.classList.remove('show');
     toggle.style.display = 'block';
+    bottomBar.style.display = 'block';
   } else {
     menu.classList.add('show');
     toggle.style.display = 'none';
+    bottomBar.style.display = 'none';
   }
 }
 </script>
