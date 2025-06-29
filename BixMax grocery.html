@@ -41,21 +41,15 @@ html, body {
 
 header {
 
-	background-color: #2d2d2d;
 	width:100%;
 	border-radius:16px;
-	border: solid 5px rgb(255, 255, 255, 0.1);
     backdrop-filter: blur(25px);
-	box-shadow: 0px 0px 30px 20px rgb(0,0,0,0.1);
 	color: white;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
 	text-align: center;
-	opacity: 0.7;
     padding: 20px;
     text-align: center;
-	gap: 15px;
 	
 }
 .grocery {
@@ -239,50 +233,72 @@ h1, h2, h3 {
 		font-size: 16px;
 		padding: 6px 12px;
 	}
-	.main-menu ul {
-		flex-direction: column;
-		gap: 10px;
-	}
 }
 
 
-/* Main menu styles */
-.main-menu {
-  background-color: #2d2d2d;
-  padding: 15px 0;
-  text-align: center;
-}
+  .menu-header {
+    background-color: #2d2d2d;
+    border-radius: 16px;
+    padding: 15px;
+    color: white;
+    text-align: center;
+  }
 
-.main-menu ul {
-  list-style: none;
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  flex-wrap: wrap;
-}
+  .menu-toggle {
+    font-size: 28px;
+    cursor: pointer;
+    padding: 10px;
+    background: #111;
+    border-radius: 8px;
+    color: white;
+    display: none;
+    margin-bottom: 10px;
+  }
 
-.main-menu ul li a {
-  color: white;
-  text-decoration: none;
-  font-size: 16px;
-  font-weight: bold;
-  padding: 10px 15px;
-  border-radius: 10px;
-  transition: background 0.3s;
-}
+  nav.menu-nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    padding: 0;
+    margin: 0;
+  }
 
-.main-menu ul li a:hover {
-  background-color: #1976d2;
-  color: #fff;
-}
+  nav.menu-nav ul li a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+  }
 
+  @media (max-width: 768px) {
+    .menu-toggle {
+      display: inline-block;
+    }
+
+    nav.menu-nav ul {
+      display: none;
+      flex-direction: column;
+      background-color: #2d2d2d;
+      padding: 10px;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+
+    nav.menu-nav ul.show {
+      display: flex;
+    }
+  }
 	
 	</style>
 
 	</head>
 	<body class="container">
-		        <nav class="main-menu">
-            <ul>
+		<div class="menu-header">
+			<h1>BixMAX</h1>
+			<div class="menu-toggle" onclick="togglemenu()">☰</div>
+		        <nav class="main-nav">
+            <ul id="mainmenu">
                 <li><a href="BixMax home.html">Home</a></li>
                 <li><a href="#">Electronics</a></li>
                 <li><a href="#">Fashion</a></li>
@@ -291,6 +307,7 @@ h1, h2, h3 {
 	        <li><a href="tel:+233536345825" class="call-button">Call To Order</a></li>
             </ul>
         </nav>
+		</div>
 	  <header>
 		  <h1>BixMAX</h1>
         <h3>All-in-One Online Shop</h3>
@@ -418,7 +435,13 @@ function updateGrandTotal() {
   });
 
   document.getElementById('grand-total').textContent = total.toFixed(2);
-}</script>
+}
+	 
+	   function toggleMenu() {
+    const menu = document.getElementById("mainMenu");
+    menu.classList.toggle("show");
+  }
+	 </script>
 </body>
 	 
 </html>
