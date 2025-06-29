@@ -235,25 +235,22 @@ h1, h2, h3 {
 		padding: 6px 12px;
 	}
 }
-
-
-  .menu-header {
-    background-color: #2d2d2d;
-    border-radius: 16px;
-    padding: 15px;
-    color: white;
-    text-align: center;
-  }
-
-  .menu-toggle {
+ .menu-toggle {
+    position: sticky;
+	 top: 0px;
+	 left: 0px;
     font-size: 28px;
     cursor: pointer;
     padding: 10px;
     background: #111;
     border-radius: 8px;
-    color: white;
+    color: white;  
+	 border: solid 5px rgb(255, 255, 255, 0.1);
+        backdrop-filter: blur(25px);
+	box-shadow: 0px 0px 30px 20px rgb(0,0,0,0.1);
     display: none;
     margin-bottom: 10px;
+	 
   }
 
   nav.menu-nav ul {
@@ -295,11 +292,9 @@ h1, h2, h3 {
 
 	</head>
 	<body class="container">
-		<div class="menu-header">
-			<h1>BixMAX</h1>
-			<div class="menu-toggle" onclick="togglemenu()">☰</div>
+			<div class="menu-toggle" onclick="toggleMenu()">☰</div>
 		        <nav class="main-nav">
-            <ul id="mainmenu">
+            <ul id="mainMenu">
                 <li><a href="BixMax home.html">Home</a></li>
                 <li><a href="#">Electronics</a></li>
                 <li><a href="#">Fashion</a></li>
@@ -437,7 +432,8 @@ function updateGrandTotal() {
 
   document.getElementById('grand-total').textContent = total.toFixed(2);
 }
-	 
+	 </script>
+		<script>
 	   function toggleMenu() {
     const menu = document.getElementById("mainMenu");
     menu.classList.toggle("show");
