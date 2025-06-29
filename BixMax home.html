@@ -23,6 +23,9 @@ h1, h2, h3 {
 	    h3 {
 		    color: black;
 	    }
+	    	    h2 {
+		    color: white;
+	    }
 .container {
 	width:100%;
 	padding:24px;
@@ -40,9 +43,7 @@ header {
 	width:100%;
 	padding:24px;
 	border-radius:16px;
-	border: solid 5px rgb(255, 255, 255, 0.1);
     backdrop-filter: blur(25px);
-	box-shadow: 0px 0px 30px 20px rgb(0,0,0,0.1);
 	color: white;
 	display: flex;
 	flex-direction: column;
@@ -190,48 +191,12 @@ nav ul li a {
     border-radius: 5px;
 }
 
-/* Newsletter */
-.newsletter {
-    background-color: #2d2d2d;
-	width:100%;
-	padding:24px;
-	border-radius:16px;
-	border: solid 5px rgb(255, 255, 255, 0.1);
-    backdrop-filter: blur(25px);
-	box-shadow: 0px 0px 30px 20px rgb(0,0,0,0.1);
-	color: white;
-	display: flex;
-	flex-direction: column;
-	align-items:center;
-	opacity: 0.9;
-}
-
-.newsletter input {
-    padding: 10px;
-    width: 250px;
-    max-width: 80%;
-    border: none;
-    border-radius: 5px;
-    margin-right: 10px;
-}
-
-.newsletter button {
-    padding: 10px 15px;
-    background-color: #ffcc00;
-    border: none;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
-}
 
 footer {
-    background-color: #111;
     color: white;
-    text-align: left;
     padding: 15px;
     margin-top: 30px;
-	width: 70%;
-	padding:15px;
+	width: 100%;
 	border-radius:16px;
 	border: solid 5px rgb(255, 255, 255, 0.1);
     backdrop-filter: blur(25px);
@@ -239,8 +204,7 @@ footer {
 	color: white;
 	display: flex;
 	flex-direction: column;
-	opacity: 0.7;
-}}
+}
 
 /* Responsive */
 @media (max-width: 480px) {
@@ -364,15 +328,7 @@ footer {
         </div>
     </section>
 <br>
-    <section class="newsletter">
-        <h3>Stay Updated!</h3>
-        <p>Subscribe to our newsletter for latest deals.</p>
-        <form>
-            <input type="email" placeholder="Enter your email" required>
-            <button type="submit">Subscribe</button>
-        </form>
-  <br>
-        <p>&copy; BixMAX 2025. All rights reserved.</p>
-		  </section>
+        <footer>&copy; BixMAX 2025. All rights reserved.</footer>
+		 
 </body>
 </html>
