@@ -250,6 +250,7 @@ h1, h2, h3 {
 
 /* Full-screen overlay menu */
 .menu-overlay {
+	position: fixed;
   top: 0;
   left: -80%; /* Hide initially */
   width: 80%;
@@ -259,6 +260,7 @@ h1, h2, h3 {
 	box-shadow: 0px 0px 30px 20px rgb(0,0,0,0.1);
   color: white;
 	background-color: #C0C0C0;
+	opacity: 0.7;
   z-index: 1000;
   display: flex;
   justify-content: center;
@@ -285,7 +287,11 @@ h1, h2, h3 {
   font-size: 24px;
   text-decoration: none;
 }
-	
+	.close {
+		position: fixed;
+		top: 10px;
+		right: 20px;
+	}
 	</style>
 
 	</head>
@@ -296,11 +302,11 @@ h1, h2, h3 {
 <!-- Fullscreen Menu -->
 <div id="fullMenu" class="menu-overlay">
   <ul>
-    <li><a href="#">Home</a></li>
+    <li><a href="BixMax home.html">Home</a></li>
     <li><a href="#">Groceries</a></li>
     <li><a href="#">Electronics</a></li>
-    <li><a href="#">Contact</a></li>
-    <li><a href="#" onclick="toggleMenu()">Close ✖</a></li>
+    <li><a href="tel:0536345825">Contact</a></li>
+    <li><a class="close" href="#" onclick="toggleMenu()">Close ✖</a></li>
   </ul>
 </div>
 		</div>
