@@ -288,14 +288,24 @@ h1, h2, h3 {
   font-size: 24px;
   text-decoration: none;
 }
-	}
-		.menu-overlay close {
+.menu-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+.menu-header h1 {
+	margin: 0;
+	font-size: 24px;
+	color: white;
+}		
+		.menu-overlay .close {
 			position: absolute;
 			top: 5px;
 			right: 5px;
 			text-decoration: none;
 			z-index: 1001;
 			color: black;
+			font-size: 28px;
 			
 		}
 	</style>
@@ -307,6 +317,8 @@ h1, h2, h3 {
 
 <!-- Fullscreen Menu -->
 <div id="fullMenu" class="menu-overlay">
+	<div class="menu-header">
+		<h1>BixMAX</h1>
 	<a class="close" href="#" onclick="toggleMenu()">✖</a>
   <ul>
     <li><a href="BixMax home.html">Home</a></li>
