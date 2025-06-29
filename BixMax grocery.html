@@ -437,12 +437,20 @@ function updateGrandTotal() {
   document.getElementById('grand-total').textContent = total.toFixed(2);
 }
 	 </script>
-		<script>
-	   function toggleMenu() {
-    const menu = document.getElementById("mainMenu");
-    menu.classList.toggle("show");
+<script>
+function toggleMenu() {
+  const menu = document.getElementById('mainMenu');
+  const toggle = document.querySelector('.menu-toggle');
+  
+  if (menu.classList.contains('show')) {
+    menu.classList.remove('show');
+    toggle.classList.remove('hidden');
+  } else {
+    menu.classList.add('show');
+    toggle.classList.add('hidden');
   }
-	 </script>
+}
+</script>
 </body>
 	 
 </html>
