@@ -217,24 +217,10 @@ footer {
 h1, h2, h3 {
     margin-bottom: 10px;
 }
+		h3 {
+			color: black;
+		}
 
-
-nav ul {
-    list-style: none;
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 15px;
-    padding: 10px 0;
-    font-size: 16px;
-}
-
-nav ul li a {
-    color: white;
-    text-decoration: none;
-    cursor: pointer;
-    font-size: 16px;
-}
 
 /*mobile Responsive*/
 @media (max-width: 480px) {
@@ -253,15 +239,49 @@ nav ul li a {
 		font-size: 16px;
 		padding: 6px 12px;
 	}
+	.main-menu ul {
+		flex-direction: column;
+		gap: 10px;
+	}
 }
+
+
+/* Main menu styles */
+.main-menu {
+  background-color: #2d2d2d;
+  padding: 15px 0;
+  text-align: center;
+}
+
+.main-menu ul {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.main-menu ul li a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 10px 15px;
+  border-radius: 10px;
+  transition: background 0.3s;
+}
+
+.main-menu ul li a:hover {
+  background-color: #1976d2;
+  color: #fff;
+}
+
+	
 	</style>
 
 	</head>
 	<body class="container">
-	  <header>
-        <h1>All-in-One Online Shop</h1>
-		
-        <nav>
+		        <nav class="main-menu">
             <ul>
                 <li><a href="BixMax home.html">Home</a></li>
                 <li><a href="#">Electronics</a></li>
@@ -271,6 +291,11 @@ nav ul li a {
 	        <li><a href="tel:+233536345825" class="call-button">Call To Order</a></li>
             </ul>
         </nav>
+	  <header>
+		  <h1>BixMAX</h1>
+        <h3>All-in-One Online Shop</h3>
+		
+
 		
     </header>
 
