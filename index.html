@@ -99,9 +99,11 @@
      /* -------------  BizMAX Root Variables ------------- */
 :root {
   --clr-1: #00ffff;   /* cyan            */
-  --clr-2: #62d4ff;   /* light-blue      */
-  --clr-3: #001529;   /* dark background */
-  --blur-strength: 60px;
+   --clr-2: #FFA500;   /* orange            */
+  --clr-3: #62d4ff;   /* light-blue      */
+   --clr-4: #FFFF00;   /* yello            */
+  --clr-5: #001529;   /* dark background */
+  --blur-strength: 40px;
 }
 
 /* -------------  Reset & Layout ------------- */
@@ -113,9 +115,9 @@ html,body{height:100%;font-family:system-ui,Segoe UI,Roboto,sans-serif;overflow-
   position:fixed;
   inset:0;                     /* top:0, right:0, bottom:0, left:0 */
   z-index:-1;                  /* behind everything */
-  background:linear-gradient(115deg,var(--clr-1),var(--clr-2),var(--clr-3));
+  background:linear-gradient(115deg,var(--clr-1),var(--clr-2),var(--clr-3)var(--clr-4),var(--clr-5));
   background-size:300% 300%;
-  animation:shift 15s ease-in-out infinite;
+  animation:shift 10s ease-in-out infinite;
   filter:blur(var(--blur-strength));     /* softens the color transitions */
 }
 
@@ -182,12 +184,14 @@ function cycleColors(){
   root.style.setProperty('--clr-1', colorSets[idx][0]);
   root.style.setProperty('--clr-2', colorSets[idx][1]);
   root.style.setProperty('--clr-3', colorSets[idx][2]);
+  root.style.setProperty('--clr-4', colorSets[idx][3]);
+  root.style.setProperty('--clr-5', colorSets[idx][4]);
 }
 
 setInterval(cycleColors, period);
 
-    setTimeout(()=> {
-      window.location.href = "BixMax home.html";}, 5000);
+    setTimeout(() = {
+      window.location.href="BixMax home.html";}, 5000);
     }
   </script>
 </html>
