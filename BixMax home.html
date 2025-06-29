@@ -225,31 +225,124 @@ div#slider figure {
 100% { left: -400%; }
 }
 
-	</style>
+
+    
+  /* Menu toggle button */
+.menu-toggle {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  font-size: 30px;
+  cursor: pointer;
+  padding: 10px 15px;
+  color: white;
+  z-index: 1001;
+  border-radius: 10px;
+}
+
+/* Full-screen overlay menu */
+.menu-overlay {
+	position: fixed;
+  top: 0;
+  left: -80%; /* Hide initially */
+  width: 80%;
+  height: 100%;
+	border-radius: 20px
+        border: solid 5px rgb(255, 255, 255, 0.1);
+        backdrop-filter: blur(25px);
+	box-shadow: 0px 0px 30px 20px rgb(0,0,0,0.1);
+  color: black;
+	background-color: #C0C0C0;
+	opacity: 0.8;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: left 0.3s ease-in-out;
+}
+
+.menu-overlay.show {
+  left: 0;
+}
+
+.menu-overlay ul {
+  list-style: none;
+  text-align: left;
+  padding: 0;
+}
+
+.menu-overlay ul li {
+  margin: 15px 0;
+  opacity: 0;
+  transform: translateX(-20px);
+  animation: slideIn 0.4s forwards;
+}
+
+/* Animate each menu item with a delay */
+.menu-overlay.show ul li:nth-child(1) { animation-delay: 0.2s; }
+.menu-overlay.show ul li:nth-child(2) { animation-delay: 0.4s; }
+.menu-overlay.show ul li:nth-child(3) { animation-delay: 0.6s; }
+.menu-overlay.show ul li:nth-child(4) { animation-delay: 0.8s; }
+
+@keyframes slideIn {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+		
+
+.menu-overlay ul li a {
+  color: black;
+  font-size: 24px;
+  text-decoration: none;
+}		
+		.menu-overlay .close {
+			position: absolute;
+			top: 5px;
+			right: 5px;
+			text-decoration: none;
+			z-index: 1001;
+			color: black;
+			font-size: 28px;
+			
+		}
+		@keyframes backgroundShift {
+  0% { background-color: #add8e6; }    /* light blue */
+  25% { background-color: #00ced1; }   /* dark cyan */
+  50% { background-color: #87cefa; }   /* sky blue */
+  75% { background-color: #00ced1; }   /* dark cyan */
+  100% { background-color: #add8e6; }  /* back to light blue */
+}
+
+body {
+  animation: backgroundShift 20s infinite linear;
+  transition: background-color 1s ease;
+}  
+    
+    
+    </style>
 
 </head>
 <body class="container">
-	
-    <section class="categories">
+<div class="menu-toggle" onclick="toggleMenu()">☰</div>
+	<div id="fullMenu" class="menu-overlay">
+	<a class="close" href="#" onclick="toggleMenu()">✖</a>
+  <ul>
+    <div class="categories">
         <h2>Shop by Category</h2>
         <div class="category-grid">
-		<a class="f" href="BixMax electronics.html" style="text-decoration">
-            <div class="category">📱 Electronics</div>
-		</a>
-		<a class="f" href="#" style="text-decoration">
-            <div class="category">👕 Fashion</div>
-		</a>
-		<a class="f" href="BixMax grocery.html" style="text-decoration">
-            <div class="category">🍎 Groceries</div>
-		</a>
-		<a class="f" href="BixMax home essential.html" style="text-decoration">
-            <div class="category">🏠 Home Essentials</div>
-		</a>
-			<a class="f" href="BixMax food menu.html" style="text-decoration">
-			 <div class="category">🍔 Food Menu</div>
-			 </a>
+		<li><a class="f" href="BixMax electronics.html" style="text-decoration">📱 Electronics</a></li>
+		<li><a class="f" href="#" style="text-decoration">👕 Fashion</a></li>
+		<li><a class="f" href="BixMax grocery.html" style="text-decoration">🍎 Groceries</a></li>
+		<li><a class="f" href="BixMax home essential.html" style="text-decoration">🏠 Home Essentials</a></li>
+		<li><a class="f" href="BixMax food menu.html" style="text-decoration">🍔 Food Menu</a></li>
 		       </div>
-    </section>
+	      </ul>
+    </div>
+
+	</div>
+
 
     <header>
 	    <h1>BixMAX</h1>
@@ -283,6 +376,23 @@ div#slider figure {
     </section>
 <br>
         <footer>&copy; BixMAX 2025. All rights reserved.</footer>
-		 
+
+	<script>
+function toggleMenu() {
+  const menu = document.getElementById('fullMenu');
+  const toggle = document.querySelector('.menu-toggle');
+  const bottomBar = document.getElementById('bottomBar');
+
+  if (menu.classList.contains('show')) {
+    menu.classList.remove('show');
+    toggle.style.display = 'block';
+    bottomBar.style.display = 'flex';
+  } else {
+    menu.classList.add('show');
+    toggle.style.display = 'none';
+    bottomBar.style.display = 'none';
+  }
+}
+</script>
 </body>
 </html>
