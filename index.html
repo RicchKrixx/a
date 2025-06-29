@@ -99,11 +99,11 @@
      /* -------------  BizMAX Root Variables ------------- */
 :root {
   --clr-1: #00ffff;   /* cyan            */
-   --clr-2: #FFA500;   /* orange            */
+  --clr-2: #FFA500;   /* orange            */
   --clr-3: #62d4ff;   /* light-blue      */
-   --clr-4: #FFFF00;   /* yello            */
+  --clr-4: #FFFF00;   /* yello            */
   --clr-5: #001529;   /* dark background */
-  --blur-strength: 40px;
+  --blur-strength: 60px;
 }
 
 /* -------------  Reset & Layout ------------- */
@@ -124,8 +124,10 @@ html,body{height:100%;font-family:system-ui,Segoe UI,Roboto,sans-serif;overflow-
 /* Keyframes drive the “flow” of the gradient */
 @keyframes shift{
   0%  {background-position:0% 50%}
-  50% {background-position:100% 50%}
-  100%{background-position:0% 50%}
+  25% {background-position:100% 50%}
+  50% {background-position:0% 50%}
+  75% {background-position:100% 50%}
+  100% {background-position:0% 50%}
 }
 
 /* -------------  Demo Content Card ------------- */
@@ -190,8 +192,6 @@ function cycleColors(){
 
 setInterval(cycleColors, period);
 
-    setTimeout(() = {
-      window.location.href="BixMax home.html";}, 5000);
-    }
+
   </script>
 </html>
