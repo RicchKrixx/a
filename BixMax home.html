@@ -246,9 +246,12 @@ div#slider figure {
   animation: slideIn 0.4s forwards;
 }
 body.noscroll {
-  overflow: hidden;
-	position: fixed;
+  overflow: hidden !important;
+	position: fixed !important;
   width: 100%;
+	height: 100vh;
+	top: 0;
+	left: 0;
 }
 /* Animate each menu item with a delay */
 .menu-overlay.show ul li:nth-child(1) { animation-delay: 0.2s; }
@@ -309,7 +312,7 @@ body {
     </style>
 
 </head>
-<body class="container">
+<body class="container" id="body">
 <div class="menu-toggle" onclick="toggleMenu()">☰</div>
 	<div id="fullMenu" class="menu-overlay">
 	<a class="close" href="#" onclick="toggleMenu()">✖</a>
@@ -367,7 +370,7 @@ function toggleMenu() {
   const menu = document.getElementById('fullMenu');
   const toggle = document.querySelector('.menu-toggle');
   const bottomBar = document.getElementById('bottomBar');
-  const body = document.body;
+  const body = document.getElementById('body');
 
   if (menu.classList.contains('show')) {
     // CLOSE MENU
