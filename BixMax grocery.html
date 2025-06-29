@@ -1,127 +1,426 @@
-<!DOCTYPE html><html lang="en">
+	<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BizMAX – Groceries</title>
-  <style>
-    /* ========== RESET ========== */
-    *{margin:0;padding:0;box-sizing:border-box;}/* ========== ROOT LAYOUT ========== */
-body{
-  font-family:Arial, sans-serif;
-  background:lightblue;
-  overflow-x:hidden;
-  padding-bottom:110px; /* space for bottom bar */
-}
-.container{max-width:100%;padding:16px;border-radius:16px;border:5px solid rgba(255,255,255,.1);backdrop-filter:blur(25px);box-shadow:0 0 30px 20px rgba(0,0,0,.1);}
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8"/>
+    <title>BizMAX</title>
 
-/* ========== HEADER & NAV ========== */
-header{
-  background:#2d2d2d;color:#fff;padding:20px;border-radius:16px;margin:10px;box-shadow:0 0 20px rgba(0,0,0,.2);display:flex;flex-direction:column;align-items:center;gap:15px;position:sticky;top:0;z-index:1000;
+	
+	<style>	
+/* Reset & Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
-.menu-icon{display:none;font-size:30px;cursor:pointer;}
-nav ul{list-style:none;display:flex;gap:15px;flex-wrap:wrap;justify-content:center;}
-nav a{color:#fff;text-decoration:none;font-weight:bold;}
 
-/* ========== GRID ========== */
-h1.section-title{color:#fff;text-align:center;margin:20px 0;}
-.grid{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;}
-.item{background:lightgrey;border-radius:20px;padding:10px;width:160px;text-align:center;box-shadow:0 0 15px rgba(0,0,0,.1);}
-.item img{width:100%;border-radius:20px;margin-bottom:10px;}
-.item h3{color:#000;margin-bottom:5px;}
-.item p{color:#000;font-weight:bold;}
-.quantity{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:8px;}
-.quantity button{width:30px;height:30px;background:cyan;border:none;border-radius:6px;font-size:18px;cursor:pointer;color:#000;transition:transform .2s;}
-.quantity button:hover{transform:scale(1.1);}
-.quantity span{font-weight:bold;}
+	
+html, body {
+  height: 100%;
+  width: 100%;
+  font-family: arial, sans-serif;
+	overflow-x: hidden;
+  background-color: lightblue;	
+  background-size: cover;
+}
+
+.container {
+	max-width: 100%;
+	margin: auto;
+	padding:16px;
+	border-radius:16px;
+	border: solid 5px rgb(255, 255, 255, 0.1);
+        backdrop-filter: blur(25px);
+	box-shadow: 0px 0px 30px 20px rgb(0,0,0,0.1);
+	color: white;
+	display: flex;
+	flex-direction: column;
+	text-align: center;
+	align-items: center;
+}
+
+header {
+
+	background-color: #2d2d2d;
+	width:100%;
+	border-radius:16px;
+	border: solid 5px rgb(255, 255, 255, 0.1);
+    backdrop-filter: blur(25px);
+	box-shadow: 0px 0px 30px 20px rgb(0,0,0,0.1);
+	color: white;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	opacity: 0.7;
+    padding: 20px;
+    text-align: center;
+	gap: 15px;
+	
+}
+.grocery {
+
+   	width: 100%;
+	padding: 24px;
+	border-radius: 30px;
+	border: solid 5px rgb(255, 255, 255, 0.1);
+    backdrop-filter: blur(25px);
+	box-shadow: 0px 0px 30px 20px rgb(0,0,0,0.1);
+	color: white;
+	display: flex;
+	flex-direction: column;
+	align-items:center;
+}
+
+.grocery-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 20px;
+
+}
+
+
+.item {
+	background-color: lightgrey;
+	border-radius: 20px;
+	overflow: hidden;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 10px;
+	color: black;
+
+}
+.item img {
+	max-width: 100%;
+	background-color: #666;
+	display: flex;
+    border-radius: 20px;
+    margin-bottom: 10px;
+	flex-shrink: 0;
+    border-radius: 20px; 
+}
+
+.quantity {
+  color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.quantity button {
+  width: 30px;
+  height: 30px;
+  font-size: 18px;
+  border: none;
+  background: #1976d2;
+  color: black;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.quantity span {
+  font-size: 18px;
+  color: black;
+}
 
 /* ========== BOTTOM BAR ========== */
-.bottom-bar{position:fixed;bottom:0;left:0;width:100%;background:cyan;display:flex;justify-content:space-between;align-items:center;padding:12px 20px;border-radius:30px 30px 0 0;box-shadow:0 -4px 12px rgba(0,0,0,.2);z-index:9999;}
-.bottom-bar span{color:#000;font-weight:bold;font-size:18px;}
-.checkout-btn{background:#28a745;color:#fff;padding:10px 20px;border-radius:25px;font-weight:bold;text-decoration:none;transition:background .3s;}
-.checkout-btn:hover{background:#218838;}
+.bottom-bar {
+  position:fixed;
+  bottom:0;left:0;
+  width:100%;
+  background:cyan;
+  display:flex;
+  border: solid 5px rgb(255, 255, 255, 0.1);
+    backdrop-filter: blur(25px);
+	  box-shadow: 0px 0px 30px 20px rgb(0,0,0,0.1);
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 20px;
+  border-radius:30px 30px 0 0;
+  z-index:9999;}
+.bottom-bar span {
+  color:#000;
+  font-weight:bold;
+  font-size:18px;
+}
+.checkout-btn {
+  background:#28a745;
+  color:#fff;
+  padding:10px 20px;
+  border-radius:25px;
+  font-weight:bold;
+  text-decoration:none;
+  transition:background .3s;
+}
+.checkout-btn:hover {
+  background:#218838;}
 
 /* ========== FOOTER ========== */
-footer{background:#111;color:#fff;text-align:center;padding:15px;margin:20px;border-radius:16px;}
+footer {
+       background:#111;
+        color:#fff;
+        text-align:center;
+        padding:15px;
+        border: solid 5px rgb(255, 255, 255, 0.1);
+        backdrop-filter: blur(25px);
+	      box-shadow: 0px 0px 30px 20px rgb(0,0,0,0.1);
+      	color: white;
+        margin:20px;
+        border-radius:16px;}
 
 /* ========== RESPONSIVE ========== */
 @media(max-width:768px){
   .menu-icon{display:block;}
-  nav ul{display:none;flex-direction:column;gap:10px;background:#2d2d2d;border-radius:12px;padding:10px;}
-  nav ul.show{display:flex;}
+  nav ul {
+    display:none;
+    flex-direction:column;
+    gap:10px;
+    background:#2d2d2d;
+    border-radius:12px;
+    padding:10px;}
+  nav ul.show{
+    display:flex;}
 }
 @media(max-width:480px){.item{width:90%;}}
 
-  </style>
-</head>
-<body>
-  <header>
-    <div class="menu-icon" onclick="toggleMenu()">☰</div>
-    <h1>BizMAX – Groceries</h1>
-    <nav id="mainNav">
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="#">Electronics</a></li>
-        <li><a href="#">Fashion</a></li>
-        <li><a href="#">Groceries</a></li>
-        <li><a href="#">Food Menu</a></li>
-        <li><a href="tel:+233536345825">Call&nbsp;To&nbsp;Order</a></li>
-      </ul>
-    </nav>
-  </header>  <div class="container">
-    <h1 class="section-title">🛒 Grocery Section</h1>
-    <div class="grid">
-      <!-- ===== Sample Items ===== -->
-      <div class="item" data-price="6">
-        <img src="pp.jpeg" alt="Tomatoes">
-        <h3>Tomatoes</h3>
-        <p>$6 / bag</p>
-        <div class="quantity"><button onclick="updateQty(this,-1)">−</button><span>0</span><button onclick="updateQty(this,1)">+</button></div>
-      </div>
-      <div class="item" data-price="4">
-        <img src="pp.jpeg" alt="Onions">
-        <h3>Onions</h3>
-        <p>$4 / bunch</p>
-        <div class="quantity"><button onclick="updateQty(this,-1)">−</button><span>0</span><button onclick="updateQty(this,1)">+</button></div>
-      </div>
-      <div class="item" data-price="15">
-        <img src="pp.jpeg" alt="Rice">
-        <h3>Rice</h3>
-        <p>$15 / 5kg</p>
-        <div class="quantity"><button onclick="updateQty(this,-1)">−</button><span>0</span><button onclick="updateQty(this,1)">+</button></div>
-      </div>
-      <div class="item" data-price="3">
-        <img src="pp.jpeg" alt="Carrots">
-        <h3>Carrots</h3>
-        <p>$3 / pack</p>
-        <div class="quantity"><button onclick="updateQty(this,-1)">−</button><span>0</span><button onclick="updateQty(this,1)">+</button></div>
-      </div>
-      <div class="item" data-price="2">
-        <img src="pp.jpeg" alt="Bananas">
-        <h3>Bananas</h3>
-        <p>$2 / bunch</p>
-        <div class="quantity"><button onclick="updateQty(this,-1)">−</button><span>0</span><button onclick="updateQty(this,1)">+</button></div>
-      </div>
-    </div>
-  </div>  <!-- ===== Bottom Total Bar ===== -->  <div class="bottom-bar">
-    <span>Grand Total: $<span id="total">0</span></span>
-    <a href="#" class="checkout-btn" onclick="alert('Checkout coming soon!')">Checkout</a>
-  </div>  <footer>&copy; 2025 BizMAX. All rights reserved.</footer>  <script>
-    function updateQty(btn,delta){
-      const span=btn.parentElement.querySelector('span');
-      let count=parseInt(span.textContent)+delta;
-      if(count<0)count=0;
-      span.textContent=count;
-      calcTotal();
+
+/* Responsive */
+@media (max-width: 480px) {
+    nav ul {
+        flex-direction: column;
+        gap: 10px;
     }
-    function calcTotal(){
-      let total=0;
-      document.querySelectorAll('.item').forEach(it=>{
-        const price=parseFloat(it.dataset.price);
-        const qty=parseInt(it.querySelector('span').textContent);
-        total+=price*qty;
-      });
-      document.getElementById('total').textContent=total.toFixed(2);
+
+    .search-container input {
+        width: 90%;
     }
-    function toggleMenu(){document.querySelector('#mainNav ul').classList.toggle('show');}
-  </script></body>
+
+    .grocery-grid {
+        flex-direction: column;
+        align-items: center;
+    }
+	.newsletter {
+	width: 100%;
+	height: auto;
+	}
+	header {
+	width: 100%;
+	height: auto;
+	}
+}
+
+h1, h2, h3 {
+    margin-bottom: 10px;
+}
+
+
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 10px 0;
+    font-size: 16px;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+ .checkout-btn {
+  width: 100%;
+  background-color: #28a745;
+  color: white;
+  padding: 24px;
+  border-radius: 20px;
+  font-weight: bold;
+  text-decoration: none;
+}
+.checkout-btn:hover {
+	background-color: #218838;
+}
+/*mobile Responsive*/
+@media (max-width: 480px) {
+	.item {
+		width: 90%;
+	}
+	.payment-method {
+		flex-direction: column;
+		align-items: center;
+	}
+	.button {
+		flex-direction: column;
+	}
+	.grand-total {
+		bottom: 60px;
+		font-size: 16px;
+		padding: 6px 12px;
+	}
+}
+
+.grand-total {
+	width: 80%;
+	position: sticky;
+	bottom: 0px;
+	border-radius: 20px;
+	padding: 4px;
+	font-weight: bold;
+	z-index: 10;
+	text-align: center;
+	border: solid 5px rgb(255, 255, 255, 0.1);
+        backdrop-filter: blur(25px);
+	box-shadow: 0px 0px 30px 20px rgb(0,0,0,0.1);
+}
+
+	</style>
+
+	</head>
+	<body class="container">
+	  <header>
+        <h1>All-in-One Online Shop</h1>
+		
+        <nav>
+            <ul>
+                <li><a href="BixMax home.html">Home</a></li>
+                <li><a href="#">Electronics</a></li>
+                <li><a href="#">Fashion</a></li>
+                <li><a href="#">Groceries</a></li>
+                <li><a href="#">Food Menu</a></li>
+	        <li><a href="tel:+233536345825" class="call-button">Call To Order</a></li>
+            </ul>
+        </nav>
+		
+    </header>
+
+	<section class="grocery">
+      <b><h1>Grocery store</h1></b>
+    <div class="grocery-grid">
+      <div align="center" class="item" data-Price="20">
+      <img src="pp.jpeg" alt="burger">
+      <h3>Burger</h3>
+      <p>Price: $20</p>
+      <div class="quantity">
+        <button onclick="updateQuantity(this, -1)">−</button>
+        <span class="count">0</span>
+        <button onclick="updateQuantity(this, 1)">+</button>
+		</div>
+		</div>
+	        <div align="center" class="item" data-Price="20">
+      <img src="pp.jpeg" alt="Sanwich">
+      <h3>Sandwich</h3>
+      <p>Price: $20</p>
+      <div class="quantity">
+        <button onclick="updateQuantity(this, -1)">−</button>
+        <span class="count">0</span>
+        <button onclick="updateQuantity(this, 1)">+</button>
+		</div>
+		</div>
+        <div align="center" class="item" data-Price="15">
+      <img src="pp.jpeg" alt="gizard">
+      <h3>Pepper</h3>
+      <p>$15 / bag</p>
+      <div class="quantity">
+        <button onclick="updateQuantity(this, -1)">−</button>
+        <span class="count">0</span>
+        <button onclick="updateQuantity(this, 1)">+</button>
+		</div>
+		</div>
+        <div align="center" class="item" data-Price="30">
+      <img src="pp.jpeg" alt="friedrice">
+      <h3>Tomato</h3>
+      <p>$30 / bag</p>
+      <div class="quantity">
+        <button onclick="updateQuantity(this, -1)">−</button>
+        <span class="count">0</span>
+        <button onclick="updateQuantity(this, 1)">+</button>
+		</div>
+		</div>
+        <div align="center" class="item" data-Price="20">
+      <img src="pp.jpeg" alt="plainrice">
+      <h3>Onion</h3>
+      <p>$20 / bunch</p>
+      <div class="quantity">
+        <button onclick="updateQuantity(this, -1)">−</button>
+        <span class="count">0</span>
+        <button onclick="updateQuantity(this, 1)">+</button>
+		</div>
+		</div>
+        <div align="center" class="item" data-Price="20">
+      <img src="pp.jpeg" alt="jollofrice">
+      <h3>Rice</h3>
+      <p>$20 / 5kg</p>
+      <div class="quantity">
+        <button onclick="updateQuantity(this, -1)">−</button>
+        <span class="count">0</span>
+        <button onclick="updateQuantity(this, 1)">+</button>
+		</div>
+		</div>
+        <div align="center" class="item" data-Price="5">
+      <img src="pp.jpeg" alt="shawarma">
+      <h3>Banana</h3>
+      <p>$5 / bunch</p>
+      <div class="quantity">
+        <button onclick="updateQuantity(this, -1)">−</button>
+        <span class="count">0</span>
+        <button onclick="updateQuantity(this, 1)">+</button>
+		</div>
+		</div>
+        <div align="center" class="item" data-Price="5">
+      <img src="pp.jpeg" alt="pizza">
+      <h3>Carrot</h3>
+      <p>$5 / pack</p>
+      <div class="quantity">
+        <button onclick="updateQuantity(this, -1)">−</button>
+        <span class="count">0</span>
+        <button onclick="updateQuantity(this, 1)">+</button>
+		</div>
+		</div> 
+	
+
+  </div>
+</section>
+  
+	         <div class="bottom-bar">
+    <span>Total: $<span id="grand-total">0.00</span></span>
+ 
+      <a href="#" class="checkout-btn" onclick="alert('Checkout coming soon!')">CHECKOUT</a>
+  </div>
+     </div>
+<br>
+			  <footer>&copy; BixMAX 2025. All rights reserved.</footer>
+	 <script>function updateQuantity(button, change) {
+  const item = button.closest('.item');
+  const countSpan = item.querySelector('.count');
+  let count = parseInt(countSpan.textContent);
+
+  count += change;
+  if (count < 0) count = 0;
+
+  countSpan.textContent = count;
+
+  updateGrandTotal();
+}
+
+function updateGrandTotal() {
+  let total = 0;
+  const items = document.querySelectorAll('.item');
+
+  items.forEach(item => {
+    const count = parseInt(item.querySelector('.count').textContent);
+    const price = parseFloat(item.getAttribute('data-price'));
+    total += count * price;
+  });
+
+  document.getElementById('grand-total').textContent = total.toFixed(2);
+}</script>
+</body>
+	 
 </html>
