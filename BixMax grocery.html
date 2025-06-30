@@ -529,6 +529,7 @@ function checkGrandTotal(event) {
   const total = parseFloat(document.getElementById('grand-total').textContent);
 
   if (total > 0) {
+    localStorage.setItem("grandTotal", total.toFixed(2));
     window.location.href = "admin.html";
   } else {
     alert("Your cart is empty!");
