@@ -78,12 +78,6 @@
       text-align: left;
 	    color: white;
     }
-    .menu-overlay ul li {
-      margin: 20px 0;
-      opacity: 0;
-      transform: translateX(-20px);
-      animation: slideIn 0.3s forwards;
-    }
 
 h1, h2, h3 {
     margin-bottom: 10px;
@@ -229,12 +223,28 @@ div#slider figure {
 100% { left: -400%; }
 }
 
+.menu-overlay ul li {
+  margin: 20px 0;
+  opacity: 0;
+  transform: translateX(-30px);
+  animation: slideIn 0.5s forwards;
+}
 
-/* Animate each menu item with a delay */
-.menu-overlay.show ul li:nth-child(1) { animation-delay: 0.2s; }
-.menu-overlay.show ul li:nth-child(2) { animation-delay: 0.4s; }
-.menu-overlay.show ul li:nth-child(3) { animation-delay: 0.6s; }
-.menu-overlay.show ul li:nth-child(4) { animation-delay: 0.8s; }
+.menu-overlay.show ul li:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.menu-overlay.show ul li:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.menu-overlay.show ul li:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.menu-overlay.show ul li:nth-child(4) {
+  animation-delay: 0.4s;
+}
+.menu-overlay.show ul li:nth-child(5) {
+  animation-delay: 0.5s;
+}
 
 @keyframes slideIn {
   to {
