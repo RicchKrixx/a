@@ -345,23 +345,82 @@ body {
 }	
 	
 	
-	
-.whatsapp-float {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  background: #25D366;
-  color: white;
-  font-size: 24px;
-  padding: 12px 16px;
-  border-radius: 50%;
-  text-decoration: none;
-  box-shadow: 0px 0px 20px rgba(0,0,0,0.2);
-  z-index: 1000;
-}	
-	
-	
-	
+	/* ── chatbot button INSIDE menu ───────────────────────── */
+#chatbot-btn{
+  margin:0 20px 25px;
+  padding:12px 20px;
+  width:calc(100% - 40px);
+  background:#1976d2;
+  border:none;
+  border-radius:14px;
+  color:#fff;
+  font-weight:bold;
+  cursor:pointer;
+  box-shadow:0 0 10px rgba(0,0,0,.25);
+}
+
+/* ── floating chat window (outside menu) ─────────────── */
+#chatbot-window{
+  display:none;
+  position:fixed;
+  bottom:90px;        /* shows above bottom bar */
+  right:20px;
+  width:300px;
+  height:380px;
+  background:#fff;
+  color:#000;
+  border-radius:14px;
+  box-shadow:0 0 20px rgba(0,0,0,.3);
+  z-index:1002;
+  overflow:hidden;
+  font-family:Arial, sans-serif;
+  flex-direction:column;
+}
+.chat-header{
+  background:#1976d2;
+  color:#fff;
+  padding:10px;
+  font-weight:bold;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+#chatContent{
+  flex:1;
+  padding:10px;
+  overflow-y:auto;
+  background:#f4f4f4;
+  font-size:14px;
+}
+.chat-input{
+  display:flex;
+  border-top:1px solid #ddd;
+}
+.chat-input input{
+  flex:1;
+  border:none;
+  padding:10px;
+  font-size:14px;
+  outline:none;
+}
+.chat-input button{
+  border:none;
+  background:#1976d2;
+  color:#fff;
+  padding:10px 16px;
+  cursor:pointer;
+}
+
+/* message bubbles */
+.bot-message,.user-message{
+  margin:6px 0;
+  padding:8px 12px;
+  border-radius:12px;
+  max-width:80%;
+}
+.bot-message{background:#ddd;align-self:flex-start}
+.user-message{background:#1976d2;color:#fff;align-self:flex-end}
+
 	
 	
 	
@@ -392,7 +451,25 @@ body {
       <li><a href="tel:0536345825">☎️Contact</a></li>
 	
     </ul>
+	   <button id="chatbot-btn" onclick="toggleChat()">💬 Chat with AI</button>
+</div>
+
+<!-- ③ floating chat window (initially hidden) -->
+<div id="chatbot-window">
+  <div class="chat-header">
+    <span>BizMAX Assistant</span>
+    <button onclick="toggleChat()">✖️</button>
   </div>
+  <div id="chatContent">
+    <div class="bot-message">Hi there! How can I help today?</div>
+  </div>
+  <div class="chat-input">
+    <input id="chatInput" type="text" placeholder="Type a message…"
+           onkeydown="if(event.key==='Enter') sendMessage()">
+    <button onclick="sendMessage()">Send</button>
+  </div>
+</div>
+ 
 
 	  <header>
 		  <h1>BixMAX</h1>
@@ -542,6 +619,38 @@ function toggleMenu() {
     bottomBar.style.display = 'none';
     document.body.style.overflow = 'hidden'; // Disable scroll
   }
+}
+</script>
+	
+<script>
+function toggleChat(){
+  const w=document.getElementById('chatbot-window');
+  w.style.display= w.style.display==='block' ? 'none':'block';
+}
+function sendMessage(){
+  const input=document.getElementById('chatInput');
+  const txt=input.value.trim();
+  if(!txt) return;
+  appendMsg('user',txt);
+  input.value='';
+  setTimeout(()=> appendMsg('bot', getBotReply(txt)),600);
+}
+function appendMsg(role,msg){
+  const box=document.getElementById('chatContent');
+  const div=document.createElement('div');
+  div.className= role==='user' ? 'user-message':'bot-message';
+  div.textContent=msg;
+  box.appendChild(div);
+  box.scrollTop=box.scrollHeight;
+}
+function getBotReply(q){
+  q=q.toLowerCase();
+  if(q.includes('hello')||q.includes('hi')) return 'Hello! 😊';
+  if(q.includes('price'))            return 'All prices are listed on our homepage.';
+  if(q.includes('order'))            return 'Add items to your cart and tap Checkout.';
+  if(q.includes('location'))         return 'We deliver anywhere in Ghana 🇬🇭.';
+  if(q.includes('help'))             return 'Sure! Ask me anything about BizMAX.';
+  return 'Sorry, I didn’t get that. Try asking about price, order, or help.';
 }
 </script>
 </body>
