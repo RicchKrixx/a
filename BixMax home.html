@@ -249,7 +249,7 @@ body.noscroll {
   overflow: hidden !important;
 	position: fixed !important;
   width: 100%;
-	height: 100vh;
+	height: 100%;
 	top: 0;
 	left: 0;
 }
@@ -372,14 +372,14 @@ function toggleMenu() {
   const bottomBar = document.getElementById('bottomBar');
   const body = document.getElementById('body');
 
-  if (menu.classList.contains('show')) {
-    // CLOSE MENU
+  const menuIsOpen = menu.classList.contains('show');
+
+  if (menuIsOpen) {
     menu.classList.remove('show');
     toggle.style.display = 'block';
     bottomBar.style.display = 'flex';
     body.classList.remove('noscroll');
   } else {
-    // OPEN MENU
     menu.classList.add('show');
     toggle.style.display = 'none';
     bottomBar.style.display = 'none';
