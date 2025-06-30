@@ -227,24 +227,17 @@ div#slider figure {
   margin: 20px 0;
   opacity: 0;
   transform: translateX(-30px);
+}
+
+.menu-overlay.show.animate ul li {
   animation: slideIn 0.5s forwards;
 }
 
-.menu-overlay.show ul li:nth-child(1) {
-  animation-delay: 0.1s;
-}
-.menu-overlay.show ul li:nth-child(2) {
-  animation-delay: 0.2s;
-}
-.menu-overlay.show ul li:nth-child(3) {
-  animation-delay: 0.3s;
-}
-.menu-overlay.show ul li:nth-child(4) {
-  animation-delay: 0.4s;
-}
-.menu-overlay.show ul li:nth-child(5) {
-  animation-delay: 0.5s;
-}
+.menu-overlay.show.animate ul li:nth-child(1) { animation-delay: 0.1s; }
+.menu-overlay.show.animate ul li:nth-child(2) { animation-delay: 0.2s; }
+.menu-overlay.show.animate ul li:nth-child(3) { animation-delay: 0.3s; }
+.menu-overlay.show.animate ul li:nth-child(4) { animation-delay: 0.4s; }
+.menu-overlay.show.animate ul li:nth-child(5) { animation-delay: 0.5s; }
 
 @keyframes slideIn {
   to {
@@ -341,24 +334,25 @@ body {
 <br>
         <footer>&copy; BixMAX 2025. All rights reserved.</footer>
 <script>
-    function toggleMenu() {
-      const menu = document.getElementById('fullMenu');
-      const toggle = document.querySelector('.menu-toggle');
-      const bottomBar = document.getElementById('bottomBar');
-      const body = document.getElementById('pageBody');
-      if (menu.classList.contains('show')) {
-        menu.classList.remove('show');
-        toggle.style.display = 'block';
-        bottomBar.style.display = 'flex';
-        body.classList.remove('noscroll');
-      } else {
-        menu.classList.add('show');
-        toggle.style.display = 'none';
-        bottomBar.style.display = 'none';
-        body.classList.add('noscroll');
-      }
-    }
 
+function toggleMenu() {
+  const menu = document.getElementById('fullMenu');
+  const toggle = document.querySelector('.menu-toggle');
+  const bottomBar = document.getElementById('bottomBar');
+
+  if (menu.classList.contains('show')) {
+    menu.classList.remove('show', 'animate');
+    toggle.style.display = 'block';
+    bottomBar.style.display = 'flex';
+    document.body.style.overflow = ''; // Enable scroll
+  } else {
+    menu.classList.add('show');
+    setTimeout(() => menu.classList.add('animate'), 50);
+    toggle.style.display = 'none';
+    bottomBar.style.display = 'none';
+    document.body.style.overflow = 'hidden'; // Disable scroll
+  }
+}
 </script>
 		
 </body>
