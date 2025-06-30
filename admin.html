@@ -1,63 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>BixMAX Checkout</title>
-<style>
-  body{margin:0;font-family:Arial;background:lightblue;padding:20px;color:#333}
-  .box{max-width:600px;margin:auto;background:#fff;padding:20px;border-radius:20px;
-       box-shadow:0 0 20px rgba(0,0,0,.15)}
-  h1,h2{text-align:center;margin-top:0}
-  .order-summary{background:#f7f7f7;padding:15px;border-radius:14px;margin-bottom:20px}
-  .order-summary p{margin:6px 0}
-  label{display:block;margin:10px 0 4px;font-weight:bold}
-  input,textarea,select{width:100%;padding:10px;border-radius:10px;border:1px solid #ccc}
-  button{width:100%;padding:14px;background:#28a745;color:#fff;border:none;
-         border-radius:12px;font-weight:bold;font-size:16px;cursor:pointer}
-  button:hover{background:#218838}
-  footer{text-align:center;margin-top:20px;font-size:14px}
-  @media(max-width:480px){.box{padding:15px}}
-</style>
+  <title>Checkout</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  <style>
+    body {
+      font-family: Arial;
+      padding: 20px;
+      background: #f0f0f0;
+    }
+    .box {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    input, textarea, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #1976d2;
+      color: white;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
 
 <div class="box">
-  <h1>Checkout</h1>
+  <h2>Checkout Page</h2>
 
-  <!-- Order Summary -->
- <h3>Order Summary</h3>
-<div id="order-summary"></div>
-<h3>Total: $<span id="total">0.00</span></h3>
+  <h3>Order Summary</h3>
+  <div id="order-summary"></div>
+  <h3>Total: $<span id="total">0.00</span></h3>
 
-  <!-- Customer Info -->
-  <label>Full Name</label>
-  <input id="name" type="text" placeholder="e.g. John Doe" required>
+  <form id="checkoutForm">
+    <input type="text" id="name" placeholder="Full Name" required>
+    <input type="tel" id="phone" placeholder="Phone Number" required>
+    <textarea id="address" placeholder="Delivery Address" required></textarea>
+    <button type="submit">Place Order</button>
+  </form>
 
-  <label>Phone Number</label>
-  <input id="phone" type="tel" placeholder="e.g. 055 123 4567" required>
-
-  <label>Delivery Address</label>
-  <textarea id="address" rows="3" placeholder="Street, City" required></textarea>
-
-  <label>Payment Method</label>
-  <select id="payment">
-    <option value="Cash on Delivery">Cash on Delivery</option>
-    <option value="Mobile Money">Mobile Money</option>
-  </select><br><br>
-
-  <button onclick="submitOrder()">Confirm &amp; Pay</button>
+  <div id="success" style="color: green; display:none;">Order placed successfully!</div>
 </div>
 
-<footer>&copy; 2025 BizMAX | All rights reserved</footer>
-
-<!-- ── Firebase SDKs ── -->
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-
 <script>
-/* ① PASTE YOUR FIREBASE CONFIG HERE */
-const firebaseConfig = {
+  // 🔥 Initialize Firebase
+ const firebaseConfig = {
   apiKey: "AIzaSyDkU07SZ8xmlg8Lo4TGBQQDISh62HRCYF0",
   authDomain: "bixmax-orders.firebaseapp.com",
   projectId: "bixmax-orders",
@@ -71,67 +67,50 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
-/* ② LOAD ORDER ITEMS (from localStorage.cart OR sample) */
-function loadSummary(){
-  const box=document.getElementById('orderItems');
-  const grand=document.getElementById('grandTotal');
-  let cart=JSON.parse(localStorage.getItem('cart')||'[]');
-  if(cart.length===0){            // sample fallback
-    cart=[{name:'Burger',qty:2,price:20},{name:'Rice',qty:1,price:20}];
-  }
-  let total=0;
-  cart.forEach(it=>{
-    const line=${it.name} x${it.qty} – $${it.qty*it.price};
-    box.innerHTML+=<p>${line}</p>;
-    total+=it.qty*it.price;
-  });
-  grand.textContent=total.toFixed(2);
-  return {cart,total};
-}
-const ORDER=loadSummary();
-
-/* ③ SUBMIT ORDER → FIREBASE Realtime DB */
-function submitOrder(){
-  const order={
-    name:document.getElementById('name').value.trim(),
-    phone:document.getElementById('phone').value.trim(),
-    address:document.getElementById('address').value.trim(),
-    payment:document.getElementById('payment').value,
-    items:ORDER.cart,
-    total:ORDER.total,
-    ts:Date.now()
-  };
-  if(!order.name!order.phone!order.address){
-    alert("Please fill all required fields"); return;
-  }
-  db.ref('orders').push(order)
-    .then(()=>{alert("✅ Order placed!"); localStorage.removeItem('cart'); window.location='thankyou.html';})
-    .catch(err=>alert("❌ Could not send order\n"+err.message));
-}
-</script>
-  <script>
+  // 🛒 Load Cart
   function loadCartSummary() {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     const summaryDiv = document.getElementById('order-summary');
     const totalSpan = document.getElementById('total');
-    summaryDiv.innerHTML = ''; // Clear any old data
-
+    summaryDiv.innerHTML = '';
     let grandTotal = 0;
 
     cart.forEach(item => {
       const itemTotal = item.price * item.quantity;
       grandTotal += itemTotal;
-
       const div = document.createElement('div');
       div.innerHTML = ${item.name} (${item.quantity} x $${item.price}) = $${itemTotal.toFixed(2)};
       summaryDiv.appendChild(div);
     });
 
     totalSpan.textContent = grandTotal.toFixed(2);
+    return { cart, total: grandTotal };
   }
 
-  // Call on page load
-  loadCartSummary();
+  const { cart, total } = loadCartSummary();
+
+  // 📤 Submit Order
+  document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const name = document.getElementById('name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const address = document.getElementById('address').value.trim();
+
+    db.collection('orders').add({
+      name,
+      phone,
+      address,
+      cart,
+      total,
+      timestamp: new Date()
+    }).then(() => {
+      document.getElementById('success').style.display = 'block';
+      localStorage.removeItem('cart');
+    }).catch(err => {
+      alert("Error placing order: " + err);
+    });
+  });
 </script>
+
 </body>
 </html>
