@@ -423,14 +423,39 @@ body {
 }
 .bot-message{background:#ddd;align-self:flex-start}
 .user-message{background:#1976d2;color:#fff;align-self:flex-end}
-</style>
+		.dark-toggle {
+  margin-top: 10px;
+  background: #000;
+  color: #fff;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: bold;
+}
 
+/* Dark mode class */
+body.dark-mode {
+  background-color: #111;
+  color: white;
+}
+body.dark-mode .container,
+body.dark-mode header,
+body.dark-mode .item,
+body.dark-mode .promo-banner,
+body.dark-mode .newsletter,
+body.dark-mode footer {
+  background-color: #222 !important;
+  color: white !important;
+}
+</style>
+<button class="dark-toggle" onclick="document.body.classList.toggle('dark-mode')">🌓</button>
 	</head>
 <body id="pageBody" class="container">
 
   <div class="menu-toggle" onclick="toggleMenu()">☰</div>
 
-  <div id="fullMenu" class="menu-overlay" style="display:flex;flex-direction:column;">
+  <div id="fullMenu" class="menu-overlay">
     <div class="menu-header">
      <h2>BixMAX</h2>
  <button class="close" onclick="toggleMenu()">✖️</button>
@@ -448,7 +473,6 @@ body {
       <li><a href="tel:0536345825">☎️Contact</a></li>
 	
     </ul>
-	   <button id="chatbot-btn" onclick="toggleChat()">💬 Chat with AI</button>
 </div>
 
 <!-- ③ floating chat window (initially hidden) -->
@@ -619,37 +643,7 @@ function toggleMenu() {
 }
 </script>
 	
-<script>
-function toggleChat(){
-  const w=document.getElementById('chatbot-window');
-  w.style.display= w.style.display==='block' ? 'none':'block';
-}
-function sendMessage(){
-  const input=document.getElementById('chatInput');
-  const txt=input.value.trim();
-  if(!txt) return;
-  appendMsg('user',txt);
-  input.value='';
-  setTimeout(()=> appendMsg('bot', getBotReply(txt)),600);
-}
-function appendMsg(role,msg){
-  const box=document.getElementById('chatContent');
-  const div=document.createElement('div');
-  div.className= role==='user' ? 'user-message':'bot-message';
-  div.textContent=msg;
-  box.appendChild(div);
-  box.scrollTop=box.scrollHeight;
-}
-function getBotReply(q){
-  q=q.toLowerCase();
-  if(q.includes('hello')||q.includes('hi')) return 'Hello! 😊';
-  if(q.includes('price'))            return 'All prices are listed on our homepage.';
-  if(q.includes('order'))            return 'Add items to your cart and tap Checkout.';
-  if(q.includes('location'))         return 'We deliver anywhere in Ghana 🇬🇭.';
-  if(q.includes('help'))             return 'Sure! Ask me anything about BizMAX.';
-  return 'Sorry, I didn’t get that. Try asking about price, order, or help.';
-}
-</script>
+
 </body>
 	 
 </html>
