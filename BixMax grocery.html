@@ -7,37 +7,81 @@
 
 	
 	<style>	
-/* Reset & Base Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+    /* Basic Reset */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow-x: hidden; font-family: Arial, sans-serif; }
 
-	
-html, body {
-  height: 100%;
-  width: 100%;
-  font-family: arial, sans-serif;
-	overflow-x: hidden;
-  background-color: lightblue;	
-  background-size: cover;
-}
+    body.noscroll {
+      position: fixed !important;
+      overflow: hidden !important;
+      height: 100vh !important;
+      width: 100% !important;
+    }
 
-.container {
-	max-width: 100%;
-	margin: auto;
-	padding:16px;
-	border-radius:16px;
-	border: solid 5px rgb(255, 255, 255, 0.1);
-        backdrop-filter: blur(25px);
-	box-shadow: 0px 0px 30px 20px rgb(0,0,0,0.1);
-	color: white;
-	display: flex;
-	flex-direction: column;
-	text-align: center;
-	align-items: center;
-}
+    .container {
+      padding-top: 0px; /* Allow space for top menu */
+      padding-bottom: 80px; /* Allow space for bottom bar */
+      min-height: 100vh;
+      background-color: lightblue;
+      text-align: center;
+    }
+
+
+    /* Menu Toggle Icon */
+    .menu-toggle {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      font-size: 30px;
+      cursor: pointer;
+      z-index: 2000;
+      color: white;
+      border-radius: 6px;
+      padding: 5px 10px;
+    }
+
+    /* Full-screen Sliding Menu */
+    .menu-overlay {
+      position: fixed;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: #2d2d2d;
+      color: white;
+      z-index: 1500;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      transition: left 0.3s ease-in-out;
+    }
+    .menu-overlay.show { left: 0; }
+
+    .menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .menu-header p {
+      font-size: 26px;
+      color: white;
+    }
+    .menu-overlay .close {
+      font-size: 28px;
+      cursor: pointer;
+      background: none;
+      color: white;
+      border: none;
+    }
+
+    .menu-overlay ul {
+      list-style: none;
+      margin-top: 30px;
+      text-align: left;
+	    color: white;
+    }
+
+		
 @keyframes animatedBackground {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
@@ -241,57 +285,21 @@ h1, h2, h3 {
 		padding: 6px 12px;
 	}
 }
-/* Menu toggle button */
-.menu-toggle {
-  position: fixed;
-  top: 10px;
-  left: 10px;
-  font-size: 30px;
-  cursor: pointer;
-  padding: 10px 15px;
-  color: white;
-  z-index: 1001;
-  border-radius: 10px;
-}
-
-/* Full-screen overlay menu */
-.menu-overlay {
-	position: fixed;
-  top: 0;
-  left: -100%; /* Hide initially */
-  width: 100%;
-  height: 100%;
-  color: black;
-	background-color: #C0C0C0;
-  z-index: 1000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: left 0.3s ease-in-out;
-}
-
-.menu-overlay.show {
-  left: 0;
-}
-
-.menu-overlay ul {
-  list-style: none;
-  text-align: left;
-  padding: 0;
-}
-
 .menu-overlay ul li {
-  margin: 15px 0;
+  margin: 20px 0;
   opacity: 0;
-  transform: translateX(-20px);
-  animation: slideIn 0.4s forwards;
+  transform: translateX(-30px);
 }
 
-/* Animate each menu item with a delay */
-.menu-overlay.show ul li:nth-child(1) { animation-delay: 0.2s; }
-.menu-overlay.show ul li:nth-child(2) { animation-delay: 0.4s; }
-.menu-overlay.show ul li:nth-child(3) { animation-delay: 0.6s; }
-.menu-overlay.show ul li:nth-child(4) { animation-delay: 0.8s; }
+.menu-overlay.show.animate ul li {
+  animation: slideIn 0.5s forwards;
+}
+
+.menu-overlay.show.animate ul li:nth-child(1) { animation-delay: 0.1s; }
+.menu-overlay.show.animate ul li:nth-child(2) { animation-delay: 0.2s; }
+.menu-overlay.show.animate ul li:nth-child(3) { animation-delay: 0.3s; }
+.menu-overlay.show.animate ul li:nth-child(4) { animation-delay: 0.4s; }
+.menu-overlay.show.animate ul li:nth-child(5) { animation-delay: 0.5s; }
 
 @keyframes slideIn {
   to {
@@ -301,19 +309,22 @@ h1, h2, h3 {
 }
 		
 
+		
+
+
 .menu-overlay ul li a {
-  color: black;
-  font-size: 24px;
+  color: white;
+  font-size: 18px;
   text-decoration: none;
 }		
 		.menu-overlay .close {
 			position: absolute;
-			top: 5px;
-			right: 5px;
+			top: 10px;
+			right: 10px;
 			text-decoration: none;
 			z-index: 1001;
 			color: black;
-			font-size: 28px;
+			font-size: 25px;
 			
 		}
 		@keyframes backgroundShift {
@@ -331,22 +342,31 @@ body {
 	</style>
 
 	</head>
-	<body class="container">
-<!-- Menu Toggle Button -->
-<div class="menu-toggle" onclick="toggleMenu()">☰</div>
+<body id="pageBody" class="container">
 
-<!-- Fullscreen Menu -->
-<div id="fullMenu" class="menu-overlay">
-	<a class="close" href="#" onclick="toggleMenu()">✖</a>
-  <ul>
-    <li><a href="BixMax home.html">Home</a></li>
-    <li><a href="BixMax food menu.html">Food menu</a></li>
-    <li><a href="BixMax electronics.html">Electronics</a></li>
-    <li><a href="tel:0536345825">Contact</a></li>
-    
-  </ul>
-</div>
-		</div>
+  <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+
+  <div id="fullMenu" class="menu-overlay">
+    <div class="menu-header">
+     <p> <h2>BixMAX</h2>
+   <h4><a href="BixMax home.html">🏠HOME</a></h4></p>
+
+      <button class="close" onclick="toggleMenu()">✖️</button>
+    </div>
+    <ul>
+	     
+      <li><a href="BixMax grocery.html">🍎Groceries</a></li>
+      <li><a href="BixMax electronics.html">📱Electronics</a></li>
+      <li><a href="BixMax food menu.html">🍔Food Menu</a></li>
+      <li><a href="BixMax home essential.html">🏠Home Essentials</a></li>
+	    <br>
+		    <br>
+			    <br>
+      <li><a href="tel:0536345825">☎️Contact</a></li>
+	
+    </ul>
+  </div>
+
 	  <header>
 		  <h1>BixMAX</h1>
         <h3>All-in-One Online Shop</h3>
