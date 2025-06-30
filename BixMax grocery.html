@@ -498,20 +498,22 @@ function updateGrandTotal() {
 	 </script>
 <script>
 function toggleMenu() {
-  const menu = document.getElementById('fullMenu');
-  const toggle = document.querySelector('.menu-toggle');
-  const bottomBar = document.getElementById('bottomBar');
-
-  if (menu.classList.contains('show')) {
-    menu.classList.remove('show');
-    toggle.style.display = 'block';
-    bottomBar.style.display = 'flex';
-  } else {
-    menu.classList.add('show');
-    toggle.style.display = 'none';
-    bottomBar.style.display = 'none';
-  }
-}
+      const menu = document.getElementById('fullMenu');
+      const toggle = document.querySelector('.menu-toggle');
+      const bottomBar = document.getElementById('bottomBar');
+      const body = document.getElementById('pageBody');
+      if (menu.classList.contains('show')) {
+        menu.classList.remove('show');
+        toggle.style.display = 'block';
+        bottomBar.style.display = 'flex';
+        body.classList.remove('noscroll');
+      } else {
+        menu.classList.add('show');
+        toggle.style.display = 'none';
+        bottomBar.style.display = 'none';
+        body.classList.add('noscroll');
+      }
+    }
 </script>
 </body>
 	 
