@@ -111,13 +111,39 @@ function submitOrder(){
     .catch(err=>alert("❌ Could not send order\n"+err.message));
 }
 </script>
-  <script>
-window.onload = function() {
-  const total = localStorage.getItem("grandTotal");
-  if (total) {
-    document.getElementById("checkout-total").textContent = "$" + total;
+<script>
+function updateQuantity(button, change) {
+  const item = button.closest('.item');
+  const countSpan = item.querySelector('.count');
+  let count = parseInt(countSpan.textContent);
+  count += change;
+  if (count < 0) count = 0;
+  countSpan.textContent = count;
+  updateGrandTotal();
+}
+
+function updateGrandTotal() {
+  let total = 0;
+  const items = document.querySelectorAll('.item');
+
+  items.forEach(item => {
+    const count = parseInt(item.querySelector('.count').textContent);
+    const price = parseFloat(item.getAttribute('data-price'));
+    total += count * price;
+  });
+
+  document.getElementById('grand-total').textContent = total.toFixed(2);
+}
+
+function checkGrandTotal() {
+  const total = parseFloat(document.getElementById('grand-total').textContent);
+  if (total > 0) {
+    localStorage.setItem("grandTotal", total.toFixed(2));
+    window.location.href = "checkout.html";
+  } else {
+    alert("Your cart is empty!");
   }
-};
+}
 </script>
 </body>
 </html>
