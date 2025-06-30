@@ -245,13 +245,13 @@ div#slider figure {
   transform: translateX(-20px);
   animation: slideIn 0.4s forwards;
 }
-body.noscroll {
+.noscroll {
+  height: 100vh !important;
   overflow: hidden !important;
-	position: fixed !important;
-  width: 100%;
-	height: 100%;
-	top: 0;
-	left: 0;
+  position: fixed !important;
+  width: 100% !important;
+  top: 0;
+  left: 0;
 }
 /* Animate each menu item with a delay */
 .menu-overlay.show ul li:nth-child(1) { animation-delay: 0.2s; }
@@ -312,8 +312,7 @@ body {
     </style>
 
 </head>
-<body id="body">
-	 <div class="container">
+<body id="pageBody" class="container">
 <div class="menu-toggle" onclick="toggleMenu()">☰</div>
 	<div id="fullMenu" class="menu-overlay">
 	<a class="close" href="#" onclick="toggleMenu()">✖</a>
@@ -364,17 +363,14 @@ body {
     </section>
 <br>
         <footer>&copy; BixMAX 2025. All rights reserved.</footer>
-		  </div>
 <script>
 function toggleMenu() {
   const menu = document.getElementById('fullMenu');
   const toggle = document.querySelector('.menu-toggle');
   const bottomBar = document.getElementById('bottomBar');
-  const body = document.getElementById('body');
+  const body = document.getElementById('pageBody');
 
-  const menuIsOpen = menu.classList.contains('show');
-
-  if (menuIsOpen) {
+  if (menu.classList.contains('show')) {
     menu.classList.remove('show');
     toggle.style.display = 'block';
     bottomBar.style.display = 'flex';
