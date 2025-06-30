@@ -372,22 +372,7 @@ body {
     </ul>
 </div>
 
-<!-- ③ floating chat window (initially hidden) -->
-<div id="chatbot-window">
-  <div class="chat-header">
-    <span>BizMAX Assistant</span>
-    <button onclick="toggleChat()">✖️</button>
-  </div>
-  <div id="chatContent">
-    <div class="bot-message">Hi there! How can I help today?</div>
-  </div>
-  <div class="chat-input">
-    <input id="chatInput" type="text" placeholder="Type a message…"
-           onkeydown="if(event.key==='Enter') sendMessage()">
-    <button onclick="sendMessage()">Send</button>
-  </div>
-</div>
- 
+
 
 	  <header>
 		  <h1>BixMAX</h1>
@@ -488,10 +473,10 @@ body {
 	         <div class="grand-total">
     <span>Total: $<span id="grand-total">0.00</span></span>
  </div>
-      <a href="#" class="checkout-btn" onclick="alert('Checkout coming soon!')">CHECKOUT</a>
+      <a href="admin.html" class="checkout-btn" onclick="goToCheckout()">CHECKOUT</a>
   
      </div>
-	<a href="https://wa.me/233536345825" class="whatsapp-float" target="_blank">💬</a>
+
  <footer>&copy; BixMAX 2025. All rights reserved.</footer>
 	 <script>function updateQuantity(button, change) {
   const item = button.closest('.item');
@@ -539,11 +524,27 @@ function toggleMenu() {
   }
 }
 </script>
-	
-<button onclick="scrollToTop()" style="position:fixed;bottom:150px;right:15px;padding:10px;border-radius:50%;background:#000;color:#fff;">⬆️</button>
-<script>
-function scrollToTop(){window.scrollTo({top:0,behavior:'smooth'})}
+	<script>
+function goToCheckout() {
+  const cart = [];
+  const items = document.querySelectorAll('.item');
+  items.forEach(item => {
+    const name = item.querySelector('h3').textContent;
+    const qty = parseInt(item.querySelector('.count').textContent);
+    const price = parseFloat(item.getAttribute('data-price'));
+    if (qty > 0) {
+      cart.push({ name, qty, price });
+    }
+  });
+  if (cart.length === 0) {
+    alert("Please add something to your cart.");
+    return;
+  }
+  localStorage.setItem('cart', JSON.stringify(cart));
+  window.location.href = "admin.html"; // Go to your checkout page
+}
 </script>
+	
 </body>
 	 
 </html>
