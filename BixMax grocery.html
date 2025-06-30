@@ -62,7 +62,7 @@
       justify-content: space-between;
       align-items: center;
     }
-    .menu-header p {
+    .menu-header h2 {
       font-size: 26px;
       color: white;
     }
@@ -339,6 +339,9 @@ body {
   animation: backgroundShift 20s infinite linear;
   transition: background-color 1s ease;
 }
+.home {
+	margin-top: 15px !important;
+}	
 	</style>
 
 	</head>
@@ -348,13 +351,13 @@ body {
 
   <div id="fullMenu" class="menu-overlay">
     <div class="menu-header">
-     <p> <h2>BixMAX</h2>
-   <h4><a href="BixMax home.html">🏠HOME</a></h4></p>
-
-      <button class="close" onclick="toggleMenu()">✖️</button>
+     <h2>BixMAX</h2>
+ <button class="close" onclick="toggleMenu()">✖️</button>
     </div>
     <ul>
-	     
+      <li><a class="home" href="BixMax home.html">🏠HOME</a></li>   
+	    	    <br>
+		    <br>
       <li><a href="BixMax grocery.html">🍎Groceries</a></li>
       <li><a href="BixMax electronics.html">📱Electronics</a></li>
       <li><a href="BixMax food menu.html">🍔Food Menu</a></li>
