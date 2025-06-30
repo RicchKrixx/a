@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>BizMAX Checkout</title>
+<title>BixMAX Checkout</title>
 <style>
   body{margin:0;font-family:Arial;background:lightblue;padding:20px;color:#333}
   .box{max-width:600px;margin:auto;background:#fff;padding:20px;border-radius:20px;
@@ -26,11 +26,9 @@
   <h1>Checkout</h1>
 
   <!-- Order Summary -->
-  <div class="order-summary" id="orderBox">
-    <h2>Order Summary</h2>
-    <div id="orderItems"></div>
-    <p style="margin-top:10px;font-weight:bold;">Total: $<span id="grandTotal">0</span></p>
-  </div>
+ <h3>Order Summary</h3>
+<div id="order-summary"></div>
+<h3>Total: $<span id="total">0.00</span></h3>
 
   <!-- Customer Info -->
   <label>Full Name</label>
@@ -110,6 +108,30 @@ function submitOrder(){
     .then(()=>{alert("✅ Order placed!"); localStorage.removeItem('cart'); window.location='thankyou.html';})
     .catch(err=>alert("❌ Could not send order\n"+err.message));
 }
+</script>
+  <script>
+  function loadCartSummary() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const summaryDiv = document.getElementById('order-summary');
+    const totalSpan = document.getElementById('total');
+    summaryDiv.innerHTML = ''; // Clear any old data
+
+    let grandTotal = 0;
+
+    cart.forEach(item => {
+      const itemTotal = item.price * item.quantity;
+      grandTotal += itemTotal;
+
+      const div = document.createElement('div');
+      div.innerHTML = ${item.name} (${item.quantity} x $${item.price}) = $${itemTotal.toFixed(2)};
+      summaryDiv.appendChild(div);
+    });
+
+    totalSpan.textContent = grandTotal.toFixed(2);
+  }
+
+  // Call on page load
+  loadCartSummary();
 </script>
 </body>
 </html>
