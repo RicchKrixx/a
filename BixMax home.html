@@ -207,52 +207,58 @@ div#slider figure {
   z-index: 1001;
   border-radius: 10px;
 }
+    /* Full-screen Sliding Menu */
+    .menu-overlay {
+      position: fixed;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: #C0C0C0;
+      opacity: 0.8;
+      color: white;
+      z-index: 1500;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      transition: left 0.3s ease-in-out;
+    }
+    .menu-overlay.show { left: 0; }
 
-/* Full-screen overlay menu */
-.menu-overlay {
-	position: fixed;
-  top: 0;
-  left: -80%; /* Hide initially */
-  width: 80%;
-  height: 100%;
-	border-radius: 20px
-        border: solid 5px rgb(255, 255, 255, 0.1);
-        backdrop-filter: blur(25px);
-	box-shadow: 0px 0px 30px 20px rgb(0,0,0,0.1);
-  color: black;
-	background-color: #C0C0C0;
-	opacity: 0.8;
-  z-index: 1000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: left 0.3s ease-in-out;
-}
+    .menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .menu-header h2 {
+      font-size: 24px;
+      color: white;
+    }
+    .menu-overlay .close {
+      font-size: 28px;
+      cursor: pointer;
+      background: none;
+      color: white;
+      border: none;
+    }
 
-.menu-overlay.show {
-  left: 0;
-}
-
-.menu-overlay ul {
-  list-style: none;
-  text-align: left;
-  padding: 0;
-}
-
-.menu-overlay ul li {
-  margin: 15px 0;
-  opacity: 0;
-  transform: translateX(-20px);
-  animation: slideIn 0.4s forwards;
-}
-.noscroll {
-  height: 100vh !important;
-  overflow: hidden !important;
-  position: fixed !important;
-  width: 100% !important;
-  top: 0;
-  left: 0;
-}
+    .menu-overlay ul {
+      list-style: none;
+      margin-top: 30px;
+      text-align: left;
+    }
+    .menu-overlay ul li {
+      margin: 20px 0;
+      opacity: 0;
+      transform: translateX(-20px);
+      animation: slideIn 0.3s forwards;
+    }
+body.noscroll {
+      position: fixed !important;
+      overflow: hidden !important;
+      height: 100vh !important;
+      width: 100% !important;
+    }
 /* Animate each menu item with a delay */
 .menu-overlay.show ul li:nth-child(1) { animation-delay: 0.2s; }
 .menu-overlay.show ul li:nth-child(2) { animation-delay: 0.4s; }
@@ -315,6 +321,8 @@ body {
 <body id="pageBody" class="container">
 <div class="menu-toggle" onclick="toggleMenu()">☰</div>
 	<div id="fullMenu" class="menu-overlay">
+		<div class="menu-header">
+			<h2>BixMAX</h2>
 	<a class="close" href="#" onclick="toggleMenu()">✖</a>
   <ul>
         <h2>Shop by Category</h2>
@@ -364,24 +372,24 @@ body {
 <br>
         <footer>&copy; BixMAX 2025. All rights reserved.</footer>
 <script>
-function toggleMenu() {
-  const menu = document.getElementById('fullMenu');
-  const toggle = document.querySelector('.menu-toggle');
-  const bottomBar = document.getElementById('bottomBar');
-  const body = document.getElementById('pageBody');
-
-  if (menu.classList.contains('show')) {
-    menu.classList.remove('show');
-    toggle.style.display = 'block';
-    bottomBar.style.display = 'flex';
-    body.classList.remove('noscroll');
-  } else {
-    menu.classList.add('show');
-    toggle.style.display = 'none';
-    bottomBar.style.display = 'none';
-    body.classList.add('noscroll');
+  function toggleMenu() {
+    const menu = document.getElementById('fullMenu');
+    const toggle = document.querySelector('.menu-toggle');
+    const bottomBar = document.getElementById('bottomBar');
+    const body = document.getElementById('pageBody');
+    if (menu.classList.contains('show')) {
+      menu.classList.remove('show');
+      toggle.style.display = 'block';
+      bottomBar.style.display = 'flex';
+      body.classList.remove('noscroll');
+    } else {
+      menu.classList.add('show');
+      toggle.style.display = 'none';
+      bottomBar.style.display = 'none';
+      body.classList.add('noscroll');
+    }
   }
-}
+
 </script>
 		
 </body>
