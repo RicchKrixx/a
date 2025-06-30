@@ -111,5 +111,13 @@ function submitOrder(){
     .catch(err=>alert("❌ Could not send order\n"+err.message));
 }
 </script>
+  <script>
+window.onload = function() {
+  const total = localStorage.getItem("grandTotal");
+  if (total) {
+    document.getElementById("checkout-total").textContent = "$" + total;
+  }
+};
+</script>
 </body>
 </html>
