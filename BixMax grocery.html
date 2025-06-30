@@ -72,13 +72,19 @@
       background: none;
       color: white;
       border: none;
+    position: absolute;
+	top: 10px;
+	right: 10px;
+	text-decoration: none;
+	z-index: 1001;
+	font-size: 25px;
     }
 
     .menu-overlay ul {
       list-style: none;
       margin-top: 30px;
       text-align: left;
-	    color: white;
+    color: white;
     }
 
 		
@@ -289,6 +295,7 @@ h1, h2, h3 {
   margin: 20px 0;
   opacity: 0;
   transform: translateX(-30px);
+	color: white;
 }
 
 .menu-overlay.show.animate ul li {
@@ -317,16 +324,7 @@ h1, h2, h3 {
   font-size: 18px;
   text-decoration: none;
 }		
-		.menu-overlay .close {
-			position: absolute;
-			top: 10px;
-			right: 10px;
-			text-decoration: none;
-			z-index: 1001;
-			color: black;
-			font-size: 25px;
-			
-		}
+		
 		@keyframes backgroundShift {
   0% { background-color: #add8e6; }    /* light blue */
   25% { background-color: #00ced1; }   /* dark cyan */
@@ -355,9 +353,7 @@ body {
  <button class="close" onclick="toggleMenu()">✖️</button>
     </div>
     <ul>
-      <li><a class="home" href="BixMax home.html">🏠HOME</a></li>   
-	    	    <br>
-		    <br>
+      <li><a class="home" href="BixMax home.html">🏠HOME</a></li>
       <li><a href="BixMax grocery.html">🍎Groceries</a></li>
       <li><a href="BixMax electronics.html">📱Electronics</a></li>
       <li><a href="BixMax food menu.html">🍔Food Menu</a></li>
