@@ -343,15 +343,17 @@ body {
 	</style>
 
 	</head>
-	  <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+<body id="pageBody" class="container">
+
+  <div class="menu-toggle" onclick="toggleMenu()">☰</div>
 
   <div id="fullMenu" class="menu-overlay">
     <div class="menu-header">
-      <h2>BixMAX</h2>
-      <button class="close" onclick="toggleMenu()">✖️</button>
+     <h2>BixMAX</h2>
+ <button class="close" onclick="toggleMenu()">✖️</button>
     </div>
     <ul>
-	     <li><a href="BixMax fashion.html">👗Fashion</a></li>
+      <li><a class="home" href="BixMax home.html">🏠HOME</a></li>
       <li><a href="BixMax grocery.html">🍎Groceries</a></li>
       <li><a href="BixMax electronics.html">📱Electronics</a></li>
       <li><a href="BixMax food menu.html">🍔Food Menu</a></li>
@@ -495,22 +497,23 @@ function updateGrandTotal() {
 	 </script>
 <script>
 function toggleMenu() {
-      const menu = document.getElementById('fullMenu');
-      const toggle = document.querySelector('.menu-toggle');
-      const bottomBar = document.getElementById('bottomBar');
-      const body = document.getElementById('pageBody');
-      if (menu.classList.contains('show')) {
-        menu.classList.remove('show');
-        toggle.style.display = 'block';
-        bottomBar.style.display = 'flex';
-        body.classList.remove('noscroll');
-      } else {
-        menu.classList.add('show');
-        toggle.style.display = 'none';
-        bottomBar.style.display = 'none';
-        body.classList.add('noscroll');
-      }
-    }
+  const menu = document.getElementById('fullMenu');
+  const toggle = document.querySelector('.menu-toggle');
+  const bottomBar = document.getElementById('bottomBar');
+
+  if (menu.classList.contains('show')) {
+    menu.classList.remove('show', 'animate');
+    toggle.style.display = 'block';
+    bottomBar.style.display = 'flex';
+    document.body.style.overflow = ''; // Enable scroll
+  } else {
+    menu.classList.add('show');
+    setTimeout(() => menu.classList.add('animate'), 50);
+    toggle.style.display = 'none';
+    bottomBar.style.display = 'none';
+    document.body.style.overflow = 'hidden'; // Disable scroll
+  }
+}
 </script>
 </body>
 	 
