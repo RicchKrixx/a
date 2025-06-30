@@ -38,7 +38,17 @@ html, body {
 	text-align: center;
 	align-items: center;
 }
+@keyframes animatedBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
 
+#bottomBar {
+  background: linear-gradient(-45deg, #23a6d5, #23d5ab, #ebcd00, #2d2d2d);
+  background-size: 100% 100%;
+  animation: animatedBackground 15s ease infinite;
+}
 header {
 
 	width:100%;
