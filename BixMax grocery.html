@@ -473,7 +473,7 @@ body {
 	         <div class="grand-total">
     <span>Total: $<span id="grand-total">0.00</span></span>
  </div>
-      <a href="admin.html" class="checkout-btn" onclick="goToCheckout()">CHECKOUT</a>
+      <a href="admin.html" class="checkout-btn" onclick="checkGrandTotal(event)">CHECKOUT</a>
   
      </div>
 
@@ -524,24 +524,16 @@ function toggleMenu() {
   }
 }
 </script>
-	<script>
-function goToCheckout() {
-  const cart = [];
-  const items = document.querySelectorAll('.item');
-  items.forEach(item => {
-    const name = item.querySelector('h3').textContent;
-    const qty = parseInt(item.querySelector('.count').textContent);
-    const price = parseFloat(item.getAttribute('data-price'));
-    if (qty > 0) {
-      cart.push({ name, qty, price });
-    }
-  });
-  if (cart.length === 0) {
-    alert("Please add something to your cart.");
-    return;
+<script>
+function checkGrandTotal(event) {
+  const total = parseFloat(document.getElementById('grand-total').textContent);
+
+  if (total > 0) {
+    window.location.href = "admin.html";
+  } else {
+    alert("Your cart is empty!");
+    event.preventDefault(); // Stop navigation
   }
-  localStorage.setItem('cart', JSON.stringify(cart));
-  window.location.href = "admin.html"; // Go to your checkout page
 }
 </script>
 	
