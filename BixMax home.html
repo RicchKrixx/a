@@ -312,12 +312,12 @@ body {
     </style>
 
 </head>
-<body class="container" id="body">
+<body id="body">
+	 <div class="container">
 <div class="menu-toggle" onclick="toggleMenu()">☰</div>
 	<div id="fullMenu" class="menu-overlay">
 	<a class="close" href="#" onclick="toggleMenu()">✖</a>
   <ul>
-    <div class="categories">
         <h2>Shop by Category</h2>
         <div class="category-grid">
 		<li><a class="f" href="BixMax electronics.html" style="text-decoration">📱 Electronics</a></li>
@@ -329,7 +329,6 @@ body {
 	      </ul>
     </div>
 
-	</div>
 
 
     <header>
@@ -365,6 +364,7 @@ body {
     </section>
 <br>
         <footer>&copy; BixMAX 2025. All rights reserved.</footer>
+		  </div>
 <script>
 function toggleMenu() {
   const menu = document.getElementById('fullMenu');
@@ -387,5 +387,6 @@ function toggleMenu() {
   }
 }
 </script>
+		
 </body>
 </html>
