@@ -347,108 +347,7 @@ body {
 	
 	
 	</style>
-	<style>
-/* ── chatbot button INSIDE menu ───────────────────────── */
-#chatbot-btn{
-  margin:0 20px 25px;
-  padding:12px 20px;
-  width:calc(100% - 40px);
-  background:#1976d2;
-  border:none;
-  border-radius:14px;
-  color:#fff;
-  font-weight:bold;
-  cursor:pointer;
-  box-shadow:0 0 10px rgba(0,0,0,.25);
-}
-
-/* ── floating chat window (outside menu) ─────────────── */
-#chatbot-window{
-  display:none;
-  position:fixed;
-  bottom:90px;        /* shows above bottom bar */
-  right:20px;
-  width:300px;
-  height:380px;
-  background:#fff;
-  color:#000;
-  border-radius:14px;
-  box-shadow:0 0 20px rgba(0,0,0,.3);
-  z-index:1002;
-  overflow:hidden;
-  font-family:Arial, sans-serif;
-  flex-direction:column;
-}
-.chat-header{
-  background:#1976d2;
-  color:#fff;
-  padding:10px;
-  font-weight:bold;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-#chatContent{
-  flex:1;
-  padding:10px;
-  overflow-y:auto;
-  background:#f4f4f4;
-  font-size:14px;
-}
-.chat-input{
-  display:flex;
-  border-top:1px solid #ddd;
-}
-.chat-input input{
-  flex:1;
-  border:none;
-  padding:10px;
-  font-size:14px;
-  outline:none;
-}
-.chat-input button{
-  border:none;
-  background:#1976d2;
-  color:#fff;
-  padding:10px 16px;
-  cursor:pointer;
-}
-
-/* message bubbles */
-.bot-message,.user-message{
-  margin:6px 0;
-  padding:8px 12px;
-  border-radius:12px;
-  max-width:80%;
-}
-.bot-message{background:#ddd;align-self:flex-start}
-.user-message{background:#1976d2;color:#fff;align-self:flex-end}
-		.dark-toggle {
-  margin-top: 10px;
-  background: #000;
-  color: #fff;
-  padding: 10px 14px;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-/* Dark mode class */
-body.dark-mode {
-  background-color: #111;
-  color: white;
-}
-body.dark-mode .container,
-body.dark-mode header,
-body.dark-mode .body,
-body.dark-mode .promo-banner {
- background-color: #222 !important;
-  color: white !important;
-}
-</style>
-<button class="dark-toggle" onclick="document.body.classList.toggle('dark-mode')">🌓</button>
-	</head>
+</head>
 <body id="pageBody" class="container">
 
   <div class="menu-toggle" onclick="toggleMenu()">☰</div>
@@ -641,7 +540,10 @@ function toggleMenu() {
 }
 </script>
 	
-
+<button onclick="scrollToTop()" style="position:fixed;bottom:150px;right:15px;padding:10px;border-radius:50%;background:#000;color:#fff;">⬆️</button>
+<script>
+function scrollToTop(){window.scrollTo({top:0,behavior:'smooth'})}
+</script>
 </body>
 	 
 </html>
