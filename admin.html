@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>BizMAX Checkout</title>
+<style>
+  body{margin:0;font-family:Arial;background:lightblue;padding:20px;color:#333}
+  .box{max-width:600px;margin:auto;background:#fff;padding:20px;border-radius:20px;
+       box-shadow:0 0 20px rgba(0,0,0,.15)}
+  h1,h2{text-align:center;margin-top:0}
+  .order-summary{background:#f7f7f7;padding:15px;border-radius:14px;margin-bottom:20px}
+  .order-summary p{margin:6px 0}
+  label{display:block;margin:10px 0 4px;font-weight:bold}
+  input,textarea,select{width:100%;padding:10px;border-radius:10px;border:1px solid #ccc}
+  button{width:100%;padding:14px;background:#28a745;color:#fff;border:none;
+         border-radius:12px;font-weight:bold;font-size:16px;cursor:pointer}
+  button:hover{background:#218838}
+  footer{text-align:center;margin-top:20px;font-size:14px}
+  @media(max-width:480px){.box{padding:15px}}
+</style>
+</head>
+<body>
+
+<div class="box">
+  <h1>Checkout</h1>
+
+  <!-- Order Summary -->
+  <div class="order-summary" id="orderBox">
+    <h2>Order Summary</h2>
+    <div id="orderItems"></div>
+    <p style="margin-top:10px;font-weight:bold;">Total: $<span id="grandTotal">0</span></p>
+  </div>
+
+  <!-- Customer Info -->
+  <label>Full Name</label>
+  <input id="name" type="text" placeholder="e.g. John Doe" required>
+
+  <label>Phone Number</label>
+  <input id="phone" type="tel" placeholder="e.g. 055 123 4567" required>
+
+  <label>Delivery Address</label>
+  <textarea id="address" rows="3" placeholder="Street, City" required></textarea>
+
+  <label>Payment Method</label>
+  <select id="payment">
+    <option value="Cash on Delivery">Cash on Delivery</option>
+    <option value="Mobile Money">Mobile Money</option>
+  </select><br><br>
+
+  <button onclick="submitOrder()">Confirm &amp; Pay</button>
+</div>
+
+<footer>&copy; 2025 BizMAX | All rights reserved</footer>
+
+<!-- ── Firebase SDKs ── -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+<script>
+/* ① PASTE YOUR FIREBASE CONFIG HERE */
+const firebaseConfig = {
+  apiKey: "AIzaSyDkU07SZ8xmlg8Lo4TGBQQDISh62HRCYF0",
+  authDomain: "bixmax-orders.firebaseapp.com",
+  projectId: "bixmax-orders",
+  storageBucket: "bixmax-orders.firebasestorage.app",
+  messagingSenderId: "880588466149",
+  appId: "1:880588466149:web:40eef55fe3aab891da710c",
+  measurementId: "G-9MR5446XT7"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+/* ② LOAD ORDER ITEMS (from localStorage.cart OR sample) */
+function loadSummary(){
+  const box=document.getElementById('orderItems');
+  const grand=document.getElementById('grandTotal');
+  let cart=JSON.parse(localStorage.getItem('cart')||'[]');
+  if(cart.length===0){            // sample fallback
+    cart=[{name:'Burger',qty:2,price:20},{name:'Rice',qty:1,price:20}];
+  }
+  let total=0;
+  cart.forEach(it=>{
+    const line=${it.name} x${it.qty} – $${it.qty*it.price};
+    box.innerHTML+=<p>${line}</p>;
+    total+=it.qty*it.price;
+  });
+  grand.textContent=total.toFixed(2);
+  return {cart,total};
+}
+const ORDER=loadSummary();
+
+/* ③ SUBMIT ORDER → FIREBASE Realtime DB */
+function submitOrder(){
+  const order={
+    name:document.getElementById('name').value.trim(),
+    phone:document.getElementById('phone').value.trim(),
+    address:document.getElementById('address').value.trim(),
+    payment:document.getElementById('payment').value,
+    items:ORDER.cart,
+    total:ORDER.total,
+    ts:Date.now()
+  };
+  if(!order.name!order.phone!order.address){
+    alert("Please fill all required fields"); return;
+  }
+  db.ref('orders').push(order)
+    .then(()=>{alert("✅ Order placed!"); localStorage.removeItem('cart'); window.location='thankyou.html';})
+    .catch(err=>alert("❌ Could not send order\n"+err.message));
+}
+</script>
+</body>
+</html>
