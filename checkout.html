@@ -1,164 +1,191 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title>BizMAX | Checkout</title>
   <style>
-    :root { --blue: #1976d2; --glass: #ffffff18; --blur: 25px }
-    * { box-sizing: border-box; margin: 0; padding: 0 }
+    :root { --blue: #1976d2; --glass: #ffffff18; --blur: 25px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: Arial; background: lightblue;
-      display: flex; align-items: center; justify-content: center;
-      min-height: 100vh; padding: 20px;
+      font-family: Arial, sans-serif;
+      background: lightblue;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
     }
     .card {
-      max-width: 620px; width: 100%; background: var(--glass);
-      border: 5px solid rgba(255,255,255,.1);
-      border-radius: 20px; padding: 28px; color: #fff;
+      max-width: 600px;
+      width: 100%;
+      background: var(--glass);
       backdrop-filter: blur(var(--blur));
-      box-shadow: 0 0 30px rgba(0,0,0,.2)
+      border-radius: 20px;
+      padding: 24px;
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+      color: #000;
+      background-color: #fff;
     }
-    h1, h2 { text-align: center; margin-bottom: 18px }
-    label { display: block; margin: 14px 0 6px; font-weight: bold }
-    input, textarea, select {
-      width: 100%; padding: 12px; border-radius: 12px; border: none;
-      background: rgba(255,255,255,.15); color: #fff; font-size: 16px
+    h1, h2 { text-align: center; margin-bottom: 16px; }
+    label { margin-top: 14px; display: block; font-weight: bold; }
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      margin-top: 5px;
+      margin-bottom: 10px;
     }
     .summary {
-      background: rgba(0,0,0,.25); border: 2px solid rgba(255,255,255,.15);
-      border-radius: 16px; padding: 20px; margin-bottom: 24px; text-align: center
+      background: #f7f7f7;
+      border-radius: 14px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    .summary p {
+      font-size: 18px;
+      font-weight: bold;
     }
     button {
-      width: 100%; padding: 16px; border: none; border-radius: 14px;
-      background: var(--blue); color: #fff; font-size: 18px;
-      font-weight: bold; cursor: pointer
+      width: 100%;
+      padding: 14px;
+      background: var(--blue);
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
     }
-    button:hover { background: #1459a4 }
+    button:hover { background: #1259a4; }
     #loader {
-      position: fixed; inset: 0; background: rgba(0,0,0,.6);
-      display: none; align-items: center; justify-content: center;
-      z-index: 1000
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      color: white;
+      font-size: 18px;
+      flex-direction: column;
     }
-    .spin {
-      width: 60px; height: 60px; border: 7px solid #eee;
-      border-top: 7px solid var(--blue); border-radius: 50%;
-      animation: spin 1s linear infinite
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid var(--blue);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 10px;
     }
-    @keyframes spin { 0% { transform: rotate(0) } 100% { transform: rotate(360deg) } }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
-
-<div class="card">
-  <h1>Checkout</h1>
-  <form id="checkoutForm" method="POST">
+  <div class="card">
+    <h1>Checkout</h1>
     <div class="summary">
       <h2>Order Summary</h2>
-      <p>Total to Pay: $<span id="grandTotalText">0.00</span></p>
+      <p>Total to Pay: $<span id="grandTotal">0.00</span></p>
     </div>
 
-    <input type="hidden" name="grandTotal" id="grandTotalInput">
-    <label>Full Name</label><input name="custName" id="custName" required>
-    <label>Email</label><input name="custEmail" id="custEmail" type="email" required>
-    <label>Phone Number</label><input name="custPhone" id="custPhone" type="tel" required>
-    <label>Delivery Address</label><textarea name="custAddr" id="custAddr" rows="3" required></textarea>
+    <form id="checkoutForm">
+      <label>Full Name</label>
+      <input id="name" name="name" required />
 
-    <label>Payment Method</label>
-    <select name="payMethod" id="payMethod">
-      <option value="delivery">Pay on Delivery</option>
-      <option value="online">Pay Online</option>
-    </select>
+      <label>Email</label>
+      <input id="email" name="email" type="email" required />
 
-    <button type="submit" id="submitBtn">Place Order</button>
-  </form>
-</div>
+      <label>Phone Number</label>
+      <input id="phone" name="phone" required />
 
-<!-- Loader -->
-<div id="loader">
-  <div style="text-align:center;color:#fff">
-    <div class="spin"></div>
-    <p style="margin-top:14px;font-weight:bold">Processing…</p>
+      <label>Address</label>
+      <textarea id="address" name="address" rows="3" required></textarea>
+
+      <label>Payment Method</label>
+      <select id="paymentMethod" name="paymentMethod">
+        <option value="delivery">Pay on Delivery</option>
+        <option value="online">Pay Online</option>
+      </select>
+
+      <button type="submit" id="checkoutBtn">Place Order</button>
+    </form>
   </div>
-</div>
 
-<!-- Paystack SDK -->
-<script src="https://js.paystack.co/v1/inline.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const total = localStorage.getItem('grandTotal') || '0';
-  document.getElementById('grandTotalText').textContent = parseFloat(total).toFixed(2);
-  document.getElementById('grandTotalInput').value = total;
-});
+  <div id="loader">
+    <div class="spinner"></div>
+    <p>Processing your order...</p>
+  </div>
 
-const paySel = document.getElementById('payMethod');
-const btn    = document.getElementById('submitBtn');
-paySel.addEventListener('change', () => btn.textContent = paySel.value === 'online' ? 'Pay Now' : 'Place Order');
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Update Grand Total
+      const total = localStorage.getItem("grandTotal") || "0.00";
+      document.getElementById("grandTotal").textContent = parseFloat(total).toFixed(2);
 
-document.getElementById('checkoutForm').addEventListener('submit', function(e){
-  e.preventDefault();
-  const form = this;
+      // Change button label
+      const method = document.getElementById("paymentMethod");
+      const btn = document.getElementById("checkoutBtn");
+      method.addEventListener("change", () => {
+        btn.textContent = method.value === "online" ? "Pay Now" : "Place Order";
+      });// Form submit
+      document.getElementById("checkoutForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const name = this.name.value.trim();
+        const email = this.email.value.trim();
+        const phone = this.phone.value.trim();
+        const address = this.address.value.trim();
+        const payment = this.paymentMethod.value;
+        const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
 
-  const total = parseFloat(localStorage.getItem('grandTotal') || '0');
-  if (total <= 0) { alert('Cart is empty.'); return; }const name  = document.getElementById('custName').value.trim();
-  const email = document.getElementById('custEmail').value.trim();
-  const phone = document.getElementById('custPhone').value.trim();
-  const addr  = document.getElementById('custAddr').value.trim();
-  if (!name  !email  !phone || !addr) {
-    alert('Please fill all fields.');
-    return;
-  }
+        if (!name  !email  !phone  !address  grandTotal <= 0) {
+          alert("Please complete all fields and make sure your cart is not empty.");
+          return;
+        }
 
-  const loader = document.getElementById('loader');
-  loader.style.display = 'flex';
+        document.getElementById("loader").style.display = "flex";
 
-  if (paySel.value === 'online') {
-    PaystackPop.setup({
-      key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxx', // ← replace with your key
-      email: email,
-      amount: Math.round(total * 100),
-      currency: 'GHS',
-      metadata: {
-        custom_fields: [
-          { display_name: "Name", value: name },
-          { display_name: "Phone", value: phone },
-          { display_name: "Address", value: addr }
-        ]
-      },
-      callback: function(response) {
-        // ✅ PAYMENT SUCCESSFUL — post to PHP and redirect
-        fetch('submit_order.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: new URLSearchParams(new FormData(form))
-        }).then(() => {
-          loader.style.display = 'none';
-          alert('Payment successful!');
-          localStorage.removeItem('cart');
-          localStorage.removeItem('grandTotal');
-          window.location.href = 'thankyou.html';
+        // Submit form data to your PHP backend (optional)
+        fetch("order.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({
+            name, email, phone, address, payment, total: grandTotal
+          })
         });
-      },
-      onClose: function(){
-        loader.style.display = 'none';
-        alert('Payment was cancelled.');
-      }
-    }).openIframe();
-  } else {
-    // Pay on delivery
-    fetch('submit_order.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams(new FormData(form))
-    }).then(() => {
-      loader.style.display = 'none';
-      alert('Order placed successfully!');
-      localStorage.removeItem('cart');
-      localStorage.removeItem('grandTotal');
-      window.location.href = 'thankyou.html';
+
+        if (payment === "online") {
+          // Paystack payment
+          PaystackPop.setup({
+            key: 'pk_test_xxxxxxxxxxxxxxxxxxxxx', // Replace with your public key
+            email: email,
+            amount: grandTotal * 100,
+            currency: "GHS",
+            callback: function(response) {
+              alert("Payment successful! Ref: " + response.reference);
+              localStorage.removeItem("cart");
+              window.location.href = "thankyou.html";
+            },
+            onClose: function() {
+              document.getElementById("loader").style.display = "none";
+              alert("Payment cancelled.");
+            }
+          }).openIframe();
+        } else {
+          setTimeout(() => {
+            localStorage.removeItem("cart");
+            window.location.href = "thankyou.html";
+          }, 2000);
+        }
+      });
     });
-  }
-});
-</script>
+  </script>
 </body>
 </html>
