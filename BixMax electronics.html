@@ -7,36 +7,91 @@
 
 	
 	<style>	
-/* Reset & Base Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+    /* Basic Reset */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow-x: hidden; font-family: Arial, sans-serif; }
 
-	
-html, body {
-  height: 100%;
-  width: 100%;
-  font-family: arial, sans-serif;
-	overflow-x: hidden;
-  background-color: lightblue;	
-  background-size: cover;
-}
+    body.noscroll {
+      position: fixed !important;
+      overflow: hidden !important;
+      height: 100vh !important;
+      width: 100% !important;
+    }
 
-.container {
-	max-width: 100%;
-	margin: auto;
-	padding:16px;
-	border-radius:16px;
-	border: solid 5px rgb(255, 255, 255, 0.1);
-        backdrop-filter: blur(25px);
-	box-shadow: 0px 0px 30px 20px rgb(0,0,0,0.1);
-	color: white;
-	display: flex;
-	flex-direction: column;
-	text-align: center;
-	align-items: center;
+    .container {
+      padding-top: 0px; /* Allow space for top menu */
+      padding-bottom: 80px; /* Allow space for bottom bar */
+      min-height: 100vh;
+      background-color: lightblue;
+      text-align: center;
+    }
+
+
+    /* Menu Toggle Icon */
+    .menu-toggle {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      font-size: 30px;
+      cursor: pointer;
+      z-index: 2000;
+      color: white;
+      border-radius: 6px;
+      padding: 5px 10px;
+    }
+
+    /* Full-screen Sliding Menu */
+    .menu-overlay {
+      position: fixed;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: #2d2d2d;
+      color: white;
+      z-index: 1500;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      transition: left 0.3s ease-in-out;
+    }
+    .menu-overlay.show { left: 0; }
+
+    .menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .menu-header h2 {
+      font-size: 26px;
+      color: white;
+    }
+    .menu-overlay .close {
+      font-size: 28px;
+      cursor: pointer;
+      background: none;
+      color: white;
+      border: none;
+    position: absolute;
+	top: 10px;
+	right: 10px;
+	text-decoration: none;
+	z-index: 1001;
+	font-size: 25px;
+    }
+
+    .menu-overlay ul {
+      list-style: none;
+      margin-top: 30px;
+      text-align: left;
+    color: white;
+    }
+
+		
+@keyframes animatedBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 header {
@@ -67,7 +122,7 @@ header {
 	align-items:center;
 }
 
-.electronics-grid {
+.electronic-grid {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
@@ -134,7 +189,7 @@ header {
   box-shadow: 0px 0px 30px 20px rgb(0,0,0,0.1);
   justify-content:space-between;
   align-items:center;
-  padding:12px 20px;
+  padding: 8px;
   border-radius:30px;
   z-index: 9999;
 }
@@ -200,7 +255,7 @@ footer {
         width: 90%;
     }
 
-    .electronics-grid {
+    .electronic-grid {
         flex-direction: column;
         align-items: center;
     }
@@ -236,63 +291,25 @@ h1, h2, h3 {
 		padding: 6px 12px;
 	}
 }
-/* Menu toggle button */
-.menu-toggle {
-  position: fixed;
-  top: 10px;
-  left: 10px;
-  font-size: 30px;
-  cursor: pointer;
-  padding: 10px 15px;
-  color: white;
-  z-index: 1001;
-  border-radius: 10px;
-}
-
-/* Full-screen overlay menu */
-.menu-overlay {
-	position: fixed;
-  top: 0;
-  left: -80%; /* Hide initially */
-  width: 80%;
-  height: 100%;
-	border-radius: 20px
-        border: solid 5px rgb(255, 255, 255, 0.1);
-        backdrop-filter: blur(25px);
-	box-shadow: 0px 0px 30px 20px rgb(0,0,0,0.1);
-  color: black;
-	background-color: #C0C0C0;
-	opacity: 0.8;
-  z-index: 1000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: left 0.3s ease-in-out;
-}
-
-.menu-overlay.show {
-  left: 0;
-}
-
-.menu-overlay ul {
-  list-style: none;
-  text-align: left;
-  padding: 0;
-}
-
 .menu-overlay ul li {
-  margin: 15px 0;
+  margin: 20px 0;
   opacity: 0;
-  transform: translateX(-20px);
-  animation: slideIn 0.4s forwards;
+  transform: translateX(-30px);
+	color: white;
 }
 
-/* Animate each menu item with a delay */
-.menu-overlay.show ul li:nth-child(1) { animation-delay: 0.2s; }
-.menu-overlay.show ul li:nth-child(2) { animation-delay: 0.4s; }
-.menu-overlay.show ul li:nth-child(3) { animation-delay: 0.6s; }
-.menu-overlay.show ul li:nth-child(4) { animation-delay: 0.8s; }
+.menu-overlay.show.animate ul li {
+  animation: slideIn 0.5s forwards;
+}
 
+.menu-overlay.show.animate ul li:nth-child(1) { animation-delay: 0.1s; }
+.menu-overlay.show.animate ul li:nth-child(2) { animation-delay: 0.2s; }
+.menu-overlay.show.animate ul li:nth-child(3) { animation-delay: 0.3s; }
+.menu-overlay.show.animate ul li:nth-child(4) { animation-delay: 0.4s; }
+.menu-overlay.show.animate ul li:nth-child(5) { animation-delay: 0.5s; }
+.menu-overlay.show.animate ul li:nth-child(6) { animation-delay: 0.6s; }
+.menu-overlay.show.animate ul li:nth-child(7) { animation-delay: 0.7s; }
+.menu-overlay.show.animate ul li:nth-child(8) { animation-delay: 0.8s; }
 @keyframes slideIn {
   to {
     opacity: 1;
@@ -301,21 +318,17 @@ h1, h2, h3 {
 }
 		
 
+.menu-overlay ul li:last-child {
+	border-top: 1px solid rgba(255, 255, 255, 0.3);
+}		
+
+
 .menu-overlay ul li a {
-  color: black;
-  font-size: 24px;
+  color: white;
+  font-size: 18px;
   text-decoration: none;
 }		
-		.menu-overlay .close {
-			position: absolute;
-			top: 5px;
-			right: 5px;
-			text-decoration: none;
-			z-index: 1001;
-			color: black;
-			font-size: 28px;
-			
-		}
+		
 		@keyframes backgroundShift {
   0% { background-color: #add8e6; }    /* light blue */
   25% { background-color: #00ced1; }   /* dark cyan */
@@ -328,25 +341,41 @@ body {
   animation: backgroundShift 20s infinite linear;
   transition: background-color 1s ease;
 }
+.home {
+	margin-top: 10px !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}	
+	
+	
+	
 	</style>
+</head>
+<body id="pageBody" class="container">
 
-	</head>
-	<body class="container">
-<!-- Menu Toggle Button -->
-<div class="menu-toggle" onclick="toggleMenu()">☰</div>
+  <div class="menu-toggle" onclick="toggleMenu()">☰</div>
 
-<!-- Fullscreen Menu -->
-<div id="fullMenu" class="menu-overlay">
-	<a class="close" href="#" onclick="toggleMenu()">✖</a>
-  <ul>
-    <li><a href="BixMax home.html">Home</a></li>
-    <li><a href="BixMax grocery.html">Grocery</a></li>
-    <li><a href="BixMax food menu.html">Food Menu</a></li>
-    <li><a href="tel:0536345825">Contact</a></li>
-    
-  </ul>
+  <div id="fullMenu" class="menu-overlay">
+    <div class="menu-header">
+     <h2>BixMAX</h2>
+ <button class="close" onclick="toggleMenu()">✖️</button>
+    </div>
+    <ul>
+      <li><a class="home" href="BixMax home.html">🏠HOME</a></li>
+	    <br>
+	    <br>
+      <li><a href="BixMax grocery.html">🍎Groceries</a></li>
+      <li><a href="BixMax electronics.html">🍔Food Menu</a></li>
+      <li><a href="BixMax fashion.html">👗Fashion</a></li>
+      <li><a href="BixMax home essential.html">🏠Home Essentials</a></li>
+	    <br>
+		    <br>
+      <li><a href="tel:0536345825">☎️Contact</a></li>
+	
+    </ul>
 </div>
-		</div>
+
+
+
 	  <header>
 		  <h1>BixMAX</h1>
         <h3>All-in-One Online Shop</h3>
@@ -357,81 +386,81 @@ body {
 
 	<section class="electronics">
       <b><h1>Electronics</h1></b>
-    <div class="electronics-grid">
-      <div align="center" class="item" data-Price="50">
-      <img src="pp.jpeg" alt="camera">
-      <h3>Camera</h3>
-      <p>GH&#8373 50</p>
+    <div class="electronic-grid">
+      <div align="center" class="item" data-Price="20">
+      <img src="pp.jpeg" alt="blender">
+      <h3>Blender</h3>
+      <p>$20</p>
       <div class="quantity">
         <button onclick="updateQuantity(this, -1)">−</button>
         <span class="count">0</span>
         <button onclick="updateQuantity(this, 1)">+</button>
 		</div>
 		</div>
-	        <div align="center" class="item" data-Price="80">
-      <img src="pp.jpeg" alt="laptop">
-      <h3>Laptop</h3>
-      <p>GH&#8373 80</p>
+	        <div align="center" class="item" data-Price="20">
+      <img src="pp.jpeg" alt="kettle">
+      <h3>Kettle</h3>
+      <p>$20</p>
       <div class="quantity">
         <button onclick="updateQuantity(this, -1)">−</button>
         <span class="count">0</span>
         <button onclick="updateQuantity(this, 1)">+</button>
 		</div>
 		</div>
-        <div align="center" class="item" data-Price="15">
-      <img src="pp.jpeg" alt="gizard">
-      <h3>Eletric Kettle</h3>
-      <p>GH&#8373 15</p>
+        <div align="center" class="item" data-Price="150">
+      <img src="pp.jpeg" alt="tv">
+      <h3>Television</h3>
+      <p>$150</p>
       <div class="quantity">
         <button onclick="updateQuantity(this, -1)">−</button>
         <span class="count">0</span>
         <button onclick="updateQuantity(this, 1)">+</button>
 		</div>
 		</div>
-        <div align="center" class="item" data-Price="4300">
-      <img src="pp.jpeg" alt="frigde">
-      <h3>Frigde</h3>
-      <p>GH&#8373 4,300.00</p>
+        <div align="center" class="item" data-Price="30">
+      <img src="pp.jpeg" alt="iron">
+      <h3>Iron</h3>
+      <p>$30</p>
       <div class="quantity">
         <button onclick="updateQuantity(this, -1)">−</button>
         <span class="count">0</span>
         <button onclick="updateQuantity(this, 1)">+</button>
 		</div>
 		</div>
-        <div align="center" class="item" data-Price="18000">
+        <div align="center" class="item" data-Price="120">
       <img src="pp.jpeg" alt="drone">
-      <h3>Mini 4 Pro Drone</h3>
-      <p>&#8373 1,8000.00</p>
+      <h3>Drone</h3>
+      <p>$120</p>
       <div class="quantity">
         <button onclick="updateQuantity(this, -1)">−</button>
         <span class="count">0</span>
         <button onclick="updateQuantity(this, 1)">+</button>
 		</div>
 		</div>
-        <div align="center" class="item" data-Price="890">
-      <img src="pp.jpeg" alt="steer">
-      <h3>Video Game Steering Wheel</h3>
-      <p>GH&#8373 890.00</p>
+        <div align="center" class="item" data-Price="80">
+      <img src="pp.jpeg" alt="gs">
+      <h3>Gaming steer</h3>
+      <p>$80</p>
       <div class="quantity">
         <button onclick="updateQuantity(this, -1)">−</button>
         <span class="count">0</span>
         <button onclick="updateQuantity(this, 1)">+</button>
 		</div>
 		</div>
-        <div align="center" class="item" data-Price="500">
-      <img src="pp.jpeg" alt="vr">
-      <h3>3D VR Headset</h3>
-      <p>GH&#8373 500.00</p>
+        <div align="center" class="item" data-Price="50">
+      <img src="pp.jpeg" alt="fan">
+      <h3>Fan</h3>
+      <p>$50</p>
       <div class="quantity">
         <button onclick="updateQuantity(this, -1)">−</button>
         <span class="count">0</span>
         <button onclick="updateQuantity(this, 1)">+</button>
 		</div>
 		</div>
-        <div align="center" class="item" data-Price="9000">
-      <img src="pp.jpeg" alt="googlepixel">
-      <h3>Google Pixel 7 Pro</h3>
-      <p>GH&#8373 9,000.00</p>
+        <div align="center" class="item" data-Price="2150">
+      <img src="pp.jpeg" alt="pb">
+      <h3>Power bike</h3>
+      <p>$2,150</p>
       <div class="quantity">
         <button onclick="updateQuantity(this, -1)">−</button>
         <span class="count">0</span>
@@ -446,9 +475,10 @@ body {
 	         <div class="grand-total">
     <span>Total: $<span id="grand-total">0.00</span></span>
  </div>
-      <a href="#" class="checkout-btn" onclick="alert('Checkout coming soon!')">CHECKOUT</a>
+      <a href="checkout.html" class="checkout-btn" onclick="checkGrandTotal(event)">CHECKOUT</a>
   
      </div>
+
  <footer>&copy; BixMAX 2025. All rights reserved.</footer>
 	 <script>function updateQuantity(button, change) {
   const item = button.closest('.item');
@@ -483,16 +513,48 @@ function toggleMenu() {
   const bottomBar = document.getElementById('bottomBar');
 
   if (menu.classList.contains('show')) {
-    menu.classList.remove('show');
+    menu.classList.remove('show', 'animate');
     toggle.style.display = 'block';
     bottomBar.style.display = 'flex';
+    document.body.style.overflow = ''; // Enable scroll
   } else {
     menu.classList.add('show');
+    setTimeout(() => menu.classList.add('animate'), 50);
     toggle.style.display = 'none';
     bottomBar.style.display = 'none';
+    document.body.style.overflow = 'hidden'; // Disable scroll
   }
 }
 </script>
+<script>
+function checkGrandTotal(event) {
+  const total = parseFloat(document.getElementById('grand-total').textContent);
+
+  if (total > 0) {
+    localStorage.setItem("grandTotal", total.toFixed(2));
+    window.location.href = "checkout.html";
+  } else {
+    alert("Your cart is empty!");
+    event.preventDefault(); // Stop navigation
+  }
+}
+	function updateGrandTotal() {
+  let total = 0;
+  const items = document.querySelectorAll('.item');
+
+  items.forEach(item => {
+    const count = parseInt(item.querySelector('.count').textContent);
+    const price = parseFloat(item.getAttribute('data-price'));
+    total += count * price;
+  });
+
+  document.getElementById('grand-total').textContent = total.toFixed(2);
+
+  // Save total to localStorage
+  localStorage.setItem("grandTotal", total.toFixed(2));
+}
+</script>
+	
 </body>
 	 
 </html>
