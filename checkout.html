@@ -29,7 +29,8 @@
   <div class="order-summary" id="orderBox">
     <h2>Order Summary</h2>
     <div id="orderItems"></div>
-    <p style="margin-top:10px;font-weight:bold;">Total: $<span id="grandTotal">0</span></p>
+ <h2>Total to Pay:</h2>
+<p id="checkout-total">$0.00</p>
   </div>
 
   <!-- Customer Info -->
@@ -145,5 +146,14 @@ function checkGrandTotal() {
   }
 }
 </script>
+  <script>
+window.onload = function() {
+  const total = localStorage.getItem("grandTotal");
+  if (total && !isNaN(total)) {
+    document.getElementById("checkout-total").textContent = "$" + total;
+  }
+};
+</script>
+  
 </body>
 </html>
