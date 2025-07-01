@@ -475,37 +475,47 @@ body {
 	         <div class="grand-total">
     <span>Total: $<span id="grand-total">0.00</span></span>
  </div>
-      <a href="checkout.html" class="checkout-btn" onclick="checkGrandTotal()">CHECKOUT</a>
+      <a href="checkout.html" class="checkout-btn" onclick="checkGrandTotal(event)">CHECKOUT</a>
   
      </div>
 
  <footer>&copy; BixMAX 2025. All rights reserved.</footer>
-	 <script>function updateQuantity(button, change) {
-  const item = button.closest('.item');
-  const countSpan = item.querySelector('.count');
-  let count = parseInt(countSpan.textContent);
-
-  count += change;
-  if (count < 0) count = 0;
-
-  countSpan.textContent = count;
-
-  updateGrandTotal();
+<script>
+/* ─── 1.  Quantity buttons ─── */
+function updateQuantity(btn, delta) {
+  const item   = btn.closest('.item');
+  const count  = item.querySelector('.count');
+  count.textContent = Math.max(0, +count.textContent + delta);
+  updateGrandTotal();              // recalc + save every change
 }
 
+/* ─── 2.  Re-calculate total & store it ─── */
 function updateGrandTotal() {
   let total = 0;
   const items = document.querySelectorAll('.item');
 
-  items.forEach(item => {
-    const count = parseInt(item.querySelector('.count').textContent);
-    const price = parseFloat(item.getAttribute('data-price'));
-    total += count * price;
+  items.forEach(it => {
+    const qty   = +it.querySelector('.count').textContent || 0;
+    const price = +it.dataset.price;
+    total += qty * price;
   });
 
   document.getElementById('grand-total').textContent = total.toFixed(2);
+  localStorage.setItem('grandTotal', total.toFixed(2));      // 🔥 keep in storage
 }
-	 </script>
+
+/* ─── 3.  Checkout click handler ─── */
+function checkGrandTotal(ev) {
+  ev.preventDefault();                                       // stop default <a> nav
+  const total = +localStorage.getItem('grandTotal') || 0;
+
+  if (total > 0) {
+    window.location.href = 'checkout.html';                  // go to checkout
+  } else {
+    alert('🛒 Your cart is empty!');
+  }
+}
+</script>
 <script>
 function toggleMenu() {
   const menu = document.getElementById('fullMenu');
