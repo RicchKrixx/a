@@ -125,13 +125,27 @@ async function trackOrder() {
 
   resultBox.style.display = 'block';
 }
-</script>
-  <script>
+<script>
 function trackOrder() {
   const enteredId = document.getElementById("trackInput").value.trim();
   if (!enteredId) return alert("Please enter your Order ID.");
 
   fetch("orders.json") // Or orders.php depending on your backend
-    </script>
+    .then(res => res.json())
+    .then(data => {
+      const order = data.find(o => o.id === enteredId);
+      if (!order) return alert("Order not found.");
+
+      // Display order info
+      document.getElementById("result").innerHTML = 
+        <h3>Order Found</h3>
+        <p><strong>Name:</strong> ${order.name}</p>
+        <p><strong>Total:</strong> $${order.total}</p>
+        <p><strong>Status:</strong> ${order.status || 'Pending'}</p>
+      ;
+    })
+    .catch(() => alert("Error fetching order data"));
+}
+</script>
 </body>
 </html>
