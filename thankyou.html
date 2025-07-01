@@ -212,6 +212,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('orderId').textContent = "Unavailable";
   }
 });
+
+
+	const urlParams = new URLSearchParams(window.location.search);
+const orderId = urlParams.get("orderId");
+document.getElementById("orderIdDisplay").textContent = orderId;
 </script>
 </body>
 </html>
