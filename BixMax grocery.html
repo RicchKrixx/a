@@ -475,7 +475,7 @@ body {
 	         <div class="grand-total">
     <span>Total: $<span id="grand-total">0.00</span></span>
  </div>
-      <a href="checkout.html" class="checkout-btn" onclick="checkGrandTotal(event)">CHECKOUT</a>
+      <a href="checkout.html" class="checkout-btn" onclick="checkGrandTotal()">CHECKOUT</a>
   
      </div>
 
@@ -526,37 +526,18 @@ function toggleMenu() {
   }
 }
 </script>
-	<script>
-function updateQuantity(button, change) {
-  const item = button.closest('.item');
-  const countSpan = item.querySelector('.count');
-  let count = parseInt(countSpan.textContent);
-  count += change;
-  if (count < 0) count = 0;
-  countSpan.textContent = count;
-  updateGrandTotal();
-}
-
-function updateGrandTotal() {
-  let total = 0;
-  const items = document.querySelectorAll('.item');
-
-  items.forEach(item => {
-    const count = parseInt(item.querySelector('.count').textContent);
-    const price = parseFloat(item.getAttribute('data-price'));
-    total += count * price;
-  });
-
-  document.getElementById('grand-total').textContent = total.toFixed(2);
-}
-
+<script>
 function checkGrandTotal() {
-  const total = parseFloat(document.getElementById('grand-total').textContent);
+  const total = parseFloat(document.getElementById('grand-total').textContent || '0');
+
   if (total > 0) {
+    // Save grand total to localStorage
     localStorage.setItem("grandTotal", total.toFixed(2));
+    
+    // Redirect to checkout page
     window.location.href = "checkout.html";
   } else {
-    alert("Your cart is empty!");
+    alert("🛒 Your cart is empty!");
   }
 }
 </script>
