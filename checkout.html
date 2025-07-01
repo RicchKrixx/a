@@ -120,63 +120,81 @@
 
     function showLoader(show) {
       document.getElementById('loader').style.display = show ? 'flex' : 'none';
-    }btn.addEventListener('click', async e => {
-      e.preventDefault();
-      const total = parseFloat(localStorage.getItem('grandTotal') || '0');
-      if (total <= 0) return alert('Cart is empty.');
-
-      const name = document.getElementById('custName').value.trim();
-      const email = document.getElementById('custEmail').value.trim();
-      const phone = document.getElementById('custPhone').value.trim();
-      const addr = document.getElementById('custAddr').value.trim();
-      if (!(name && email && phone && addr)) return alert('Please fill all details.');
-
-      const orderId = 'BIZ-' + Date.now();
-      showLoader(true);
-
-      const orderData = { id: orderId, name, email, phone, address: addr, total, payment: paySel.value, status: 'Pending' };
-
-      // Send order to backend (save_order.php or orders.json if you're using PHP or JSON)
-      try {
-        await fetch('save_order.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(orderData)
-        });
-      } catch (err) {
-        console.warn('Failed to save order:', err);
-      }
-
-      if (paySel.value === 'online') {
-        PaystackPop.setup({
-          key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxx',
-          email,
-          amount: Math.round(total * 100),
-          currency: 'GHS',
-          metadata: { custom_fields: [
-            { display_name: 'Order ID', value: orderId },
-            { display_name: 'Name', value: name },
-            { display_name: 'Phone', value: phone },
-            { display_name: 'Address', value: addr }
-          ] },
-          callback: function (response) {
-            alert('Payment successful! Order ID: ' + orderId);
-            localStorage.removeItem('cart');
-            window.location = 'thankyou.html';
-          },
-          onClose: function () {
-            showLoader(false);
-            alert('Payment was cancelled.');
-          }
-        }).openIframe();
-      } else {
-        setTimeout(() => {
-          alert('Order placed successfully! Your Order ID is ' + orderId);
-          localStorage.removeItem('cart');
-          window.location = 'thankyou.html';
-        }, 1500);
-      }
-    });
+    }
+   
   </script>
+  <script>
+btn.addEventListener('click', e => {
+  e.preventDefault();
+
+  const total = parseFloat(localStorage.getItem('grandTotal') || '0');
+  if (total <= 0) {
+    alert('Cart is empty.');
+    return;
+  }
+
+  const name  = document.getElementById('custName').value.trim();
+  const email = document.getElementById('custEmail').value.trim();
+  const phone = document.getElementById('custPhone').value.trim();
+  const addr  = document.getElementById('custAddr').value.trim();
+  const payment = paySel.value;
+
+  if (!(name && email && phone && addr)) {
+    alert('Please fill all details.');
+    return;
+  }
+
+  showLoader(true);
+
+  // Generate Order ID
+  const orderId = 'BMX' + Date.now();
+
+  // Save order data to localStorage for thankyou & tracking
+  const orderData = {
+    id: orderId,
+    name,
+    email,
+    phone,
+    addr,
+    payment,
+    total,
+    date: new Date().toLocaleString()
+  };
+  localStorage.setItem("latestOrder", JSON.stringify(orderData));
+  localStorage.setItem("latestOrderId", orderId);
+
+  if (payment === 'online') {
+    PaystackPop.setup({
+      key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxx',
+      email: email,
+      amount: Math.round(total * 100),
+      currency: 'GHS',
+      metadata: {
+        custom_fields: [
+          { display_name: 'Name', value: name },
+          { display_name: 'Phone', value: phone },
+          { display_name: 'Address', value: addr },
+          { display_name: 'Order ID', value: orderId }
+        ]
+      },
+      callback: function (response) {
+        alert('Payment successful! Ref: ' + response.reference);
+        localStorage.removeItem('cart');
+        window.location = 'thankyou.html';
+      },
+      onClose: function () {
+        showLoader(false);
+        alert('Payment was cancelled.');
+      }
+    }).openIframe();
+  } else {
+    setTimeout(() => {
+      alert('Order placed successfully!');
+      localStorage.removeItem('cart');
+      window.location = 'thankyou.html';
+    }, 1500);
+  }
+});
+</script>
 </body>
 </html>
