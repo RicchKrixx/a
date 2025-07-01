@@ -106,16 +106,14 @@
       <p style="margin-top:14px;font-size:18px;font-weight:bold">Processing…</p>
     </div>
   </div>
-<!-- Loader Helper & Paystack -->
+<!-- Paystack -->
 <script src="https://js.paystack.co/v1/inline.js"></script>
 
-<!-- Firebase + Everything Inside -->
+<!-- Firebase + Logic -->
 <script type="module">
-  // Firebase Imports
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  // Firebase Config
   const firebaseConfig = {
     apiKey: "AIzaSyDkU07SZ8xmlg8Lo4TGBQQDISh62HRCYF0",
     authDomain: "bixmax-orders.firebaseapp.com",
@@ -125,39 +123,30 @@
     appId: "1:880588466149:web:40eef55fe3aab891da710c"
   };
 
-  // Initialize
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  // Show grand total
-  document.addEventListener("DOMContentLoaded", () => {
-    const total = localStorage.getItem("grandTotal") || "0";
-    document.getElementById("grandTotal").textContent = parseFloat(total).toFixed(2);
-  });
-
-  // Update button label on method change
   const paySel = document.getElementById("payMethod");
   const btn = document.getElementById("actionBtn");
+  const loader = document.getElementById("loader");
+
+  // 1. Show grand total
+  const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
+  document.getElementById("grandTotal").textContent = grandTotal.toFixed(2);
+
+  // 2. Change button label based on payment method
   paySel.addEventListener("change", () => {
     btn.textContent = paySel.value === "online" ? "Pay Now" : "Place Order";
   });
 
-  // Loader toggle
-  function showLoader(flag) {
-    document.getElementById("loader").style.display = flag ? "flex" : "none";
-  }
-
-  // Button click
+  // 3. Button click handler
   btn.addEventListener("click", async (e) => {
     e.preventDefault();
-
     const name = document.getElementById("custName").value.trim();
     const email = document.getElementById("custEmail").value.trim();
     const phone = document.getElementById("custPhone").value.trim();
     const addr = document.getElementById("custAddr").value.trim();
     const method = paySel.value;
-    const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
-    const orderId = "BMX" + Date.now();
 
     if (!name  !email  !phone || !addr) {
       alert("Please fill all fields.");
@@ -165,11 +154,12 @@
     }
 
     if (grandTotal <= 0) {
-      alert("🛒 Your cart is empty!");
+      alert("Cart is empty.");
       return;
     }
 
-    showLoader(true);
+    loader.style.display = "flex";
+    const orderId = "BMX" + Date.now();
 
     const order = {
       id: orderId,
@@ -188,8 +178,8 @@
 
       if (method === "online") {
         PaystackPop.setup({
-          key: "pk_test_xxxxxxxxxxxxxxxxxxxxxxx", // Replace this key
-          email,
+          key: "pk_test_xxxxxxxxxxxxxxxxxxxxxxx", // REPLACE with your public key
+          email: email,
           amount: Math.round(grandTotal * 100),
           currency: "GHS",
           metadata: {
@@ -201,27 +191,28 @@
             ]
           },
           callback: function (response) {
-            alert("Payment successful! Ref: " + response.reference);
             localStorage.removeItem("cart");
             window.location.href = "thankyou.html";
           },
           onClose: function () {
-            showLoader(false);
+            loader.style.display = "none";
             alert("Payment was cancelled.");
           }
         }).openIframe();
       } else {
         setTimeout(() => {
-          alert("Order placed successfully!");
           localStorage.removeItem("cart");
           window.location.href = "thankyou.html";
         }, 1200);
       }
     } catch (err) {
-      showLoader(false);
-      alert("❌ Failed to place order: " + err.message);
+      loader.style.display = "none";
+      alert("❌ Failed to save order: " + err.message);
     }
   });
+
+  // 4. Initial label update
+  btn.textContent = paySel.value === "online" ? "Pay Now" : "Place Order";
 </script>
 </body>
 </html>
