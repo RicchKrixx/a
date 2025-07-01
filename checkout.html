@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>BizMAX Checkout</title>
+<title>BixMAX Checkout</title>
 <style>
   body{margin:0;font-family:Arial;background:lightblue;padding:20px;color:#333}
   .box{max-width:600px;margin:auto;background:#fff;padding:20px;border-radius:20px;
@@ -18,6 +18,20 @@
   button:hover{background:#218838}
   footer{text-align:center;margin-top:20px;font-size:14px}
   @media(max-width:480px){.box{padding:15px}}
+  /* Loader Spinner */
+.spinner {
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #1976d2;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  margin: 0 auto;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 </style>
 </head>
 <body>
@@ -29,8 +43,8 @@
   <div class="order-summary" id="orderBox">
     <h2>Order Summary</h2>
     <div id="orderItems"></div>
- <h2>Total to Pay:</h2>
-<p id="checkout-total">$0.00</p>
+ <h2>Total to Pay:
+<p id="checkout-total">$0.00</p></h2>
   </div>
 
   <!-- Customer Info -->
@@ -49,7 +63,16 @@
     <option value="Mobile Money">Mobile Money</option>
   </select><br><br>
 
-  <button onclick="submitOrder()">Confirm &amp; Pay</button>
+  <!-- Place Order Button -->
+<button id="placeOrderBtn" style="padding: 12px 24px; background-color: #1976d2; color: white; font-size: 18px; border: none; border-radius: 10px; cursor: pointer;">
+  Place Order
+</button>
+
+<!-- Loader (Hidden initially) -->
+<div id="loader" style="display:none; margin-top:20px; text-align:center;">
+  <p>Processing your order...</p>
+  <div class="spinner"></div>
+</div>
 </div>
 
 <footer>&copy; 2025 BizMAX | All rights reserved</footer>
@@ -117,6 +140,17 @@ window.onload = function() {
   }
 };
 </script>
-  
+  <script>
+  document.getElementById('placeOrderBtn').addEventListener('click', function () {
+    // Hide button, show loader
+    this.style.display = 'none';
+    document.getElementById('loader').style.display = 'block';
+
+    // Wait 3 seconds, then redirect to thank you page
+    setTimeout(function () {
+      window.location.href = 'thankyou.html'; // Change this if your thank you page has a different name
+    }, 3000);
+  });
+</script>
 </body>
 </html>
