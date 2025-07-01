@@ -52,7 +52,7 @@
       opacity: 0;
     }
 
-    .enter-btn, track-btn {
+    .enter-btn {
       background-color: cyan;
       color: black;
       padding: 12px 24px;
@@ -70,7 +70,19 @@
       background-color: #00bcbc;
       transform: scale(1.05);
     }
-
+.track-btn {
+      background-color: cyan;
+      color: black;
+      padding: 6px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 16px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease, background-color 0.3s ease;
+      animation: fadeIn 1s ease-out 0.9s forwards;
+      opacity: 0;
+    }
     /* Animations */
     @keyframes fadeInUp {
       to {
@@ -155,13 +167,12 @@ html,body{height:100%;font-family:system-ui,Segoe UI,Roboto,sans-serif;overflow-
   <div class="welcome-box">
     <h1>🎉Thank You!🎉</h1>
     <p>Your order has been placed successfully.
-    <br>Order iD: <strong>ABC123XYZ</strong></p>
+    <br>Order iD: <strong id="orderIdDisplay"></strong></p>
     <a href="order-tracking.html" class="track-btn">Track Your Order</a>
     <br>
     <a href="BixMax home.html" class="enter-btn">Return to Home</a>
   </div>
   
-</body>
   <script>
     /*
   Every n seconds swap the root CSS variables with a new
@@ -191,4 +202,16 @@ setInterval(cycleColors, period);
 
 
   </script>
+  <!-- ✅ Thank You Page (Fix Order ID) --><script>
+// Show the last order ID from localStorage
+window.addEventListener("DOMContentLoaded", () => {
+  const orderId = localStorage.getItem("lastOrderId");
+  if (orderId) {
+    document.getElementById("orderIdDisplay").textContent = orderId;
+  } else {
+    document.getElementById("orderIdDisplay").textContent = "Unavailable";
+  }
+});
+</script>
+</body>
 </html>
