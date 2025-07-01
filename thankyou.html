@@ -57,5 +57,54 @@
     <p>Your order has been received.<br>We'll contact you soon for delivery.</p>
     <a href="BixMax home.html" class="home-btn">Return to Home</a>
   </div>
+  <div id="invoice" style="background:white; padding:20px; color:black; max-width:600px; margin:auto;">
+  <h2 style="text-align:center;">BixMAX Invoice</h2>
+  <p>Date: <span id="invoice-date"></span></p>
+  <p>Customer Name: <span id="invoice-name">[Customer Name]</span></p>
+  <hr>
+  <h3>Order Summary:</h3>
+  <table style="width:100%; border-collapse: collapse;" border="1">
+    <thead>
+      <tr>
+        <th>Item</th><th>Qty</th><th>Price</th>
+      </tr>
+    </thead>
+    <tbody id="invoice-items">
+      <!-- JS will insert items here -->
+    </tbody>
+  </table>
+  <h3 style="text-align:right;">Total: $<span id="invoice-total">0.00</span></h3>
+</div>
+
+<button onclick="generateInvoice()" style="margin-top:20px;">Download Invoice PDF</button>
+  <script>
+  // Simulated data - in real case, pull from session/localStorage or Firebase
+  const order = {
+    name: "John Doe",
+    date: new Date().toLocaleDateString(),
+    total: "85.00",
+    items: [
+      { name: "Rice", qty: 2, price: 20 },
+      { name: "Pepper", qty: 3, price: 15 },
+      { name: "Onion", qty: 1, price: 15 }
+    ]
+  };
+
+  // Fill invoice data
+  document.getElementById("invoice-name").textContent = order.name;
+  document.getElementById("invoice-date").textContent = order.date;
+  document.getElementById("invoice-total").textContent = order.total;
+
+  const tbody = document.getElementById("invoice-items");
+  order.items.forEach(item => {
+    const row = <tr><td>${item.name}</td><td>${item.qty}</td><td>$${item.price}</td></tr>;
+    tbody.innerHTML += row;
+  });
+
+  function generateInvoice() {
+    const invoice = document.getElementById("invoice");
+    html2pdf().from(invoice).save(BixMAX_Invoice_${Date.now()}.pdf);
+  }
+</script>
 </body>
 </html>
