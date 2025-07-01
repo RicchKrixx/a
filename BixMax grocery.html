@@ -525,33 +525,7 @@ function toggleMenu() {
     document.body.style.overflow = 'hidden'; // Disable scroll
   }
 }
-</script>
-<script>
-function saveCartToStorage () {
-  const cart  = [];
-  let   total = 0;
 
-  document.querySelectorAll('.item').forEach(it => {
-    const qty  = +it.querySelector('.count').textContent || 0;
-    if (qty > 0) {
-      const name  = it.querySelector('h3').textContent;
-      const price = +it.dataset.price;           // data-price="20"
-      cart.push({ name, qty, price });
-      total += qty * price;
-    }
-  });
-
-  localStorage.setItem('cartItems', JSON.stringify(cart));
-  localStorage.setItem('grandTotal', total.toFixed(2));
-}
-
-/* Call this after every + / – button */
-function updateQuantity(btn, delta){
-  const countEl = btn.parentElement.querySelector('.count');
-  countEl.textContent = Math.max(0, +countEl.textContent + delta);
-  saveCartToStorage();                //  ← keep storage in sync
-}
-</script>
 </body>
 	 
 </html>
