@@ -123,140 +123,108 @@
     }
    
   </script>
-  <script>
-btn.addEventListener('click', e => {
-  e.preventDefault();
-
-  const total = parseFloat(localStorage.getItem('grandTotal') || '0');
-  if (total <= 0) {
-    alert('Cart is empty.');
-    return;
-  }
-
-  const name  = document.getElementById('custName').value.trim();
-  const email = document.getElementById('custEmail').value.trim();
-  const phone = document.getElementById('custPhone').value.trim();
-  const addr  = document.getElementById('custAddr').value.trim();
-  const payment = paySel.value;
-
-  if (!(name && email && phone && addr)) {
-    alert('Please fill all details.');
-    return;
-  }
-
-  showLoader(true);
-
-  // Generate Order ID
-  const orderId = 'BMX' + Date.now();
-
-  // Save order data to localStorage for thankyou & tracking
-  const orderData = {
-    id: orderId,
-    name,
-    email,
-    phone,
-    addr,
-    payment,
-    total,
-    date: new Date().toLocaleString()
-  };
-
-  if (payment === 'online') {
-    PaystackPop.setup({
-      key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxx',
-      email: email,
-      amount: Math.round(total * 100),
-      currency: 'GHS',
-      metadata: {
-        custom_fields: [
-          { display_name: 'Name', value: name },
-          { display_name: 'Phone', value: phone },
-          { display_name: 'Address', value: addr },
-          { display_name: 'Order ID', value: orderId }
-        ]
-      },
-      callback: function (response) {
-        alert('Payment successful! Ref: ' + response.reference);
-        localStorage.removeItem('cart');
-        window.location = 'thankyou.html';
-      },
-      onClose: function () {
-        showLoader(false);
-        alert('Payment was cancelled.');
-      }
-    }).openIframe();
-  } else {
-    setTimeout(() => {
-      alert('Order placed successfully!');
-      localStorage.removeItem('cart');
-      window.location = 'thankyou.html';
-    }, 1500);
-  }
-});</script>
-<!-- Firebase SDKs -->
+ <!-- ===== Firebase + Paystack unified checkout script ===== -->
 <script type="module">
-  // 1. Import Firebase libraries
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  /* -----------------------------------------------
+     1.  Firebase SDK imports
+  ------------------------------------------------- */
+  import { initializeApp }                                   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  // 2. Your Firebase config (replace with your actual config!)
+  /* -----------------------------------------------
+     2.  YOUR Firebase config  (replace if different)
+  ------------------------------------------------- */
   const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT.appspot.com",
-    messagingSenderId: "XXXXXXX",
-    appId: "YOUR_APP_ID"
+    apiKey:            "AIzaSyDkU07SZ8xmlg8Lo4TGBQQDISh62HRCYF0",
+    authDomain:        "bixmax-orders.firebaseapp.com",
+    projectId:         "bixmax-orders",
+    storageBucket:     "bixmax-orders.appspot.com",
+    messagingSenderId: "880588466149",
+    appId:             "1:880588466149:web:40eef55fe3aab891da710c"
   };
 
-  // 3. Initialize Firebase
+  /* -----------------------------------------------
+     3.  Init Firebase
+  ------------------------------------------------- */
   const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  const db  = getFirestore(app);
 
-  // 4. Handle checkout
+  /* -----------------------------------------------
+     4.  Helpers
+  ------------------------------------------------- */
+  const showLoader = (flag) => { document.getElementById("loader").style.display = flag ? "flex" : "none"; };
+
+  /* -----------------------------------------------
+     5.  Main checkout handler
+  ------------------------------------------------- */
   document.getElementById("actionBtn").addEventListener("click", async (e) => {
     e.preventDefault();
 
-    const name = document.getElementById("custName").value.trim();
-    const email = document.getElementById("custEmail").value.trim();
-    const phone = document.getElementById("custPhone").value.trim();
-    const addr = document.getElementById("custAddr").value.trim();
+    /* ---- read form ---- */
+    const name   = document.getElementById("custName").value.trim();
+    const email  = document.getElementById("custEmail").value.trim();
+    const phone  = document.getElementById("custPhone").value.trim();
+    const addr   = document.getElementById("custAddr").value.trim();
     const method = document.getElementById("payMethod").value;
     const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
+    const cartItems  = JSON.parse(localStorage.getItem("cart") || "[]");   // ← items saved from grocery page
 
-    if (!name  !email  !phone || !addr) {
-      alert("Please fill all fields.");
-      return;
-    }
+    if (!name  !email  !phone || !addr) { alert("Please fill all fields"); return; }
+    if (grandTotal <= 0)                 { alert("🛒 Cart empty"); return; }
 
-    if (grandTotal <= 0) {
-      alert("🛒 Your cart is empty!");
-      return;
-    }
+    showLoader(true);
 
-    // 5. Prepare order data
+    /* ---- build order object ---- */
     const order = {
-      name,
-      email,
-      phone,
-      address: addr,
-      method,
+      name , email , phone ,
+      address   : addr,
+      payment   : method,
       grandTotal,
-      createdAt: serverTimestamp()
+      items     : cartItems,        // full list for admin
+      createdAt : serverTimestamp()
     };
 
     try {
-      // 6. Save order to Firestore
-      const docRef = await addDoc(collection(db, "orders"), order);
+      /* ---- save to Firestore ---- */
+      const doc = await addDoc(collection(db, "orders"), order);
+      const orderId = doc.id;                      // Firestore-generated ID
+      localStorage.setItem("orderID", orderId);    // show on thank-you
 
-      // 7. Save order ID for thank you page and tracking
-      localStorage.setItem("orderID", docRef.id);
-      localStorage.removeItem("cart"); // optional
-      window.location.href = "thankyou.html";
-    } catch (err) {
-      alert("❌ Failed to place order: " + err.message);
+      /* ---- continue based on payment method ---- */
+      if (method === "online") {
+        /* ----- Paystack flow ----- */
+        PaystackPop.setup({
+          key: "pk_test_xxxxxxxxxxxxxxxxxxxxxx",   // ← your public key
+          email,
+          amount  : Math.round(grandTotal * 100),
+          currency: "GHS",
+          metadata: {
+            custom_fields: [
+              { display_name: "Order ID", value: orderId },
+              { display_name: "Name",      value: name }
+            ]
+          },
+          callback: ref => {
+            alert("Payment successful! Ref: " + ref.reference);
+            localStorage.removeItem("cart");
+            window.location = "thankyou.html";
+          },
+          onClose: () => { showLoader(false); alert("Payment cancelled."); }
+        }).openIframe();
+
+      } else {
+        /* ----- Pay on Delivery flow ----- */
+        setTimeout(() => {
+          alert("Order placed! (Pay on delivery)");
+          localStorage.removeItem("cart");
+          window.location = "thankyou.html";
+        }, 1200);
+      }} catch (err) {
+      showLoader(false);
+      alert("❌ Could not save order: " + err.message);
     }
   });
-</script>
+</script>v
+
 </body>
 </html>
