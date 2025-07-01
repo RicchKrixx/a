@@ -475,7 +475,7 @@ body {
 	         <div class="grand-total">
     <span>Total: $<span id="grand-total">0.00</span></span>
  </div>
-<button class="checkout-btn" onclick="checkGrandTotal(event)">CHECKOUT</button>
+<button id="checkoutBtn" class="checkout-btn">CHECKOUT</button>
   
      </div>
 
@@ -503,18 +503,22 @@ function updateGrandTotal() {
   document.getElementById('grand-total').textContent = total.toFixed(2);
   localStorage.setItem('grandTotal', total.toFixed(2));      // 🔥 keep in storage
 }
+}
+</script>
+	<script>
+document.getElementById('checkoutBtn').addEventListener('click', function (event) {
+  event.preventDefault(); // Stop all default behavior
 
-/* ─── 3.  Checkout click handler ─── */
-function checkGrandTotal(ev) {
-  ev.preventDefault();                                       // stop default <a> nav
-  const total = +localStorage.getItem('grandTotal') || 0;
+  const total = parseFloat(document.getElementById('grand-total').textContent || '0');
 
   if (total > 0) {
-    window.location.href = 'checkout.html';                  // go to checkout
+    localStorage.setItem("grandTotal", total.toFixed(2));
+    window.location.href = "checkout.html";
   } else {
-    alert('🛒 Your cart is empty!');
+    alert("🛒 Your cart is empty!");
+    // Do nothing else — stay on the page
   }
-}
+});
 </script>
 <script>
 function toggleMenu() {
