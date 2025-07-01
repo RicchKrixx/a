@@ -66,12 +66,12 @@
 <body>
   <div class="card">
     <h1>Track Your Order</h1>
-    <input id="trackId" placeholder="Enter Order ID" />
+    <input id="orderId" placeholder="Enter Order ID" />
     <button onclick="trackOrder()">Track Order</button><div class="result" id="trackResult" style="display:none"></div>
 
   </div>  <script>
     function trackOrder() {
-      const id = document.getElementById('trackId').value.trim();
+      const id = document.getElementById('orderId').value.trim();
       const result = document.getElementById('trackResult');
       result.style.display = 'none';
       result.innerHTML = '';
