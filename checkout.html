@@ -1,182 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>BixMAX Checkout</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial;
-      background: lightblue;
-      padding: 20px;
-      color: #333;
-    }
-    .box {
-      max-width: 600px;
-      margin: auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 20px;
-      box-shadow: 0 0 20px rgba(0,0,0,.15);
-    }
-    h1, h2 {
-      text-align: center;
-      margin-top: 0;
-    }
-    .order-summary {
-      background: #f7f7f7;
-      padding: 15px;
-      border-radius: 14px;
-      margin-bottom: 20px;
-    }
-    label {
-      display: block;
-      margin: 10px 0 4px;
-      font-weight: bold;
-    }
-    input, textarea, select {
-      width: 100%;
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-    }
-    button {
-      width: 100%;
-      padding: 14px;
-      background: #1976d2;
-      color: #fff;
-      border: none;
-      border-radius: 12px;
-      font-weight: bold;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    footer {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 14px;
-    }
-    .spinner {
-      border: 6px solid #f3f3f3;
-      border-top: 6px solid #1976d2;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      margin: 0 auto;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    @media(max-width: 480px) {
-      .box { padding: 15px; }
-    }
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>BizMAX | Checkout</title>
+
+<!-- ── STYLES ── -->
+<style>
+  :root{--blue:#1976d2;}
+  body{margin:0;font-family:Arial;background:lightblue;padding:20px}
+  .box{max-width:620px;margin:auto;background:#fff;padding:24px;
+       border-radius:20px;box-shadow:0 0 20px rgba(0,0,0,.15)}
+  h1,h2{margin:0 0 18px;text-align:center}
+  label{display:block;margin:12px 0 6px;font-weight:bold}
+  input,textarea,select{width:100%;padding:10px;border-radius:10px;border:1px solid #ccc}
+  .summary{background:#f7f7f7;border-radius:14px;padding:16px;margin-bottom:22px}
+  .summary p{margin:6px 0}
+  button{width:100%;padding:14px;background:var(--blue);color:#fff;
+         border:none;border-radius:12px;font-size:16px;font-weight:bold;cursor:pointer}
+  button:hover{background:#145aae}
+  /* Loader overlay */
+  #loader{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;
+          align-items:center;justify-content:center;z-index:1000}
+  .spinner{width:60px;height:60px;border:7px solid #eee;border-top:7px solid var(--blue);
+           border-radius:50%;animation:spin 1s linear infinite}
+  @keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+  footer{text-align:center;margin-top:30px}
+</style>
 </head>
 <body>
 
 <div class="box">
   <h1>Checkout</h1>
 
-  <div class="order-summary">
+  <!-- ░░░ ORDER SUMMARY ░░░ -->
+  <div class="summary">
     <h2>Order Summary</h2>
-    <p>Total to Pay: <strong id="checkout-total">$0.00</strong></p>
+    <div id="itemList"></div>
+    <p style="margin-top:10px;font-size:18px;font-weight:bold">
+      Total: $<span id="grandTotal">0.00</span>
+    </p>
   </div>
 
+  <!-- ░░░ CUSTOMER DETAILS ░░░ -->
   <label>Full Name</label>
-  <input id="customerName" type="text" placeholder="e.g. John Doe" required>
-
-  <label>Phone Number</label>
-  <input id="customerPhone" type="tel" placeholder="e.g. 055 123 4567" required>
+  <input id="custName" type="text" placeholder="John Doe" required>
 
   <label>Email</label>
-  <input id="customerEmail" type="email" placeholder="guest@example.com" required>
+  <input id="custEmail" type="email" placeholder="john@example.com" required>
+
+  <label>Phone Number</label>
+  <input id="custPhone" type="tel" placeholder="055 123 4567" required>
 
   <label>Delivery Address</label>
-  <textarea id="customerAddress" rows="3" placeholder="Street, City" required></textarea>
+  <textarea id="custAddr" rows="3" placeholder="Street / City" required></textarea>
 
+  <!-- ░░░ PAYMENT METHOD ░░░ -->
   <label>Payment Method</label>
-  <select id="paymentMethod">
+  <select id="payMethod">
     <option value="delivery">Pay on Delivery</option>
     <option value="online">Pay Online</option>
   </select>
 
-  <button id="checkoutBtn">Place Order</button>
+  <!-- ░░░ ACTION BUTTON ░░░ -->
+  <button id="actionBtn">Place Order</button>
 </div>
 
 <!-- Loader -->
-<div id="loader" style="display:none; margin-top:20px; text-align:center;">
-  <p>Processing your order...</p>
-  <div class="spinner"></div>
+<div id="loader">
+  <div style="text-align:center;color:#fff">
+    <div class="spinner"></div>
+    <p style="margin-top:14px;font-weight:bold">Processing…</p>
+  </div>
 </div>
 
-<footer>&copy; BixMAX 2025 | All rights reserved</footer>
+<footer>&copy; BizMAX 2025 | All rights reserved</footer>
 
 <!-- Paystack SDK -->
 <script src="https://js.paystack.co/v1/inline.js"></script>
 
 <script>
-window.onload = function () {
-  const total = localStorage.getItem("grandTotal");
-  if (total && !isNaN(total)) {
-    document.getElementById("checkout-total").textContent = "$" + total;
+/* 1 — Load items & total */
+(function loadCart(){
+  const cart  = JSON.parse(localStorage.getItem('cartItems')||'[]');
+  const total = localStorage.getItem('grandTotal')||'0.00';
+  document.getElementById('grandTotal').textContent = total;
+
+  const list = document.getElementById('itemList');
+  if(cart.length===0){ list.innerHTML='<p>No items in cart.</p>'; return; }
+  cart.forEach(it=>{
+    const line = document.createElement('p');
+    line.textContent = ${it.qty} × ${it.name};
+    list.appendChild(line);
+  });
+})();
+
+/* 2 — Switch button label */
+const paySel = document.getElementById('payMethod');
+const btn    = document.getElementById('actionBtn');
+paySel.addEventListener('change',()=>btn.textContent=paySel.value==='online'?'Pay Now':'Place Order');
+
+/* 3 — Click handler */
+btn.addEventListener('click',e=>{
+  e.preventDefault();
+
+  const total = parseFloat(localStorage.getItem('grandTotal')||'0');
+  if(total<=0){alert('Cart is empty.');return;}
+
+  const name = document.getElementById('custName').value.trim();
+  const email= document.getElementById('custEmail').value.trim();
+  const phone= document.getElementById('custPhone').value.trim();
+  const addr = document.getElementById('custAddr').value.trim();
+  if(!name!email!phone||!addr){alert('Please fill in all details.');return;}// Show loader
+  document.getElementById('loader').style.display='flex';
+
+  if(paySel.value==='online'){
+    /* —— Paystack —— */
+    PaystackPop.setup({
+      key:'pk_test_xxxxxxxxxxxxxxxxxxxxxxx',   // ← YOUR PUBLIC KEY
+      email:email,
+      amount:Math.round(total*100),            // kobo/pesewa
+      currency:'GHS',
+      metadata:{custom_fields:[
+        {display_name:'Name',  value:name},
+        {display_name:'Phone', value:phone},
+        {display_name:'Address',value:addr}
+      ]},
+      callback:function(r){
+        alert('Payment successful! Ref: '+r.reference);
+        localStorage.removeItem('cart');                // clear cart
+        window.location='thankyou.html';
+      },
+      onClose:function(){
+        alert('Payment cancelled.');
+        document.getElementById('loader').style.display='none';
+      }
+    }).openIframe();
+
+  }else{
+    // Pay on delivery → straight to thank you
+    alert('Order placed! We will contact you soon.');
+    localStorage.removeItem('cart');
+    window.location='thankyou.html';
   }
-};
-
-// Switch button text
-document.getElementById("paymentMethod").addEventListener("change", function () {
-  const method = this.value;
-  document.getElementById("checkoutBtn").textContent = method === "online" ? "Pay Now" : "Place Order";
-});
-
-document.getElementById("checkoutBtn").addEventListener("click", function () {
-  const name = document.getElementById("customerName").value.trim();
-  const email = document.getElementById("customerEmail").value.trim();
-  const phone = document.getElementById("customerPhone").value.trim();
-  const address = document.getElementById("customerAddress").value.trim();
-  const method = document.getElementById("paymentMethod").value;
-  const total = parseFloat(localStorage.getItem("grandTotal") || "0");
-
-  if (!name  !email  !phone || !address) {
-    alert("Please fill in all details.");
-    return;
-  }
-
-  if (total <= 0) {
-    alert("Cart is empty.");
-    return;
-  }
-
-  // Show loader
-  document.getElementById("loader").style.display = "block";
-  document.getElementById("checkoutBtn").disabled = true;setTimeout(() => {
-    if (method === "online") {
-      let handler = PaystackPop.setup({
-        key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxx', // Replace with your Paystack key
-        email: email,
-        amount: total * 100,
-        currency: 'GHS',
-        callback: function (response) {
-          alert("Payment successful! Ref: " + response.reference);
-          window.location.href = "thankyou.html";
-        },
-        onClose: function () {
-          alert("Payment cancelled.");
-          document.getElementById("loader").style.display = "none";
-          document.getElementById("checkoutBtn").disabled = false;
-        }
-      });
-      handler.openIframe();
-    } else {
-      // Pay on delivery
-      alert("Order placed successfully!");
-      window.location.href = "thankyou.html";
-    }
-  }, 2000); // simulate 2s loading
 });
 </script>
-
 </body>
 </html>
