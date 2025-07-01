@@ -1,37 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BizMAX | Checkout</title>
-<style>
-  :root{--blue:#1976d2;--glass:#ffffff18;--blur:25px}
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:Arial;background:lightblue;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
-  .card{max-width:620px;width:100%;background:var(--glass);border:5px solid rgba(255,255,255,.1);border-radius:20px;padding:28px;color:#fff;backdrop-filter:blur(var(--blur));box-shadow:0 0 30px rgba(0,0,0,.2)}
-  h1,h2{text-align:center;margin-bottom:18px}
-  label{display:block;margin:14px 0 6px;font-weight:bold}
-  input,textarea,select{width:100%;padding:12px;border-radius:12px;border:none;background:rgba(255,255,255,.15);color:#fff;font-size:16px}
-  .summary{background:rgba(0,0,0,.25);border:2px solid rgba(255,255,255,.15);border-radius:16px;padding:20px;margin-bottom:24px;text-align:center}
-  button{width:100%;padding:16px;border:none;border-radius:14px;background:var(--blue);color:#fff;font-size:18px;font-weight:bold;cursor:pointer}
-  button:hover{background:#1459a4}
-  #loader{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:1000}
-  .spin{width:60px;height:60px;border:7px solid #eee;border-top:7px solid var(--blue);border-radius:50%;animation:spin 1s linear infinite}@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
-</style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>BizMAX | Checkout</title>
+  <style>
+    :root { --blue: #1976d2; --glass: #ffffff18; --blur: 25px }
+    * { box-sizing: border-box; margin: 0; padding: 0 }
+    body {
+      font-family: Arial; background: lightblue;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; padding: 20px;
+    }
+    .card {
+      max-width: 620px; width: 100%; background: var(--glass);
+      border: 5px solid rgba(255,255,255,.1);
+      border-radius: 20px; padding: 28px; color: #fff;
+      backdrop-filter: blur(var(--blur));
+      box-shadow: 0 0 30px rgba(0,0,0,.2)
+    }
+    h1, h2 { text-align: center; margin-bottom: 18px }
+    label { display: block; margin: 14px 0 6px; font-weight: bold }
+    input, textarea, select {
+      width: 100%; padding: 12px; border-radius: 12px; border: none;
+      background: rgba(255,255,255,.15); color: #fff; font-size: 16px
+    }
+    .summary {
+      background: rgba(0,0,0,.25); border: 2px solid rgba(255,255,255,.15);
+      border-radius: 16px; padding: 20px; margin-bottom: 24px; text-align: center
+    }
+    button {
+      width: 100%; padding: 16px; border: none; border-radius: 14px;
+      background: var(--blue); color: #fff; font-size: 18px;
+      font-weight: bold; cursor: pointer
+    }
+    button:hover { background: #1459a4 }
+    #loader {
+      position: fixed; inset: 0; background: rgba(0,0,0,.6);
+      display: none; align-items: center; justify-content: center;
+      z-index: 1000
+    }
+    .spin {
+      width: 60px; height: 60px; border: 7px solid #eee;
+      border-top: 7px solid var(--blue); border-radius: 50%;
+      animation: spin 1s linear infinite
+    }
+    @keyframes spin { 0% { transform: rotate(0) } 100% { transform: rotate(360deg) } }
+  </style>
 </head>
 <body>
 
 <div class="card">
   <h1>Checkout</h1>
-
-  <form id="checkoutForm" method="POST" action="submit_order.php">
+  <form id="checkoutForm" method="POST">
     <div class="summary">
       <h2>Order Summary</h2>
       <p>Total to Pay: $<span id="grandTotalText">0.00</span></p>
     </div>
 
     <input type="hidden" name="grandTotal" id="grandTotalInput">
-
     <label>Full Name</label><input name="custName" id="custName" required>
     <label>Email</label><input name="custEmail" id="custEmail" type="email" required>
     <label>Phone Number</label><input name="custPhone" id="custPhone" type="tel" required>
@@ -48,49 +75,88 @@
 </div>
 
 <!-- Loader -->
-<div id="loader"><div style="text-align:center;color:#fff"><div class="spin"></div><p style="margin-top:14px;font-weight:bold">Processing…</p></div></div>
+<div id="loader">
+  <div style="text-align:center;color:#fff">
+    <div class="spin"></div>
+    <p style="margin-top:14px;font-weight:bold">Processing…</p>
+  </div>
+</div>
 
-<!-- Paystack (only for Pay-Online) -->
+<!-- Paystack SDK -->
 <script src="https://js.paystack.co/v1/inline.js"></script>
 <script>
-/* Load grand total */
-document.addEventListener('DOMContentLoaded',()=>{
-  const total=localStorage.getItem('grandTotal')||'0';
-  document.getElementById('grandTotalText').textContent=parseFloat(total).toFixed(2);
-  document.getElementById('grandTotalInput').value=total;
+document.addEventListener('DOMContentLoaded', () => {
+  const total = localStorage.getItem('grandTotal') || '0';
+  document.getElementById('grandTotalText').textContent = parseFloat(total).toFixed(2);
+  document.getElementById('grandTotalInput').value = total;
 });
 
-/* Change button text */
-const paySel=document.getElementById('payMethod');
-const btn   =document.getElementById('submitBtn');
-paySel.addEventListener('change',()=>btn.textContent=paySel.value==='online'?'Pay Now':'Place Order');
+const paySel = document.getElementById('payMethod');
+const btn    = document.getElementById('submitBtn');
+paySel.addEventListener('change', () => btn.textContent = paySel.value === 'online' ? 'Pay Now' : 'Place Order');
 
-/* Intercept form submit */
-document.getElementById('checkoutForm').addEventListener('submit',function(e){
-  const total=parseFloat(localStorage.getItem('grandTotal')||'0');
-  if(total<=0){alert('Cart is empty.');e.preventDefault();return;}
+document.getElementById('checkoutForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const form = this;
 
-  if(paySel.value==='online'){
-    e.preventDefault();                               // stop normal submit
-    document.getElementById('loader').style.display='flex';
+  const total = parseFloat(localStorage.getItem('grandTotal') || '0');
+  if (total <= 0) { alert('Cart is empty.'); return; }const name  = document.getElementById('custName').value.trim();
+  const email = document.getElementById('custEmail').value.trim();
+  const phone = document.getElementById('custPhone').value.trim();
+  const addr  = document.getElementById('custAddr').value.trim();
+  if (!name  !email  !phone || !addr) {
+    alert('Please fill all fields.');
+    return;
+  }
 
+  const loader = document.getElementById('loader');
+  loader.style.display = 'flex';
+
+  if (paySel.value === 'online') {
     PaystackPop.setup({
-      key:'pk_test_xxxxxxxxxxxxxxxxxxxxxxx',           // ← YOUR PUBLIC KEY
-      email:document.getElementById('custEmail').value.trim(),
-      amount:Math.round(total*100),
-      currency:'GHS',
-      callback: function(resp){
-        // continue with normal form POST via JS
-        document.getElementById('loader').style.display='none';
-        alert('Payment successful! Ref: '+resp.reference);
-        localStorage.removeItem('cart');
-        e.target.submit();                             // now post to PHP
+      key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxx', // ← replace with your key
+      email: email,
+      amount: Math.round(total * 100),
+      currency: 'GHS',
+      metadata: {
+        custom_fields: [
+          { display_name: "Name", value: name },
+          { display_name: "Phone", value: phone },
+          { display_name: "Address", value: addr }
+        ]
       },
-      onClose:function(){
-        document.getElementById('loader').style.display='none';
-        alert('Payment cancelled.');
+      callback: function(response) {
+        // ✅ PAYMENT SUCCESSFUL — post to PHP and redirect
+        fetch('submit_order.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams(new FormData(form))
+        }).then(() => {
+          loader.style.display = 'none';
+          alert('Payment successful!');
+          localStorage.removeItem('cart');
+          localStorage.removeItem('grandTotal');
+          window.location.href = 'thankyou.html';
+        });
+      },
+      onClose: function(){
+        loader.style.display = 'none';
+        alert('Payment was cancelled.');
       }
     }).openIframe();
+  } else {
+    // Pay on delivery
+    fetch('submit_order.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(new FormData(form))
+    }).then(() => {
+      loader.style.display = 'none';
+      alert('Order placed successfully!');
+      localStorage.removeItem('cart');
+      localStorage.removeItem('grandTotal');
+      window.location.href = 'thankyou.html';
+    });
   }
 });
 </script>
