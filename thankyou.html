@@ -1,110 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Thank You - BizMAX</title>
   <style>
-    body {
+    * {
       margin: 0;
-      font-family: 'Arial', sans-serif;
-      background: linear-gradient(135deg, #00bcd4, #009688);
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, lightblue, cyan);
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .thankyou-container {
+      background-color: rgba(0, 0, 0, 0.6);
+      border-radius: 20px;
+      padding: 40px 30px;
       color: white;
       text-align: center;
-    }
-
-    .thank-you-box {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(15px);
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      box-shadow: 0px 0px 30px rgba(0,0,0,0.3);
       max-width: 400px;
+      width: 90%;
+      backdrop-filter: blur(15px);
     }
 
-    h1 {
-      font-size: 2.5em;
+    .thankyou-container h1 {
+      font-size: 32px;
       margin-bottom: 10px;
     }
 
-    p {
-      font-size: 1.1em;
+    .thankyou-container p {
+      font-size: 18px;
+      margin-bottom: 20px;
     }
 
-    .home-btn {
-      margin-top: 25px;
+    .thankyou-container a {
       display: inline-block;
-      background-color: #ffffff;
-      color: #00796b;
+      background-color: white;
+      color: black;
+      padding: 12px 24px;
       text-decoration: none;
-      padding: 10px 20px;
-      border-radius: 10px;
+      border-radius: 25px;
       font-weight: bold;
+      transition: background-color 0.3s;
     }
 
-    .home-btn:hover {
-      background-color: #e0f2f1;
+    .thankyou-container a:hover {
+      background-color: #ddd;
+    }
+
+    footer {
+      margin-top: 30px;
+      color: white;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
-  <div class="thank-you-box">
-    <h1>Thank You! 🎉</h1>
-    <p>Your order has been received.<br>We'll contact you soon for delivery.</p>
-    <a href="BixMax home.html" class="home-btn">Return to Home</a>
+  <div class="thankyou-container">
+    <h1>🎉Thank You!🎉</h1>
+    <p>Your order has been placed successfully.</p>
+    <a href="BixMax home.html">Return to Home</a>
   </div>
-  <div id="invoice" style="background:white; padding:20px; color:black; max-width:600px; margin:auto;">
-  <h2 style="text-align:center;">BixMAX Invoice</h2>
-  <p>Date: <span id="invoice-date"></span></p>
-  <p>Customer Name: <span id="invoice-name">[Customer Name]</span></p>
-  <hr>
-  <h3>Order Summary:</h3>
-  <table style="width:100%; border-collapse: collapse;" border="1">
-    <thead>
-      <tr>
-        <th>Item</th><th>Qty</th><th>Price</th>
-      </tr>
-    </thead>
-    <tbody id="invoice-items">
-      <!-- JS will insert items here -->
-    </tbody>
-  </table>
-  <h3 style="text-align:right;">Total: $<span id="invoice-total">0.00</span></h3>
-</div>
 
-<button onclick="generateInvoice()" style="margin-top:20px;">Download Invoice PDF</button>
-  <script>
-  // Simulated data - in real case, pull from session/localStorage or Firebase
-  const order = {
-    name: "John Doe",
-    date: new Date().toLocaleDateString(),
-    total: "85.00",
-    items: [
-      { name: "Rice", qty: 2, price: 20 },
-      { name: "Pepper", qty: 3, price: 15 },
-      { name: "Onion", qty: 1, price: 15 }
-    ]
-  };
-
-  // Fill invoice data
-  document.getElementById("invoice-name").textContent = order.name;
-  document.getElementById("invoice-date").textContent = order.date;
-  document.getElementById("invoice-total").textContent = order.total;
-
-  const tbody = document.getElementById("invoice-items");
-  order.items.forEach(item => {
-    const row = <tr><td>${item.name}</td><td>${item.qty}</td><td>$${item.price}</td></tr>;
-    tbody.innerHTML += row;
-  });
-
-  function generateInvoice() {
-    const invoice = document.getElementById("invoice");
-    html2pdf().from(invoice).save(BixMAX_Invoice_${Date.now()}.pdf);
-  }
-</script>
+  <footer>
+    &copy; BixMAX 2025. All rights reserved.
+  </footer>
 </body>
 </html>
