@@ -195,6 +195,34 @@ btn.addEventListener('click', e => {
     }, 1500);
   }
 });
+
+    // After showing loader and validating fields
+const orderId = "ORD" + Date.now();
+
+const orderData = {
+  id: orderId,
+  name, email, phone, address: addr,
+  items: JSON.parse(localStorage.getItem("cart") || "[]"),
+  grandTotal: total
+};
+
+// Save order to orders.json via PHP
+fetch("save-order.php", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(orderData)
+})
+.then(res => res.json())
+.then(res => {
+  console.log(res);
+  // Then redirect to thank you page with order ID
+  window.location.href = "thankyou.html?orderId=" + orderId;
+})
+.catch(err => {
+  console.error("Saving order failed:", err);
+  alert("Could not save order. Please try again.");
+  showLoader(false);
+});
 </script>
 </body>
 </html>
