@@ -387,7 +387,7 @@ body {
 	<section class="fashion">
       <b><h1>👗Fashion</h1></b>
     <div class="fashion-grid">
-      <div align="center" class="item" data-Price="20">
+      <div align="center" class="item" data-price="20">
       <img src="pp.jpeg" alt="l">
       <h3>Labubu</h3>
       <p>$20</p>
@@ -397,7 +397,7 @@ body {
         <button onclick="updateQuantity(this, 1)">+</button>
 		</div>
 		</div>
-	        <div align="center" class="item" data-Price="20">
+	        <div align="center" class="item" data-price="20">
       <img src="pp.jpeg" alt="p">
       <h3>Purse</h3>
       <p>$20</p>
@@ -407,7 +407,7 @@ body {
         <button onclick="updateQuantity(this, 1)">+</button>
 		</div>
 		</div>
-        <div align="center" class="item" data-Price="15">
+        <div align="center" class="item" data-price="15">
       <img src="pp.jpeg" alt="bag">
       <h3>Tote bags</h3>
       <p>$15</p>
@@ -417,7 +417,7 @@ body {
         <button onclick="updateQuantity(this, 1)">+</button>
 		</div>
 		</div>
-        <div align="center" class="item" data-Price="30">
+        <div align="center" class="item" data-price="30">
       <img src="pp.jpeg" alt="shirts">
       <h3>Shirts</h3>
       <p>$30</p>
@@ -427,7 +427,7 @@ body {
         <button onclick="updateQuantity(this, 1)">+</button>
 		</div>
 		</div>
-        <div align="center" class="item" data-Price="20">
+        <div align="center" class="item" data-price="20">
       <img src="pp.jpeg" alt="sd">
       <h3>Summer dresses</h3>
       <p>$20</p>
@@ -437,7 +437,7 @@ body {
         <button onclick="updateQuantity(this, 1)">+</button>
 		</div>
 		</div>
-        <div align="center" class="item" data-Price="20">
+        <div align="center" class="item" data-price="20">
       <img src="pp.jpeg" alt="cc">
       <h3>Cuba style men chain</h3>
       <p>$20</p>
@@ -447,7 +447,7 @@ body {
         <button onclick="updateQuantity(this, 1)">+</button>
 		</div>
 		</div>
-        <div align="center" class="item" data-Price="50">
+        <div align="center" class="item" data-price="50">
       <img src="pp.jpeg" alt="sneakers">
       <h3>Sneakers</h3>
       <p>$50</p>
@@ -457,7 +457,7 @@ body {
         <button onclick="updateQuantity(this, 1)">+</button>
 		</div>
 		</div>
-        <div align="center" class="item" data-Price="25">
+        <div align="center" class="item" data-price="25">
       <img src="pp.jpeg" alt="wg">
       <h3>Women glasses</h3>
       <p>$25</p>
@@ -480,30 +480,7 @@ body {
      </div>
 
  <footer>&copy; BixMAX 2025. All rights reserved.</footer>
-<script>
-/* ─── 1.  Quantity buttons ─── */
-function updateQuantity(btn, delta) {
-  const item   = btn.closest('.item');
-  const count  = item.querySelector('.count');
-  count.textContent = Math.max(0, +count.textContent + delta);
-  updateGrandTotal();              // recalc + save every change
-}
 
-/* ─── 2.  Re-calculate total & store it ─── */
-function updateGrandTotal() {
-  let total = 0;
-  const items = document.querySelectorAll('.item');
-
-  items.forEach(it => {
-    const qty   = +it.querySelector('.count').textContent || 0;
-    const price = +it.dataset.price;
-    total += qty * price;
-  });
-
-  document.getElementById('grand-total').textContent = total.toFixed(2);
-  localStorage.setItem('grandTotal', total.toFixed(2));      // 🔥 keep in storage
-}
-</script>
 	<script>
 document.getElementById('checkoutBtn').addEventListener('click', function (event) {
   event.preventDefault(); // Stop all default behavior
@@ -554,28 +531,78 @@ function checkGrandTotal() {
   }
 }
 </script>
-	<script>
-function saveCartToStorage() {
-  const items = document.querySelectorAll('.item');
-  const cart = [];
+<script>
+/* ──────────────────────────────────────────────────────────
+   1.  Restore counts from localStorage if user returns
+─────────────────────────────────────────────────────────── */
+document.addEventListener("DOMContentLoaded", () => {
+  const savedCart = JSON.parse(localStorage.getItem("cart") || "[]");
+  savedCart.forEach(sc => {
+    // find the matching card
+    const card = [...document.querySelectorAll(".item")]
+      .find(it => it.querySelector("h3").textContent.trim() === sc.name);
+    if (card) card.querySelector(".count").textContent = sc.qty;
+  });
+  updateGrandTotal();       // show correct total on load
+});
 
-  items.forEach(item => {
-    const count = parseInt(item.querySelector('.count').textContent);
-    if (count > 0) {
+/* ──────────────────────────────────────────────────────────
+   2.  Quantity buttons
+─────────────────────────────────────────────────────────── */
+function updateQuantity(btn, delta) {
+  const card  = btn.closest(".item");
+  const count = card.querySelector(".count");
+  count.textContent = Math.max(0, +count.textContent + delta);
+  saveCartToStorage();
+  updateGrandTotal();
+}
+
+/* ──────────────────────────────────────────────────────────
+   3.  Re-calculate grand total & display
+─────────────────────────────────────────────────────────── */
+function updateGrandTotal() {
+  let total = 0;
+  document.querySelectorAll(".item").forEach(card => {
+    const qty   = +card.querySelector(".count").textContent;
+    const price = +card.dataset.price || 0;
+    total += qty * price;
+  });
+  document.getElementById("grand-total").textContent = total.toFixed(2);
+  localStorage.setItem("grandTotal", total.toFixed(2));
+}
+
+/* ──────────────────────────────────────────────────────────
+   4.  Save full cart to localStorage
+─────────────────────────────────────────────────────────── */
+function saveCartToStorage() {
+  const cart = [];
+  document.querySelectorAll(".item").forEach(card => {
+    const qty = +card.querySelector(".count").textContent;
+    if (qty > 0) {
       cart.push({
-        name: item.querySelector('h3').textContent,
-        image: item.querySelector('img').getAttribute('src'),
-        price: parseFloat(item.getAttribute('data-price')),
-        qty: count
+        name : card.querySelector("h3").textContent.trim(),
+        image: card.querySelector("img").getAttribute("src"),
+        price: +card.dataset.price,
+        qty
       });
     }
   });
-
-  localStorage.setItem('cart', JSON.stringify(cart));
+  localStorage.setItem("cart", JSON.stringify(cart));
 }
-saveCartToStorage(); // ✅ Add this line
-  updateGrandTotal();
-</script>
+
+/* ──────────────────────────────────────────────────────────
+   5.  Checkout button
+─────────────────────────────────────────────────────────── */
+document.getElementById("checkoutBtn").addEventListener("click", e => {
+  e.preventDefault();
+  const total = parseFloat(localStorage.getItem("grandTotal") || "0");
+  if (total > 0) {
+    window.location.href = "checkout.html";
+  } else {
+    alert("🛒 Your cart is empty!");
+  }
+});
+</script>	
 </body>
 	 
 </html>
