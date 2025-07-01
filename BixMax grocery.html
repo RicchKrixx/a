@@ -536,6 +536,21 @@ function checkGrandTotal(event) {
     event.preventDefault(); // Stop navigation
   }
 }
+	function updateGrandTotal() {
+  let total = 0;
+  const items = document.querySelectorAll('.item');
+
+  items.forEach(item => {
+    const count = parseInt(item.querySelector('.count').textContent);
+    const price = parseFloat(item.getAttribute('data-price'));
+    total += count * price;
+  });
+
+  document.getElementById('grand-total').textContent = total.toFixed(2);
+
+  // Save total to localStorage
+  localStorage.setItem("grandTotal", total.toFixed(2));
+}
 </script>
 	
 </body>
