@@ -57,16 +57,20 @@
   <label>Delivery Address</label>
   <textarea id="address" rows="3" placeholder="Street, City" required></textarea>
 
-  <label>Payment Method</label>
-  <select id="payment">
-    <option value="Cash on Delivery">Cash on Delivery</option>
-    <option value="Mobile Money">Mobile Money</option>
-  </select><br><br>
+  <!-- PAYMENT METHOD -->
+  <label style="margin-top:10px">Payment Method</label>
+  <select id="paymentMethod" style="width:100%;padding:10px;border-radius:8px;border:1px solid #ccc">
+    <option value="delivery">Pay on Delivery</option>
+    <option value="online">Pay Online</option>
+  </select>
 
-  <!-- Place Order Button -->
-<button id="placeOrderBtn" style="padding: 12px 24px; background-color: #1976d2; color: white; font-size: 18px; border: none; border-radius: 10px; cursor: pointer;">
-  Place Order
-</button>
+  <!-- ACTION BUTTON -->
+  <button id="checkoutBtn" style="margin-top:20px;width:100%;padding:14px;background:#1976d2;
+         color:#fff;border:none;border-radius:10px;font-size:16px;cursor:pointer">
+    Place Order
+  </button>
+</div>
+
 
 <!-- Loader (Hidden initially) -->
 <div id="loader" style="display:none; margin-top:20px; text-align:center;">
@@ -74,6 +78,23 @@
   <div class="spinner"></div>
 </div>
 </div>
+    <h2 style="text-align:center">Pay</h2>
+<!-- ----------  CHECKOUT SECTION  ---------- -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arial" />
+<div style="max-width:500px;margin:auto;background:#fff;padding:24px;border-radius:16px;
+            box-shadow:0 0 20px rgba(0,0,0,0.1);font-family:Arial">
+
+  <!-- NAME & EMAIL -->
+  <label>Name</label>
+  <input id="customerName" type="text" required style="width:100%;padding:10px;border-radius:8px;border:1px solid #ccc">
+
+  <label>Email</label>
+  <input id="customerEmail" type="email" required style="width:100%;padding:10px;border-radius:8px;border:1px solid #ccc">
+
+  <!-- GRAND TOTAL DISPLAY (populate this from your cart logic) -->
+  <h3 style="margin-top:20px">
+    Total: $<span id="grand-total">0.00</span>
+  </h3>
 
 <footer>&copy; 2025 BizMAX | All rights reserved</footer>
 
@@ -151,6 +172,57 @@ window.onload = function() {
       window.location.href = 'thankyou.html'; // Change this if your thank you page has a different name
     }, 3000);
   });
+</script>
+  
+<!-- Paystack SDK -->
+<script src="https://js.paystack.co/v1/inline.js"></script>
+
+<script>
+/* ▼ OPTIONAL: set grand-total from localStorage/cart logic  */
+document.addEventListener('DOMContentLoaded', () => {
+  const storedTotal = localStorage.getItem('grandTotal');
+  if (storedTotal) document.getElementById('grand-total').textContent = storedTotal;
+});
+
+/* ▼ Switch button label when method changes */
+const paySel = document.getElementById('paymentMethod');
+const btn    = document.getElementById('checkoutBtn');
+paySel.addEventListener('change', () => {
+  btn.textContent = paySel.value === 'online' ? 'Pay Now' : 'Place Order';
+});
+
+/* ▼ Handle click */
+btn.addEventListener('click', e => {
+  e.preventDefault();
+  const total  = parseFloat(document.getElementById('grand-total').textContent || '0');
+  if (total <= 0) return alert('Please add items to your cart.');
+
+  if (paySel.value === 'online') {
+    payWithPaystack(total);
+  } else {
+    // Pay on delivery — straight to thank-you page
+    window.location.href = 'thankyou.html';
+  }
+});
+
+/* ▼ Paystack inline pop-up */
+function payWithPaystack(amount) {
+  const email = document.getElementById('customerEmail').value.trim() || 'guest@example.com';
+  const handler = PaystackPop.setup({
+    key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxxx',   //  ←  YOUR PUBLIC KEY
+    email: email,
+    amount: amount * 100, // Paystack expects lowest currency unit
+    currency: 'GHS',      // or 'NGN', 'USD', etc.
+    callback: response => {
+      alert('Payment successful! Ref: ' + response.reference);
+      window.location.href = 'thankyou.html';
+    },
+    onClose: () => {
+      alert('Payment was not completed.');
+    }
+  });
+  handler.openIframe();
+}
 </script>
 </body>
 </html>
