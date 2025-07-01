@@ -554,6 +554,28 @@ function checkGrandTotal() {
   }
 }
 </script>
+	<script>
+function saveCartToStorage() {
+  const items = document.querySelectorAll('.item');
+  const cart = [];
+
+  items.forEach(item => {
+    const count = parseInt(item.querySelector('.count').textContent);
+    if (count > 0) {
+      cart.push({
+        name: item.querySelector('h3').textContent,
+        image: item.querySelector('img').getAttribute('src'),
+        price: parseFloat(item.getAttribute('data-price')),
+        qty: count
+      });
+    }
+  });
+
+  localStorage.setItem('cart', JSON.stringify(cart));
+}
+saveCartToStorage(); // ✅ Add this line
+  updateGrandTotal();
+</script>
 </body>
 	 
 </html>
