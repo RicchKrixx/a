@@ -49,13 +49,16 @@
 
   <!-- Customer Info -->
   <label>Full Name</label>
-  <input id="name" type="text" placeholder="e.g. John Doe" required>
+  <input id="customerName" type="email" placeholder="guest@example.com" required>
 
   <label>Phone Number</label>
-  <input id="phone" type="tel" placeholder="e.g. 055 123 4567" required>
-
+  <input id="customerPhone" type="tel" placeholder="e.g. 055 123 4567" required>
+  
+  <label>Email</label>
+  <input id="customerEmail" type="text" placeholder="e.g. John Doe" required>
+  
   <label>Delivery Address</label>
-  <textarea id="address" rows="3" placeholder="Street, City" required></textarea>
+  <textarea id="customerAddress" rows="3" placeholder="Street, City" required></textarea>
 
   <!-- PAYMENT METHOD -->
   <label style="margin-top:10px">Payment Method</label>
@@ -160,52 +163,56 @@ window.onload = function() {
 <!-- Paystack SDK -->
 <script src="https://js.paystack.co/v1/inline.js"></script>
 
+<script src="https://js.paystack.co/v1/inline.js"></script>
+
 <script>
-/* ▼ OPTIONAL: set grand-total from localStorage/cart logic  */
-document.addEventListener('DOMContentLoaded', () => {
-  const storedTotal = localStorage.getItem('grandTotal');
-  if (storedTotal) document.getElementById('grand-total').textContent = storedTotal;
-});
+document.addEventListener('DOMContentLoaded', function () {
+  const paymentSelect = document.getElementById('paymentMethod');
+  const checkoutBtn = document.getElementById('checkoutBtn');
 
-/* ▼ Switch button label when method changes */
-const paySel = document.getElementById('paymentMethod');
-const btn    = document.getElementById('checkoutBtn');
-paySel.addEventListener('change', () => {
-  btn.textContent = paySel.value === 'online' ? 'Pay Now' : 'Place Order';
-});
+  paymentSelect.addEventListener('change', () => {
+    checkoutBtn.textContent = paymentSelect.value === 'online' ? 'Pay Now' : 'Place Order';
+  });
 
-/* ▼ Handle click */
-btn.addEventListener('click', e => {
-  e.preventDefault();
-  const total  = parseFloat(document.getElementById('grand-total').textContent || '0');
-  if (total <= 0) return alert('Please add items to your cart.');
+  checkoutBtn.addEventListener('click', function (e) {
+    e.preventDefault();
 
-  if (paySel.value === 'online') {
-    payWithPaystack(total);
-  } else {
-    // Pay on delivery — straight to thank-you page
-    window.location.href = 'thankyou.html';
-  }
-});
+    const grandTotal = parseFloat(document.getElementById('grand-total').textContent || '0');
+    if (grandTotal <= 0) {
+      alert('Please add items to cart before checking out.');
+      return;
+    }
 
-/* ▼ Paystack inline pop-up */
-function payWithPaystack(amount) {
-  const email = document.getElementById('customerEmail').value.trim() || 'guest@example.com';
-  const handler = PaystackPop.setup({
-    key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxxx',   //  ←  YOUR PUBLIC KEY
-    email: email,
-    amount: amount * 100, // Paystack expects lowest currency unit
-    currency: 'GHS',      // or 'NGN', 'USD', etc.
-    callback: response => {
-      alert('Payment successful! Ref: ' + response.reference);
+    const name = document.getElementById('customerName')?.value.trim();
+    const email = document.getElementById('customerEmail')?.value.trim();
+    const phone = document.getElementById('customerPhone')?.value.trim();
+    const address = document.getElementById('customerAddress')?.value.trim();
+
+    if (!name  !email  !phone || !address) {
+      alert('Please fill in all details.');
+      return;
+    }
+
+    if (paymentSelect.value === 'online') {
+      let handler = PaystackPop.setup({
+        key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxx', // Replace with your Paystack public key
+        email: email,
+        amount: grandTotal * 100,
+        currency: 'GHS',
+        callback: function (response) {
+          alert('Payment successful! Ref: ' + response.reference);
+          window.location.href = 'thankyou.html';
+        },
+        onClose: function () {
+          alert('Payment was cancelled.');
+        }
+      });
+      handler.openIframe();
+    } else {
       window.location.href = 'thankyou.html';
-    },
-    onClose: () => {
-      alert('Payment was not completed.');
     }
   });
-  handler.openIframe();
-}
+});
 </script>
 </body>
 </html>
