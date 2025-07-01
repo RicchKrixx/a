@@ -72,14 +72,15 @@
       transform: scale(1.05);
     }
 .track-btn {
-      background-color: cyan;
       color: black;
       padding: 6px;
       border-radius: 30px;
+	border: solid 5px rgb(255, 255, 255, 0.1);
+    backdrop-filter: blur(25px);
+	box-shadow: 0px 0px 30px 20px rgb(0,0,0,0.1);
       text-decoration: none;
       font-weight: bold;
       font-size: 16px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
       transition: transform 0.3s ease, background-color 0.3s ease;
       animation: fadeIn 1s ease-out 0.9s forwards;
       opacity: 0;
@@ -168,9 +169,8 @@ html,body{height:100%;font-family:system-ui,Segoe UI,Roboto,sans-serif;overflow-
   <div class="welcome-box">
     <h1>🎉Thank You!🎉</h1>
     <p>Your order has been placed successfully.
-    <br>Order iD: <b id="orderId"></b><br>
+    <br>Order iD: <b id="orderId"></b><br><br>
     <a href="order-tracking.html" class="track-btn">Track Your Order</a></p>
-    <br>
     <a href="BixMax home.html" class="enter-btn">Return to Home</a>
   </div>
   
