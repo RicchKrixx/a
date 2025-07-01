@@ -1,151 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BizMAX | Track Your Order</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Track Order | BizMAX</title>
   <style>
-    :root {
-      --glass: #ffffff18;
-      --blur: 25px;
-      --blue: #1976d2;
-    }
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
     body {
       font-family: Arial, sans-serif;
       background: lightblue;
-      min-height: 100vh;
-      padding: 30px 20px;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
+      margin: 0;
+      padding: 20px;
     }
-    .card {
-      background: var(--glass);
-      backdrop-filter: blur(var(--blur));
-      border: 5px solid rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
-      padding: 28px;
-      width: 100%;
-      max-width: 620px;
-      box-shadow: 0 0 30px rgba(0,0,0,0.2);
-      color: #fff;
+    .track-box {
+      max-width: 500px;
+      margin: 40px auto;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 24px;
+      border-radius: 16px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
     }
-    h1 {
+    h2, h3 {
       text-align: center;
       margin-bottom: 20px;
+      color: black;
     }
     input {
       width: 100%;
-      padding: 14px;
-      border-radius: 12px;
-      border: none;
+      padding: 12px;
       font-size: 16px;
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
-    }
-    input::placeholder {
-      color: #eee;
+      border-radius: 10px;
+      border: none;
+      margin-bottom: 10px;
     }
     button {
-      margin-top: 16px;
       width: 100%;
       padding: 14px;
-      background: var(--blue);
-      color: #fff;
-      font-weight: bold;
       font-size: 16px;
-      border: none;
       border-radius: 12px;
+      background-color: #1976d2;
+      color: white;
+      border: none;
+      font-weight: bold;
       cursor: pointer;
     }
-    button:hover {
-      background: #1259a4;
-    }
     .result {
-      margin-top: 24px;
-      padding: 18px;
-      border-radius: 16px;
-      background: rgba(0,0,0,0.3);
-      border: 2px solid rgba(255,255,255,0.1);
+      margin-top: 20px;
+      color: black;
     }
-    .result h2 {
-      margin-bottom: 12px;
-      font-size: 20px;
-      border-bottom: 1px solid #fff;
-      padding-bottom: 6px;
+    .item-box {
+      background: #fff;
+      padding: 10px;
+      border-radius: 10px;
+      margin: 10px 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
-    .result p {
-      margin: 6px 0;
-      font-size: 16px;
+    .item-box img {
+      max-width: 60px;
+      vertical-align: middle;
+      border-radius: 10px;
+      margin-right: 10px;
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Track Your Order</h1>
-    <input id="orderIdInput" placeholder="Enter your Order ID" />
-    <button onclick="trackOrder()">Track Order</button>
 
-    <div id="result" class="result" style="display: none;"></div>
+  <div class="track-box">
+    <h2>Track Your Order</h2>
+    <input id="trackId" placeholder="Enter Order ID (e.g. #123456)" />
+    <button onclick="trackOrder()">Track</button>
+
+    <div class="result" id="resultBox"></div>
   </div>
 
-<script>
-async function trackOrder() {
-  const id = document.getElementById('orderIdInput').value.trim();
-  const resultBox = document.getElementById('result');
+  <script>
+    function trackOrder() {
+      const id = document.getElementById('trackId').value.trim();
+      const allOrders = JSON.parse(localStorage.getItem('orders') || '{}');
+      const order = allOrders[id];
 
-  if (!id) { alert('Please enter your Order ID'); return; }
+      const result = document.getElementById('resultBox');
+      result.innerHTML = '';
 
-  try {
-    const res = await fetch('track-order.php?id=' + encodeURIComponent(id));
-    const data = await res.json();
+      if (!order) {
+        result.innerHTML = <p style="color:red;">❌ Order not found!</p>;
+        return;
+      }
 
-    if (data.status === 'found') {
-      const o = data.order;
-      resultBox.innerHTML = 
-        <h2>Order Details</h2>
-        <p><strong>Order ID:</strong> ${o.order_id}</p>
-        <p><strong>Customer:</strong> ${o.name}</p>
-        <p><strong>Total:</strong> $${o.total}</p>
-        <p><strong>Status:</strong> ${o.status ?? 'Pending'}</p>
-        <p><strong>Date:</strong> ${o.created_at}</p>
+      result.innerHTML += 
+        <h3>Customer: ${order.name}</h3>
+        <p><b>Email:</b> ${order.email}</p>
+        <p><b>Phone:</b> ${order.phone}</p>
+        <p><b>Address:</b> ${order.address}</p>
+        <p><b>Payment:</b> ${order.payment}</p>
+        <p><b>Total Paid:</b> $${order.total}</p>
+        <h3>🛍️ Items:</h3>
       ;
-    } else {
-      resultBox.innerHTML = <h2>Order Not Found</h2><p>Please check the ID and try again.</p>;
+
+      order.items.forEach(item => {
+        result.innerHTML += 
+          <div class="item-box">
+            <img src="${item.img}" />
+            <b>${item.name}</b> - Qty: ${item.qty} x $${item.price}
+          </div>
+        ;
+      });
     }
-  } catch (err) {
-    console.error(err);
-    resultBox.innerHTML = <h2>Error</h2><p>Unable to fetch order. Try later.</p>;
-  }
+  </script>
 
-  resultBox.style.display = 'block';
-}
-<script>
-function trackOrder() {
-  const enteredId = document.getElementById("trackInput").value.trim();
-  if (!enteredId) return alert("Please enter your Order ID.");
-
-  fetch("orders.json") // Or orders.php depending on your backend
-    .then(res => res.json())
-    .then(data => {
-      const order = data.find(o => o.id === enteredId);
-      if (!order) return alert("Order not found.");
-
-      // Display order info
-      document.getElementById("result").innerHTML = 
-        <h3>Order Found</h3>
-        <p><strong>Name:</strong> ${order.name}</p>
-        <p><strong>Total:</strong> $${order.total}</p>
-        <p><strong>Status:</strong> ${order.status || 'Pending'}</p>
-      ;
-    })
-    .catch(() => alert("Error fetching order data"));
-}
-</script>
 </body>
 </html>
