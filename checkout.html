@@ -106,35 +106,16 @@
       <p style="margin-top:14px;font-size:18px;font-weight:bold">Processing…</p>
     </div>
   </div>
-
-<!-- Paystack -->
+<!-- Loader Helper & Paystack -->
 <script src="https://js.paystack.co/v1/inline.js"></script>
 
-<script>
-  // 1. Set grand total from localStorage
-  document.addEventListener('DOMContentLoaded', () => {
-    const stored = localStorage.getItem('grandTotal') || '0';
-    document.getElementById('grandTotal').textContent = parseFloat(stored).toFixed(2);
-  });
-
-  // 2. Switch button label
-  const paySel = document.getElementById('payMethod');
-  const btn = document.getElementById('actionBtn');
-  paySel.addEventListener('change', () => {
-    btn.textContent = paySel.value === 'online' ? 'Pay Now' : 'Place Order';
-  });
-
-  // 3. Show/hide loader
-  function showLoader(show) {
-    document.getElementById('loader').style.display = show ? 'flex' : 'none';
-  }
-</script>
-
-<!-- Firebase logic -->
+<!-- Firebase + Everything Inside -->
 <script type="module">
+  // Firebase Imports
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+  // Firebase Config
   const firebaseConfig = {
     apiKey: "AIzaSyDkU07SZ8xmlg8Lo4TGBQQDISh62HRCYF0",
     authDomain: "bixmax-orders.firebaseapp.com",
@@ -144,17 +125,37 @@
     appId: "1:880588466149:web:40eef55fe3aab891da710c"
   };
 
+  // Initialize
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  document.getElementById("actionBtn").addEventListener("click", async (e) => {
+  // Show grand total
+  document.addEventListener("DOMContentLoaded", () => {
+    const total = localStorage.getItem("grandTotal") || "0";
+    document.getElementById("grandTotal").textContent = parseFloat(total).toFixed(2);
+  });
+
+  // Update button label on method change
+  const paySel = document.getElementById("payMethod");
+  const btn = document.getElementById("actionBtn");
+  paySel.addEventListener("change", () => {
+    btn.textContent = paySel.value === "online" ? "Pay Now" : "Place Order";
+  });
+
+  // Loader toggle
+  function showLoader(flag) {
+    document.getElementById("loader").style.display = flag ? "flex" : "none";
+  }
+
+  // Button click
+  btn.addEventListener("click", async (e) => {
     e.preventDefault();
 
     const name = document.getElementById("custName").value.trim();
     const email = document.getElementById("custEmail").value.trim();
     const phone = document.getElementById("custPhone").value.trim();
     const addr = document.getElementById("custAddr").value.trim();
-    const method = document.getElementById("payMethod").value;
+    const method = paySel.value;
     const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
     const orderId = "BMX" + Date.now();
 
@@ -187,7 +188,7 @@
 
       if (method === "online") {
         PaystackPop.setup({
-          key: "pk_test_xxxxxxxxxxxxxxxxxxxxxxx", // replace with your key
+          key: "pk_test_xxxxxxxxxxxxxxxxxxxxxxx", // Replace this key
           email,
           amount: Math.round(grandTotal * 100),
           currency: "GHS",
@@ -222,6 +223,5 @@
     }
   });
 </script>
-
 </body>
 </html>
