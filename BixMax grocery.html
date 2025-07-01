@@ -527,43 +527,15 @@ function toggleMenu() {
 }
 </script>
 <script>
-function checkGrandTotal(event) {
-  const total = parseFloat(document.getElementById('grand-total').textContent);
-
-  if (total > 0) {
-    localStorage.setItem("grandTotal", total.toFixed(2));
-    window.location.href = "checkout.html";
-  } else {
-    alert("Your cart is empty!");
-    event.preventDefault(); // Stop navigation
-  }
-}
-	function updateGrandTotal() {
-  let total = 0;
-  const items = document.querySelectorAll('.item');
-
-  items.forEach(item => {
-    const count = parseInt(item.querySelector('.count').textContent);
-    const price = parseFloat(item.getAttribute('data-price'));
-    total += count * price;
-  });
-
-  document.getElementById('grand-total').textContent = total.toFixed(2);
-
-  // Save total to localStorage
-  localStorage.setItem("grandTotal", total.toFixed(2));
-}
-</script>
-	<script>
 function saveCartToStorage () {
-  const cart = [];
-  let total  = 0;
+  const cart  = [];
+  let   total = 0;
 
   document.querySelectorAll('.item').forEach(it => {
-    const qty  = parseInt(it.querySelector('.count').textContent || '0');
+    const qty  = +it.querySelector('.count').textContent || 0;
     if (qty > 0) {
       const name  = it.querySelector('h3').textContent;
-      const price = parseFloat(it.getAttribute('data-price'));
+      const price = +it.dataset.price;           // data-price="20"
       cart.push({ name, qty, price });
       total += qty * price;
     }
@@ -573,7 +545,12 @@ function saveCartToStorage () {
   localStorage.setItem('grandTotal', total.toFixed(2));
 }
 
-/* call saveCartToStorage() inside every + / − click handler */
+/* Call this after every + / – button */
+function updateQuantity(btn, delta){
+  const countEl = btn.parentElement.querySelector('.count');
+  countEl.textContent = Math.max(0, +countEl.textContent + delta);
+  saveCartToStorage();                //  ← keep storage in sync
+}
 </script>
 </body>
 	 
