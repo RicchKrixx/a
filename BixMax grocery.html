@@ -473,7 +473,7 @@ body {
 	         <div class="grand-total">
     <span>Total: $<span id="grand-total">0.00</span></span>
  </div>
-      <a href="admin.html" class="checkout-btn" onclick="checkGrandTotal(event)">CHECKOUT</a>
+      <a href="checkout.html" class="checkout-btn" onclick="checkGrandTotal(event)">CHECKOUT</a>
   
      </div>
 
@@ -530,7 +530,7 @@ function checkGrandTotal(event) {
 
   if (total > 0) {
     localStorage.setItem("grandTotal", total.toFixed(2));
-    window.location.href = "admin.html";
+    window.location.href = "checkout.html";
   } else {
     alert("Your cart is empty!");
     event.preventDefault(); // Stop navigation
