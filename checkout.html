@@ -160,8 +160,6 @@ btn.addEventListener('click', e => {
     total,
     date: new Date().toLocaleString()
   };
-  localStorage.setItem("latestOrder", JSON.stringify(orderData));
-  localStorage.setItem("latestOrderId", orderId);
 
   if (payment === 'online') {
     PaystackPop.setup({
@@ -194,35 +192,71 @@ btn.addEventListener('click', e => {
       window.location = 'thankyou.html';
     }, 1500);
   }
-});
+});</script>
+<!-- Firebase SDKs -->
+<script type="module">
+  // 1. Import Firebase libraries
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // After showing loader and validating fields
-const orderId = "ORD" + Date.now();
+  // 2. Your Firebase config (replace with your actual config!)
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "XXXXXXX",
+    appId: "YOUR_APP_ID"
+  };
 
-const orderData = {
-  id: orderId,
-  name, email, phone, address: addr,
-  items: JSON.parse(localStorage.getItem("cart") || "[]"),
-  grandTotal: total
-};
+  // 3. Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-// Save order to orders.json via PHP
-fetch("save-order.php", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(orderData)
-})
-.then(res => res.json())
-.then(res => {
-  console.log(res);
-  // Then redirect to thank you page with order ID
-  window.location.href = "thankyou.html?orderId=" + orderId;
-})
-.catch(err => {
-  console.error("Saving order failed:", err);
-  alert("Could not save order. Please try again.");
-  showLoader(false);
-});
+  // 4. Handle checkout
+  document.getElementById("actionBtn").addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById("custName").value.trim();
+    const email = document.getElementById("custEmail").value.trim();
+    const phone = document.getElementById("custPhone").value.trim();
+    const addr = document.getElementById("custAddr").value.trim();
+    const method = document.getElementById("payMethod").value;
+    const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
+
+    if (!name  !email  !phone || !addr) {
+      alert("Please fill all fields.");
+      return;
+    }
+
+    if (grandTotal <= 0) {
+      alert("🛒 Your cart is empty!");
+      return;
+    }
+
+    // 5. Prepare order data
+    const order = {
+      name,
+      email,
+      phone,
+      address: addr,
+      method,
+      grandTotal,
+      createdAt: serverTimestamp()
+    };
+
+    try {
+      // 6. Save order to Firestore
+      const docRef = await addDoc(collection(db, "orders"), order);
+
+      // 7. Save order ID for thank you page and tracking
+      localStorage.setItem("orderID", docRef.id);
+      localStorage.removeItem("cart"); // optional
+      window.location.href = "thankyou.html";
+    } catch (err) {
+      alert("❌ Failed to place order: " + err.message);
+    }
+  });
 </script>
 </body>
 </html>
