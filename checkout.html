@@ -4,86 +4,114 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>BizMAX | Checkout</title>
+
+<!-- ──  THEME STYLES  ── -->
 <style>
-  :root{--blue:#1976d2}
-  body{margin:0;font-family:Arial;background:lightblue;padding:20px}
-  .box{max-width:620px;margin:auto;background:#fff;padding:24px;
-       border-radius:20px;box-shadow:0 0 20px rgba(0,0,0,.12)}
-  h1,h2{margin:0 0 18px;text-align:center}
-  label{display:block;margin:12px 0 6px;font-weight:bold}
-  input,textarea,select{width:100%;padding:10px;border-radius:10px;border:1px solid #ccc}
-  .summary{background:#f7f7f7;border-radius:14px;padding:16px;margin-bottom:22px}
-  .summary p{margin:6px 0}
-  button{width:100%;padding:14px;background:var(--blue);color:#fff;border:none;
-         border-radius:12px;font-size:16px;font-weight:bold;cursor:pointer}
-  button:hover{background:#145aae}
-  #loader{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;
-          align-items:center;justify-content:center;z-index:1000}
-  .spin{width:60px;height:60px;border:7px solid #eee;border-top:7px solid var(--blue);
-        border-radius:50%;animation:spin 1s linear infinite}
+  :root{--glass:#ffffff18;--blur:25px;--blue:#1976d2}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:lightblue url("") no-repeat center/cover;
+    min-height:100vh;display:flex;justify-content:center;align-items:center;
+    padding:20px;overflow-x:hidden;
+  }
+  .card{
+    width:100%;max-width:620px;background:var(--glass);
+    border-radius:20px;padding:28px;border:5px solid rgba(255,255,255,.1);
+    backdrop-filter:blur(var(--blur));
+    box-shadow:0 0 30px rgba(0,0,0,.2);color:#fff;
+  }
+  h1,h2{text-align:center;margin-bottom:18px}
+  label{display:block;margin:14px 0 6px;font-weight:bold}
+  input,textarea,select{
+    width:100%;padding:12px;border-radius:12px;border:none;
+    background:rgba(255,255,255,.15);color:#fff
+  }
+  input::placeholder,textarea::placeholder{color:#eee}
+  .summary{
+    background:rgba(0,0,0,.25);padding:20px;border-radius:16px;
+    border:2px solid rgba(255,255,255,.15);margin-bottom:24px
+  }
+  .summary p{margin:6px 0;font-size:18px;font-weight:bold}
+  button{
+    width:100%;padding:16px;border:none;border-radius:14px;
+    font-size:18px;font-weight:bold;cursor:pointer;
+    background:var(--blue);color:#fff;transition:background .25s
+  }
+  button:hover{background:#1259a4}
+  /* Loader */
+  #loader{
+    position:fixed;inset:0;display:none;align-items:center;justify-content:center;
+    background:rgba(0,0,0,.6);z-index:1000
+  }
+  .spin{
+    width:60px;height:60px;border:7px solid #eee;
+    border-top:7px solid var(--blue);border-radius:50%;
+    animation:spin 1s linear infinite
+  }
   @keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
-  footer{text-align:center;margin-top:30px}
 </style>
 </head>
 <body>
 
-<div class="box">
+<div class="card">
   <h1>Checkout</h1>
 
+  <!-- ░░ ORDER SUMMARY (grand total only) ░░ -->
   <div class="summary">
     <h2>Order Summary</h2>
-    <div id="itemList"></div>
-    <p style="margin-top:10px;font-size:18px;font-weight:bold">
-      Total: $<span id="grandTotal">0.00</span>
-    </p>
+    <p>Total&nbsp;to&nbsp;Pay:&nbsp;$<span id="grandTotal">0.00</span></p>
   </div>
 
-  <label>Full Name</label><input id="custName"  required>
-  <label>Email</label><input id="custEmail" type="email" required>
-  <label>Phone</label><input id="custPhone" type="tel"  required>
-  <label>Address</label><textarea id="custAddr" rows="3" required></textarea>
+  <!-- ░░ CUSTOMER INPUTS ░░ -->
+  <label>Full Name</label><input id="custName" required placeholder="John Doe">
+  <label>Email</label><input id="custEmail" type="email" required placeholder="john@example.com">
+  <label>Phone Number</label><input id="custPhone" type="tel" required placeholder="055 123 4567">
+  <label>Delivery Address</label><textarea id="custAddr" rows="3" required placeholder="Street • City"></textarea>
 
+  <!-- ░░ PAYMENT ░░ -->
   <label>Payment Method</label>
-  <select id="payMethod"><option value="delivery">Pay on Delivery</option><option value="online">Pay Online</option></select>
+  <select id="payMethod">
+    <option value="delivery">Pay on Delivery</option>
+    <option value="online">Pay Online</option>
+  </select>
 
+  <!-- ░░ ACTION BUTTON ░░ -->
   <button id="actionBtn">Place Order</button>
 </div>
 
 <!-- Loader overlay -->
 <div id="loader">
-  <div style="color:#fff;text-align:center">
+  <div style="text-align:center;color:#fff">
     <div class="spin"></div>
-    <p style="margin-top:12px;font-weight:bold">Processing…</p>
+    <p style="margin-top:14px;font-size:18px;font-weight:bold">Processing…</p>
   </div>
 </div>
 
-<footer>&copy; BizMAX 2025</footer>
-
+<!-- Paystack SDK -->
 <script src="https://js.paystack.co/v1/inline.js"></script>
+
 <script>
-/* ===== 1.  Load cart & total ===== */
-const cart   = JSON.parse(localStorage.getItem('cartItems')||'[]');
-const total  = parseFloat(localStorage.getItem('grandTotal')||'0');
-document.getElementById('grandTotal').textContent = total.toFixed(2);
+/* ========== 1. Load grand total ========== */
+document.addEventListener('DOMContentLoaded',()=>{
+  const total = parseFloat(localStorage.getItem('grandTotal')||'0').toFixed(2);
+  document.getElementById('grandTotal').textContent = total;
+});
 
-const listEl = document.getElementById('itemList');
-if(cart.length){ cart.forEach(i=>listEl.insertAdjacentHTML('beforeend',<p>${i.qty} × ${i.name}</p>)); }
-else { listEl.innerHTML='<p>No items in cart.</p>'; }
+/* ========== 2. Switch button label ========== */
+const paySel = document.getElementById('payMethod');
+const btn    = document.getElementById('actionBtn');
+paySel.addEventListener('change',()=>btn.textContent = paySel.value==='online'?'Pay Now':'Place Order');
 
-/* ===== 2.  Button label switch ===== */
-const sel = document.getElementById('payMethod');
-const btn = document.getElementById('actionBtn');
-sel.addEventListener('change',()=>btn.textContent=sel.value==='online'?'Pay Now':'Place Order');
+/* ========== 3. Loader helpers ========== */
+function showLoader(flag){document.getElementById('loader').style.display = flag?'flex':'none';}
 
-/* ===== 3.  Loader helpers ===== */
-function showLoader(flag){ document.getElementById('loader').style.display = flag?'flex':'none'; }
-
-/* ===== 4.  Main click ===== */
+/* ========== 4. Main button handler ========== */
 btn.addEventListener('click', e=>{
   e.preventDefault();
-  if(total<=0){alert('Cart is empty.');return;}
 
-  const name  = document.getElementById('custName').value.trim();
+  const total = parseFloat(localStorage.getItem('grandTotal')||'0');
+  if(total<=0){alert('Cart is empty.');return;}const name  = document.getElementById('custName').value.trim();
   const email = document.getElementById('custEmail').value.trim();
   const phone = document.getElementById('custPhone').value.trim();
   const addr  = document.getElementById('custAddr').value.trim();
@@ -91,33 +119,34 @@ btn.addEventListener('click', e=>{
 
   showLoader(true);
 
-  if(sel.value==='online'){
+  if(paySel.value==='online'){
+    /* ::::: PAYSTACK ::::: */
     PaystackPop.setup({
-      key:'pk_test_xxxxxxxxxxxxxxxxxxxxxxx',       // ← YOUR PUBLIC KEY
+      key:'pk_test_xxxxxxxxxxxxxxxxxxxxxxx',      // ◄ YOUR PUBLIC KEY
       email, amount:Math.round(total*100), currency:'GHS',
       metadata:{custom_fields:[
-        {display_name:'Name', value:name},
+        {display_name:'Name',value:name},
         {display_name:'Phone',value:phone},
         {display_name:'Address',value:addr}
       ]},
-      callback: r=>{
-        alert('Payment success! Ref: '+r.reference);
-        localStorage.removeItem('cart');           // clear cart
+      callback:r=>{
+        alert('Payment successful! Ref: '+r.reference);
+        localStorage.removeItem('cart');          // clear cart if you saved it
         window.location='thankyou.html';
       },
-      onClose: ()=>{
+      onClose:()=>{
         showLoader(false);
-        alert('Payment cancelled.');
+        alert('Payment was cancelled.');
       }
     }).openIframe();
 
   }else{
     /* Pay on delivery */
     setTimeout(()=>{
-      alert('Order placed! We will contact you.');
+      alert('Order placed successfully!'); 
       localStorage.removeItem('cart');
       window.location='thankyou.html';
-    },1200);
+    },1500);
   }
 });
 </script>
