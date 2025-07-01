@@ -5,13 +5,12 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>BizMAX | Checkout</title>
 
-<!-- ──  THEME STYLES  ── -->
 <style>
   :root{--glass:#ffffff18;--blur:25px;--blue:#1976d2}
   *{box-sizing:border-box;margin:0;padding:0}
   body{
     font-family:Arial,Helvetica,sans-serif;
-    background:lightblue url("") no-repeat center/cover;
+    background:lightblue;
     min-height:100vh;display:flex;justify-content:center;align-items:center;
     padding:20px;overflow-x:hidden;
   }
@@ -57,26 +56,26 @@
 <div class="card">
   <h1>Checkout</h1>
 
-  <!-- ░░ ORDER SUMMARY (grand total only) ░░ -->
+  <!-- Order Summary -->
   <div class="summary">
     <h2>Order Summary</h2>
     <p>Total&nbsp;to&nbsp;Pay:&nbsp;$<span id="grandTotal">0.00</span></p>
   </div>
 
-  <!-- ░░ CUSTOMER INPUTS ░░ -->
-  <label>Full Name</label><input id="custName" required placeholder="John Doe">
-  <label>Email</label><input id="custEmail" type="email" required placeholder="john@example.com">
-  <label>Phone Number</label><input id="custPhone" type="tel" required placeholder="055 123 4567">
-  <label>Delivery Address</label><textarea id="custAddr" rows="3" required placeholder="Street • City"></textarea>
+  <!-- Customer inputs -->
+  <label>Full Name</label><input id="custName" placeholder="John Doe" required>
+  <label>Email</label><input id="custEmail" type="email" placeholder="john@example.com" required>
+  <label>Phone Number</label><input id="custPhone" type="tel" placeholder="055 123 4567" required>
+  <label>Delivery Address</label><textarea id="custAddr" rows="3" placeholder="Street • City" required></textarea>
 
-  <!-- ░░ PAYMENT ░░ -->
+  <!-- Payment -->
   <label>Payment Method</label>
   <select id="payMethod">
     <option value="delivery">Pay on Delivery</option>
     <option value="online">Pay Online</option>
   </select>
 
-  <!-- ░░ ACTION BUTTON ░░ -->
+  <!-- Action -->
   <button id="actionBtn">Place Order</button>
 </div>
 
@@ -88,65 +87,65 @@
   </div>
 </div>
 
-<!-- Paystack SDK -->
+<!-- Paystack -->
 <script src="https://js.paystack.co/v1/inline.js"></script>
 
 <script>
-/* ========== 1. Load grand total ========== */
+/* 1. Load grand total */
 document.addEventListener('DOMContentLoaded',()=>{
-  const total = parseFloat(localStorage.getItem('grandTotal')||'0').toFixed(2);
-  document.getElementById('grandTotal').textContent = total;
+  const stored = localStorage.getItem('grandTotal') || '0';
+  document.getElementById('grandTotal').textContent = parseFloat(stored).toFixed(2);
 });
 
-/* ========== 2. Switch button label ========== */
+/* 2. Switch button text */
 const paySel = document.getElementById('payMethod');
 const btn    = document.getElementById('actionBtn');
-paySel.addEventListener('change',()=>btn.textContent = paySel.value==='online'?'Pay Now':'Place Order');
+paySel.addEventListener('change',()=> btn.textContent = paySel.value==='online' ? 'Pay Now' : 'Place Order');
 
-/* ========== 3. Loader helpers ========== */
-function showLoader(flag){document.getElementById('loader').style.display = flag?'flex':'none';}
+/* 3. Loader helper */
+function showLoader(show){ document.getElementById('loader').style.display = show?'flex':'none'; }
 
-/* ========== 4. Main button handler ========== */
+/* 4. Main handler */
 btn.addEventListener('click', e=>{
   e.preventDefault();
 
-  const total = parseFloat(localStorage.getItem('grandTotal')||'0');
-  if(total<=0){alert('Cart is empty.');return;}const name  = document.getElementById('custName').value.trim();
+  const total = parseFloat(localStorage.getItem('grandTotal') || '0');
+  if (total <= 0) { alert('Cart is empty.'); return; }const name  = document.getElementById('custName').value.trim();
   const email = document.getElementById('custEmail').value.trim();
   const phone = document.getElementById('custPhone').value.trim();
   const addr  = document.getElementById('custAddr').value.trim();
-  if(!name!email!phone||!addr){alert('Please fill all details.');return;}
+  if (!(name && email && phone && addr)) { alert('Please fill all details.'); return; }
 
   showLoader(true);
 
-  if(paySel.value==='online'){
-    /* ::::: PAYSTACK ::::: */
+  if (paySel.value === 'online') {
     PaystackPop.setup({
-      key:'pk_test_xxxxxxxxxxxxxxxxxxxxxxx',      // ◄ YOUR PUBLIC KEY
-      email, amount:Math.round(total*100), currency:'GHS',
+      key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxx',     // ← YOUR PUBLIC KEY
+      email: email,
+      amount: Math.round(total * 100),            // lower unit
+      currency: 'GHS',
       metadata:{custom_fields:[
-        {display_name:'Name',value:name},
-        {display_name:'Phone',value:phone},
-        {display_name:'Address',value:addr}
+        {display_name:'Name',  value:name},
+        {display_name:'Phone', value:phone},
+        {display_name:'Address', value:addr}
       ]},
-      callback:r=>{
-        alert('Payment successful! Ref: '+r.reference);
-        localStorage.removeItem('cart');          // clear cart if you saved it
+      callback: function(resp){
+        alert('Payment successful! Ref: ' + resp.reference);
+        localStorage.removeItem('cart');
         window.location='thankyou.html';
       },
-      onClose:()=>{
+      onClose: function(){
         showLoader(false);
         alert('Payment was cancelled.');
       }
     }).openIframe();
 
-  }else{
-    /* Pay on delivery */
+  } else {
     setTimeout(()=>{
-      alert('Order placed successfully!'); 
+      alert('Order placed successfully!');
       localStorage.removeItem('cart');
       window.location='thankyou.html';
-    },1500);
+    }, 1500);
   }
 });
 </script>
