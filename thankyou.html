@@ -64,7 +64,7 @@
       transition: transform 0.3s ease, background-color 0.3s ease;
       animation: fadeIn 1s ease-out 0.9s forwards;
       opacity: 0;
-      margin-bottom: 5px;
+      margin-top: 5px;
     }
 
     .enter-btn:hover {
@@ -168,7 +168,7 @@ html,body{height:100%;font-family:system-ui,Segoe UI,Roboto,sans-serif;overflow-
   <div class="welcome-box">
     <h1>🎉Thank You!🎉</h1>
     <p>Your order has been placed successfully.
-    <br>Order iD: <strong id="orderIdDisplay"></strong></p>
+    <br>Order iD: <b id="orderId"></b></p>
     <a href="order-tracking.html" class="track-btn">Track Your Order</a>
     <br>
     <a href="BixMax home.html" class="enter-btn">Return to Home</a>
@@ -203,14 +203,13 @@ setInterval(cycleColors, period);
 
 
   </script>
-  <!-- ✅ Thank You Page (Fix Order ID) --><script>
-// Show the last order ID from localStorage
-window.addEventListener("DOMContentLoaded", () => {
-  const orderId = localStorage.getItem("lastOrderId");
-  if (orderId) {
-    document.getElementById("orderIdDisplay").textContent = orderId;
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const order = JSON.parse(localStorage.getItem('latestOrder'));
+  if (order && order.id) {
+    document.getElementById('orderId').textContent = order.id;
   } else {
-    document.getElementById("orderIdDisplay").textContent = "Unavailable";
+    document.getElementById('orderId').textContent = "Unavailable";
   }
 });
 </script>
