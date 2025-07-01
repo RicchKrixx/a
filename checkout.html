@@ -107,121 +107,118 @@
     </div>
   </div>
 
-  <script src="https://js.paystack.co/v1/inline.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const stored = localStorage.getItem('grandTotal') || '0';
-      document.getElementById('grandTotal').textContent = parseFloat(stored).toFixed(2);
-    });
+<!-- Paystack -->
+<script src="https://js.paystack.co/v1/inline.js"></script>
 
-    const paySel = document.getElementById('payMethod');
-    const btn = document.getElementById('actionBtn');
-    paySel.addEventListener('change', () => btn.textContent = paySel.value === 'online' ? 'Pay Now' : 'Place Order');
+<script>
+  // 1. Set grand total from localStorage
+  document.addEventListener('DOMContentLoaded', () => {
+    const stored = localStorage.getItem('grandTotal') || '0';
+    document.getElementById('grandTotal').textContent = parseFloat(stored).toFixed(2);
+  });
 
-    function showLoader(show) {
-      document.getElementById('loader').style.display = show ? 'flex' : 'none';
-    }
-   
-  </script>
- <!-- ===== Firebase + Paystack unified checkout script ===== -->
+  // 2. Switch button label
+  const paySel = document.getElementById('payMethod');
+  const btn = document.getElementById('actionBtn');
+  paySel.addEventListener('change', () => {
+    btn.textContent = paySel.value === 'online' ? 'Pay Now' : 'Place Order';
+  });
+
+  // 3. Show/hide loader
+  function showLoader(show) {
+    document.getElementById('loader').style.display = show ? 'flex' : 'none';
+  }
+</script>
+
+<!-- Firebase logic -->
 <script type="module">
-  /* -----------------------------------------------
-     1.  Firebase SDK imports
-  ------------------------------------------------- */
-  import { initializeApp }                                   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  /* -----------------------------------------------
-     2.  YOUR Firebase config  (replace if different)
-  ------------------------------------------------- */
   const firebaseConfig = {
-    apiKey:            "AIzaSyDkU07SZ8xmlg8Lo4TGBQQDISh62HRCYF0",
-    authDomain:        "bixmax-orders.firebaseapp.com",
-    projectId:         "bixmax-orders",
-    storageBucket:     "bixmax-orders.appspot.com",
+    apiKey: "AIzaSyDkU07SZ8xmlg8Lo4TGBQQDISh62HRCYF0",
+    authDomain: "bixmax-orders.firebaseapp.com",
+    projectId: "bixmax-orders",
+    storageBucket: "bixmax-orders.appspot.com",
     messagingSenderId: "880588466149",
-    appId:             "1:880588466149:web:40eef55fe3aab891da710c"
+    appId: "1:880588466149:web:40eef55fe3aab891da710c"
   };
 
-  /* -----------------------------------------------
-     3.  Init Firebase
-  ------------------------------------------------- */
   const app = initializeApp(firebaseConfig);
-  const db  = getFirestore(app);
+  const db = getFirestore(app);
 
-  /* -----------------------------------------------
-     4.  Helpers
-  ------------------------------------------------- */
-  const showLoader = (flag) => { document.getElementById("loader").style.display = flag ? "flex" : "none"; };
-
-  /* -----------------------------------------------
-     5.  Main checkout handler
-  ------------------------------------------------- */
   document.getElementById("actionBtn").addEventListener("click", async (e) => {
     e.preventDefault();
 
-    /* ---- read form ---- */
-    const name   = document.getElementById("custName").value.trim();
-    const email  = document.getElementById("custEmail").value.trim();
-    const phone  = document.getElementById("custPhone").value.trim();
-    const addr   = document.getElementById("custAddr").value.trim();
+    const name = document.getElementById("custName").value.trim();
+    const email = document.getElementById("custEmail").value.trim();
+    const phone = document.getElementById("custPhone").value.trim();
+    const addr = document.getElementById("custAddr").value.trim();
     const method = document.getElementById("payMethod").value;
     const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
-    const cartItems  = JSON.parse(localStorage.getItem("cart") || "[]");   // ← items saved from grocery page
+    const orderId = "BMX" + Date.now();
 
-    if (!name  !email  !phone || !addr) { alert("Please fill all fields"); return; }
-    if (grandTotal <= 0)                 { alert("🛒 Cart empty"); return; }
+    if (!name  !email  !phone || !addr) {
+      alert("Please fill all fields.");
+      return;
+    }
+
+    if (grandTotal <= 0) {
+      alert("🛒 Your cart is empty!");
+      return;
+    }
 
     showLoader(true);
 
-    /* ---- build order object ---- */
     const order = {
-      name , email , phone ,
-      address   : addr,
-      payment   : method,
+      id: orderId,
+      name,
+      email,
+      phone,
+      address: addr,
+      method,
       grandTotal,
-      items     : cartItems,        // full list for admin
-      createdAt : serverTimestamp()
+      createdAt: serverTimestamp()
     };
 
     try {
-      /* ---- save to Firestore ---- */
-      const doc = await addDoc(collection(db, "orders"), order);
-      const orderId = doc.id;                      // Firestore-generated ID
-      localStorage.setItem("orderID", orderId);    // show on thank-you
+      const docRef = await addDoc(collection(db, "orders"), order);
+      localStorage.setItem("orderID", docRef.id);
 
-      /* ---- continue based on payment method ---- */
       if (method === "online") {
-        /* ----- Paystack flow ----- */
         PaystackPop.setup({
-          key: "pk_test_xxxxxxxxxxxxxxxxxxxxxx",   // ← your public key
+          key: "pk_test_xxxxxxxxxxxxxxxxxxxxxxx", // replace with your key
           email,
-          amount  : Math.round(grandTotal * 100),
+          amount: Math.round(grandTotal * 100),
           currency: "GHS",
           metadata: {
             custom_fields: [
-              { display_name: "Order ID", value: orderId },
-              { display_name: "Name",      value: name }
+              { display_name: "Name", value: name },
+              { display_name: "Phone", value: phone },
+              { display_name: "Address", value: addr },
+              { display_name: "Order ID", value: orderId }
             ]
           },
-          callback: ref => {
-            alert("Payment successful! Ref: " + ref.reference);
+          callback: function (response) {
+            alert("Payment successful! Ref: " + response.reference);
             localStorage.removeItem("cart");
-            window.location = "thankyou.html";
+            window.location.href = "thankyou.html";
           },
-          onClose: () => { showLoader(false); alert("Payment cancelled."); }
+          onClose: function () {
+            showLoader(false);
+            alert("Payment was cancelled.");
+          }
         }).openIframe();
-
       } else {
-        /* ----- Pay on Delivery flow ----- */
         setTimeout(() => {
-          alert("Order placed! (Pay on delivery)");
+          alert("Order placed successfully!");
           localStorage.removeItem("cart");
-          window.location = "thankyou.html";
+          window.location.href = "thankyou.html";
         }, 1200);
-      }} catch (err) {
+      }
+    } catch (err) {
       showLoader(false);
-      alert("❌ Could not save order: " + err.message);
+      alert("❌ Failed to place order: " + err.message);
     }
   });
 </script>
