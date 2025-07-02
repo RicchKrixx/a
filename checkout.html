@@ -214,5 +214,11 @@
   // 4. Initial label update
   btn.textContent = paySel.value === "online" ? "Pay Now" : "Place Order";
 </script>
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const stored = localStorage.getItem('grandTotal') || '0';
+    document.getElementById('grandTotal').textContent = parseFloat(stored).toFixed(2);
+  });
+</script>
 </body>
 </html>
