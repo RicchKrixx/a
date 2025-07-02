@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -99,19 +98,12 @@
     </select>
     <br>
     <button id="actionBtn">Place Order</button>
-  </div>
-
-  <div id="loader">
+  </div>  <div id="loader">
     <div style="text-align:center;color:#fff">
       <div class="spin"></div>
       <p style="margin-top:14px;font-size:18px;font-weight:bold">Processing…</p>
     </div>
-  </div>
-<!-- Paystack -->
-<script src="https://js.paystack.co/v1/inline.js"></script>
-
-<!-- Firebase + Logic -->
-<script type="module">
+  </div><script src="https://js.paystack.co/v1/inline.js"></script><script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -125,9 +117,7 @@
   };
 
   const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  document.getElementById("actionBtn").addEventListener("click", async (e) => {
+  const db = getFirestore(app);document.getElementById("actionBtn").addEventListener("click", async (e) => {
     e.preventDefault();
 
     const name = document.getElementById("custName").value.trim();
@@ -149,7 +139,6 @@
     }
 
     const orderId = "BMX" + Date.now();
-
     const order = {
       id: orderId,
       name,
@@ -159,43 +148,35 @@
       method,
       grandTotal,
       createdAt: serverTimestamp(),
-      items: cart // include full item info
+      items: cart
     };
+
+    document.getElementById("loader").style.display = "flex";
 
     try {
       const docRef = await addDoc(collection(db, "orders"), order);
-
-      localStorage.setItem("orderID", docRef.id); // Firestore ID (optional)
-      localStorage.setItem("lastOrderID", orderId); // our custom ID for thankyou & tracking
+      localStorage.setItem("orderID", docRef.id);
+      localStorage.setItem("lastOrderID", orderId);
       localStorage.removeItem("cart");
       window.location.href = "thankyou.html";
     } catch (err) {
       alert("❌ Failed to place order: " + err.message);
+    } finally {
+      document.getElementById("loader").style.display = "none";
     }
   });
+</script><script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const total = parseFloat(localStorage.getItem("grandTotal") || "0");
+    document.getElementById("grandTotal").textContent = total.toFixed(2);
 
-  // 4. Initial label update
-  btn.textContent = paySel.value === "online" ? "Pay Now" : "Place Order";
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const total = parseFloat(localStorage.getItem('grandTotal') || '0');
-  document.getElementById('grandTotal').textContent = total.toFixed(2);
-});
-</script>
-  <script>
-  const payMethod = document.getElementById("payMethod");
-  const actionBtn = document.getElementById("actionBtn");
-
-  // Update button text based on selected payment method
-  payMethod.addEventListener("change", () => {
+    const payMethod = document.getElementById("payMethod");
+    const actionBtn = document.getElementById("actionBtn");
     actionBtn.textContent = payMethod.value === "online" ? "Pay Now" : "Place Order";
-  });
 
-  // Set the initial text based on default selection
-  window.addEventListener("DOMContentLoaded", () => {
-    actionBtn.textContent = payMethod.value === "online" ? "Pay Now" : "Place Order";
+    payMethod.addEventListener("change", () => {
+      actionBtn.textContent = payMethod.value === "online" ? "Pay Now" : "Place Order";
+    });
   });
-</script>
-</body>
+</script></body>
 </html>
