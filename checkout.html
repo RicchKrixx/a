@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -98,112 +99,96 @@
     </select>
     <br>
     <button id="actionBtn">Place Order</button>
-  </div>  <div id="loader">
+  </div>
+
+  <div id="loader">
     <div style="text-align:center;color:#fff">
       <div class="spin"></div>
       <p style="margin-top:14px;font-size:18px;font-weight:bold">Processing…</p>
     </div>
   </div>
+
+  <!-- Paystack -->
   <script src="https://js.paystack.co/v1/inline.js"></script>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  <!-- Firebase + Logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDkU07SZ8xmlg8Lo4TGBQQDISh62HRCYF0",
-  authDomain: "bixmax-orders.firebaseapp.com",
-  projectId: "bixmax-orders",
-  storageBucket: "bixmax-orders.appspot.com",
-  messagingSenderId: "880588466149",
-  appId: "1:880588466149:web:40eef55fe3aab891da710c"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-document.addEventListener("DOMContentLoaded", () => {
-  const actionBtn = document.getElementById("actionBtn");
-  const payMethod = document.getElementById("payMethod");
-
-  // Update total display
-  const total = parseFloat(localStorage.getItem("grandTotal") || "0");
-  document.getElementById("grandTotal").textContent = total.toFixed(2);
-
-  // Update button text initially
-  actionBtn.textContent = payMethod.value === "online" ? "Pay Now" : "Place Order";
-
-  // Change button label on selection change
-  payMethod.addEventListener("change", () => {
-    actionBtn.textContent = payMethod.value === "online" ? "Pay Now" : "Place Order";
-  });
-
-  actionBtn.addEventListener("click", async (e) => {
-    e.preventDefault();
-
-    const name = document.getElementById("custName").value.trim();
-    const email = document.getElementById("custEmail").value.trim();
-    const phone = document.getElementById("custPhone").value.trim();
-    const addr = document.getElementById("custAddr").value.trim();
-    const method = payMethod.value;
-    const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
-    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-
-    if (!name  !email  !phone || !addr) {
-      alert("Please fill all fields.");
-      return;
-    }
-
-    if (grandTotal <= 0 || cart.length === 0) {
-      alert("🛒 Your cart is empty!");
-      return;
-    }
-
-    // Show loader
-    document.getElementById("loader").style.display = "flex";
-
-    const orderId = "BMX" + Date.now();
-
-    const order = {
-      id: orderId,
-      name,
-      email,
-      phone,
-      address: addr,
-      method,
-      grandTotal,
-      createdAt: serverTimestamp(),
-      items: cart
+    const firebaseConfig = {
+      apiKey: "AIzaSyDkU07SZ8xmlg8Lo4TGBQQDISh62HRCYF0",
+      authDomain: "bixmax-orders.firebaseapp.com",
+      projectId: "bixmax-orders",
+      storageBucket: "bixmax-orders.appspot.com",
+      messagingSenderId: "880588466149",
+      appId: "1:880588466149:web:40eef55fe3aab891da710c"
     };
 
-    try {
-      const docRef = await addDoc(collection(db, "orders"), order);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);document.addEventListener("DOMContentLoaded", () => {
+      const actionBtn = document.getElementById("actionBtn");
+      const payMethod = document.getElementById("payMethod");
 
-      localStorage.setItem("orderID", docRef.id);
-      localStorage.setItem("lastOrderID", orderId);
-      localStorage.removeItem("cart");
-
-      window.location.href = "thankyou.html";
-    } catch (err) {
-      alert("❌ Failed to place order: " + err.message);
-      document.getElementById("loader").style.display = "none";
-    }
-  });
-});
-</script>
-  
-  <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const total = parseFloat(localStorage.getItem("grandTotal") || "0");
-    document.getElementById("grandTotal").textContent = total.toFixed(2);
-
-    const payMethod = document.getElementById("payMethod");
-    const actionBtn = document.getElementById("actionBtn");
-    actionBtn.textContent = payMethod.value === "online" ? "Pay Now" : "Place Order";
-
-    payMethod.addEventListener("change", () => {
+      // Show correct button label
       actionBtn.textContent = payMethod.value === "online" ? "Pay Now" : "Place Order";
+
+      payMethod.addEventListener("change", () => {
+        actionBtn.textContent = payMethod.value === "online" ? "Pay Now" : "Place Order";
+      });
+
+      // Show total
+      const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
+      document.getElementById("grandTotal").textContent = grandTotal.toFixed(2);
+
+      // Main button click
+      actionBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById("custName").value.trim();
+        const email = document.getElementById("custEmail").value.trim();
+        const phone = document.getElementById("custPhone").value.trim();
+        const addr = document.getElementById("custAddr").value.trim();
+        const method = payMethod.value;
+        const total = parseFloat(localStorage.getItem("grandTotal") || "0");
+        const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+        if (!name  !email  !phone || !addr) {
+          alert("Please fill all fields.");
+          return;
+        }
+
+        if (total <= 0 || cart.length === 0) {
+          alert("🛒 Your cart is empty!");
+          return;
+        }
+
+        document.getElementById("loader").style.display = "flex";
+        const orderId = "BMX" + Date.now();
+
+        const order = {
+          id: orderId,
+          name,
+          email,
+          phone,
+          address: addr,
+          method,
+          grandTotal: total,
+          createdAt: serverTimestamp(),
+          items: cart
+        };
+
+        try {
+          const docRef = await addDoc(collection(db, "orders"), order);
+          localStorage.setItem("lastOrderID", orderId);
+          localStorage.removeItem("cart");
+          window.location.href = "thankyou.html";
+        } catch (err) {
+          alert("❌ Order failed: " + err.message);
+          document.getElementById("loader").style.display = "none";
+        }
+      });
     });
-  });
-</script></body>
+  </script>
+</body>
 </html>
