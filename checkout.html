@@ -134,10 +134,6 @@
   const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
   document.getElementById("grandTotal").textContent = grandTotal.toFixed(2);
 
-  // 2. Change button label based on payment method
-  paySel.addEventListener("change", () => {
-    btn.textContent = paySel.value === "online" ? "Pay Now" : "Place Order";
-  });
 
   // 3. Button click handler
   btn.addEventListener("click", async (e) => {
@@ -218,6 +214,20 @@
   document.addEventListener('DOMContentLoaded', () => {
     const stored = localStorage.getItem('grandTotal') || '0';
     document.getElementById('grandTotal').textContent = parseFloat(stored).toFixed(2);
+  });
+</script>
+  <script>
+  const payMethod = document.getElementById("payMethod");
+  const actionBtn = document.getElementById("actionBtn");
+
+  // Update button text based on selected payment method
+  payMethod.addEventListener("change", () => {
+    actionBtn.textContent = payMethod.value === "online" ? "Pay Now" : "Place Order";
+  });
+
+  // Set the initial text based on default selection
+  window.addEventListener("DOMContentLoaded", () => {
+    actionBtn.textContent = payMethod.value === "online" ? "Pay Now" : "Place Order";
   });
 </script>
 </body>
