@@ -97,6 +97,7 @@
       <option value="delivery">Pay on Delivery</option>
       <option value="online">Pay Online</option>
     </select>
+    <br>
     <button id="actionBtn">Place Order</button>
   </div>
 
@@ -126,35 +127,27 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  const paySel = document.getElementById("payMethod");
-  const btn = document.getElementById("actionBtn");
-  const loader = document.getElementById("loader");
-
-  // 1. Show grand total
-  const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
-  document.getElementById("grandTotal").textContent = grandTotal.toFixed(2);
-
-
-  // 3. Button click handler
-  btn.addEventListener("click", async (e) => {
+  document.getElementById("actionBtn").addEventListener("click", async (e) => {
     e.preventDefault();
+
     const name = document.getElementById("custName").value.trim();
     const email = document.getElementById("custEmail").value.trim();
     const phone = document.getElementById("custPhone").value.trim();
     const addr = document.getElementById("custAddr").value.trim();
-    const method = paySel.value;
+    const method = document.getElementById("payMethod").value;
+    const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
     if (!name  !email  !phone || !addr) {
       alert("Please fill all fields.");
       return;
     }
 
-    if (grandTotal <= 0) {
-      alert("Cart is empty.");
+    if (grandTotal <= 0 || cart.length === 0) {
+      alert("🛒 Your cart is empty!");
       return;
     }
 
-    loader.style.display = "flex";
     const orderId = "BMX" + Date.now();
 
     const order = {
@@ -165,45 +158,19 @@
       address: addr,
       method,
       grandTotal,
-      createdAt: serverTimestamp()
+      createdAt: serverTimestamp(),
+      items: cart // include full item info
     };
 
     try {
       const docRef = await addDoc(collection(db, "orders"), order);
-      localStorage.setItem("orderID", docRef.id);
 
-      if (method === "online") {
-        PaystackPop.setup({
-          key: "pk_test_xxxxxxxxxxxxxxxxxxxxxxx", // REPLACE with your public key
-          email: email,
-          amount: Math.round(grandTotal * 100),
-          currency: "GHS",
-          metadata: {
-            custom_fields: [
-              { display_name: "Name", value: name },
-              { display_name: "Phone", value: phone },
-              { display_name: "Address", value: addr },
-              { display_name: "Order ID", value: orderId }
-            ]
-          },
-          callback: function (response) {
-            localStorage.removeItem("cart");
-            window.location.href = "thankyou.html";
-          },
-          onClose: function () {
-            loader.style.display = "none";
-            alert("Payment was cancelled.");
-          }
-        }).openIframe();
-      } else {
-        setTimeout(() => {
-          localStorage.removeItem("cart");
-          window.location.href = "thankyou.html";
-        }, 1200);
-      }
+      localStorage.setItem("orderID", docRef.id); // Firestore ID (optional)
+      localStorage.setItem("lastOrderID", orderId); // our custom ID for thankyou & tracking
+      localStorage.removeItem("cart");
+      window.location.href = "thankyou.html";
     } catch (err) {
-      loader.style.display = "none";
-      alert("❌ Failed to save order: " + err.message);
+      alert("❌ Failed to place order: " + err.message);
     }
   });
 
