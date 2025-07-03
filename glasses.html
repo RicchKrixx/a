@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BizMAX | Glasses</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: lightblue;
+    }
+    header {
+      background: #1976d2;
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .cart-icon {
+      position: relative;
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .cart-icon span {
+      position: absolute;
+      top: -8px;
+      right: -10px;
+      background: red;
+      color: white;
+      font-size: 13px;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+    h1 {
+      text-align: center;
+      margin: 20px 0;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+      padding: 20px;
+    }
+    .item {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 12px;
+      text-align: center;
+    }
+    .item img {
+      max-width: 100%;
+      border-radius: 10px;
+      height: 150px;
+      object-fit: cover;
+    }
+    .item h3 {
+      margin: 10px 0 4px;
+    }
+    .item p {
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    .item button {
+      padding: 8px 16px;
+      background: #1976d2;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h2>👓 Glasses</h2>
+    <div class="cart-icon" onclick="window.location.href='cart.html'">
+      🛒 <span id="cart-count">0</span>
+    </div>
+  </header>
+
+  <h1>Women’s Glasses</h1>
+  <div class="grid" id="productGrid"></div>
+
+  <script>
+    const products = [
+      { name: "Pink Frame", price: 25, image: "pp.jpeg" },
+      { name: "Classic Black", price: 30, image: "pp.jpeg" },
+      { name: "Round Gold", price: 35, image: "pp.jpeg" },
+      { name: "Oversized Square", price: 28, image: "pp.jpeg" },
+      { name: "Transparent Blue", price: 22, image: "pp.jpeg" }
+    ];
+
+    const grid = document.getElementById("productGrid");
+    const cartCount = document.getElementById("cart-count");
+
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      cartCount.textContent = cart.reduce((sum, item) => sum + item.qty, 0);
+    }
+
+    function addToCart(product) {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const index = cart.findIndex(i => i.name === product.name);
+      if (index > -1) {
+        cart[index].qty += 1;
+      } else {
+        cart.push({ ...product, qty: 1 });
+      }
+      localStorage.setItem("cart", JSON.stringify(cart));
+      updateCartCount();
+      alert(${product.name} added to cart ✅);
+    }
+
+    products.forEach(product => {
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = 
+        <img src="${product.image}" alt="${product.name}" />
+        <h3>${product.name}</h3>
+        <p>$${product.price}</p>
+        <button onclick='addToCart(${JSON.stringify(product)})'>Add to Cart</button>
+      ;
+      grid.appendChild(div);
+    });
+
+    updateCartCount();
+  </script>
+</body>
+</html>
