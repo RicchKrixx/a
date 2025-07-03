@@ -1,135 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Receipt | BixMAX</title>
   <style>
-    body {
-      background: lightblue;
-      font-family: Arial, sans-serif;
-      padding: 30px;
-      color: #000;
+    body{
+      background:lightblue;
+      font-family:Arial,Helvetica,sans-serif;
+      margin:0;
+      padding:30px 15px;
+      display:flex;
+      justify-content:center;
     }
-
-    .receipt {
-      background: white;
-      border-radius: 20px;
-      padding: 24px;
-      max-width: 600px;
-      margin: auto;
-      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    .receipt{
+      width:100%;max-width:650px;
+      background:white;
+      border-radius:20px;
+      padding:28px;
+      box-shadow:0 0 25px rgba(0,0,0,0.25);
     }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #1976d2;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 20px;
-    }
-
-    th, td {
-      padding: 10px;
-      border-bottom: 1px solid #ccc;
-      text-align: left;
-    }
-
-    th {
-      background: #f0f0f0;
-    }
-
-    .info {
-      margin-bottom: 20px;
-      font-size: 15px;
-    }
-
-    .total {
-      font-size: 18px;
-      font-weight: bold;
-      text-align: right;
-    }
-
-    .order-id {
-      text-align: center;
-      font-weight: bold;
-      margin-bottom: 20px;
-      color: #333;
-    }
+    h2{text-align:center;margin:0 0 18px;color:#1976d2}
+    .order-id{font-weight:bold;text-align:center;margin-bottom:14px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px;border-bottom:1px solid #ddd;text-align:left;font-size:15px}
+    th{background:#f0f0f0}
+    .total{font-weight:bold;text-align:right;margin-top:18px;font-size:18px}
+    .info p{margin:4px 0}
+    .notfound{color:red;text-align:center;font-weight:bold}
   </style>
 </head>
 <body>
-  <div class="receipt">
+  <div class="receipt" id="receiptBox">
     <h2>BixMAX Receipt</h2>
-    <div class="order-id">Order ID: <span id="orderId"></span></div>
+
+    <div class="order-id">Order ID: <span id="orderId">…</span></div>
 
     <div class="info">
       <p><strong>Name:</strong> <span id="custName"></span></p>
       <p><strong>Email:</strong> <span id="custEmail"></span></p>
       <p><strong>Phone:</strong> <span id="custPhone"></span></p>
       <p><strong>Address:</strong> <span id="custAddr"></span></p>
-      <p><strong>Payment Method:</strong> <span id="payMethod"></span></p>
+      <p><strong>Payment:</strong> <span id="payMethod"></span></p>
     </div>
 
-    <table>
+    <table id="itemsTable" style="display:none;">
       <thead>
-        <tr>
-          <th>Item</th>
-          <th>Qty</th>
-          <th>Price</th>
-          <th>Total</th>
-        </tr>
+        <tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr>
       </thead>
-      <tbody id="itemsTable">
-        <!-- Items will be added here -->
-      </tbody>
+      <tbody id="receiptBody"></tbody>
     </table>
 
-    <div class="total">
-      Grand Total: $<span id="grandTotal">0.00</span>
-    </div>
+    <div class="total" id="grandTotal" style="display:none;"></div>
+    <p class="notfound" id="nfMsg" style="display:none;">Order not found ❌</p>
   </div>
 
-  <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const orderId = urlParams.get("orderId");
-    const allOrders = JSON.parse(localStorage.getItem("orders") || "{}");
-    const order = allOrders[orderId];
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+  const params=new URLSearchParams(location.search);
+  const id=params.get('orderId');
+  document.getElementById('orderId').textContent=id||'Unavailable';
 
-    document.getElementById("orderId").textContent = orderId || "Unavailable";
+  const orders=JSON.parse(localStorage.getItem('orders')||'{}');
+  const order=orders[id];
 
-    if (order) {
-      document.getElementById("custName").textContent = order.name;
-      document.getElementById("custEmail").textContent = order.email;
-      document.getElementById("custPhone").textContent = order.phone;
-      document.getElementById("custAddr").textContent = order.address;
-      document.getElementById("payMethod").textContent = order.method === "online" ? "Pay Online" : "Pay on Delivery";
-      document.getElementById("grandTotal").textContent = parseFloat(order.amount).toFixed(2);
+  if(!order){
+    document.getElementById('nfMsg').style.display='block';
+    return;
+  }
 
-      const tbody = document.getElementById("itemsTable");
-      let total = 0;
+  // fill customer info
+  document.getElementById('custName').textContent = order.name;
+  document.getElementById('custEmail').textContent = order.email;
+  document.getElementById('custPhone').textContent = order.phone;
+  document.getElementById('custAddr').textContent = order.address;
+  document.getElementById('payMethod').textContent = order.method==='online'?'Pay Online':'Pay on Delivery';
 
-      order.items.forEach(item => {
-        const row = document.createElement("tr");
-        const itemTotal = item.price * item.qty;
-        total += itemTotal;
-        row.innerHTML = 
-          <td>${item.name}</td>
-          <td>${item.qty}</td>
-          <td>$${parseFloat(item.price).toFixed(2)}</td>
-          <td>$${itemTotal.toFixed(2)}</td>
-        ;
-        tbody.appendChild(row);
-      });
+  // list items
+  const body=document.getElementById('receiptBody');
+  let grand=0;
+  order.items.forEach(it=>{
+    const row=document.createElement('tr');
+    const lineTotal=it.price*it.qty;
+    grand+=lineTotal;
+    row.innerHTML=<td>${it.name}</td>
+                   <td>${it.qty}</td>
+                   <td>$${it.price.toFixed(2)}</td>
+                   <td>$${lineTotal.toFixed(2)}</td>;
+    body.appendChild(row);
+  });
 
-      document.getElementById("grandTotal").textContent = total.toFixed(2);
-    } else {
-      document.querySelector(".receipt").innerHTML = "<h2>Order not found</h2>";
-    }
-  </script>
+  document.getElementById('itemsTable').style.display='table';
+  const gEl=document.getElementById('grandTotal');
+  gEl.textContent='Grand Total: $'+grand.toFixed(2);
+  gEl.style.display='block';
+});
+</script>
 </body>
 </html>
