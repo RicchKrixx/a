@@ -177,5 +177,16 @@ btn.addEventListener('click', e => {
   }
 });
 </script>
+  <script>const fullOrder = {
+  id: "BMX" + Date.now(),
+  cart: JSON.parse(localStorage.getItem('cart') || '[]'),
+  grandTotal: parseFloat(localStorage.getItem('grandTotal') || '0')
+};
+
+// Save full order for receipt
+localStorage.setItem("receiptData", JSON.stringify(fullOrder));
+
+// Optionally clear cart after saving
+localStorage.removeItem("cart");</script>
 </body>
 </html>
