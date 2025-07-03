@@ -1,85 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Order Receipt | BizMAX</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Receipt | BizMAX</title>
   <style>
-    body{margin:0;padding:20px;background:lightblue;font-family:Arial,Helvetica,sans-serif}
-    .wrapper{
-      max-width:750px;margin:auto;background:rgba(255,255,255,0.1);
-      backdrop-filter:blur(15px);border-radius:22px;padding:32px;
-      box-shadow:0 0 20px rgba(0,0,0,0.25);color:#000;
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom right, #1976d2, #00bcd4);
+      color: white;
     }
-    h1{text-align:center;margin:0 0 6px}
-    h3{text-align:center;margin:0 0 20px;font-weight:600}
-    table{width:100%;border-collapse:collapse;margin-top:10px}
-    th,td{padding:12px;border-bottom:1px solid rgba(0,0,0,0.15)}
-    th{background:#1976d2;color:#fff;text-align:left}
-    .total{font-weight:bold;text-align:right;margin-top:18px;font-size:18px}
-    a.back{display:block;margin:26px auto 0;padding:10px 24px;
-      background:cyan;color:#000;border-radius:22px;font-weight:bold;
-      width:max-content;text-decoration:none}
-    a.back:hover{background:#00bcbc}
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 30px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .order-info, .items {
+      margin-bottom: 20px;
+    }
+
+    .order-info p {
+      margin: 6px 0;
+      font-size: 16px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    th {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .total {
+      font-size: 20px;
+      font-weight: bold;
+      text-align: right;
+      margin-top: 20px;
+    }
+
+    .back-btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      background: cyan;
+      color: black;
+      font-weight: bold;
+      text-decoration: none;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .back-btn:hover {
+      background: #00a9b3;
+    }
   </style>
 </head>
 <body>
-  <div class="wrapper">
-    <h1>🧾 Receipt</h1>
-    <h3 id="oid">Order ID: —</h3>
+  <div class="container">
+    <h1>🧾 Your Receipt</h1>
 
-    <div id="custInfo"></div>
+    <div class="order-info" id="orderInfo"></div>
+    <div class="items" id="itemList"></div>
+    <div class="total" id="totalAmount"></div>
 
-    <table>
-      <thead>
-        <tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr>
-      </thead>
-      <tbody id="tbody"></tbody>
-    </table>
-
-    <p class="total">Grand Total: $<span id="gt">0.00</span></p>
-
-    <a href="BixMax home.html" class="back">🏠 Back Home</a>
+    <a href="index.html" class="back-btn">🏠 Return Home</a>
   </div>
 
-<script>
-document.addEventListener('DOMContentLoaded',()=>{
-  const q = new URLSearchParams(location.search);
-  const orderId = q.get('orderId');
-  document.getElementById('oid').textContent = 'Order ID: '+(orderId||'Unavailable');
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const orderId = params.get("orderId");
+    const orders = JSON.parse(localStorage.getItem("orders") || "{}");
+    const order = orders[orderId];
 
-  const orders = JSON.parse(localStorage.getItem('orders')||'{}');
-  const order = orders[orderId];
+    if (!order) {
+      document.querySelector('.container').innerHTML = 
+        <h1>Order Not Found</h1>
+        <p style="text-align:center">The order ID is missing or invalid.</p>
+      ;
+    } else {
+      // Display customer info
+      document.getElementById("orderInfo").innerHTML = 
+        <p><strong>Order ID:</strong> ${order.id}</p>
+        <p><strong>Name:</strong> ${order.name}</p>
+        <p><strong>Email:</strong> ${order.email}</p>
+        <p><strong>Phone:</strong> ${order.phone}</p>
+        <p><strong>Address:</strong> ${order.address}</p>
+        <p><strong>Payment Method:</strong> ${order.method}</p>
+      ;
 
-  if(!order){
-    document.getElementById('custInfo').innerHTML='<p>Order not found.</p>';
-    return;
-  }
+      // Display items
+      const itemsHTML = order.items.map(item => 
+        <tr>
+          <td>${item.name}</td>
+          <td>${item.qty}</td>
+          <td>$${item.price.toFixed(2)}</td>
+          <td>$${(item.qty * item.price).toFixed(2)}</td>
+        </tr>
+      ).join('');
 
-  // customer info
-  document.getElementById('custInfo').innerHTML = 
-    <p><b>Name:</b> ${order.name}</p>
-    <p><b>Email:</b> ${order.email}</p>
-    <p><b>Phone:</b> ${order.phone}</p>
-    <p><b>Address:</b> ${order.address}</p>
-    <p><b>Payment:</b> ${order.method==='online'?'Paystack':'Pay on Delivery'}</p>
-  ;
+      document.getElementById("itemList").innerHTML = 
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Qty</th>
+              <th>Price</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>${itemsHTML}</tbody>
+        </table>
+      ;
 
-  // items
-  let grand=0;
-  order.items.forEach(it=>{
-    const sub=it.qty*it.price; grand+=sub;
-    document.getElementById('tbody').insertAdjacentHTML('beforeend',
-      <tr>
-        <td>${it.name}</td>
-        <td>${it.qty}</td>
-        <td>$${it.price.toFixed(2)}</td>
-        <td>$${sub.toFixed(2)}</td>
-      </tr>
-    );
-  });
-  document.getElementById('grandTotal').textContent = grand.toFixed(2);
-});
-</script>
+      // Show total
+      document.getElementById("totalAmount").textContent = Grand Total: $${order.total.toFixed(2)};
+    }
+  </script>
 </body>
 </html>
