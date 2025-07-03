@@ -1,48 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>BixMAX | Receipt</title>
   <style>
     body {
-      background: lightblue;
       font-family: Arial, sans-serif;
+      background: lightblue;
+      margin: 0;
       padding: 20px;
+      color: #333;
     }
 
-    .receipt-container {
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(20px);
-      border-radius: 16px;
-      padding: 30px;
-      color: #000;
-      max-width: 600px;
+    .receipt-box {
+      max-width: 700px;
       margin: auto;
-      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.15);
     }
 
     h1 {
       text-align: center;
+      margin-bottom: 30px;
       color: #1976d2;
-      margin-bottom: 10px;
-    }
-
-    .order-id {
-      text-align: center;
-      margin-bottom: 20px;
-      font-weight: bold;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
     }
 
     th, td {
+      padding: 12px;
       text-align: left;
-      padding: 10px;
       border-bottom: 1px solid #ddd;
     }
 
@@ -55,33 +49,31 @@
       text-align: right;
       font-size: 18px;
       font-weight: bold;
-      margin-top: 10px;
     }
 
-    .btn {
-      display: inline-block;
+    .back-btn {
+      display: block;
+      text-align: center;
       margin-top: 20px;
       padding: 12px 24px;
       background-color: cyan;
-      border: none;
-      border-radius: 25px;
       color: black;
       font-weight: bold;
+      border-radius: 30px;
       text-decoration: none;
-      transition: background 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
 
-    .btn:hover {
+    .back-btn:hover {
       background-color: #00bcbc;
     }
   </style>
 </head>
 <body>
-  <div class="receipt-container">
-    <h1>Receipt</h1>
-    <div class="order-id">Order ID: <span id="orderId">Loading…</span></div>
 
-    <table>
+  <div class="receipt-box">
+    <h1>🧾 Order Receipt</h1>
+    <table id="receiptTable">
       <thead>
         <tr>
           <th>Item</th>
@@ -90,38 +82,43 @@
           <th>Total</th>
         </tr>
       </thead>
-      <tbody id="itemList">
+      <tbody id="receiptBody">
         <!-- Items will be inserted here -->
       </tbody>
     </table>
 
-    <div class="total">Grand Total: $<span id="grandTotal">0.00</span></div>
+    <p class="total">Grand Total: GHS <span id="grandTotal">0.00</span></p>
 
-    <a href="BixMax home.html" class="btn">Back to Home</a>
+    <a href="BixMax home.html" class="back-btn">← Back to Home</a>
   </div>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
-      const orderId = localStorage.getItem("lastOrderID") || "Unavailable";
+    document.addEventListener('DOMContentLoaded', () => {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const receiptBody = document.getElementById('receiptBody');
+      const grandTotal = localStorage.getItem('grandTotal') || '0';
 
-      document.getElementById("orderId").textContent = orderId;
-      document.getElementById("grandTotal").textContent = grandTotal.toFixed(2);
+      if (cart.length === 0) {
+        receiptBody.innerHTML = <tr><td colspan="4" style="text-align:center;">No items found in cart.</td></tr>;
+      } else {
+        cart.forEach(item => {
+          const row = document.createElement('tr');
+          const total = item.price * item.qty;
 
-      const tbody = document.getElementById("itemList");
-      cart.forEach(item => {
-        const row = document.createElement("tr");
-        const itemTotal = (item.price * item.qty).toFixed(2);
-        row.innerHTML = 
-          <td>${item.name}</td>
-          <td>${item.qty}</td>
-          <td>$${item.price.toFixed(2)}</td>
-          <td>$${itemTotal}</td>
-        ;
-        tbody.appendChild(row);
-      });
+          row.innerHTML = 
+            <td>${item.name}</td>
+            <td>${item.qty}</td>
+            <td>GHS ${parseFloat(item.price).toFixed(2)}</td>
+            <td>GHS ${total.toFixed(2)}</td>
+          ;
+
+          receiptBody.appendChild(row);
+        });
+      }
+
+      document.getElementById('grandTotal').textContent = parseFloat(grandTotal).toFixed(2);
     });
   </script>
+
 </body>
 </html>
