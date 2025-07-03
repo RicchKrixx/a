@@ -1,81 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Receipt - BixMAX</title>
+  <title>Receipt | BixMAX</title>
   <style>
     body {
       background: lightblue;
       font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 30px 20px;
-      display: flex;
-      justify-content: center;
+      padding: 30px;
+      color: #000;
     }
 
-    .receipt-box {
-      width: 100%;
-      max-width: 600px;
-      background: rgba(255,255,255,0.1);
+    .receipt {
+      background: white;
       border-radius: 20px;
-      padding: 30px;
-      backdrop-filter: blur(20px);
-      color: white;
+      padding: 24px;
+      max-width: 600px;
+      margin: auto;
       box-shadow: 0 0 20px rgba(0,0,0,0.2);
     }
 
-    h1 {
+    h2 {
       text-align: center;
       margin-bottom: 20px;
-    }
-
-    .order-id {
-      font-weight: bold;
-      margin-bottom: 20px;
-      text-align: center;
-      background: rgba(0,0,0,0.2);
-      padding: 8px 16px;
-      border-radius: 12px;
-      display: inline-block;
+      color: #1976d2;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 20px;
+      margin-bottom: 20px;
     }
 
     th, td {
-      padding: 12px;
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
       text-align: left;
-      border-bottom: 1px solid rgba(255,255,255,0.2);
     }
 
     th {
-      background: rgba(0,0,0,0.3);
+      background: #f0f0f0;
+    }
+
+    .info {
+      margin-bottom: 20px;
+      font-size: 15px;
     }
 
     .total {
-      text-align: right;
-      font-weight: bold;
-      margin-top: 20px;
       font-size: 18px;
+      font-weight: bold;
+      text-align: right;
     }
 
-    .empty-msg {
+    .order-id {
       text-align: center;
-      margin-top: 40px;
-      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #333;
     }
   </style>
 </head>
 <body>
-  <div class="receipt-box">
-    <h1>Order Receipt</h1>
-    <div class="order-id" id="orderIdBox">Order ID: Loading...</div>
+  <div class="receipt">
+    <h2>BixMAX Receipt</h2>
+    <div class="order-id">Order ID: <span id="orderId"></span></div>
 
-    <table id="receiptTable" style="display:none;">
+    <div class="info">
+      <p><strong>Name:</strong> <span id="custName"></span></p>
+      <p><strong>Email:</strong> <span id="custEmail"></span></p>
+      <p><strong>Phone:</strong> <span id="custPhone"></span></p>
+      <p><strong>Address:</strong> <span id="custAddr"></span></p>
+      <p><strong>Payment Method:</strong> <span id="payMethod"></span></p>
+    </div>
+
+    <table>
       <thead>
         <tr>
           <th>Item</th>
@@ -84,49 +84,51 @@
           <th>Total</th>
         </tr>
       </thead>
-      <tbody id="receiptBody"></tbody>
+      <tbody id="itemsTable">
+        <!-- Items will be added here -->
+      </tbody>
     </table>
 
-    <div class="total" id="grandTotalBox"></div>
-    <div class="empty-msg" id="emptyMsg">No order found.</div>
+    <div class="total">
+      Grand Total: $<span id="grandTotal">0.00</span>
+    </div>
   </div>
 
   <script>
     const urlParams = new URLSearchParams(window.location.search);
     const orderId = urlParams.get("orderId");
-    const orderData = JSON.parse(localStorage.getItem("orders") || "{}")[orderId];
+    const allOrders = JSON.parse(localStorage.getItem("orders") || "{}");
+    const order = allOrders[orderId];
 
-    const orderIdBox = document.getElementById("orderIdBox");
-    const table = document.getElementById("receiptTable");
-    const body = document.getElementById("receiptBody");
-    const grandBox = document.getElementById("grandTotalBox");
-    const emptyMsg = document.getElementById("emptyMsg");
+    document.getElementById("orderId").textContent = orderId || "Unavailable";
 
-    if (orderId && orderData) {
-      orderIdBox.textContent = Order ID: ${orderId};
-      let grand = 0;
+    if (order) {
+      document.getElementById("custName").textContent = order.name;
+      document.getElementById("custEmail").textContent = order.email;
+      document.getElementById("custPhone").textContent = order.phone;
+      document.getElementById("custAddr").textContent = order.address;
+      document.getElementById("payMethod").textContent = order.method === "online" ? "Pay Online" : "Pay on Delivery";
+      document.getElementById("grandTotal").textContent = parseFloat(order.amount).toFixed(2);
 
-      orderData.items.forEach(item => {
+      const tbody = document.getElementById("itemsTable");
+      let total = 0;
+
+      order.items.forEach(item => {
         const row = document.createElement("tr");
-        const total = item.price * item.qty;
-        grand += total;
-
+        const itemTotal = item.price * item.qty;
+        total += itemTotal;
         row.innerHTML = 
           <td>${item.name}</td>
           <td>${item.qty}</td>
-          <td>$${item.price.toFixed(2)}</td>
-          <td>$${total.toFixed(2)}</td>
+          <td>$${parseFloat(item.price).toFixed(2)}</td>
+          <td>$${itemTotal.toFixed(2)}</td>
         ;
-        body.appendChild(row);
+        tbody.appendChild(row);
       });
 
-      grandBox.textContent = Grand Total: $${grand.toFixed(2)};
-      table.style.display = "table";
-      emptyMsg.style.display = "none";
+      document.getElementById("grandTotal").textContent = total.toFixed(2);
     } else {
-      orderIdBox.textContent = "Order ID: Not Found";
-      table.style.display = "none";
-      emptyMsg.textContent = "Sorry, no receipt data found for this order.";
+      document.querySelector(".receipt").innerHTML = "<h2>Order not found</h2>";
     }
   </script>
 </body>
