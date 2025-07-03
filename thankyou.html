@@ -2,49 +2,66 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Thank You | BizMAX</title>
+
   <style>
+    /* ------ basic glass look to match BizMAX ------ */
+    :root { --glass: rgba(255,255,255,0.1); --blur: 25px; }
+
+    *{box-sizing:border-box;margin:0;padding:0}
     body{
-      height:100vh; margin:0;
-      display:flex; justify-content:center; align-items:center; flex-direction:column;
-      background:lightblue; font-family:Arial,Helvetica,sans-serif;
+      height:100vh; display:flex; justify-content:center; align-items:center;
+      font-family:Arial,Helvetica,sans-serif;
+      background: lightblue;
     }
-    .box{
-      background:rgba(255,255,255,0.1); backdrop-filter:blur(20px);
-      border-radius:28px; padding:40px 30px; text-align:center;
-      box-shadow:0 0 25px rgba(0,0,0,0.2); max-width:90%;
-      color:#000;
+    .card{
+      background:var(--glass);
+      backdrop-filter:blur(var(--blur));
+      border-radius:28px;
+      padding:40px 32px;
+      text-align:center;
+      box-shadow:0 0 25px rgba(0,0,0,.25);
+      max-width:90%; color:#000;
     }
-    h1{margin:0 0 12px}
-    p{margin:6px 0 20px}
+    h1{margin-bottom:12px;font-size:30px}
+    p{margin:6px 0 18px;font-size:18px}
     .btn{
-      display:inline-block; margin:8px; padding:12px 28px;
-      background:cyan; color:#000; font-weight:bold; border-radius:26px;
-      text-decoration:none; transition:background .25s;
+      display:inline-block;
+      margin:10px; padding:12px 26px;
+      border-radius:26px; background:cyan; color:#000;
+      font-weight:bold; text-decoration:none; transition:background .25s;
     }
     .btn:hover{background:#00bcbc}
   </style>
 </head>
 <body>
-  <div class="box">
-    <h1>🎉 Thanks for your purchase!</h1>
-    <p>Order ID: <b id="orderId">Loading...</b></p>
 
-    <a id="receiptBtn" class="btn">🧾 View Receipt</a>
-    <a href="BixMax home.html" class="btn">🏠 Back Home</a>
+  <div class="card">
+    <h1>🎉 Thank You!</h1>
+    <p>Your order was placed successfully.</p>
+    <p>Order ID: <b id="orderId">Loading…</b></p>
+
+    <a id="receiptBtn" href="receipt.html" class="btn">🧾 View Receipt</a>
+    <a href="BixMax home.html" class="btn">🏠 Return Home</a>
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded',()=>{
-      const q = new URLSearchParams(location.search);
-      const orderId = q.get('orderId');
-      document.getElementById('orderId').textContent = orderId || 'Unavailable';
-      const receiptBtn = document.getElementById('receiptBtn');
-      if(orderId){
-        receiptBtn.href = receipt.html?orderId=${orderId};
-      }else{
-        receiptBtn.style.display='none';
+    document.addEventListener('DOMContentLoaded', () => {
+      // grab orderId from URL: thankyou.html?orderId=XXXX
+      const params   = new URLSearchParams(window.location.search);
+      const orderId  = params.get('orderId');
+
+      // update page
+      const idEl     = document.getElementById('orderId');
+      const receipt  = document.getElementById('receiptBtn');
+
+      if (orderId) {
+        idEl.textContent = orderId;
+        receipt.href     = 'receipt.html?orderId=' + encodeURIComponent(orderId);
+      } else {
+        idEl.textContent = 'Unavailable';
+        receipt.style.display = 'none';       // hide button if no ID
       }
     });
   </script>
