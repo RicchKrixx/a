@@ -110,14 +110,109 @@
       <p style="margin-top:14px;font-size:18px;font-weight:bold">Processing…</p>
     </div>
   </div>
+<script src="https://js.paystack.co/v1/inline.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-  const stored = localStorage.getItem('grandTotal') || '0';
-  document.getElementById('grandTotal').textContent = parseFloat(stored).toFixed(2);
+document.addEventListener("DOMContentLoaded", () => {
+  const total = localStorage.getItem("grandTotal") || "0";
+  document.getElementById("grandTotal").textContent = parseFloat(total).toFixed(2);
 });
 
-document.getElementById('actionBtn').addEventListener('click', () => {
-  alert("Button clicked. Grand total: $" + document.getElementById('grandTotal').textContent);
+// Elements
+const payMethod = document.getElementById("payMethod");
+const actionBtn = document.getElementById("actionBtn");
+
+// Change button label
+payMethod.addEventListener("change", () => {
+  actionBtn.textContent = payMethod.value === "online" ? "Pay Now" : "Place Order";
+});
+
+// Show loader
+function showLoader(show) {
+  document.getElementById("loader").style.display = show ? "flex" : "none";
+}
+
+// Generate unique Order ID
+function generateOrderId() {
+  return "BX" + Date.now().toString(36).toUpperCase();
+}
+
+// Main logic
+actionBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+
+  const name = document.getElementById("custName").value.trim();
+  const email = document.getElementById("custEmail").value.trim();
+  const phone = document.getElementById("custPhone").value.trim();
+  const address = document.getElementById("custAddr").value.trim();
+  const method = payMethod.value;
+  const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
+  const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
+
+  if (!(name && email && phone && address)) {
+    alert("Please fill in all customer details.");
+    return;
+  }
+
+  if (grandTotal <= 0 || cartItems.length === 0) {
+    alert("Cart is empty or total is 0.");
+    return;
+  }
+
+  const orderId = generateOrderId();
+
+  // Save order to localStorage
+  const orderData = {
+    id: orderId,
+    name,
+    email,
+    phone,
+    address,
+    method,
+    items: cartItems,
+    total: grandTotal
+  };
+
+  const allOrders = JSON.parse(localStorage.getItem("orders") || "{}");
+  allOrders[orderId] = orderData;
+  localStorage.setItem("orders", JSON.stringify(allOrders));
+  localStorage.setItem("latestOrderId", orderId);
+
+  showLoader(true);
+
+  if (method === "online") {
+    // Paystack
+    PaystackPop.setup({
+      key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxx', // Replace with your real key
+      email: email,
+      amount: Math.round(grandTotal * 100),
+      currency: "GHS",
+      metadata: {
+        custom_fields: [
+          { display_name: "Name", value: name },
+          { display_name: "Phone", value: phone },
+          { display_name: "Address", value: address }
+        ]
+      },
+      callback: function (response) {
+        alert("Payment successful! Ref: " + response.reference);
+        localStorage.removeItem("cart");
+        showLoader(false);
+        window.location.href = "thankyou.html?orderId=" + orderId;
+      },
+      onClose: function () {
+        showLoader(false);
+        alert("Payment cancelled.");
+      }
+    }).openIframe();
+  } else {
+    // Pay on Delivery
+    setTimeout(() => {
+      alert("Order placed successfully!");
+      localStorage.removeItem("cart");
+      showLoader(false);
+      window.location.href = "thankyou.html?orderId=" + orderId;
+    }, 1500);
+  }
 });
 </script>
 </body>
