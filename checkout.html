@@ -5,29 +5,35 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>BizMAX | Checkout</title>
 <style>
-:root{--blue:#1976d2;--bg:#e0f7fa}
+:root{--blue:#1976d2;--glass:#ffffffd9}
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}
-body{background:var(--bg);padding:20px;min-height:100vh}
-h1{text-align:center;margin-bottom:18px}
-.card{max-width:760px;margin:auto;background:#ffffffcc;border-radius:20px;
-      padding:28px;box-shadow:0 4px 18px rgba(0,0,0,.15)}
-.cart-title{font-weight:bold;margin-bottom:10px}
-.item{display:flex;align-items:center;gap:12px;margin:8px 0}
-.item img{width:70px;height:70px;object-fit:cover;border-radius:12px}
+body{background:#e0f7fa;padding:20px;min-height:100vh}
+h1{text-align:center;margin-bottom:18px;color:#000}
+.card{max-width:720px;margin:auto;background:var(--glass);border-radius:20px;
+      padding:26px;box-shadow:0 4px 18px rgba(0,0,0,.15)}
+.item{display:flex;align-items:center;gap:14px;margin:8px 0}
+.item img{width:68px;height:68px;border-radius:12px;object-fit:cover}
 .item .info{flex:1}
-.item .info h4{margin:0 0 4px;font-size:15px}
+.item .info h4{margin:0;font-size:15px}
 .item .info span{font-size:14px;font-weight:bold}
-.total{margin-top:12px;text-align:right;font-size:18px;font-weight:bold}
-label{display:block;margin-top:16px;margin-bottom:5px;font-weight:bold}
-input,textarea,select{width:100%;padding:12px;border-radius:10px;border:none;
-       background:#f5f5f5;font-size:15px}
-#locBtn{margin-top:6px;padding:7px 12px;background:#333;color:#fff;font-size:13px;
+.total{font-size:18px;font-weight:bold;text-align:right;margin-top:10px}
+label{display:block;margin-top:16px;font-weight:bold}
+input,textarea,select{width:100%;padding:12px;border:none;border-radius:10px;
+      background:#f4f4f4;font-size:15px;margin-top:4px}
+#locBtn{margin-top:6px;background:#333;color:#fff;padding:7px 12px;font-size:13px;
         border:none;border-radius:8px;cursor:pointer}
 #locBtn:hover{background:#111}
-.action-btn{width:100%;margin-top:24px;padding:16px;border:none;border-radius:12px;
-            background:var(--blue);color:#fff;font-size:17px;font-weight:bold;cursor:pointer}
-.action-btn:hover{background:#135bad}
-.error{color:red;text-align:center;font-weight:bold;margin-top:12px}
+#submitBtn{width:100%;margin-top:24px;padding:16px;font-size:17px;font-weight:bold;
+           border:none;border-radius:12px;background:var(--blue);color:#fff;cursor:pointer}
+#submitBtn:hover{background:#0f5caf}
+.error{color:red;text-align:center;font-weight:bold;margin-top:10px}
+/* Loader overlay */
+.loader{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;
+        align-items:center;justify-content:center;z-index:5000}
+.loader.visible{display:flex}
+.spinner{width:60px;height:60px;border:6px solid #eee;border-top:6px solid var(--blue);
+         border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -35,134 +41,129 @@ input,textarea,select{width:100%;padding:12px;border-radius:10px;border:none;
 <h1>Checkout</h1>
 
 <div class="card">
-  <!-- ░░ CART SUMMARY ░░ -->
+  <!-- ░░ Items & total ░░ -->
   <div id="cartBox"></div>
 
-  <!-- ░░ CUSTOMER INFO ░░ -->
-  <label for="custName">Full Name</label>
-  <input id="custName" placeholder="John Doe">
-
-  <label for="custEmail">Email</label>
-  <input id="custEmail" type="email" placeholder="john@example.com">
-
-  <label for="custPhone">Phone</label>
-  <input id="custPhone" type="tel" placeholder="055 123 4567">
+  <!-- ░░ Customer ░░ -->
+  <label>Full Name</label><input id="custName" placeholder="John Doe">
+  <label>Email</label><input id="custEmail" type="email" placeholder="john@example.com">
+  <label>Phone</label><input id="custPhone" type="tel" placeholder="055 123 4567">
 
   <label>Delivery Address
     <button id="locBtn" type="button">📍 Use My Location</button>
   </label>
-  <textarea id="custAddr" rows="3" placeholder="Street • City • Landmark"></textarea>
+  <textarea id="custAddr" rows="3" placeholder="Street • City • Landmarks"></textarea>
 
-  <!-- ░░ PAYMENT ░░ -->
   <label>Payment Method</label>
   <select id="payMethod">
     <option value="delivery">Pay on Delivery</option>
     <option value="online">Pay Online</option>
   </select>
 
-  <button id="submitBtn" class="action-btn">Place Order</button>
+  <button id="submitBtn">Place Order</button>
   <div id="err" class="error"></div>
 </div>
+
+<!-- Loader -->
+<div class="loader" id="loader"><div class="spinner"></div></div>
 
 <!-- Paystack SDK -->
 <script src="https://js.paystack.co/v1/inline.js"></script>
 <script>
-/* ---------- 1.  Build Cart Summary ---------- */
-const cart       = JSON.parse(localStorage.getItem('cart')||'[]');
-const cartBox    = document.getElementById('cartBox');
-let   grandTotal = 0;
+/* --------------- CART SUMMARY --------------- */
+const cart   = JSON.parse(localStorage.getItem('cart')||'[]');
+const box    = document.getElementById('cartBox');
+let   total  = 0, totalQty = 0;
 
-function renderCart(){
-  if(cart.length===0){
-    cartBox.innerHTML='<p style="text-align:center;font-weight:bold">🛒 Your cart is empty.</p>';
-    return;
-  }
-  cartBox.innerHTML='<div class="cart-title">Order Summary</div>';
+if(cart.length===0){
+  box.innerHTML='<p style="text-align:center;font-weight:bold">🛒 Your cart is empty.</p>';
+}else{
+  box.innerHTML='<h3 style="margin-bottom:8px">Order Summary</h3>';
   cart.forEach(it=>{
-    const sub=it.qty*it.price;
-    grandTotal+=sub;
-    cartBox.insertAdjacentHTML('beforeend',
+    const sub = it.qty * it.price;
+    total    += sub;
+    totalQty += it.qty;
+    box.insertAdjacentHTML('beforeend',
       <div class="item">
         <img src="${it.image}" alt="${it.name}">
         <div class="info">
           <h4>${it.name}</h4>
           <span>${it.qty} × $${it.price.toFixed(2)} = $${sub.toFixed(2)}</span>
         </div>
-      </div>
-    );
+      </div>);
   });
-  cartBox.insertAdjacentHTML('beforeend',
-    <div class="total">Total: $${grandTotal.toFixed(2)}</div>);
+  box.insertAdjacentHTML('beforeend',<div class="total">Total: $${total.toFixed(2)}</div>);
 }
-renderCart();
 
-/* ---------- 2.  Geo-Location ---------- */
-document.getElementById('locBtn').onclick=()=>{
+/* --------------- LOCATION --------------- */document.getElementById('locBtn').onclick=()=>{
   if(!navigator.geolocation){alert('Geolocation not supported');return;}
   navigator.geolocation.getCurrentPosition(
     pos=>{
       const {latitude,longitude}=pos.coords;
       document.getElementById('custAddr').value=
-        Lat:${latitude.toFixed(5)}, Lng:${longitude.toFixed(5)};
+        \Lat:${latitude.toFixed(5)}, Lng:${longitude.toFixed(5)}\;
     },
-    ()=>alert('Could not get location — please allow permission.')
+    ()=>alert('Could not get location.')
   );
-};/* ---------- 3.  Payment method → button text ---------- */
-const paySel  = document.getElementById('payMethod');
-const btn     = document.getElementById('submitBtn');
+};
+
+/* --------------- BUTTON LABEL --------------- */
+const paySel=document.getElementById('payMethod');
+const btn   =document.getElementById('submitBtn');
 function syncBtn(){btn.textContent=paySel.value==='online'?'Pay Now':'Place Order';}
 paySel.onchange=syncBtn; syncBtn();
 
-/* ---------- 4.  Submit Order ---------- */
+/* --------------- SUBMIT --------------- */
+const loader=document.getElementById('loader');
+function showLoader(s){loader.classList.toggle('visible',s);}
 btn.onclick=()=>{
-  const name  = document.getElementById('custName').value.trim();
-  const email = document.getElementById('custEmail').value.trim();
-  const phone = document.getElementById('custPhone').value.trim();
-  const addr  = document.getElementById('custAddr').value.trim();
-  const err   = document.getElementById('err');
-  err.textContent='';
+  const name =document.getElementById('custName').value.trim();
+  const mail =document.getElementById('custEmail').value.trim();
+  const tel  =document.getElementById('custPhone').value.trim();
+  const addr =document.getElementById('custAddr').value.trim();
+  const err  =document.getElementById('err'); err.textContent='';
 
-  if(!name!email!phone||!addr){
-    err.textContent='❗ Please fill all fields.'; return;
-  }
-  if(cart.length===0||grandTotal<=0){
-    err.textContent='🛒 Your cart is empty.'; return;
-  }
+  if(!name!mail!tel||!addr){err.textContent='Please fill all fields.';return;}
+  if(cart.length===0){err.textContent='Cart empty.';return;}
 
-  /* ===== 4A. Pay Online → Paystack ===== */
+  showLoader(true);
+  const orderId='BMX'+Date.now();
+
+  /* ---- PAY ONLINE ---- */
   if(paySel.value==='online'){
     PaystackPop.setup({
-      key:'pk_test_xxxxxxxxxxxxxxxxxxxxxxx',        // ← PUT YOUR PUBLIC KEY
-      email,
-      amount:Math.round(grandTotal*100),           // kobo / pesewas
+      key:'pk_test_xxxxxxxxxxxxxxxxxxxxxxx',           //  <-- your key
+      email:mail,
+      amount:Math.round(total*100),
       currency:'GHS',
       metadata:{custom_fields:[
-        {display_name:'Name', value:name},
-        {display_name:'Phone',value:phone},
-        {display_name:'Address',value:addr}
+        {display_name:'Name',value:name},
+        {display_name:'Phone',value:tel},
+        {display_name:'Address',value:addr},
+        {display_name:'Order ID',value:orderId}
       ]},
       callback:res=>{
-        alert('Payment successful ✔️ Ref: '+res.reference);
-        localStorage.removeItem('cart');
-        window.location='thankyou.html';
+        finishOrder('online',orderId,name,total);
       },
-      onClose:()=>alert('Payment cancelled.')
+      onClose:()=>{showLoader(false);alert('Payment cancelled.');}
     }).openIframe();
-    return; // stop here for Paystack flow
+    return;
   }
 
-  /* ===== 4B. Pay on Delivery → send e-mail ===== */
-  const bodyLines = cart
-        .map(it=>${it.qty} × ${it.name} = $${(it.qty*it.price).toFixed(2)})
-        .join('%0D%0A');
-  const body =
-New BizMAX Order%0D%0A--------------------%0D%0A${bodyLines}%0D%0A--------------------%0D%0ATotal: $${grandTotal.toFixed(2)}%0D%0APayment: Pay on Delivery%0D%0A%0D%0ACustomer:%0D%0AName: ${name}%0D%0APhone: ${phone}%0D%0AAddress: ${encodeURIComponent(addr)};
-
-  window.location.href=mailto:gadrijasper23@gmail.com?subject=New Order from ${encodeURIComponent(name)}&body=${body};
-
-  localStorage.removeItem('cart');
-  setTimeout(()=>window.location='thankyou.html',600);
+  /* ---- PAY ON DELIVERY ---- */
+  setTimeout(()=>finishOrder('delivery',orderId,name,total),2000);
 };
+
+/* --------------- FINISH & REDIRECT --------------- */
+function finishOrder(method,orderId,name,total){
+  // save for thank you page
+  localStorage.setItem('lastOrder', JSON.stringify({
+    id:orderId, name, total:total.toFixed(2), qty:totalQty
+  }));
+  // clear cart
+  localStorage.removeItem('cart');
+  window.location='thankyou.html';
+}
 </script>
 </body>
 </html>
