@@ -1,163 +1,46 @@
+<!-- thankyou.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Thank You BixMAX</title>
+  <title>Thank You | BizMAX</title>
+
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      height: 100vh;
-      background-color: lightblue;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      overflow: hidden;
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+      height:100vh;background:lightblue;font-family:Arial,sans-serif;
+      display:flex;justify-content:center;align-items:center;flex-direction:column
     }
-
-    .welcome-box {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(25px);
-      border-radius: 30px;
-      padding: 40px 30px;
-      text-align: center;
-      box-shadow: 0px 0px 30px 20px rgba(0, 0, 0, 0.1);
-      border: solid 5px rgba(255, 255, 255, 0.1);
-      color: white;
-      max-width: 90%;
-      opacity: 0;
-      transform: translateY(50px);
-      animation: fadeInUp 1.2s ease-out forwards;
+    .box{
+      background:rgba(255,255,255,0.08);backdrop-filter:blur(25px);
+      border-radius:30px;padding:40px 30px;text-align:center;
+      box-shadow:0 0 30px rgba(0,0,0,.15);max-width:90%;color:#fff
     }
-
-    .welcome-box h1 {
-      font-size: 32px;
-      margin-bottom: 15px;
-      color: white;
-      animation: popIn 1s ease-out 0.3s forwards;
-      opacity: 0;
+    h1{font-size:32px;margin-bottom:16px}
+    p{font-size:18px;margin:18px 0}
+    a.btn{
+      display:inline-block;margin:10px;padding:12px 24px;border-radius:30px;
+      background:cyan;color:#000;font-weight:bold;text-decoration:none
     }
-
-    .welcome-box p {
-      font-size: 18px;
-      margin-bottom: 30px;
-      animation: fadeIn 1s ease-out 0.6s forwards;
-      opacity: 0;
-    }
-
-    .enter-btn,
-    .track-btn,
-    .receipt-btn {
-      background-color: cyan;
-      color: black;
-      padding: 12px 24px;
-      border-radius: 30px;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 16px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-      transition: transform 0.3s ease, background-color 0.3s ease;
-      animation: fadeIn 1s ease-out 0.9s forwards;
-      opacity: 0;
-      margin: 10px;
-      display: inline-block;
-    }
-
-    .enter-btn:hover,
-    .track-btn:hover,
-    .receipt-btn:hover {
-      background-color: #00bcbc;
-      transform: scale(1.05);
-    }
-
-    /* Animations */
-    @keyframes fadeInUp {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-      }
-    }
-
-    @keyframes popIn {
-      0% { transform: scale(0.8); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    :root {
-      --clr-1: #FFA500;
-      --clr-2: #62d4ff;
-      --clr-3: #001529;
-      --blur-strength: 60px;
-    }
-
-    .bg {
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      background: linear-gradient(115deg, var(--clr-1), var(--clr-2), var(--clr-3));
-      background-size: 300% 300%;
-      animation: shift 10s ease-in-out infinite;
-      filter: blur(var(--blur-strength));
-    }
-
-    @keyframes shift {
-      0% { background-position: 0% 50% }
-      50% { background-position: 100% 50% }
-      100% { background-position: 0% 50% }
-    }
+    a.btn:hover{background:#00bcbc}
   </style>
 </head>
 <body>
-  <div class="bg"></div>
-  <div class="welcome-box">
-    <h1>🎉 Thank You! 🎉</h1>
-    <p>
-      Your order has been placed successfully.<br>
-      Order ID: <b id="orderId">Loading…</b><br><br>
+  <div class="box">
+    <h1>🎉 Thank You!</h1>
+    <p>Your order has been placed successfully.</p>
+    <p>Order ID: <strong id="orderId">loading…</strong></p>
 
-      <a href="order-tracking.html" class="track-btn">Track Your Order</a>
-      <a href="receipt.html" class="receipt-btn">View Receipt</a>
-    </p>
-
-    <a href="BixMax home.html" class="enter-btn">Return to Home</a>
+    <a href="receipt.html"    class="btn">View Receipt</a>
+    <a href="BixMax home.html" class="btn">Return Home</a>
   </div>
 
   <script>
-    // Load Order ID from localStorage
-    document.addEventListener('DOMContentLoaded', () => {
-      const orderId = localStorage.getItem('lastOrderID') || "Unavailable";
-      document.getElementById('orderId').textContent = orderId;
+    document.addEventListener('DOMContentLoaded',()=>{
+      const id = localStorage.getItem('lastOrderID') || 'Unavailable';
+      document.getElementById('orderId').textContent = id;
     });
-
-    // Optional: animate gradient shift
-    const colorSets = [
-      ['#00ffff', '#62d4ff', '#001529'],
-      ['#FFA500', '#40e9ff', '#002542'],
-      ['#22c1c3', '#FF0000', '#001d33'],
-      ['#00b7ff', '#1ae3ff', '#008000']
-    ];
-
-    let idx = 0;
-    const root = document.documentElement;
-    const period = 12000;
-
-    function cycleColors() {
-      idx = (idx + 1) % colorSets.length;
-      root.style.setProperty('--clr-1', colorSets[idx][0]);
-      root.style.setProperty('--clr-2', colorSets[idx][1]);
-      root.style.setProperty('--clr-3', colorSets[idx][2]);
-    }
-
-    setInterval(cycleColors, period);
   </script>
 </body>
 </html>
