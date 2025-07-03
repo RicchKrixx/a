@@ -113,45 +113,55 @@
 
 <script src="https://js.paystack.co/v1/inline.js"></script>
 <script>
+/* Load grand total */
 document.addEventListener('DOMContentLoaded', () => {
   const stored = localStorage.getItem('grandTotal') || '0';
   document.getElementById('grandTotal').textContent = parseFloat(stored).toFixed(2);
 });
 
+/* Switch button label */
 const paySel = document.getElementById('payMethod');
 const btn = document.getElementById('actionBtn');
 paySel.addEventListener('change', () => {
   btn.textContent = paySel.value === 'online' ? 'Pay Now' : 'Place Order';
 });
 
+/* Loader helper */
 function showLoader(show) {
   document.getElementById('loader').style.display = show ? 'flex' : 'none';
 }
 
+/* Generate unique order ID */
 function generateOrderId() {
-  return 'BMX' + Date.now().toString().slice(-6);
+  const now = Date.now();
+  const random = Math.floor(Math.random() * 10000);
+  return BX${now}${random};
 }
 
+/* Save order to localStorage */
+function saveOrder(orderId, data) {
+  const allOrders = JSON.parse(localStorage.getItem('orders') || '{}');
+  allOrders[orderId] = data;
+  localStorage.setItem('orders', JSON.stringify(allOrders));
+  localStorage.setItem('latestOrder', JSON.stringify({ id: orderId }));
+}
+
+/* Main order button logic */
 btn.addEventListener('click', e => {
   e.preventDefault();
   const total = parseFloat(localStorage.getItem('grandTotal') || '0');
-  if (total <= 0) {
-    alert('Cart is empty.');
-    return;
-  }
+  if (total <= 0) return alert('Cart is empty.');
 
   const name = document.getElementById('custName').value.trim();
   const email = document.getElementById('custEmail').value.trim();
   const phone = document.getElementById('custPhone').value.trim();
   const addr = document.getElementById('custAddr').value.trim();
+  if (!(name && email && phone && addr)) return alert('Please fill all details.');
 
-  if (!(name && email && phone && addr)) {
-    alert('Please fill all details.');
-    return;
-  }
-
-  const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
+  const method = paySel.value;
   const orderId = generateOrderId();
+
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
   const orderData = {
     id: orderId,
     name,
@@ -159,19 +169,16 @@ btn.addEventListener('click', e => {
     phone,
     address: addr,
     amount: total.toFixed(2),
-    method: paySel.value,
-    items: cartItems
+    method,
+    items: cart
   };
 
-  const allOrders = JSON.parse(localStorage.getItem("orders") || "{}");
-  allOrders[orderId] = orderData;
-  localStorage.setItem("orders", JSON.stringify(allOrders));
-
   showLoader(true);
+  saveOrder(orderId, orderData);
 
-  if (paySel.value === 'online') {
+  if (method === 'online') {
     PaystackPop.setup({
-      key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxx', // Replace with your Paystack public key
+      key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxx', // replace with your key
       email: email,
       amount: Math.round(total * 100),
       currency: 'GHS',
@@ -185,8 +192,7 @@ btn.addEventListener('click', e => {
       callback: function (resp) {
         alert('Payment successful! Ref: ' + resp.reference);
         localStorage.removeItem('cart');
-        showLoader(false);
-        window.location = thankyou.html?orderId=${orderId};
+        window.location = 'thankyou.html?orderId=' + orderId;
       },
       onClose: function () {
         showLoader(false);
@@ -197,8 +203,7 @@ btn.addEventListener('click', e => {
     setTimeout(() => {
       alert('Order placed successfully!');
       localStorage.removeItem('cart');
-      showLoader(false);
-      window.location = thankyou.html?orderId=${orderId};
+      window.location = 'thankyou.html?orderId=' + orderId;
     }, 1500);
   }
 });
