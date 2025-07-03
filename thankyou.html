@@ -5,88 +5,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Thank You | BizMAX</title>
   <style>
-    body {
-      height: 100vh;
-      background-color: lightblue;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      margin: 0;
+    body{
+      height:100vh; margin:0;
+      display:flex; justify-content:center; align-items:center; flex-direction:column;
+      background:lightblue; font-family:Arial,Helvetica,sans-serif;
     }
-
-    .card {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(25px);
-      border-radius: 30px;
-      padding: 40px 30px;
-      text-align: center;
-      box-shadow: 0px 0px 30px 20px rgba(0, 0, 0, 0.1);
-      border: 5px solid rgba(255, 255, 255, 0.1);
-      color: white;
-      max-width: 90%;
+    .box{
+      background:rgba(255,255,255,0.1); backdrop-filter:blur(20px);
+      border-radius:28px; padding:40px 30px; text-align:center;
+      box-shadow:0 0 25px rgba(0,0,0,0.2); max-width:90%;
+      color:#000;
     }
-
-    h1 {
-      font-size: 32px;
-      margin-bottom: 15px;
+    h1{margin:0 0 12px}
+    p{margin:6px 0 20px}
+    .btn{
+      display:inline-block; margin:8px; padding:12px 28px;
+      background:cyan; color:#000; font-weight:bold; border-radius:26px;
+      text-decoration:none; transition:background .25s;
     }
-
-    p {
-      font-size: 18px;
-      margin-bottom: 20px;
-    }
-
-    .btn {
-      display: inline-block;
-      margin: 10px;
-      padding: 12px 24px;
-      border-radius: 30px;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 16px;
-      background-color: cyan;
-      color: black;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-      transition: transform 0.3s ease;
-    }
-
-    .btn:hover {
-      transform: scale(1.05);
-      background-color: #00bcbc;
-    }
+    .btn:hover{background:#00bcbc}
   </style>
 </head>
 <body>
-
-  <div class="card">
-    <h1>🎉 Thank You!</h1>
-    <p>Your order has been placed successfully.</p>
+  <div class="box">
+    <h1>🎉 Thanks for your purchase!</h1>
     <p>Order ID: <b id="orderId">Loading...</b></p>
 
-    <a id="receiptLink" href="#" class="btn">🧾View Receipt</a>
-    <a href="BixMax home.html" class="btn">🏠Return Home</a>
+    <a id="receiptBtn" class="btn">🧾 View Receipt</a>
+    <a href="BixMax home.html" class="btn">🏠 Back Home</a>
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const params = new URLSearchParams(window.location.search);
-      const orderId = params.get("orderId");
-
-      // Show Order ID
-      const idDisplay = document.getElementById("orderId");
-      idDisplay.textContent = orderId || "Unavailable";
-
-      // Update receipt link
-      const receiptLink = document.getElementById("receiptLink");
-      if (orderId) {
-        receiptLink.href = "receipt.html?orderId=" + orderId;
-      } else {
-        receiptLink.style.display = "none";
+    document.addEventListener('DOMContentLoaded',()=>{
+      const q = new URLSearchParams(location.search);
+      const orderId = q.get('orderId');
+      document.getElementById('orderId').textContent = orderId || 'Unavailable';
+      const receiptBtn = document.getElementById('receiptBtn');
+      if(orderId){
+        receiptBtn.href = receipt.html?orderId=${orderId};
+      }else{
+        receiptBtn.style.display='none';
       }
     });
   </script>
-
 </body>
 </html>
