@@ -101,41 +101,34 @@
     <a href="BixMax home.html" class="btn">← Back to Home</a>
   </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Get cart data
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      const receiptBody = document.getElementById('receiptBody');
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const receipt = JSON.parse(localStorage.getItem('receiptData') || '{}');
+    const receiptBody = document.getElementById('receiptBody');
+    const orderIdSpan = document.getElementById('orderId');
+    const grandTotalSpan = document.getElementById('grandTotal');
 
-      // Get grand total
-      const grandTotal = parseFloat(localStorage.getItem('grandTotal') || '0');
-      document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
+    if (!receipt.id  !receipt.cart  receipt.cart.length === 0) {
+      orderIdSpan.textContent = "Unavailable";
+      receiptBody.innerHTML = <tr><td colspan="4" style="text-align:center;">No receipt data found.</td></tr>;
+      return;
+    }
 
-      // Display Order ID
-      const latestOrder = JSON.parse(localStorage.getItem('latestOrder') || '{}');
-      const orderId = latestOrder?.id  localStorage.getItem("lastOrderID")  "Unavailable";
-      document.getElementById('orderId').textContent = orderId;
+    orderIdSpan.textContent = receipt.id;
+    grandTotalSpan.textContent = receipt.grandTotal.toFixed(2);
 
-      // Fill table with cart items
-      if (cart.length === 0) {
-        receiptBody.innerHTML = <tr><td colspan="4" style="text-align:center;">No items found in cart.</td></tr>;
-      } else {
-        cart.forEach(item => {
-          const row = document.createElement('tr');
-          const total = item.qty * item.price;
-
-          row.innerHTML = 
-            <td>${item.name}</td>
-            <td>${item.qty}</td>
-            <td>GHS ${parseFloat(item.price).toFixed(2)}</td>
-            <td>GHS ${total.toFixed(2)}</td>
-          ;
-
-          receiptBody.appendChild(row);
-        });
-      }
+    receipt.cart.forEach(item => {
+      const row = document.createElement('tr');
+      row.innerHTML = 
+        <td>${item.name}</td>
+        <td>${item.qty}</td>
+        <td>GHS ${parseFloat(item.price).toFixed(2)}</td>
+        <td>GHS ${(item.qty * item.price).toFixed(2)}</td>
+      ;
+      receiptBody.appendChild(row);
     });
-  </script>
+  });
+</script>
 
 </body>
 </html>
