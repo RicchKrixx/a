@@ -75,17 +75,19 @@
     </div>
   </div>
 
-  <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const orderId = urlParams.get("orderId");
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const orderId = urlParams.get("orderId") || localStorage.getItem('latestOrderId');
+  const orderEl = document.getElementById('orderId');
 
-    if (orderId) {
-      document.getElementById("orderId").textContent = orderId;
-      document.getElementById("receiptBtn").href = receipt.html?orderId=${orderId};
-    } else {
-      document.getElementById("orderId").textContent = "Unavailable";
-      document.getElementById("receiptBtn").style.display = "none";
-    }
-  </script>
+  if (orderId) {
+    orderEl.textContent = orderId;
+    document.getElementById('receiptLink').href = "receipt.html?orderId=" + orderId;
+  } else {
+    orderEl.textContent = "Unavailable";
+  }
+});
+</script>
 </body>
 </html>
