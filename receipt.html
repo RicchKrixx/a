@@ -5,135 +5,81 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Order Receipt | BizMAX</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: lightblue;
-      margin: 0;
-      padding: 20px;
+    body{margin:0;padding:20px;background:lightblue;font-family:Arial,Helvetica,sans-serif}
+    .wrapper{
+      max-width:750px;margin:auto;background:rgba(255,255,255,0.1);
+      backdrop-filter:blur(15px);border-radius:22px;padding:32px;
+      box-shadow:0 0 20px rgba(0,0,0,0.25);color:#000;
     }
-
-    .receipt-box {
-      max-width: 700px;
-      margin: auto;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-      backdrop-filter: blur(15px);
-      color: white;
-    }
-
-    h1, h3 {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
-    p {
-      font-size: 16px;
-      margin: 5px 0;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      color: white;
-    }
-
-    th, td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .total {
-      font-size: 18px;
-      font-weight: bold;
-      margin-top: 20px;
-      text-align: right;
-    }
-
-    .back {
-      display: block;
-      margin: 30px auto 0;
-      padding: 12px 20px;
-      background: cyan;
-      color: black;
-      font-weight: bold;
-      border-radius: 20px;
-      text-align: center;
-      text-decoration: none;
-      width: fit-content;
-    }
-
-    .back:hover {
-      background: #00bcbc;
-    }
+    h1{text-align:center;margin:0 0 6px}
+    h3{text-align:center;margin:0 0 20px;font-weight:600}
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    th,td{padding:12px;border-bottom:1px solid rgba(0,0,0,0.15)}
+    th{background:#1976d2;color:#fff;text-align:left}
+    .total{font-weight:bold;text-align:right;margin-top:18px;font-size:18px}
+    a.back{display:block;margin:26px auto 0;padding:10px 24px;
+      background:cyan;color:#000;border-radius:22px;font-weight:bold;
+      width:max-content;text-decoration:none}
+    a.back:hover{background:#00bcbc}
   </style>
 </head>
 <body>
+  <div class="wrapper">
+    <h1>🧾 Receipt</h1>
+    <h3 id="oid">Order ID: —</h3>
 
-<div class="receipt-box">
-  <h1>🧾 Order Receipt</h1>
-  <h3>Order ID: <span id="orderId">Loading...</span></h3>
-  <div id="custInfo"></div>
-  <table>
-    <thead>
-      <tr>
-        <th>Item</th>
-        <th>Qty</th>
-        <th>Price</th>
-        <th>Total</th>
-      </tr>
-    </thead>
-    <tbody id="itemList"></tbody>
-  </table>
-  <p class="total">Grand Total: $<span id="grandTotal">0.00</span></p>
-  <a href="BixMax home.html" class="back">Return Home</a>
-</div>
+    <div id="custInfo"></div>
+
+    <table>
+      <thead>
+        <tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+
+    <p class="total">Grand Total: $<span id="gt">0.00</span></p>
+
+    <a href="BixMax home.html" class="back">🏠 Back Home</a>
+  </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const urlParams = new URLSearchParams(location.search);
-    const orderId = urlParams.get('orderId');
-    document.getElementById('orderId').textContent = orderId || 'Unavailable';
+document.addEventListener('DOMContentLoaded',()=>{
+  const q = new URLSearchParams(location.search);
+  const orderId = q.get('orderId');
+  document.getElementById('oid').textContent = 'Order ID: '+(orderId||'Unavailable');
 
-    const orders = JSON.parse(localStorage.getItem('orders') || '{}');
-    const order = orders[orderId];
+  const orders = JSON.parse(localStorage.getItem('orders')||'{}');
+  const order = orders[orderId];
 
-    if (!order) {
-      document.getElementById('custInfo').innerHTML = '<p>Order not found.</p>';
-      return;
-    }
+  if(!order){
+    document.getElementById('custInfo').innerHTML='<p>Order not found.</p>';
+    return;
+  }
 
-    // Show customer info
-    document.getElementById('custInfo').innerHTML = 
-      <p><b>Name:</b> ${order.name}</p>
-      <p><b>Email:</b> ${order.email}</p>
-      <p><b>Phone:</b> ${order.phone}</p>
-      <p><b>Address:</b> ${order.address}</p>
-      <p><b>Payment:</b> ${order.method === 'online' ? 'Paystack' : 'Pay on Delivery'}</p>
-    ;
+  // customer info
+  document.getElementById('custInfo').innerHTML = 
+    <p><b>Name:</b> ${order.name}</p>
+    <p><b>Email:</b> ${order.email}</p>
+    <p><b>Phone:</b> ${order.phone}</p>
+    <p><b>Address:</b> ${order.address}</p>
+    <p><b>Payment:</b> ${order.method==='online'?'Paystack':'Pay on Delivery'}</p>
+  ;
 
-    // Show items
-    const tbody = document.getElementById('itemList');
-    let grandTotal = 0;
-    order.items.forEach(item => {
-      const total = item.price * item.qty;
-      grandTotal += total;
-      const tr = document.createElement('tr');
-      tr.innerHTML = 
-        <td>${item.name}</td>
-        <td>${item.qty}</td>
-        <td>$${item.price.toFixed(2)}</td>
-        <td>$${total.toFixed(2)}</td>
-      ;
-      tbody.appendChild(tr);
-    });
-
-    document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
+  // items
+  let grand=0;
+  order.items.forEach(it=>{
+    const sub=it.qty*it.price; grand+=sub;
+    document.getElementById('tbody').insertAdjacentHTML('beforeend',
+      <tr>
+        <td>${it.name}</td>
+        <td>${it.qty}</td>
+        <td>$${it.price.toFixed(2)}</td>
+        <td>$${sub.toFixed(2)}</td>
+      </tr>
+    );
   });
+  document.getElementById('gt').textContent = grand.toFixed(2);
+});
 </script>
-
 </body>
 </html>
