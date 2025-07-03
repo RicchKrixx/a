@@ -122,6 +122,30 @@ header {
 	align-items:center;
 }
 
+.scroll-row {
+  display: flex;
+  overflow-x: auto;
+  gap: 20px;
+  padding: 10px;
+  scroll-snap-type: x mandatory;
+}
+
+.scroll-row .item {
+  min-width: 200px;
+  flex: 0 0 auto;
+  background: lightgray;
+  border-radius: 16px;
+  padding: 12px;
+  scroll-snap-align: start;
+  text-align: center;
+}
+
+.scroll-row .item img {
+  width: 100%;
+  border-radius: 12px;
+}
+		
+
 .fashion-grid {
     display: flex;
     flex-wrap: wrap;
@@ -384,27 +408,31 @@ body {
 		
     </header>
 <section class="fashion">
-  <h1>👗 Fashion (Top Picks)</h1>
-  <div class="fashion-grid">
+  <h1 style="text-align:center;">👗 Fashion (Top Picks)</h1>
+
+  <!-- Horizontal Scroll Container -->
+  <div class="scroll-row">
     <div class="item">
-      <img src="pp.jpeg" alt="labubu">
+      <img src="pp.jpeg" alt="Labubu" />
       <h3>Labubu</h3>
       <p>$20</p>
     </div>
     <div class="item">
-      <img src="pp.jpeg" alt="tote bag">
+      <img src="pp.jpeg" alt="Tote Bag" />
       <h3>Tote Bag</h3>
       <p>$15</p>
     </div>
     <div class="item">
-      <img src="pp.jpeg" alt="sneakers">
+      <img src="pp.jpeg" alt="Sneakers" />
       <h3>Sneakers</h3>
       <p>$50</p>
     </div>
   </div>
 
   <!-- View All Button -->
-  <a href="fashion.html" class="checkout-btn" style="display:inline-block;margin-top:15px;">👀 View All</a>
+  <div style="text-align:center; margin-top: 20px;">
+    <a href="fashion.html" class="checkout-btn">👀 View All</a>
+  </div>
 </section>
 	<section class="fashion">
       <b><h1>👗Fashion</h1></b>
