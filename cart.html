@@ -1,231 +1,173 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BizMAX | Cart</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #e0f7fa;
-      padding: 20px;
-      color: #333;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BizMAX | Cart</title>
 
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 30px;
-    }
+<style>
+  :root { --glass:rgba(255,255,255,0.08); --blur:25px; --blue:#1976d2; }
 
-    header h1 {
-      color: #1976d2;
-    }
+  body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:lightblue;
+    margin:0; padding:20px;
+  }
 
-    .cart-badge {
-      position: relative;
-      font-size: 24px;
-      cursor: pointer;
-    }
+  .cart-box{
+    max-width:800px; margin:auto;
+    background:var(--glass);
+    backdrop-filter:blur(var(--blur));
+    border-radius:20px;
+    padding:28px;
+    box-shadow:0 0 25px rgba(0,0,0,0.25);
+    color:#fff;
+  }
 
-    .cart-badge span {
-      position: absolute;
-      top: -10px;
-      right: -10px;
-      background: red;
-      color: white;
-      font-size: 12px;
-      border-radius: 50%;
-      padding: 3px 6px;
-    }
+  h1{margin-top:0;text-align:center}
 
-    .cart-item {
-      display: flex;
-      align-items: center;
-      background: white;
-      border-radius: 16px;
-      margin-bottom: 15px;
-      padding: 15px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
+  .item{
+    display:flex; align-items:center; gap:20px;
+    border-bottom:1px solid rgba(255,255,255,0.15);
+    padding:14px 0;
+  }
+  .item img{
+    width:70px; height:70px; object-fit:cover; border-radius:12px;
+  }
+  .name{flex:1}
+  .qty-control{
+    display:flex; align-items:center; gap:6px;
+  }
+  .qty-control button{
+    width:28px; height:28px; border:none;
+    background:#fff; color:#000; border-radius:6px; cursor:pointer;
+    font-weight:bold;
+  }
+  .remove-btn{
+    background:red; color:#fff; border:none; padding:6px 12px;
+    border-radius:8px; cursor:pointer; font-size:14px;
+  }
+  .total-line{
+    font-weight:bold; text-align:right; margin-top:20px; font-size:18px;
+  }
+  .checkout-btn{
+    display:block; width:100%; margin-top:25px; padding:14px;
+    background:var(--blue); color:#fff; font-size:18px; font-weight:bold;
+    border:none; border-radius:14px; cursor:pointer;
+  }
+  .checkout-btn:hover{background:#1259a4}
 
-    .cart-item img {
-      width: 80px;
-      height: 80px;
-      border-radius: 12px;
-      margin-right: 15px;
-      object-fit: cover;
-    }
-
-    .cart-info {
-      flex: 1;
-    }
-
-    .cart-info h3 {
-      margin: 0 0 6px;
-    }
-
-    .cart-info p {
-      margin: 0;
-      font-size: 16px;
-    }
-
-    .qty {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 8px;
-    }
-
-    .qty button {
-      padding: 5px 10px;
-      font-weight: bold;
-      font-size: 16px;
-      border: none;
-      background: #1976d2;
-      color: white;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    .remove-btn {
-      font-size: 18px;
-      background: none;
-      border: none;
-      color: red;
-      cursor: pointer;
-      margin-left: 10px;
-    }
-
-    .total {
-      font-size: 20px;
-      font-weight: bold;
-      margin-top: 20px;
-    }
-
-    .actions {
-      margin-top: 25px;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .actions button {
-      padding: 12px 20px;
-      font-size: 16px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .checkout-btn {
-      background: #1976d2;
-      color: white;
-    }
-
-    .empty-btn {
-      background: #ccc;
-    }
-
-    @media (max-width: 600px) {
-      .cart-item {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .cart-item img {
-        width: 100%;
-        height: auto;
-        margin-bottom: 10px;
-      }
-
-      .actions {
-        flex-direction: column;
-        gap: 12px;
-      }
-    }
-  </style>
+  /* Simple badge style if you have a cart icon elsewhere */
+  #cartCount{
+    position:fixed; top:12px; right:16px;
+    background:red; color:white; width:22px; height:22px;
+    border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-size:13px; font-weight:bold;
+  }
+</style>
 </head>
 <body>
 
-  <header>
-    <h1>My Cart</h1>
-    <div class="cart-badge">🛒 <span id="cartCount">0</span></div>
-  </header>
+<!-- Optional badge – put wherever you like -->
+<div id="cartCount">0</div>
 
-  <div id="cartContainer"></div>
+<div class="cart-box">
+  <h1>🛒 Your Cart</h1>
+  <div id="cartItems"></div>
 
-  <div class="total">Total: $<span id="grandTotal">0.00</span></div>
+  <div class="total-line">Grand Total: $<span id="grandTotal">0.00</span></div>
+  <button class="checkout-btn" onclick="proceedCheckout()">Proceed to Checkout</button>
+</div>
 
-  <div class="actions">
-    <button class="empty-btn" onclick="clearCart()">Empty Cart</button>
-    <button class="checkout-btn" onclick="goToCheckout()">Checkout</button>
-  </div>
+<script>
+/* ---------- Core Helpers ---------- */
 
-  <script>
-    const cartContainer = document.getElementById('cartContainer');
-    const grandTotalEl = document.getElementById('grandTotal');
-    const cartCount = document.getElementById('cartCount');
+// Read cart array from storage
+function getCart(){ return JSON.parse(localStorage.getItem('cart')||'[]'); }
+// Save cart array to storage
+function setCart(arr){ localStorage.setItem('cart', JSON.stringify(arr)); }
+// Update badge count
+function updateCartIcon(){
+  const count = getCart().reduce((s,i)=>s+i.qty,0);
+  document.getElementById('cartCount').textContent = count;
+}
 
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+/* ---------- Render Cart ---------- */
+function renderCart(){
+  const container = document.getElementById('cartItems');
+  container.innerHTML = '';
+  const cart = getCart();
+  let grand = 0;
 
-    function updateCartDisplay() {
-      cartContainer.innerHTML = '';
-      let total = 0;
-      cart.forEach((item, i) => {
-        const itemEl = document.createElement('div');
-        itemEl.className = 'cart-item';
-        itemEl.innerHTML = `
-          <img src="${item.image}" alt="${item.name}">
-          <div class="cart-info">
-            <h3>${item.name}</h3>
-            <p>Price: $${item.price.toFixed(2)}</p>
-            <div class="qty">
-              <button onclick="changeQty(${i}, -1)">−</button><span>${item.qty}</span>
-              <button onclick="changeQty(${i}, 1)">+</button>
-              <button class="remove-btn" onclick="removeItem(${i})">🗑️</button>
-            </div>
-          </div>
-        `;
-        cartContainer.appendChild(itemEl);
-        total += item.qty * item.price;
-      });
+  if(cart.length===0){
+    container.innerHTML = '<p>Your cart is empty.</p>';
+    document.getElementById('grandTotal').textContent = '0.00';
+    localStorage.setItem('grandTotal','0');
+    updateCartIcon();
+    return;
+  }
 
-      grandTotalEl.textContent = total.toFixed(2);
-      cartCount.textContent = cart.reduce((sum, item) => sum + item.qty, 0);
-      localStorage.setItem('grandTotal', total.toFixed(2));
-      localStorage.setItem('cart', JSON.stringify(cart));
+  cart.forEach(item=>{
+    const lineTotal = item.qty * item.price;
+    grand += lineTotal;
+
+    const div = document.createElement('div'); div.className='item';
+    div.innerHTML = 
+      <img src="${item.image}" alt="${item.name}">
+      <div class="name"><b>${item.name}</b><br>$${item.price.toFixed(2)}</div>
+
+      <div class="qty-control">
+        <button onclick="changeQty('${item.id}',-1)">−</button>
+        <span id="q_${item.id}">${item.qty}</span>
+        <button onclick="changeQty('${item.id}',1)">+</button>
+      </div>
+
+      <button class="remove-btn" onclick="removeFromCart('${item.id}')">Delete</button>
+    ;
+    container.appendChild(div);
+  });
+
+  document.getElementById('grandTotal').textContent = grand.toFixed(2);
+  localStorage.setItem('grandTotal', grand.toFixed(2));
+  updateCartIcon();
+}/* ---------- Quantity Update ---------- */
+function changeQty(productId, delta){
+  const cart = getCart();
+  const idx = cart.findIndex(it=>it.id===productId);
+  if(idx>-1){
+    cart[idx].qty += delta;
+    if(cart[idx].qty <= 0){ // auto remove if qty <=0
+      cart.splice(idx,1);
     }
+    setCart(cart);
+    renderCart();
+  }
+}
 
-    function changeQty(index, delta) {
-      cart[index].qty += delta;
-      if (cart[index].qty <= 0) removeItem(index);
-      else updateCartDisplay();
-    }
+/* ---------- Remove ---------- */
+function removeFromCart(productId){
+  const cart = getCart().filter(it=>it.id !== productId);
+  setCart(cart);
+  renderCart();
+}
 
-    function removeItem(index) {
-      cart.splice(index, 1);
-      updateCartDisplay();
-    }
+/* ---------- Proceed to Checkout ---------- */
+function proceedCheckout(){
+  const cart = getCart();
+  const grand = parseFloat(localStorage.getItem('grandTotal')||'0');
+  if(cart.length===0 || grand<=0){
+    alert('🛒 Your cart is empty!');
+    return;
+  }
+  // redirect
+  location.href = 'checkout.html';
+}
 
-    function clearCart() {
-      if (confirm("Clear all items from cart?")) {
-        cart = [];
-        updateCartDisplay();
-      }
-    }
-
-    function goToCheckout() {
-      if (cart.length === 0) {
-        alert("🛒 Cart is empty!");
-        return;
-      }
-      window.location.href = "checkout.html";
-    }
-
-    updateCartDisplay(); // Initialize on load
-  </script>
+/* ---------- Init ---------- */
+document.addEventListener('DOMContentLoaded', ()=>{
+  renderCart();
+  updateCartIcon();
+});
+</script>
 </body>
 </html>
