@@ -1,39 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>BizMAX | Checkout</title>
 <style>
-  :root{--blue:#1976d2;--glass:#ffffff2e}
-  *{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
-  body{
-    background:lightblue;padding:20px;min-height:100vh;margin:0
-  }
-  h1{text-align:center;margin:0 0 18px}
-  .card{
-    max-width:680px;margin:auto;background:var(--glass);
-    backdrop-filter:blur(18px);border-radius:20px;padding:28px;
-    box-shadow:0 4px 20px rgba(0,0,0,.15)
-  }
-  .line{display:flex;justify-content:space-between;margin:6px 0;font-size:15px}
-  .line span:first-child{flex:1}
-  .total{font-weight:bold;font-size:18px;text-align:right;margin-top:12px}
-  label{display:block;margin-top:16px;font-weight:bold}
-  input,textarea,select{
-    width:100%;padding:12px;border-radius:10px;border:none;
-    background:rgba(255,255,255,.7);font-size:15px;margin-top:4px
-  }
-  .btn{width:100%;padding:16px;border:none;border-radius:12px;
-       font-size:17px;font-weight:bold;color:#fff;background:var(--blue);
-       cursor:pointer;margin-top:22px}
-  .btn:hover{background:#1259a4}
-  #locBtn{
-    margin-top:6px;padding:7px 12px;width:auto;background:#333;
-    font-size:13px;border-radius:8px
-  }
-  #locBtn:hover{background:#111}
-  .error{color:red;text-align:center;margin-top:12px;font-weight:bold}
+:root{--blue:#1976d2;--bg:#e0f7fa}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}
+body{background:var(--bg);padding:20px;min-height:100vh}
+h1{text-align:center;margin-bottom:18px}
+.card{max-width:760px;margin:auto;background:#ffffffcc;border-radius:20px;
+      padding:28px;box-shadow:0 4px 18px rgba(0,0,0,.15)}
+.cart-title{font-weight:bold;margin-bottom:10px}
+.item{display:flex;align-items:center;gap:12px;margin:8px 0}
+.item img{width:70px;height:70px;object-fit:cover;border-radius:12px}
+.item .info{flex:1}
+.item .info h4{margin:0 0 4px;font-size:15px}
+.item .info span{font-size:14px;font-weight:bold}
+.total{margin-top:12px;text-align:right;font-size:18px;font-weight:bold}
+label{display:block;margin-top:16px;margin-bottom:5px;font-weight:bold}
+input,textarea,select{width:100%;padding:12px;border-radius:10px;border:none;
+       background:#f5f5f5;font-size:15px}
+#locBtn{margin-top:6px;padding:7px 12px;background:#333;color:#fff;font-size:13px;
+        border:none;border-radius:8px;cursor:pointer}
+#locBtn:hover{background:#111}
+.action-btn{width:100%;margin-top:24px;padding:16px;border:none;border-radius:12px;
+            background:var(--blue);color:#fff;font-size:17px;font-weight:bold;cursor:pointer}
+.action-btn:hover{background:#135bad}
+.error{color:red;text-align:center;font-weight:bold;margin-top:12px}
 </style>
 </head>
 <body>
@@ -41,21 +35,23 @@
 <h1>Checkout</h1>
 
 <div class="card">
-  <!-- ░░ ORDER SUMMARY ░░ -->
-  <div id="summary"></div>
+  <!-- ░░ CART SUMMARY ░░ -->
+  <div id="cartBox"></div>
 
   <!-- ░░ CUSTOMER INFO ░░ -->
-  <label>Full Name</label>
+  <label for="custName">Full Name</label>
   <input id="custName" placeholder="John Doe">
-  <label>Email</label>
+
+  <label for="custEmail">Email</label>
   <input id="custEmail" type="email" placeholder="john@example.com">
-  <label>Phone</label>
+
+  <label for="custPhone">Phone</label>
   <input id="custPhone" type="tel" placeholder="055 123 4567">
 
   <label>Delivery Address
     <button id="locBtn" type="button">📍 Use My Location</button>
   </label>
-  <textarea id="custAddr" rows="3" placeholder="Street • City • Landmarks"></textarea>
+  <textarea id="custAddr" rows="3" placeholder="Street • City • Landmark"></textarea>
 
   <!-- ░░ PAYMENT ░░ -->
   <label>Payment Method</label>
@@ -64,33 +60,43 @@
     <option value="online">Pay Online</option>
   </select>
 
-  <button id="actionBtn" class="btn">Place Order</button>
+  <button id="submitBtn" class="action-btn">Place Order</button>
   <div id="err" class="error"></div>
 </div>
 
 <!-- Paystack SDK -->
 <script src="https://js.paystack.co/v1/inline.js"></script>
 <script>
-/* ========== 1.  Show cart & total ========== */
-const cart = JSON.parse(localStorage.getItem('cart')||'[]');
-const summaryBox = document.getElementById('summary');
-let grand = 0;
+/* ---------- 1.  Build Cart Summary ---------- */
+const cart       = JSON.parse(localStorage.getItem('cart')||'[]');
+const cartBox    = document.getElementById('cartBox');
+let   grandTotal = 0;
 
-if(cart.length===0){
-  summaryBox.innerHTML='<p style="text-align:center;font-weight:bold">🛒 Your cart is empty.</p>';
-}else{
-  summaryBox.innerHTML='<h3 style="margin-bottom:8px">Order Summary</h3>';
+function renderCart(){
+  if(cart.length===0){
+    cartBox.innerHTML='<p style="text-align:center;font-weight:bold">🛒 Your cart is empty.</p>';
+    return;
+  }
+  cartBox.innerHTML='<div class="cart-title">Order Summary</div>';
   cart.forEach(it=>{
-    const sub = it.qty*it.price;
-    grand += sub;
-    summaryBox.insertAdjacentHTML('beforeend',
-      <div class="line"><span>${it.qty} × ${it.name}</span><span>$${sub.toFixed(2)}</span></div>);
+    const sub=it.qty*it.price;
+    grandTotal+=sub;
+    cartBox.insertAdjacentHTML('beforeend',
+      <div class="item">
+        <img src="${it.image}" alt="${it.name}">
+        <div class="info">
+          <h4>${it.name}</h4>
+          <span>${it.qty} × $${it.price.toFixed(2)} = $${sub.toFixed(2)}</span>
+        </div>
+      </div>
+    );
   });
-  summaryBox.insertAdjacentHTML('beforeend',
-    <div class="total">Total: $${grand.toFixed(2)}</div>);
+  cartBox.insertAdjacentHTML('beforeend',
+    <div class="total">Total: $${grandTotal.toFixed(2)}</div>);
 }
+renderCart();
 
-/* ========== 2.  Use My Location button ========== */
+/* ---------- 2.  Geo-Location ---------- */
 document.getElementById('locBtn').onclick=()=>{
   if(!navigator.geolocation){alert('Geolocation not supported');return;}
   navigator.geolocation.getCurrentPosition(
@@ -99,56 +105,63 @@ document.getElementById('locBtn').onclick=()=>{
       document.getElementById('custAddr').value=
         Lat:${latitude.toFixed(5)}, Lng:${longitude.toFixed(5)};
     },
-    ()=>alert('Could not fetch location')
+    ()=>alert('Could not get location — please allow permission.')
   );
-};
-
-/* ========== 3.  Toggle button text ========== */
+};/* ---------- 3.  Payment method → button text ---------- */
 const paySel  = document.getElementById('payMethod');
-const actBtn  = document.getElementById('actionBtn');
-function setBtn(){actBtn.textContent = paySel.value==='online'?'Pay Now':'Place Order';}
-paySel.onchange=setBtn; setBtn();/* ========== 4.  Submit handler ========== */
-actBtn.onclick=()=>{
+const btn     = document.getElementById('submitBtn');
+function syncBtn(){btn.textContent=paySel.value==='online'?'Pay Now':'Place Order';}
+paySel.onchange=syncBtn; syncBtn();
+
+/* ---------- 4.  Submit Order ---------- */
+btn.onclick=()=>{
   const name  = document.getElementById('custName').value.trim();
   const email = document.getElementById('custEmail').value.trim();
   const phone = document.getElementById('custPhone').value.trim();
   const addr  = document.getElementById('custAddr').value.trim();
-  const err   = document.getElementById('err'); err.textContent='';
+  const err   = document.getElementById('err');
+  err.textContent='';
 
-  if(!name!email!phone||!addr){err.textContent='Please fill all fields.';return;}
-  if(cart.length===0||grand<=0){err.textContent='🛒 Cart is empty.';return;}
+  if(!name!email!phone||!addr){
+    err.textContent='❗ Please fill all fields.'; return;
+  }
+  if(cart.length===0||grandTotal<=0){
+    err.textContent='🛒 Your cart is empty.'; return;
+  }
 
-  /* -------- PAY ONLINE (PAYSTACK) -------- */
+  /* ===== 4A. Pay Online → Paystack ===== */
   if(paySel.value==='online'){
     PaystackPop.setup({
-      key:'pk_test_xxxxxxxxxxxxxxxxxxxxxxx',      //  <<<  REPLACE with your Paystack pub key
+      key:'pk_test_xxxxxxxxxxxxxxxxxxxxxxx',        // ← PUT YOUR PUBLIC KEY
       email,
-      amount: Math.round(grand*100),              //  pesewas / kobo
+      amount:Math.round(grandTotal*100),           // kobo / pesewas
       currency:'GHS',
       metadata:{custom_fields:[
-        {display_name:'Name',value:name},
+        {display_name:'Name', value:name},
         {display_name:'Phone',value:phone},
         {display_name:'Address',value:addr}
       ]},
-      callback: res=>{
+      callback:res=>{
         alert('Payment successful ✔️ Ref: '+res.reference);
         localStorage.removeItem('cart');
         window.location='thankyou.html';
       },
-      onClose: ()=>alert('Payment was cancelled')
+      onClose:()=>alert('Payment cancelled.')
     }).openIframe();
-    return;
+    return; // stop here for Paystack flow
   }
 
-  /* -------- PAY ON DELIVERY -------- */
-  const lines = cart.map(it=>${it.qty} x ${it.name} = $${(it.qty*it.price).toFixed(2)}).join('%0D%0A');
+  /* ===== 4B. Pay on Delivery → send e-mail ===== */
+  const bodyLines = cart
+        .map(it=>${it.qty} × ${it.name} = $${(it.qty*it.price).toFixed(2)})
+        .join('%0D%0A');
   const body =
-New BizMAX Order%0D%0A-----------------%0D%0A${lines}%0D%0A-----------------%0D%0ATotal: $${grand.toFixed(2)}%0D%0APayment: Pay on Delivery%0D%0A%0D%0ACustomer Details:%0D%0AName: ${name}%0D%0APhone: ${phone}%0D%0AAddress: ${addr};
-  const mailto=mailto:gadrijasper23@gmail.com?subject=New Order from ${encodeURIComponent(name)}&body=${body};
-  window.location.href=mailto;
+New BizMAX Order%0D%0A--------------------%0D%0A${bodyLines}%0D%0A--------------------%0D%0ATotal: $${grandTotal.toFixed(2)}%0D%0APayment: Pay on Delivery%0D%0A%0D%0ACustomer:%0D%0AName: ${name}%0D%0APhone: ${phone}%0D%0AAddress: ${encodeURIComponent(addr)};
+
+  window.location.href=mailto:gadrijasper23@gmail.com?subject=New Order from ${encodeURIComponent(name)}&body=${body};
 
   localStorage.removeItem('cart');
-  setTimeout(()=>window.location='thankyou.html',500);
+  setTimeout(()=>window.location='thankyou.html',600);
 };
 </script>
 </body>
