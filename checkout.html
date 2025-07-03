@@ -1,92 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>BixMAX | Checkout</title>
+  <title>BizMAX | Checkout</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: lightblue;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      min-height: 100vh;
+    :root{--glass:#ffffff18;--blur:25px;--blue:#1976d2}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:Arial,Helvetica,sans-serif;
+      background:lightblue;
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:20px;
+      overflow-x:hidden;
     }
-    .card {
-      max-width: 600px;
-      width: 100%;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
-      padding: 30px;
-      backdrop-filter: blur(25px);
-      box-shadow: 0 0 20px rgba(0,0,0,0.2);
-      color: #fff;
+    .card{
+      width:100%;
+      max-width:620px;
+      background:var(--glass);
+      border-radius:20px;
+      padding:28px;
+      border:5px solid rgba(255,255,255,.1);
+      backdrop-filter:blur(var(--blur));
+      box-shadow:0 0 30px rgba(0,0,0,.2);
+      color:#fff;
     }
-    label {
-      display: block;
-      margin: 12px 0 6px;
-      font-weight: bold;
-    }
+    h1,h2{text-align:center;margin-bottom:18px}
+    label{display:block;margin:14px 0 6px;font-weight:bold}
     input, textarea, select {
-      width: 100%;
-      padding: 12px;
-      border-radius: 10px;
-      border: none;
+      width:100%;
+      padding:12px;
+      border-radius:12px;
+      border:none;
+      background:rgba(255,255,255,.15);
+      color: #fff;
       font-size: 16px;
-      background: rgba(255,255,255,0.2);
-      color: #fff;
     }
-    .summary {
-      background: rgba(0,0,0,0.2);
-      padding: 16px;
-      border-radius: 14px;
-      margin-bottom: 20px;
+    input::placeholder,textarea::placeholder{color:#eee}
+    .summary{
+      background:rgba(0,0,0,.25);
+      padding:20px;
+      border-radius:16px;
+      border:2px solid rgba(255,255,255,.15);
+      margin-bottom:24px
     }
-    .summary p {
-      font-size: 18px;
-      font-weight: bold;
+    .summary p{margin:6px 0;font-size:18px;font-weight:bold}
+    button{
+      width:100%;
+      padding:16px;
+      border:none;
+      border-radius:14px;
+      font-size:18px;
+      font-weight:bold;
+      cursor:pointer;
+      background:var(--blue);
+      color:#fff;
+      transition:background .25s
     }
-    button {
-      width: 100%;
-      padding: 14px;
-      font-size: 18px;
-      border: none;
-      border-radius: 12px;
-      background: #1976d2;
-      color: #fff;
-      cursor: pointer;
+    button:hover{background:#1259a4}
+    #loader{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(0,0,0,.6);
+      z-index:1000
     }
-    button:hover {
-      background: #1259a4;
+    .spin{
+      width:60px;
+      height:60px;
+      border:7px solid #eee;
+      border-top:7px solid var(--blue);
+      border-radius:50%;
+      animation:spin 1s linear infinite
     }
-    #loader {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    .spin {
-      width: 50px;
-      height: 50px;
-      border: 6px solid #eee;
-      border-top: 6px solid #1976d2;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    @keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
   </style>
 </head>
 <body>
   <div class="card">
-    <h2>Checkout</h2>
+    <h1>Checkout</h1>
     <div class="summary">
+      <h2>Order Summary</h2>
       <p>Total to Pay: $<span id="grandTotal">0.00</span></p>
     </div>
     <label>Full Name</label>
@@ -96,95 +95,102 @@
     <label>Phone Number</label>
     <input id="custPhone" type="tel" placeholder="055 123 4567">
     <label>Delivery Address</label>
-    <textarea id="custAddr" placeholder="Street • City"></textarea>
+    <textarea id="custAddr" rows="3" placeholder="Street • City"></textarea>
     <label>Payment Method</label>
     <select id="payMethod">
       <option value="delivery">Pay on Delivery</option>
       <option value="online">Pay Online</option>
     </select>
-    <br><br>
     <button id="actionBtn">Place Order</button>
   </div>
 
-  <div id="loader"><div class="spin"></div></div>
+  <div id="loader">
+    <div style="text-align:center;color:#fff">
+      <div class="spin"></div>
+      <p style="margin-top:14px;font-size:18px;font-weight:bold">Processing…</p>
+    </div>
+  </div>
 
   <script src="https://js.paystack.co/v1/inline.js"></script>
   <script>
     const btn = document.getElementById("actionBtn");
-    const method = document.getElementById("payMethod");
+    const paySel = document.getElementById("payMethod");
     const loader = document.getElementById("loader");
 
-    // Set button text initially
-    method.addEventListener("change", () => {
-      btn.textContent = method.value === "online" ? "Pay Now" : "Place Order";
+    // Set button label
+    paySel.addEventListener("change", () => {
+      btn.textContent = paySel.value === "online" ? "Pay Now" : "Place Order";
     });
 
-    // Load and display grand total
+    // Load total
     document.addEventListener("DOMContentLoaded", () => {
-      const grand = localStorage.getItem("grandTotal") || "0";
-      document.getElementById("grandTotal").textContent = parseFloat(grand).toFixed(2);
-      btn.textContent = method.value === "online" ? "Pay Now" : "Place Order";
+      const total = localStorage.getItem("grandTotal") || "0";
+      document.getElementById("grandTotal").textContent = parseFloat(total).toFixed(2);
+      btn.textContent = paySel.value === "online" ? "Pay Now" : "Place Order";
     });
-
-    function generateOrderID() {
-      return "BMX" + Date.now();
-    }
 
     function showLoader(show) {
       loader.style.display = show ? "flex" : "none";
     }
 
-    btn.addEventListener("click", () => {
+    function generateOrderID() {
+      return "BMX" + Math.floor(Math.random() * 1000000);
+    }btn.addEventListener("click", () => {
       const name = document.getElementById("custName").value.trim();
       const email = document.getElementById("custEmail").value.trim();
       const phone = document.getElementById("custPhone").value.trim();
-      const addr = document.getElementById("custAddr").value.trim();
-      const pay = method.value;
-      const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
+      const address = document.getElementById("custAddr").value.trim();
+      const method = paySel.value;
+      const total = parseFloat(localStorage.getItem("grandTotal") || "0");
       const cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
-      if (!(name && email && phone && addr)) return alert("Please fill all fields.");
-      if (grandTotal <= 0 || cart.length === 0) return alert("🛒 Your cart is empty!");
+      if (!(name && email && phone && address)) return alert("Fill all fields");
+      if (total <= 0 || cart.length === 0) return alert("Your cart is empty");
 
       const orderId = generateOrderID();
-      const orderData = {
+      const order = {
         id: orderId,
         name,
         email,
         phone,
-        address: addr,
-        method: pay,
-        grandTotal,
+        address,
+        method,
+        grandTotal: total,
         items: cart
       };
 
-      // Save to localStorage
-      const allOrders = JSON.parse(localStorage.getItem("orders") || "{}");
-      allOrders[orderId] = orderData;
-      localStorage.setItem("orders", JSON.stringify(allOrders));
+      // Save to orders
+      const orders = JSON.parse(localStorage.getItem("orders") || "{}");
+      orders[orderId] = order;
+      localStorage.setItem("orders", JSON.stringify(orders));
+      localStorage.setItem("latestOrder", JSON.stringify(order));
 
       showLoader(true);
 
-      if (pay === "online") {
+      if (method === "online") {
         PaystackPop.setup({
-          key: "pk_test_xxxxxxxxxxxxxx", // Replace with your Paystack public key
+          key: "pk_test_xxxxxxxxxxxxxxxx", // replace with your key
           email: email,
-          amount: Math.round(grandTotal * 100),
+          amount: Math.round(total * 100),
           currency: "GHS",
-          callback: function(response) {
-            alert("✅ Payment successful! Ref: " + response.reference);
+          metadata: {
+            custom_fields: [
+              { display_name: "Customer Name", value: name },
+              { display_name: "Phone", value: phone },
+              { display_name: "Address", value: address }
+            ]
+          },
+          callback: function (response) {
             localStorage.removeItem("cart");
-            showLoader(false);
             window.location.href = thankyou.html?orderId=${orderId};
           },
-          onClose: function() {
+          onClose: function () {
             showLoader(false);
-            alert("❌ Payment cancelled.");
+            alert("Payment cancelled.");
           }
         }).openIframe();
       } else {
         setTimeout(() => {
-          alert("✅ Order placed successfully!");
           localStorage.removeItem("cart");
           showLoader(false);
           window.location.href = thankyou.html?orderId=${orderId};
