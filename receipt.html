@@ -1,134 +1,80 @@
+<!-- receipt.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BizMAX | Receipt</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Receipt | BizMAX</title>
+
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: lightblue;
-      margin: 0;
-      padding: 20px;
-      color: #333;
+    body{font-family:Arial,sans-serif;background:lightblue;margin:0;padding:20px}
+    .wrapper{
+      max-width:700px;margin:auto;background:#fff;padding:30px;border-radius:20px;
+      box-shadow:0 0 20px rgba(0,0,0,.15)
     }
-
-    .receipt-box {
-      max-width: 700px;
-      margin: auto;
-      background: white;
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.15);
+    h1{text-align:center;color:#1976d2;margin-bottom:8px}
+    .order-id{text-align:center;font-weight:bold;margin-bottom:24px}
+    table{width:100%;border-collapse:collapse;margin-bottom:20px}
+    th,td{padding:12px;border-bottom:1px solid #ddd;text-align:left}
+    th{background:#1976d2;color:#fff}
+    .total{text-align:right;font-size:18px;font-weight:bold;margin-top:10px}
+    a.btn{
+      display:block;text-align:center;margin-top:30px;padding:12px 24px;
+      background:cyan;color:#000;font-weight:bold;border-radius:30px;text-decoration:none
     }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 10px;
-      color: #1976d2;
-    }
-
-    .order-id {
-      text-align: center;
-      font-weight: bold;
-      margin-bottom: 30px;
-      font-size: 18px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 20px;
-    }
-
-    th, td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
-
-    th {
-      background-color: #1976d2;
-      color: white;
-    }
-
-    .total {
-      text-align: right;
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    .btn {
-      display: block;
-      text-align: center;
-      margin-top: 30px;
-      padding: 12px 24px;
-      background-color: cyan;
-      color: black;
-      font-weight: bold;
-      border-radius: 30px;
-      text-decoration: none;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    }
-
-    .btn:hover {
-      background-color: #00bcbc;
-    }
+    a.btn:hover{background:#00bcbc}
   </style>
 </head>
 <body>
-
-  <div class="receipt-box">
+  <div class="wrapper">
     <h1>🧾 Order Receipt</h1>
-    <div class="order-id">Order ID: <span id="orderId">loading...</span></div>
+    <p class="order-id">Order ID: <span id="orderId">loading…</span></p>
 
-    <table id="receiptTable">
+    <table>
       <thead>
-        <tr>
-          <th>Item</th>
-          <th>Qty</th>
-          <th>Price</th>
-          <th>Total</th>
-        </tr>
+        <tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr>
       </thead>
-      <tbody id="receiptBody">
-        <!-- Items will be added here -->
+      <tbody id="body">
+        <!-- rows injected by JS -->
       </tbody>
     </table>
 
     <p class="total">Grand Total: GHS <span id="grandTotal">0.00</span></p>
-
     <a href="BixMax home.html" class="btn">← Back to Home</a>
   </div>
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const receipt = JSON.parse(localStorage.getItem('receiptData') || '{}');
-    const receiptBody = document.getElementById('receiptBody');
-    const orderIdSpan = document.getElementById('orderId');
-    const grandTotalSpan = document.getElementById('grandTotal');
+  <script>
+    document.addEventListener('DOMContentLoaded',()=>{
+      /* pull the data the checkout page saved */
+      const receipt = JSON.parse(localStorage.getItem('receiptData')||'{}');
 
-    if (!receipt.id  !receipt.cart  receipt.cart.length === 0) {
-      orderIdSpan.textContent = "Unavailable";
-      receiptBody.innerHTML = <tr><td colspan="4" style="text-align:center;">No receipt data found.</td></tr>;
-      return;
-    }
+      /* show order id */
+      document.getElementById('orderId').textContent = receipt.id || 'Unavailable';
 
-    orderIdSpan.textContent = receipt.id;
-    grandTotalSpan.textContent = receipt.grandTotal.toFixed(2);
+      /* show grand total */
+      document.getElementById('grandTotal').textContent =
+        (receipt.grandTotal||0).toFixed(2);
 
-    receipt.cart.forEach(item => {
-      const row = document.createElement('tr');
-      row.innerHTML = 
-        <td>${item.name}</td>
-        <td>${item.qty}</td>
-        <td>GHS ${parseFloat(item.price).toFixed(2)}</td>
-        <td>GHS ${(item.qty * item.price).toFixed(2)}</td>
-      ;
-      receiptBody.appendChild(row);
+      /* list items */
+      const tbody = document.getElementById('body');
+      if(!receipt.cart || receipt.cart.length===0){
+        tbody.innerHTML = <tr><td colspan="4" style="text-align:center">
+                           No items found.</td></tr>;
+        return;
+      }
+
+      receipt.cart.forEach(item=>{
+        const tr = document.createElement('tr');
+        const total = (item.qty * item.price).toFixed(2);
+        tr.innerHTML = 
+          <td>${item.name}</td>
+          <td>${item.qty}</td>
+          <td>GHS ${Number(item.price).toFixed(2)}</td>
+          <td>GHS ${total}</td>;
+        tbody.appendChild(tr);
+      });
     });
-  });
-</script>
-
+  </script>
 </body>
+
 </html>
