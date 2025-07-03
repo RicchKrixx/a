@@ -8,7 +8,7 @@
     :root { --glass:#ffffff18; --blur:25px; --blue:#1976d2; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: Arial, sans-serif;
       background: lightblue;
       min-height: 100vh;
       display: flex;
@@ -28,188 +28,150 @@
       box-shadow: 0 0 30px rgba(0,0,0,.2);
       color: #fff;
     }
-    h1,h2 { text-align: center; margin-bottom: 18px; }
+    h1, h2 { text-align: center; margin-bottom: 18px; }
     label { display: block; margin: 14px 0 6px; font-weight: bold; }
     input, textarea, select {
-      width: 100%;
-      padding: 12px;
-      border-radius: 12px;
-      border: none;
-      background: rgba(255,255,255,.15);
-      color: #fff;
-      font-size: 16px;
+      width: 100%; padding: 12px; border-radius: 12px;
+      border: none; background: rgba(255,255,255,.15);
+      color: #fff; font-size: 16px;
     }
-    html { touch-action: manipulation; }
-    input::placeholder,textarea::placeholder { color: #eee; }
+    input::placeholder, textarea::placeholder { color: #eee; }
     .summary {
       background: rgba(0,0,0,.25);
-      padding: 20px;
-      border-radius: 16px;
+      padding: 20px; border-radius: 16px;
       border: 2px solid rgba(255,255,255,.15);
       margin-bottom: 24px;
     }
     .summary p { margin: 6px 0; font-size: 18px; font-weight: bold; }
     button {
-      width: 100%;
-      padding: 16px;
-      border: none;
-      border-radius: 14px;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      background: var(--blue);
-      color: #fff;
-      transition: background .25s;
+      width: 100%; padding: 16px; border: none;
+      border-radius: 14px; font-size: 18px; font-weight: bold;
+      cursor: pointer; background: var(--blue); color: #fff;
     }
     button:hover { background: #1259a4; }
     #loader {
-      position: fixed;
-      inset: 0;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0,0,0,.6);
-      z-index: 1000;
+      position: fixed; inset: 0; display: none;
+      align-items: center; justify-content: center;
+      background: rgba(0,0,0,.6); z-index: 1000;
     }
     .spin {
-      width: 60px;
-      height: 60px;
-      border: 7px solid #eee;
-      border-top: 7px solid var(--blue);
-      border-radius: 50%;
+      width: 60px; height: 60px; border: 7px solid #eee;
+      border-top: 7px solid var(--blue); border-radius: 50%;
       animation: spin 1s linear infinite;
     }
-    @keyframes spin { 0% { transform: rotate(0) } 100% { transform: rotate(360deg) } }
+    @keyframes spin {
+      0% { transform: rotate(0); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
-
-<div class="card">
-  <h1>Checkout</h1>
-  <div class="summary">
-    <h2>Order Summary</h2>
-    <p>Total to Pay: $<span id="grandTotal">0.00</span></p>
+  <div class="card">
+    <h1>Checkout</h1>
+    <div class="summary">
+      <h2>Order Summary</h2>
+      <p>Total to Pay: $<span id="grandTotal">0.00</span></p>
+    </div>
+    <label>Full Name</label><input id="custName" placeholder="John Doe" required>
+    <label>Email</label><input id="custEmail" type="email" placeholder="john@example.com" required>
+    <label>Phone Number</label><input id="custPhone" type="tel" placeholder="055 123 4567" required>
+    <label>Delivery Address</label><textarea id="custAddr" rows="3" placeholder="Street • City" required></textarea>
+    <label>Payment Method</label>
+    <select id="payMethod">
+      <option value="delivery">Pay on Delivery</option>
+      <option value="online">Pay Online</option>
+    </select>
+    <button id="actionBtn">Place Order</button>
   </div>
-  <label>Full Name</label><input id="custName" placeholder="John Doe" required>
-  <label>Email</label><input id="custEmail" type="email" placeholder="john@example.com" required>
-  <label>Phone Number</label><input id="custPhone" type="tel" placeholder="055 123 4567" required>
-  <label>Delivery Address</label><textarea id="custAddr" rows="3" placeholder="Street • City" required></textarea>
-  <label>Payment Method</label>
-  <select id="payMethod">
-    <option value="delivery">Pay on Delivery</option>
-    <option value="online">Pay Online</option>
-  </select>
-  <button id="actionBtn">Place Order</button>
-</div>
 
-<div id="loader">
-  <div style="text-align:center;color:#fff">
-    <div class="spin"></div>
-    <p style="margin-top:14px;font-size:18px;font-weight:bold">Processing…</p>
+  <div id="loader">
+    <div style="text-align:center;color:#fff">
+      <div class="spin"></div>
+      <p style="margin-top:14px;font-size:18px;font-weight:bold">Processing…</p>
+    </div>
   </div>
-</div>
 
-<script src="https://js.paystack.co/v1/inline.js"></script>
-<script>
-// Load grand total
-document.addEventListener('DOMContentLoaded', () => {
-  const stored = localStorage.getItem('grandTotal') || '0';
-  document.getElementById('grandTotal').textContent = parseFloat(stored).toFixed(2);
-});
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+  <script>
+    // Load grand total
+    document.addEventListener('DOMContentLoaded', () => {
+      const stored = localStorage.getItem('grandTotal') || '0';
+      document.getElementById('grandTotal').textContent = parseFloat(stored).toFixed(2);
+    });
 
-// Switch button label
-const paySel = document.getElementById('payMethod');
-const btn = document.getElementById('actionBtn');
-paySel.addEventListener('change', () => {
-  btn.textContent = paySel.value === 'online' ? 'Pay Now' : 'Place Order';
-});
+    const paySel = document.getElementById('payMethod');
+    const btn = document.getElementById('actionBtn');
 
-// Loader
-function showLoader(show) {
-  document.getElementById('loader').style.display = show ? 'flex' : 'none';
-}// Send to PHP (if needed)
-function postToPHP(data){
-  fetch('order.php', {
-    method: 'POST',
-    headers:{'Content-Type': 'application/x-www-form-urlencoded'},
-    body: new URLSearchParams(data)
-  }).then(res => console.log('Data sent to PHP')).catch(err => console.log(err));
-}
+    // Update button text
+    paySel.addEventListener('change', () => {
+      btn.textContent = paySel.value === 'online' ? 'Pay Now' : 'Place Order';
+    });
 
-// Main checkout logic
-btn.addEventListener('click', e => {
-  e.preventDefault();
+    // Show loader
+    function showLoader(show) {
+      document.getElementById('loader').style.display = show ? 'flex' : 'none';
+    }
 
-  const total = parseFloat(localStorage.getItem('grandTotal') || '0');
-  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-  if (total <= 0 || cart.length === 0) {
-    alert('Cart is empty.');
-    return;
-  }
+    // Main order handling
+    btn.addEventListener('click', () => {
+      const total = parseFloat(localStorage.getItem('grandTotal') || '0');
+      if (total <= 0) return alert("Cart is empty!");const name = document.getElementById("custName").value.trim();
+      const email = document.getElementById("custEmail").value.trim();
+      const phone = document.getElementById("custPhone").value.trim();
+      const addr = document.getElementById("custAddr").value.trim();
 
-  const name  = document.getElementById('custName').value.trim();
-  const email = document.getElementById('custEmail').value.trim();
-  const phone = document.getElementById('custPhone').value.trim();
-  const addr  = document.getElementById('custAddr').value.trim();
-
-  if (!(name && email && phone && addr)) {
-    alert('Please fill all details.');
-    return;
-  }
-
-  const orderId = 'BMX' + Date.now();
-  const method = paySel.value;
-
-  const order = {
-    id: orderId,
-    name,
-    email,
-    phone,
-    address: addr,
-    amount: total.toFixed(2),
-    method,
-    items: cart
-  };
-
-  // Save to localStorage for thank you + receipt
-  localStorage.setItem('latestOrder', JSON.stringify(order));
-  showLoader(true);
-  postToPHP(order);
-
-  if (method === 'online') {
-    PaystackPop.setup({
-      key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxx', // replace with your real key
-      email: email,
-      amount: Math.round(total * 100),
-      currency: 'GHS',
-      metadata: {
-        custom_fields: [
-          { display_name: 'Name', value: name },
-          { display_name: 'Phone', value: phone },
-          { display_name: 'Address', value: addr }
-        ]
-      },
-      callback: function(resp) {
-        alert('Payment successful! Ref: ' + resp.reference);
-        localStorage.removeItem('cart');
-        showLoader(false);
-        window.location = 'thankyou.html';
-      },
-      onClose: function() {
-        showLoader(false);
-        alert('Payment was cancelled.');
+      if (!name  !email  !phone || !addr) {
+        return alert("Please fill all fields.");
       }
-    }).openIframe();
-  } else {
-    setTimeout(() => {
-      alert('Order placed successfully!');
-      localStorage.removeItem('cart');
-      showLoader(false);
-      window.location = 'thankyou.html';
-    }, 1500);
-  }
-});
-</script>
 
+      const orderId = "BMX" + Date.now();
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+      const order = {
+        id: orderId,
+        name, email, phone, address: addr,
+        method: paySel.value,
+        grandTotal: total.toFixed(2),
+        items: cart
+      };
+
+      // Save order to localStorage
+      const allOrders = JSON.parse(localStorage.getItem("orders") || "{}");
+      allOrders[orderId] = order;
+      localStorage.setItem("orders", JSON.stringify(allOrders));
+      localStorage.setItem("lastOrderId", orderId);
+
+      showLoader(true);
+
+      if (paySel.value === "online") {
+        PaystackPop.setup({
+          key: "pk_test_xxxxxxxxxxxxx", // Replace with your key
+          email: email,
+          amount: Math.round(total * 100),
+          currency: "GHS",
+          metadata: {
+            custom_fields: [
+              { display_name: "Name", value: name },
+              { display_name: "Phone", value: phone },
+              { display_name: "Address", value: addr }
+            ]
+          },
+          callback: function(response) {
+            localStorage.removeItem("cart");
+            window.location.href = thankyou.html?orderId=${orderId};
+          },
+          onClose: function() {
+            showLoader(false);
+            alert("Payment cancelled.");
+          }
+        }).openIframe();
+      } else {
+        setTimeout(() => {
+          localStorage.removeItem("cart");
+          window.location.href = thankyou.html?orderId=${orderId};
+        }, 1500);
+      }
+    });
+  </script>
 </body>
 </html>
