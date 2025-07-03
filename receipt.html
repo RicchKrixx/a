@@ -3,113 +3,137 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BizMAX | Order Receipt</title>
+  <title>Order Receipt | BizMAX</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       background: lightblue;
       margin: 0;
       padding: 20px;
-      color: #000;
     }
 
-    .receipt-container {
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(20px);
-      padding: 30px;
+    .receipt-box {
       max-width: 700px;
       margin: auto;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 30px;
       border-radius: 20px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(15px);
+      color: white;
     }
 
-    h1, h2 {
+    h1, h3 {
       text-align: center;
-      color: #000;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 16px;
+      margin: 5px 0;
     }
 
     table {
       width: 100%;
-      margin-top: 20px;
       border-collapse: collapse;
+      margin-top: 20px;
+      color: white;
     }
 
     th, td {
       padding: 12px;
-      border-bottom: 1px solid #ddd;
       text-align: left;
-    }
-
-    th {
-      background: #1976d2;
-      color: white;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .total {
-      font-weight: bold;
       font-size: 18px;
-      text-align: right;
+      font-weight: bold;
       margin-top: 20px;
+      text-align: right;
     }
 
-    .order-id {
-      margin-top: 15px;
+    .back {
+      display: block;
+      margin: 30px auto 0;
+      padding: 12px 20px;
+      background: cyan;
+      color: black;
       font-weight: bold;
+      border-radius: 20px;
       text-align: center;
+      text-decoration: none;
+      width: fit-content;
+    }
+
+    .back:hover {
+      background: #00bcbc;
     }
   </style>
 </head>
 <body>
 
-<div class="receipt-container">
+<div class="receipt-box">
   <h1>🧾 Order Receipt</h1>
-  <p class="order-id">Order ID: <span id="orderId">Loading…</span></p>
-
+  <h3>Order ID: <span id="orderId">Loading...</span></h3>
+  <div id="custInfo"></div>
   <table>
     <thead>
       <tr>
-        <th>Product</th>
+        <th>Item</th>
         <th>Qty</th>
         <th>Price</th>
+        <th>Total</th>
       </tr>
     </thead>
-    <tbody id="receiptItems">
-      <!-- Items will be inserted here -->
-    </tbody>
+    <tbody id="itemList"></tbody>
   </table>
-
-  <div class="total">Total: $<span id="totalAmount">0.00</span></div>
+  <p class="total">Grand Total: $<span id="grandTotal">0.00</span></p>
+  <a href="BixMax home.html" class="back">Return Home</a>
 </div>
 
 <script>
-  const params = new URLSearchParams(window.location.search);
-  const orderId = params.get("orderId");
+  document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(location.search);
+    const orderId = urlParams.get('orderId');
+    document.getElementById('orderId').textContent = orderId || 'Unavailable';
 
-  document.getElementById("orderId").textContent = orderId || "Unavailable";
-
-  if (orderId) {
-    const orders = JSON.parse(localStorage.getItem("orders") || "{}");
+    const orders = JSON.parse(localStorage.getItem('orders') || '{}');
     const order = orders[orderId];
 
-    if (order && order.items && order.total) {
-      let html = "";
-      order.items.forEach(item => {
-        html += 
-          <tr>
-            <td>${item.name}</td>
-            <td>${item.qty}</td>
-            <td>$${(item.price * item.qty).toFixed(2)}</td>
-          </tr>
-        ;
-      });
-      document.getElementById("receiptItems").innerHTML = html;
-      document.getElementById("totalAmount").textContent = parseFloat(order.total).toFixed(2);
-    } else {
-      document.getElementById("receiptItems").innerHTML = "<tr><td colspan='3'>No order found.</td></tr>";
+    if (!order) {
+      document.getElementById('custInfo').innerHTML = '<p>Order not found.</p>';
+      return;
     }
-  } else {
-    document.getElementById("receiptItems").innerHTML = "<tr><td colspan='3'>No order ID provided.</td></tr>";
-  }
+
+    // Show customer info
+    document.getElementById('custInfo').innerHTML = 
+      <p><b>Name:</b> ${order.name}</p>
+      <p><b>Email:</b> ${order.email}</p>
+      <p><b>Phone:</b> ${order.phone}</p>
+      <p><b>Address:</b> ${order.address}</p>
+      <p><b>Payment:</b> ${order.method === 'online' ? 'Paystack' : 'Pay on Delivery'}</p>
+    ;
+
+    // Show items
+    const tbody = document.getElementById('itemList');
+    let grandTotal = 0;
+    order.items.forEach(item => {
+      const total = item.price * item.qty;
+      grandTotal += total;
+      const tr = document.createElement('tr');
+      tr.innerHTML = 
+        <td>${item.name}</td>
+        <td>${item.qty}</td>
+        <td>$${item.price.toFixed(2)}</td>
+        <td>$${total.toFixed(2)}</td>
+      ;
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
+  });
 </script>
+
 </body>
 </html>
