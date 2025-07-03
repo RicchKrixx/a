@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BizMAX | Cart</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: lightblue;
+      padding: 20px;
+    }
+
+    header {
+      background: #1976d2;
+      color: white;
+      padding: 16px;
+      text-align: center;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+
+    .cart-container {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.1);
+    }
+
+    .cart-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 12px;
+    }
+
+    .cart-item img {
+      width: 80px;
+      height: 80px;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+
+    .info {
+      flex: 1;
+    }
+
+    .info h3 {
+      margin: 0;
+    }
+
+    .info p {
+      margin: 4px 0;
+    }
+
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .qty-controls button {
+      width: 30px;
+      height: 30px;
+      background: #1976d2;
+      border: none;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .summary {
+      margin-top: 24px;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: right;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .buttons button {
+      flex: 1;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .btn-shop {
+      background: #ccc;
+    }
+
+    .btn-checkout {
+      background: #1976d2;
+      color: white;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 40px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h2>🛒 Your Cart</h2>
+  </header>
+
+  <div class="cart-container" id="cartContainer">
+    <!-- JS will load cart items here -->
+  </div>
+
+  <script>
+    const cartContainer = document.getElementById('cartContainer');
+
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    function updateCart() {
+      if (cart.length === 0) {
+        cartContainer.innerHTML = <div class="empty">🛍️ Your cart is empty</div>;
+        localStorage.removeItem("grandTotal");
+        return;
+      }
+
+      let total = 0;
+      cartContainer.innerHTML = '';
+
+      cart.forEach((item, index) => {
+        const subtotal = item.qty * item.price;
+        total += subtotal;
+
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = 
+          <img src="${item.image}" alt="${item.name}">
+          <div class="info">
+            <h3>${item.name}</h3>
+            <p>$${item.price.toFixed(2)} × ${item.qty} = <b>$${subtotal.toFixed(2)}</b></p>
+            <div class="qty-controls">
+              <button onclick="changeQty(${index}, -1)">−</button>
+              <span>${item.qty}</span>
+              <button onclick="changeQty(${index}, 1)">+</button>
+            </div>
+          </div>
+        ;
+        cartContainer.appendChild(div);
+      });
+
+      const summary = document.createElement('div');
+      summary.className = 'summary';
+      summary.innerHTML = Total: $${total.toFixed(2)};
+      cartContainer.appendChild(summary);
+
+      const buttons = document.createElement('div');
+      buttons.className = 'buttons';
+      buttons.innerHTML = 
+        <button class="btn-shop" onclick="window.location.href='index.html'">← Continue Shopping</button>
+        <button class="btn-checkout" onclick="goToCheckout()">Checkout</button>
+      ;
+      cartContainer.appendChild(buttons);localStorage.setItem('cart', JSON.stringify(cart));
+      localStorage.setItem('grandTotal', total.toFixed(2));
+    }
+
+    function changeQty(index, delta) {
+      cart[index].qty += delta;
+      if (cart[index].qty <= 0) cart.splice(index, 1);
+      updateCart();
+    }
+
+    function goToCheckout() {
+      if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+      }
+      window.location.href = "checkout.html";
+    }
+
+    updateCart();
+  </script>
+</body>
+</html>
