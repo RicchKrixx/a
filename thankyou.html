@@ -3,91 +3,79 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Thank You - BixMAX</title>
+  <title>Thank You | BixMAX</title>
   <style>
-    body {
-      background: lightblue;
-      font-family: Arial, sans-serif;
-      height: 100vh;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    /* --- simple BizMAX glass look --- */
+    body{
+      background:lightblue;
+      font-family:Arial,Helvetica,sans-serif;
+      height:100vh;
+      margin:0;
+      display:flex;
+      justify-content:center;
+      align-items:center;
     }
-
-    .box {
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(25px);
-      border: 3px solid rgba(255,255,255,0.2);
-      border-radius: 24px;
-      padding: 40px 30px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-      text-align: center;
-      max-width: 400px;
-      color: #fff;
+    .box{
+      background:rgba(255,255,255,0.1);
+      backdrop-filter:blur(25px);
+      border-radius:24px;
+      padding:40px 30px;
+      color:#fff;
+      text-align:center;
+      max-width:90%;
+      box-shadow:0 0 25px rgba(0,0,0,0.25);
     }
-
-    h1 {
-      font-size: 28px;
-      margin-bottom: 20px;
+    h1{font-size:28px;margin-bottom:14px}
+    #orderId{
+      display:inline-block;
+      background:rgba(0,0,0,0.25);
+      padding:6px 14px;
+      border-radius:12px;
+      font-weight:bold;
+      margin:12px 0;
     }
-
-    #orderId {
-      font-weight: bold;
-      font-size: 18px;
-      color: #fff;
-      background: rgba(0,0,0,0.2);
-      padding: 6px 14px;
-      border-radius: 12px;
-      margin-top: 10px;
-      display: inline-block;
+    .btn{
+      display:inline-block;
+      margin:10px 6px 0;
+      padding:12px 24px;
+      border-radius:30px;
+      background:cyan;
+      color:#000;
+      text-decoration:none;
+      font-weight:bold;
+      transition:.3s;
     }
-
-    .btn {
-      display: inline-block;
-      margin-top: 20px;
-      margin-right: 10px;
-      background: cyan;
-      color: black;
-      padding: 12px 20px;
-      border-radius: 30px;
-      font-weight: bold;
-      text-decoration: none;
-      transition: 0.3s ease;
-    }
-
-    .btn:hover {
-      background: #00bcbc;
-    }
+    .btn:hover{background:#00bcbc}
   </style>
 </head>
 <body>
   <div class="box">
     <h1>🎉 Thank You!</h1>
-    <p>Your order has been placed successfully.</p>
+    <p>Your order was placed successfully.</p>
     <p>Order ID:</p>
-    <div id="orderId">Loading...</div>
+    <div id="orderId">Loading…</div><br>
 
-    <div>
-      <a id="receiptLink" href="receipt.html" class="track-btn">View Receipt</a>
-      <a class="btn" href="order-tracking.html">Track Order</a>
-      <a class="btn" href="BixMax home.html">Return to Home</a>
-    </div>
+    <a id="receiptLink" class="btn" href="#">View Receipt</a>
+    <a class="btn" href="order-tracking.html">Track Order</a>
+    <a class="btn" href="BixMax home.html">Return Home</a>
   </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const orderId = urlParams.get("orderId") || localStorage.getItem('latestOrderId');
-  const orderEl = document.getElementById('orderId');
+  <script>
+    // read ?orderId= from URL and wire up receipt link
+    document.addEventListener('DOMContentLoaded',()=>{
+      const params=new URLSearchParams(location.search);
+      const id=params.get('orderId');
+      const idEl=document.getElementById('orderId');
+      const link=document.getElementById('receiptLink');
 
-  if (orderId) {
-    orderEl.textContent = orderId;
-    document.getElementById('receiptLink').href = "receipt.html?orderId=" + orderId;
-  } else {
-    orderEl.textContent = "Unavailable";
-  }
-});
-</script>
+      if(id){
+        idEl.textContent=id;
+        link.href='receipt.html?orderId='+id;
+      }else{
+        idEl.textContent='Unavailable';
+        link.style.display='none';
+      }
+    });
+  </script>
 </body>
 </html>
