@@ -86,42 +86,53 @@
   </div>
 </div>
 
-<script src="https://js.paystack.co/v1/inline.js"></script>
 <script>
 /* Load grand total */
-document.addEventListener('DOMContentLoaded',()=>{
+document.addEventListener('DOMContentLoaded', () => {
   const stored = localStorage.getItem('grandTotal') || '0';
   document.getElementById('grandTotal').textContent = parseFloat(stored).toFixed(2);
 });
 
 /* Switch button label */
 const paySel = document.getElementById('payMethod');
-const btn    = document.getElementById('actionBtn');
-paySel.addEventListener('change',()=> btn.textContent = paySel.value==='online' ? 'Pay Now' : 'Place Order');
+const btn = document.getElementById('actionBtn');
+paySel.addEventListener('change', () => btn.textContent = paySel.value === 'online' ? 'Pay Now' : 'Place Order');
 
 /* Loader helper */
-function showLoader(show){ document.getElementById('loader').style.display = show?'flex':'none'; }
+function showLoader(show) {
+  document.getElementById('loader').style.display = show ? 'flex' : 'none';
+}
 
 /* Send to PHP silently */
-function postToPHP(data){
+function postToPHP(data) {
   fetch('order.php', {
     method: 'POST',
-    headers:{'Content-Type': 'application/x-www-form-urlencoded'},
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams(data)
   }).then(res => console.log('Data sent to PHP')).catch(err => console.log(err));
-}/* Main button */
-btn.addEventListener('click', e=>{
+}
+
+/* Main button */
+btn.addEventListener('click', e => {
   e.preventDefault();
   const total = parseFloat(localStorage.getItem('grandTotal') || '0');
   if (total <= 0) { alert('Cart is empty.'); return; }
 
-  const name  = document.getElementById('custName').value.trim();
+  const name = document.getElementById('custName').value.trim();
   const email = document.getElementById('custEmail').value.trim();
   const phone = document.getElementById('custPhone').value.trim();
-  const addr  = document.getElementById('custAddr').value.trim();
-  if (!(name && email && phone && addr)) { alert('Please fill all details.'); return; }
+  const addr = document.getElementById('custAddr').value.trim();
+
+  if (!(name && email && phone && addr)) {
+    alert('Please fill all details.');
+    return;
+  }
+
+  const orderId = "BMX" + Date.now(); // ✅ Unique Order ID
+  localStorage.setItem("lastOrderID", orderId); // ✅ Save for thankyou.html
 
   const data = {
+    id: orderId, // ✅ include in PHP
     name: name,
     email: email,
     phone: phone,
@@ -135,30 +146,33 @@ btn.addEventListener('click', e=>{
 
   if (paySel.value === 'online') {
     PaystackPop.setup({
-      key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxx', // your key here
+      key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxx', // your key
       email: email,
       amount: Math.round(total * 100),
       currency: 'GHS',
-      metadata:{custom_fields:[
-        {display_name:'Name',  value:name},
-        {display_name:'Phone', value:phone},
-        {display_name:'Address', value:addr}
-      ]},
-      callback: function(resp){
+      metadata: {
+        custom_fields: [
+          { display_name: 'Name', value: name },
+          { display_name: 'Phone', value: phone },
+          { display_name: 'Address', value: addr },
+          { display_name: 'Order ID', value: orderId } // ✅ visible in Paystack
+        ]
+      },
+      callback: function (resp) {
         alert('Payment successful! Ref: ' + resp.reference);
         localStorage.removeItem('cart');
-        window.location='thankyou.html';
+        window.location = 'thankyou.html';
       },
-      onClose: function(){
+      onClose: function () {
         showLoader(false);
         alert('Payment was cancelled.');
       }
     }).openIframe();
   } else {
-    setTimeout(()=>{
+    setTimeout(() => {
       alert('Order placed successfully!');
       localStorage.removeItem('cart');
-      window.location='thankyou.html';
+      window.location = 'thankyou.html';
     }, 1500);
   }
 });
