@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>BixMAX | Receipt</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BizMAX | Receipt</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -24,14 +24,21 @@
 
     h1 {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 10px;
       color: #1976d2;
+    }
+
+    .order-id {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 30px;
+      font-size: 18px;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
 
     th, td {
@@ -51,10 +58,10 @@
       font-weight: bold;
     }
 
-    .back-btn {
+    .btn {
       display: block;
       text-align: center;
-      margin-top: 20px;
+      margin-top: 30px;
       padding: 12px 24px;
       background-color: cyan;
       color: black;
@@ -64,7 +71,7 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
 
-    .back-btn:hover {
+    .btn:hover {
       background-color: #00bcbc;
     }
   </style>
@@ -73,6 +80,8 @@
 
   <div class="receipt-box">
     <h1>🧾 Order Receipt</h1>
+    <div class="order-id">Order ID: <span id="orderId">loading...</span></div>
+
     <table id="receiptTable">
       <thead>
         <tr>
@@ -83,27 +92,37 @@
         </tr>
       </thead>
       <tbody id="receiptBody">
-        <!-- Items will be inserted here -->
+        <!-- Items will be added here -->
       </tbody>
     </table>
 
     <p class="total">Grand Total: GHS <span id="grandTotal">0.00</span></p>
 
-    <a href="BixMax home.html" class="back-btn">← Back to Home</a>
+    <a href="BixMax home.html" class="btn">← Back to Home</a>
   </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // Get cart data
       const cart = JSON.parse(localStorage.getItem('cart') || '[]');
       const receiptBody = document.getElementById('receiptBody');
-      const grandTotal = localStorage.getItem('grandTotal') || '0';
 
+      // Get grand total
+      const grandTotal = parseFloat(localStorage.getItem('grandTotal') || '0');
+      document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
+
+      // Display Order ID
+      const latestOrder = JSON.parse(localStorage.getItem('latestOrder') || '{}');
+      const orderId = latestOrder?.id  localStorage.getItem("lastOrderID")  "Unavailable";
+      document.getElementById('orderId').textContent = orderId;
+
+      // Fill table with cart items
       if (cart.length === 0) {
         receiptBody.innerHTML = <tr><td colspan="4" style="text-align:center;">No items found in cart.</td></tr>;
       } else {
         cart.forEach(item => {
           const row = document.createElement('tr');
-          const total = item.price * item.qty;
+          const total = item.qty * item.price;
 
           row.innerHTML = 
             <td>${item.name}</td>
@@ -115,8 +134,6 @@
           receiptBody.appendChild(row);
         });
       }
-
-      document.getElementById('grandTotal').textContent = parseFloat(grandTotal).toFixed(2);
     });
   </script>
 
