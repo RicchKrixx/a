@@ -176,7 +176,6 @@ actionBtn.addEventListener("click", (e) => {
   allOrders[orderId] = orderData;
   localStorage.setItem("orders", JSON.stringify(allOrders));
 localStorage.setItem("latestOrderId", orderId);
-window.location = thankyou.html?orderId=${orderId};
 
   showLoader(true);
 
