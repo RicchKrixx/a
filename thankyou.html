@@ -1,46 +1,77 @@
-<!-- thankyou.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Thank You | BizMAX</title>
-
   <style>
-    *{margin:0;padding:0;box-sizing:border-box}
-    body{
-      height:100vh;background:lightblue;font-family:Arial,sans-serif;
-      display:flex;justify-content:center;align-items:center;flex-direction:column
+    body {
+      height: 100vh;
+      background: lightblue;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      margin: 0;
     }
-    .box{
-      background:rgba(255,255,255,0.08);backdrop-filter:blur(25px);
-      border-radius:30px;padding:40px 30px;text-align:center;
-      box-shadow:0 0 30px rgba(0,0,0,.15);max-width:90%;color:#fff
+
+    .box {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      padding: 40px 30px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+      color: #fff;
+      max-width: 90%;
     }
-    h1{font-size:32px;margin-bottom:16px}
-    p{font-size:18px;margin:18px 0}
-    a.btn{
-      display:inline-block;margin:10px;padding:12px 24px;border-radius:30px;
-      background:cyan;color:#000;font-weight:bold;text-decoration:none
+
+    h1 {
+      font-size: 30px;
+      margin-bottom: 10px;
     }
-    a.btn:hover{background:#00bcbc}
+
+    p {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      background-color: cyan;
+      color: black;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 16px;
+      margin: 10px;
+      display: inline-block;
+    }
+
+    .btn:hover {
+      background-color: #00bcbc;
+    }
   </style>
 </head>
 <body>
   <div class="box">
     <h1>🎉 Thank You!</h1>
-    <p>Your order has been placed successfully.</p>
-    <p>Order ID: <strong id="orderId">loading…</strong></p>
+    <p>Your order was placed successfully.</p>
+    <p>Order ID: <b id="orderId">Loading...</b></p>
 
-    <a href="receipt.html"    class="btn">View Receipt</a>
-    <a href="BixMax home.html" class="btn">Return Home</a>
+    <a href="receipt.html" class="btn">View Receipt</a>
+    <a href="index.html" class="btn">Return to Home</a>
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded',()=>{
-      const id = localStorage.getItem('lastOrderID') || 'Unavailable';
-      document.getElementById('orderId').textContent = id;
-    });
+    const order = JSON.parse(localStorage.getItem('latestOrder'));
+    if (order && order.id) {
+      document.getElementById('orderId').textContent = order.id;
+    } else {
+      document.getElementById('orderId').textContent = "Unavailable";
+    }
   </script>
 </body>
 </html>
