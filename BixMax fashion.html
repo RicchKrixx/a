@@ -5,136 +5,218 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BizMAX | Fashion</title>
   <style>
-    :root {
-      --primary: #1976d2;
-      --glass: rgba(255,255,255,0.1);
-    }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, lightblue, cyan);
+      background: linear-gradient(to right, lightblue, cyan);
       padding: 20px;
+      color: #000;
     }
-
     h1 {
       text-align: center;
-      margin-bottom: 20px;
-      color: #fff;
-      text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+      margin-bottom: 30px;
     }
-
-    .fashion-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 20px;
+    .category {
+      margin-bottom: 40px;
     }
-
-    .item {
-      background: var(--glass);
-      backdrop-filter: blur(25px);
-      border-radius: 20px;
-      padding: 16px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-      color: #000;
-      transition: transform 0.2s ease;
-    }
-
-    .item:hover {
-      transform: scale(1.03);
-    }
-
-    .item img {
-      width: 100%;
-      border-radius: 14px;
+    .cat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-bottom: 10px;
     }
-
-    .item h3 {
-      margin-bottom: 4px;
-      font-size: 18px;
+    .cat-header h2 {
+      font-size: 22px;
     }
-
-    .item p {
+    .cat-header a {
+      font-size: 14px;
+      text-decoration: none;
+      color: #1976d2;
       font-weight: bold;
-      margin-bottom: 10px;
     }
 
-    .btn {
-      display: inline-block;
-      background: var(--primary);
-      color: #fff;
-      padding: 10px 16px;
-      border: none;
+    .scroll-row {
+      display: flex;
+      overflow-x: auto;
+      gap: 16px;
+      padding-bottom: 10px;
+    }
+
+    .product {
+      min-width: 160px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      padding: 12px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .product img {
+      width: 100%;
+      height: 130px;
+      object-fit: cover;
       border-radius: 12px;
-      font-weight: bold;
-      cursor: pointer;
-      width: 100%;
+      margin-bottom: 10px;
     }
 
-    .btn:hover {
-      background: #1259a4;
+    .product h3 {
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+
+    .product p {
+      font-weight: bold;
+      color: #1976d2;
+      font-size: 15px;
     }
 
     footer {
       text-align: center;
-      margin-top: 40px;
-      color: white;
       font-size: 14px;
+      color: #000;
+      margin-top: 50px;
+    }
+
+    /* Scrollbar hidden on mobile */
+    .scroll-row::-webkit-scrollbar {
+      height: 8px;
+    }
+    .scroll-row::-webkit-scrollbar-thumb {
+      background: #ccc;
+      border-radius: 10px;
     }
   </style>
 </head>
 <body>
 
-  <h1>👗 Fashion Products</h1>
+  <h1>👗 Fashion Collection</h1>
 
-  <div class="fashion-grid">
-    <div class="item" data-name="Labubu" data-price="20" data-image="pp.jpeg">
-      <img src="pp.jpeg" alt="Labubu">
-      <h3>Labubu</h3>
-      <p>$20</p>
-      <button class="btn" onclick="addToCart(this)">Add to Cart</button>
+  <!-- Category: Shirts -->
+  <div class="category">
+    <div class="cat-header">
+      <h2>Shirts</h2>
+      <a href="shirts.html">View All ></a>
     </div>
-
-    <div class="item" data-name="Purse" data-price="20" data-image="pp.jpeg">
-      <img src="pp.jpeg" alt="Purse">
-      <h3>Purse</h3>
-      <p>$20</p>
-      <button class="btn" onclick="addToCart(this)">Add to Cart</button>
+    <div class="scroll-row">
+      <div class="product">
+        <img src="pp.jpeg" alt="Shirt">
+        <h3>Classic Shirt</h3>
+        <p>$30</p>
+      </div>
+      <div class="product">
+        <img src="pp.jpeg" alt="Shirt">
+        <h3>Denim Shirt</h3>
+        <p>$25</p>
+      </div>
+      <div class="product">
+        <img src="pp.jpeg" alt="Shirt">
+        <h3>Casual Tee</h3>
+        <p>$20</p>
+      </div>
     </div>
-
-    <div class="item" data-name="Tote Bag" data-price="15" data-image="pp.jpeg">
-      <img src="pp.jpeg" alt="Tote Bag">
-      <h3>Tote Bag</h3>
-      <p>$15</p>
-      <button class="btn" onclick="addToCart(this)">Add to Cart</button>
-    </div>
-
-    <!-- Add more items as needed -->
   </div>
 
-  <footer>&copy; BizMAX 2025. All rights reserved.</footer>
+  <!-- Category: Shoes -->
+  <div class="category">
+    <div class="cat-header">
+      <h2>Shoes</h2>
+      <a href="shoes.html">View All ></a>
+    </div>
+    <div class="scroll-row">
+      <div class="product">
+        <img src="pp.jpeg" alt="Sneakers">
+        <h3>Sneakers</h3>
+        <p>$50</p>
+      </div>
+      <div class="product">
+        <img src="pp.jpeg" alt="Boots">
+        <h3>Leather Boots</h3>
+        <p>$60</p>
+      </div>
+      <div class="product">
+        <img src="pp.jpeg" alt="Slides">
+        <h3>Comfort Slides</h3>
+        <p>$18</p>
+      </div>
+    </div>
+  </div>
 
-  <script>
-    function addToCart(btn) {
-      const item = btn.closest('.item');
-      const name = item.dataset.name;
-      const price = parseFloat(item.dataset.price);
-      const image = item.dataset.image;
+  <!-- Category: Bags -->
+  <div class="category">
+    <div class="cat-header">
+      <h2>Bags</h2>
+      <a href="bags.html">View All ></a>
+    </div>
+    <div class="scroll-row">
+      <div class="product">
+        <img src="pp.jpeg" alt="Tote Bag">
+        <h3>Tote Bag</h3>
+        <p>$15</p>
+      </div>
+      <div class="product">
+        <img src="pp.jpeg" alt="Purse">
+        <h3>Mini Purse</h3>
+        <p>$20</p>
+      </div>
+      <div class="product">
+        <img src="pp.jpeg" alt="Backpack">
+        <h3>Backpack</h3>
+        <p>$25</p>
+      </div>
+    </div>
+  </div>
 
-      let cart = JSON.parse(localStorage.getItem('cart')) || [];
-      const existing = cart.find(p => p.name === name);
+  <!-- Category: Glasses -->
+  <div class="category">
+    <div class="cat-header">
+      <h2>Glasses</h2>
+      <a href="glasses.html">View All ></a>
+    </div>
+    <div class="scroll-row"><div class="product">
+        <img src="pp.jpeg" alt="Sunglasses">
+        <h3>Men Shades</h3>
+        <p>$18</p>
+      </div>
+      <div class="product">
+        <img src="pp.jpeg" alt="Glasses">
+        <h3>Women Frames</h3>
+        <p>$22</p>
+      </div>
+      <div class="product">
+        <img src="pp.jpeg" alt="Designer Glass">
+        <h3>Luxury Glass</h3>
+        <p>$40</p>
+      </div>
+    </div>
+  </div>
 
-      if (existing) {
-        existing.qty += 1;
-      } else {
-        cart.push({ name, price, image, qty: 1 });
-      }
+  <!-- Category: Chains -->
+  <div class="category">
+    <div class="cat-header">
+      <h2>Chains</h2>
+      <a href="chains.html">View All ></a>
+    </div>
+    <div class="scroll-row">
+      <div class="product">
+        <img src="pp.jpeg" alt="Chain">
+        <h3>Cuban Chain</h3>
+        <p>$25</p>
+      </div>
+      <div class="product">
+        <img src="pp.jpeg" alt="Pendant Chain">
+        <h3>Pendant Chain</h3>
+        <p>$30</p>
+      </div>
+      <div class="product">
+        <img src="pp.jpeg" alt="Gold Chain">
+        <h3>Gold Style</h3>
+        <p>$35</p>
+      </div>
+    </div>
+  </div>
 
-      localStorage.setItem('cart', JSON.stringify(cart));
-      alert(name + " added to cart 🛒");
-    }
-  </script>
+  <footer>&copy; BizMAX 2025</footer>
 
 </body>
 </html>
