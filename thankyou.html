@@ -3,74 +3,88 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Thank You | BizMAX</title>
+  <title>Thank You - BixMAX</title>
   <style>
     body {
-      height: 100vh;
       background: lightblue;
       font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
+      height: 100vh;
       margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .box {
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(20px);
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(25px);
+      border: 3px solid rgba(255,255,255,0.2);
+      border-radius: 24px;
       padding: 40px 30px;
-      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
       text-align: center;
-      box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+      max-width: 400px;
       color: #fff;
-      max-width: 90%;
     }
 
     h1 {
-      font-size: 30px;
-      margin-bottom: 10px;
-    }
-
-    p {
-      font-size: 18px;
+      font-size: 28px;
       margin-bottom: 20px;
     }
 
-    .btn {
-      background-color: cyan;
-      color: black;
-      padding: 12px 24px;
-      border: none;
-      border-radius: 30px;
-      text-decoration: none;
+    #orderId {
       font-weight: bold;
-      font-size: 16px;
-      margin: 10px;
+      font-size: 18px;
+      color: #fff;
+      background: rgba(0,0,0,0.2);
+      padding: 6px 14px;
+      border-radius: 12px;
+      margin-top: 10px;
       display: inline-block;
     }
 
+    .btn {
+      display: inline-block;
+      margin-top: 20px;
+      margin-right: 10px;
+      background: cyan;
+      color: black;
+      padding: 12px 20px;
+      border-radius: 30px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: 0.3s ease;
+    }
+
     .btn:hover {
-      background-color: #00bcbc;
+      background: #00bcbc;
     }
   </style>
 </head>
 <body>
   <div class="box">
     <h1>🎉 Thank You!</h1>
-    <p>Your order was placed successfully.</p>
-    <p>Order ID: <b id="orderId">Loading...</b></p>
+    <p>Your order has been placed successfully.</p>
+    <p>Order ID:</p>
+    <div id="orderId">Loading...</div>
 
-    <a href="receipt.html" class="btn">View Receipt</a>
-    <a href="index.html" class="btn">Return to Home</a>
+    <div>
+      <a id="receiptBtn" class="btn" href="#">View Receipt</a>
+      <a class="btn" href="order-tracking.html">Track Order</a>
+      <a class="btn" href="BixMax home.html">Return to Home</a>
+    </div>
   </div>
 
   <script>
-    const order = JSON.parse(localStorage.getItem('latestOrder'));
-    if (order && order.id) {
-      document.getElementById('orderId').textContent = order.id;
+    const urlParams = new URLSearchParams(window.location.search);
+    const orderId = urlParams.get("orderId");
+
+    if (orderId) {
+      document.getElementById("orderId").textContent = orderId;
+      document.getElementById("receiptBtn").href = receipt.html?orderId=${orderId};
     } else {
-      document.getElementById('orderId').textContent = "Unavailable";
+      document.getElementById("orderId").textContent = "Unavailable";
+      document.getElementById("receiptBtn").style.display = "none";
     }
   </script>
 </body>
