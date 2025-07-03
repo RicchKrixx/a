@@ -1,119 +1,117 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BizMAX | Track Order</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Track Order | BixMAX</title>
   <style>
     body {
       background: lightblue;
       font-family: Arial, sans-serif;
-      padding: 20px;
+      padding: 30px;
       color: #000;
     }
-    .card {
+
+    .tracker {
+      background: white;
+      border-radius: 20px;
+      padding: 24px;
       max-width: 600px;
       margin: auto;
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 20px;
-      padding: 30px;
-      box-shadow: 0 0 30px rgba(0,0,0,0.2);
-      backdrop-filter: blur(20px);
-      border: 5px solid rgba(255,255,255,0.1);
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
     }
-    h1 {
+
+    h2 {
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
+      color: #1976d2;
     }
+
     input {
       width: 100%;
       padding: 12px;
+      margin-bottom: 14px;
       font-size: 16px;
-      border-radius: 12px;
+      border-radius: 10px;
       border: none;
-      margin-bottom: 20px;
-      background: rgba(255,255,255,0.2);
-      color: black;
+      background: #f0f0f0;
     }
+
     button {
       width: 100%;
-      padding: 14px;
-      font-weight: bold;
-      font-size: 18px;
+      padding: 12px;
       background: #1976d2;
       color: white;
+      font-size: 16px;
       border: none;
-      border-radius: 12px;
+      border-radius: 10px;
       cursor: pointer;
+      font-weight: bold;
     }
+
+    button:hover {
+      background: #1259a4;
+    }
+
     .result {
-      margin-top: 30px;
-      padding: 20px;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.2);
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      margin-top: 20px;
+      border-top: 1px solid #ccc;
+      padding-top: 20px;
     }
-    .result h3 {
-      margin-bottom: 10px;
+
+    .not-found {
+      color: red;
+      text-align: center;
+      font-weight: bold;
     }
-    .result p, .result li {
-      margin: 5px 0;
-    }
-    .items ul {
-      padding-left: 20px;
+
+    .result p {
+      margin: 8px 0;
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Track Your Order</h1>
-    <input id="orderId" placeholder="Enter Order ID" />
-    <button onclick="trackOrder()">Track Order</button><div class="result" id="trackResult" style="display:none"></div>
+  <div class="tracker">
+    <h2>Track Your Order</h2>
+    <input type="text" id="trackId" placeholder="Enter your Order ID (e.g., BMX123456)" />
+    <button onclick="trackOrder()">Check Status</button>
 
-  </div>  <script>
+    <div class="result" id="trackResult"></div>
+  </div>
+
+  <script>
     function trackOrder() {
-      const id = document.getElementById('orderId').value.trim();
+      const id = document.getElementById('trackId').value.trim();
       const result = document.getElementById('trackResult');
-      result.style.display = 'none';
-      result.innerHTML = '';
+      result.innerHTML = "";
 
-      if (!id) return alert('Please enter your Order ID.');
+      const orders = JSON.parse(localStorage.getItem("orders") || "{}");
+      const order = orders[id];
 
-      fetch('orders.json')
-        .then(res => res.json())
-        .then(data => {
-          const order = data.find(o => o.id === id);
-          if (!order) {
-            result.style.display = 'block';
-            result.innerHTML = '<p><b>Order not found.</b></p>';
-            return;
-          }
+      if (!order) {
+        result.innerHTML = <p class="not-found">❌ Order ID not found</p>;
+        return;
+      }
 
-          let html = 
-            <h3>Order ID: ${order.id}</h3>
-            <p><b>Name:</b> ${order.name}</p>
-            <p><b>Phone:</b> ${order.phone}</p>
-            <p><b>Email:</b> ${order.email}</p>
-            <p><b>Address:</b> ${order.address}</p>
-            <p><b>Total:</b> $${order.total}</p>
-            <div class="items">
-              <h3>Items:</h3>
-              <ul>
-          ;
+      let html = 
+        <p><strong>Order ID:</strong> ${id}</p>
+        <p><strong>Name:</strong> ${order.name}</p>
+        <p><strong>Phone:</strong> ${order.phone}</p>
+        <p><strong>Email:</strong> ${order.email}</p>
+        <p><strong>Address:</strong> ${order.address}</p>
+        <p><strong>Payment Method:</strong> ${order.method === 'online' ? 'Pay Online' : 'Pay on Delivery'}</p>
+        <p><strong>Total:</strong> $${parseFloat(order.amount).toFixed(2)}</p>
+        <p><strong>Items:</strong></p>
+        <ul>
+      ;
 
-          order.items.forEach(item => {
-            html += <li>${item.qty} × ${item.name} — $${item.price}</li>;
-          });
+      order.items.forEach(item => {
+        html += <li>${item.name} x${item.qty} @ $${item.price} = $${(item.price * item.qty).toFixed(2)}</li>;
+      });
 
-          html += '</ul></div>';
-
-          result.innerHTML = html;
-          result.style.display = 'block';
-        })
-        .catch(err => {
-          result.style.display = 'block';
-          result.innerHTML = '<p>Error loading order data.</p>';
-          console.error(err);
-        });
+      html += </ul>;
+      result.innerHTML = html;
     }
-  </script></body>
+  </script>
+</body>
 </html>
