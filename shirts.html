@@ -1,142 +1,141 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BizMAX | Shirts</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shirts - BixMAX</title>
   <style>
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
       background: lightblue;
+      margin: 0;
+      padding: 0;
     }
     header {
       background: #1976d2;
-      color: white;
-      padding: 16px 24px;
+      color: #fff;
+      padding: 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
     }
     .cart-icon {
       position: relative;
-      font-size: 20px;
       cursor: pointer;
     }
     .cart-icon span {
-      position: absolute;
-      top: -8px;
-      right: -10px;
       background: red;
       color: white;
-      font-size: 13px;
-      width: 18px;
-      height: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      font-size: 14px;
+      padding: 2px 6px;
       border-radius: 50%;
+      position: absolute;
+      top: -10px;
+      right: -10px;
     }
-    h1 {
+    .container {
+      padding: 20px;
+    }
+    h2 {
       text-align: center;
-      margin: 20px 0;
+      margin-bottom: 20px;
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 16px;
-      padding: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
     }
     .item {
       background: white;
-      border-radius: 16px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      padding: 12px;
+      border-radius: 12px;
+      padding: 10px;
       text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
     .item img {
-      max-width: 100%;
-      border-radius: 10px;
-      height: 150px;
+      width: 100%;
+      border-radius: 12px;
+      max-height: 160px;
       object-fit: cover;
     }
     .item h3 {
-      margin: 10px 0 4px;
+      margin: 10px 0 5px;
     }
     .item p {
-      margin-bottom: 8px;
       font-weight: bold;
+      color: #333;
     }
     .item button {
-      padding: 8px 16px;
       background: #1976d2;
       color: white;
       border: none;
+      padding: 10px 16px;
       border-radius: 8px;
       cursor: pointer;
+    }
+    .item button:hover {
+      background: #135ca3;
     }
   </style>
 </head>
 <body>
-
   <header>
-    <h2>👕 Shirts</h2>
+    <h1>Shirts - BixMAX</h1>
     <div class="cart-icon" onclick="window.location.href='cart.html'">
       🛒 <span id="cart-count">0</span>
     </div>
   </header>
+  <div class="container">
+    <h2>All Shirt Products</h2>
+    <div class="grid">
+      <div class="item" data-name="Casual Shirt" data-price="25" data-img="shirt1.jpg">
+        <img src="shirt1.jpg" alt="Casual Shirt">
+        <h3>Casual Shirt</h3>
+        <p>$25</p>
+        <button onclick="addToCart(this)">Add to Cart</button>
+      </div>
+      <div class="item" data-name="Formal Shirt" data-price="30" data-img="shirt2.jpg">
+        <img src="shirt2.jpg" alt="Formal Shirt">
+        <h3>Formal Shirt</h3>
+        <p>$30</p>
+        <button onclick="addToCart(this)">Add to Cart</button>
+      </div>
+      <div class="item" data-name="Flannel Shirt" data-price="28" data-img="shirt3.jpg">
+        <img src="shirt3.jpg" alt="Flannel Shirt">
+        <h3>Flannel Shirt</h3>
+        <p>$28</p>
+        <button onclick="addToCart(this)">Add to Cart</button>
+      </div>
+      <div class="item" data-name="Denim Shirt" data-price="35" data-img="shirt4.jpg">
+        <img src="shirt4.jpg" alt="Denim Shirt">
+        <h3>Denim Shirt</h3>
+        <p>$35</p>
+        <button onclick="addToCart(this)">Add to Cart</button>
+      </div>
+    </div>
+  </div>  <script>
+    function addToCart(button) {
+      const item = button.closest('.item');
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const name = item.dataset.name;
+      const price = parseFloat(item.dataset.price);
+      const img = item.dataset.img;
+      const existing = cart.find(i => i.name === name);
 
-  <h1>Shirts Collection</h1>
-  <div class="grid" id="productGrid">
-    <!-- Products will go here -->
-  </div>
-
-  <script>
-    const products = [
-      { name: "Denim Shirt", price: 25, image: "pp.jpeg" },
-      { name: "Cotton Tee", price: 15, image: "pp.jpeg" },
-      { name: "Formal Shirt", price: 35, image: "pp.jpeg" },
-      { name: "Slim Fit", price: 28, image: "pp.jpeg" },
-      { name: "Printed Shirt", price: 30, image: "pp.jpeg" }
-    ];
-
-    const grid = document.getElementById("productGrid");
-    const cartCount = document.getElementById("cart-count");
+      if (existing) {
+        existing.qty++;
+      } else {
+        cart.push({ name, price, img, qty: 1 });
+      }
+      localStorage.setItem('cart', JSON.stringify(cart));
+      updateCartCount();
+    }
 
     function updateCartCount() {
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      cartCount.textContent = cart.reduce((sum, item) => sum + item.qty, 0);
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+      document.getElementById('cart-count').textContent = totalQty;
     }
-
-    function addToCart(product) {
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      const index = cart.findIndex(i => i.name === product.name);
-      if (index > -1) {
-        cart[index].qty += 1;
-      } else {
-        cart.push({ ...product, qty: 1 });
-      }
-      localStorage.setItem("cart", JSON.stringify(cart));
-      updateCartCount();
-      alert(${product.name} added to cart ✅);
-    }
-
-    products.forEach(product => {
-      const div = document.createElement("div");
-      div.className = "item";
-      div.innerHTML = 
-        <img src="${product.image}" alt="${product.name}" />
-        <h3>${product.name}</h3>
-        <p>$${product.price}</p>
-        <button onclick='addToCart(${JSON.stringify(product)})'>Add to Cart</button>
-      ;
-      grid.appendChild(div);
-    });
 
     updateCartCount();
-  </script>
-</body>
+  </script></body>
 </html>
