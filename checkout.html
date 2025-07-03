@@ -110,103 +110,14 @@
       <p style="margin-top:14px;font-size:18px;font-weight:bold">Processing…</p>
     </div>
   </div>
-
-<script src="https://js.paystack.co/v1/inline.js"></script>
 <script>
-// Load and display grand total
 document.addEventListener('DOMContentLoaded', () => {
   const stored = localStorage.getItem('grandTotal') || '0';
   document.getElementById('grandTotal').textContent = parseFloat(stored).toFixed(2);
 });
 
-// Switch button label
-const paySel = document.getElementById('payMethod');
-const btn = document.getElementById('actionBtn');
-paySel.addEventListener('change', () => {
-  btn.textContent = paySel.value === 'online' ? 'Pay Now' : 'Place Order';
-});
-
-// Show/hide loader
-function showLoader(show) {
-  document.getElementById('loader').style.display = show ? 'flex' : 'none';
-}
-
-// Generate order ID
-function generateOrderId() {
-  const now = Date.now();
-  const rand = Math.floor(Math.random() * 10000);
-  return BX${now}${rand};
-}
-
-// Save order to localStorage
-function saveOrder(orderId, orderData) {
-  const orders = JSON.parse(localStorage.getItem('orders') || '{}');
-  orders[orderId] = orderData;
-  localStorage.setItem('orders', JSON.stringify(orders));
-  localStorage.setItem('latestOrder', JSON.stringify({ id: orderId }));
-}
-
-// Main button click
-btn.addEventListener('click', (e) => {
-  e.preventDefault();
-
-  const grandTotal = parseFloat(localStorage.getItem('grandTotal') || '0');
-  if (grandTotal <= 0) return alert('Cart is empty.');
-
-  const name  = document.getElementById('custName').value.trim();
-  const email = document.getElementById('custEmail').value.trim();
-  const phone = document.getElementById('custPhone').value.trim();
-  const addr  = document.getElementById('custAddr').value.trim();
-  if (!(name && email && phone && addr)) return alert('Please fill all fields.');
-
-  const method = paySel.value;
-  const orderId = generateOrderId();
-  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-
-  const orderData = {
-    id: orderId,
-    name,
-    email,
-    phone,
-    address: addr,
-    amount: grandTotal.toFixed(2),
-    method,
-    items: cart
-  };
-
-  showLoader(true);
-  saveOrder(orderId, orderData);
-
-  if (method === 'online') {
-    PaystackPop.setup({
-      key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxx', // replace with your key
-      email: email,
-      amount: Math.round(grandTotal * 100),
-      currency: 'GHS',
-      metadata: {
-        custom_fields: [
-          { display_name: 'Name', value: name },
-          { display_name: 'Phone', value: phone },
-          { display_name: 'Address', value: addr }
-        ]
-      },
-      callback: function (resp) {
-        alert('Payment successful! Ref: ' + resp.reference);
-        localStorage.removeItem('cart');
-        window.location = 'thankyou.html?orderId=' + orderId;
-      },
-      onClose: function () {
-        showLoader(false);
-        alert('Payment was cancelled.');
-      }
-    }).openIframe();
-  } else {
-    setTimeout(() => {
-      alert('Order placed successfully!');
-      localStorage.removeItem('cart');
-      window.location = 'thankyou.html?orderId=' + orderId;
-    }, 1500);
-  }
+document.getElementById('actionBtn').addEventListener('click', () => {
+  alert("Button clicked. Grand total: $" + document.getElementById('grandTotal').textContent);
 });
 </script>
 </body>
