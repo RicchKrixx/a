@@ -3,51 +3,95 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BizMAX | Fashion</title>
+  <title>BixMAX | Fashion</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue: #00ced1;
+      --shadow: 0 4px 16px rgba(0,0,0,0.2);
+      --radius: 18px;
+    }
+
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, lightblue, cyan);
-      padding: 20px;
-      color: #000;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: lightblue;
+      color: #222;
+      padding-top: 70px;
     }
-    h1 {
-      text-align: center;
-      margin-bottom: 30px;
+
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(15px);
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+      color: #fff;
     }
+
+    .cart-icon {
+      position: relative;
+      font-size: 22px;
+      text-decoration: none;
+      color: white;
+    }
+
+    #cartCount {
+      position: absolute;
+      top: -8px;
+      right: -12px;
+      background: red;
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 50%;
+      padding: 2px 6px;
+    }
+
+    section {
+      padding: 24px;
+    }
+
     .category {
       margin-bottom: 40px;
     }
+
     .cat-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 14px;
     }
+
     .cat-header h2 {
-      font-size: 22px;
+      margin: 0;
     }
+
     .cat-header a {
       font-size: 14px;
       text-decoration: none;
-      color: #1976d2;
+      color: var(--blue);
       font-weight: bold;
     }
 
-    .scroll-row {
+    .products {
       display: flex;
-      overflow-x: auto;
       gap: 16px;
-      padding-bottom: 10px;
+      overflow-x: auto;
+      padding-bottom: 6px;
     }
 
     .product {
-      min-width: 160px;
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      background: white;
       padding: 12px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      min-width: 180px;
       text-align: center;
       flex-shrink: 0;
     }
@@ -56,167 +100,210 @@
       width: 100%;
       height: 130px;
       object-fit: cover;
-      border-radius: 12px;
+      border-radius: var(--radius);
       margin-bottom: 10px;
     }
 
     .product h3 {
-      font-size: 15px;
-      margin-bottom: 6px;
+      font-size: 16px;
+      margin: 6px 0;
     }
 
     .product p {
-      font-weight: bold;
-      color: #1976d2;
       font-size: 15px;
+      font-weight: bold;
     }
 
-    footer {
-      text-align: center;
-      font-size: 14px;
-      color: #000;
-      margin-top: 50px;
-    }
-
-    /* Scrollbar hidden on mobile */
-    .scroll-row::-webkit-scrollbar {
-      height: 8px;
-    }
-    .scroll-row::-webkit-scrollbar-thumb {
-      background: #ccc;
+    .add-btn {
+      background: var(--blue);
+      color: white;
+      padding: 8px 12px;
+      border: none;
       border-radius: 10px;
+      cursor: pointer;
+      margin-top: 8px;
+      font-weight: bold;
+    }
+
+    .add-btn:hover {
+      background: #008b8b;
+    }
+
+    @media (max-width: 500px) {
+      .products {
+        gap: 12px;
+      }
+      .product {
+        min-width: 150px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <h1>👗 Fashion Collection</h1>
-
-  <!-- Category: Shirts -->
-  <div class="category">
-    <div class="cat-header">
-      <h2>Shirts</h2>
-      <a href="shirts.html">View All ></a>
-    </div>
-    <div class="scroll-row">
-      <div class="product">
-        <img src="pp.jpeg" alt="Shirt">
-        <h3>Classic Shirt</h3>
-        <p>$30</p>
-      </div>
-      <div class="product">
-        <img src="pp.jpeg" alt="Shirt">
-        <h3>Denim Shirt</h3>
-        <p>$25</p>
-      </div>
-      <div class="product">
-        <img src="pp.jpeg" alt="Shirt">
-        <h3>Casual Tee</h3>
-        <p>$20</p>
-      </div>
-    </div>
+  <!-- Top Bar with Cart -->
+  <div class="top-bar">
+    <h1>BixMAX</h1>
+    <a href="cart.html" class="cart-icon">🛒<span id="cartCount">0</span></a>
   </div>
 
-  <!-- Category: Shoes -->
-  <div class="category">
-    <div class="cat-header">
-      <h2>Shoes</h2>
-      <a href="shoes.html">View All ></a>
+  <!-- Fashion Sections -->
+  <section>
+    <div class="category">
+      <div class="cat-header">
+        <h2>Shirts</h2>
+        <a href="shirts.html">View All</a>
+      </div>
+      <div class="products">
+        <div class="product">
+          <img src="pp.jpeg" alt="Shirt">
+          <h3>Classic Shirt</h3>
+          <p>$30</p>
+          <button class="add-btn" onclick="addToCart('Classic Shirt', 'pp.jpeg', 30)">Add to Cart</button>
+        </div>
+        <div class="product">
+          <img src="pp.jpeg" alt="Shirt">
+          <h3>V-Neck</h3>
+          <p>$25</p>
+          <button class="add-btn" onclick="addToCart('V-Neck', 'pp.jpeg', 25)">Add to Cart</button>
+        </div>
+        <div class="product">
+          <img src="pp.jpeg" alt="Shirt">
+          <h3>Hoodie Tee</h3>
+          <p>$35</p>
+          <button class="add-btn" onclick="addToCart('Hoodie Tee', 'pp.jpeg', 35)">Add to Cart</button>
+        </div>
+      </div>
     </div>
-    <div class="scroll-row">
-      <div class="product">
-        <img src="pp.jpeg" alt="Sneakers">
-        <h3>Sneakers</h3>
-        <p>$50</p>
-      </div>
-      <div class="product">
-        <img src="pp.jpeg" alt="Boots">
-        <h3>Leather Boots</h3>
-        <p>$60</p>
-      </div>
-      <div class="product">
-        <img src="pp.jpeg" alt="Slides">
-        <h3>Comfort Slides</h3>
-        <p>$18</p>
-      </div>
-    </div>
-  </div>
 
-  <!-- Category: Bags -->
-  <div class="category">
-    <div class="cat-header">
-      <h2>Bags</h2>
-      <a href="bags.html">View All ></a>
+    <div class="category">
+      <div class="cat-header">
+        <h2>Dresses</h2>
+        <a href="dresses.html">View All</a></div>
+      <div class="products">
+        <div class="product">
+          <img src="pp.jpeg" alt="Dress">
+          <h3>Summer Dress</h3>
+          <p>$40</p>
+          <button class="add-btn" onclick="addToCart('Summer Dress', 'pp.jpeg', 40)">Add to Cart</button>
+        </div>
+        <div class="product">
+          <img src="pp.jpeg" alt="Dress">
+          <h3>Evening Gown</h3>
+          <p>$60</p>
+          <button class="add-btn" onclick="addToCart('Evening Gown', 'pp.jpeg', 60)">Add to Cart</button>
+        </div>
+        <div class="product">
+          <img src="pp.jpeg" alt="Dress">
+          <h3>Casual Wear</h3>
+          <p>$30</p>
+          <button class="add-btn" onclick="addToCart('Casual Wear', 'pp.jpeg', 30)">Add to Cart</button>
+        </div>
+      </div>
     </div>
-    <div class="scroll-row">
-      <div class="product">
-        <img src="pp.jpeg" alt="Tote Bag">
-        <h3>Tote Bag</h3>
-        <p>$15</p>
-      </div>
-      <div class="product">
-        <img src="pp.jpeg" alt="Purse">
-        <h3>Mini Purse</h3>
-        <p>$20</p>
-      </div>
-      <div class="product">
-        <img src="pp.jpeg" alt="Backpack">
-        <h3>Backpack</h3>
-        <p>$25</p>
-      </div>
-    </div>
-  </div>
 
-  <!-- Category: Glasses -->
-  <div class="category">
-    <div class="cat-header">
-      <h2>Glasses</h2>
-      <a href="glasses.html">View All ></a>
+    <div class="category">
+      <div class="cat-header">
+        <h2>Chains</h2>
+        <a href="chains.html">View All</a>
+      </div>
+      <div class="products">
+        <div class="product">
+          <img src="pp.jpeg" alt="Chain">
+          <h3>Gold Chain</h3>
+          <p>$80</p>
+          <button class="add-btn" onclick="addToCart('Gold Chain', 'pp.jpeg', 80)">Add to Cart</button>
+        </div>
+        <div class="product">
+          <img src="pp.jpeg" alt="Chain">
+          <h3>Silver Chain</h3>
+          <p>$50</p>
+          <button class="add-btn" onclick="addToCart('Silver Chain', 'pp.jpeg', 50)">Add to Cart</button>
+        </div>
+        <div class="product">
+          <img src="pp.jpeg" alt="Chain">
+          <h3>Men’s Chain</h3>
+          <p>$70</p>
+          <button class="add-btn" onclick="addToCart('Men’s Chain', 'pp.jpeg', 70)">Add to Cart</button>
+        </div>
+      </div>
     </div>
-    <div class="scroll-row"><div class="product">
-        <img src="pp.jpeg" alt="Sunglasses">
-        <h3>Men Shades</h3>
-        <p>$18</p>
-      </div>
-      <div class="product">
-        <img src="pp.jpeg" alt="Glasses">
-        <h3>Women Frames</h3>
-        <p>$22</p>
-      </div>
-      <div class="product">
-        <img src="pp.jpeg" alt="Designer Glass">
-        <h3>Luxury Glass</h3>
-        <p>$40</p>
-      </div>
-    </div>
-  </div>
 
-  <!-- Category: Chains -->
-  <div class="category">
-    <div class="cat-header">
-      <h2>Chains</h2>
-      <a href="chains.html">View All ></a>
+    <div class="category">
+      <div class="cat-header">
+        <h2>Sneakers</h2>
+        <a href="sneakers.html">View All</a>
+      </div>
+      <div class="products">
+        <div class="product">
+          <img src="pp.jpeg" alt="Sneakers">
+          <h3>Nike Air</h3>
+          <p>$100</p>
+          <button class="add-btn" onclick="addToCart('Nike Air', 'pp.jpeg', 100)">Add to Cart</button>
+        </div>
+        <div class="product">
+          <img src="pp.jpeg" alt="Sneakers">
+          <h3>Adidas</h3>
+          <p>$90</p>
+          <button class="add-btn" onclick="addToCart('Adidas', 'pp.jpeg', 90)">Add to Cart</button>
+        </div>
+        <div class="product">
+          <img src="pp.jpeg" alt="Sneakers">
+          <h3>Vans Classic</h3>
+          <p>$75</p>
+          <button class="add-btn" onclick="addToCart('Vans Classic', 'pp.jpeg', 75)">Add to Cart</button>
+        </div>
+      </div>
     </div>
-    <div class="scroll-row">
-      <div class="product">
-        <img src="pp.jpeg" alt="Chain">
-        <h3>Cuban Chain</h3>
-        <p>$25</p>
+
+    <div class="category">
+      <div class="cat-header">
+        <h2>Glasses</h2>
+        <a href="glasses.html">View All</a>
       </div>
-      <div class="product">
-        <img src="pp.jpeg" alt="Pendant Chain">
-        <h3>Pendant Chain</h3>
-        <p>$30</p>
-      </div>
-      <div class="product">
-        <img src="pp.jpeg" alt="Gold Chain">
-        <h3>Gold Style</h3>
-        <p>$35</p>
+      <div class="products">
+        <div class="product">
+          <img src="pp.jpeg" alt="Glasses">
+          <h3>Ray-Ban</h3>
+          <p>$50</p>
+          <button class="add-btn" onclick="addToCart('Ray-Ban', 'pp.jpeg', 50)">Add to Cart</button>
+        </div>
+        <div class="product">
+          <img src="pp.jpeg" alt="Glasses">
+          <h3>Clear Vision</h3>
+          <p>$25</p>
+          <button class="add-btn" onclick="addToCart('Clear Vision', 'pp.jpeg', 25)">Add to Cart</button>
+        </div>
+        <div class="product">
+          <img src="pp.jpeg" alt="Glasses">
+          <h3>Blue Light</h3>
+          <p>$35</p>
+          <button class="add-btn" onclick="addToCart('Blue Light', 'pp.jpeg', 35)">Add to Cart</button>
+        </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <footer>&copy; BizMAX 2025</footer>
+  <!-- Script -->
+  <script>
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const count = cart.reduce((sum, item) => sum + item.qty, 0);
+      document.getElementById("cartCount").textContent = count;
+    }function addToCart(name, img, price) {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const existing = cart.find(item => item.name === name);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ name, image: img, price, qty: 1 });
+      }
+      localStorage.setItem("cart", JSON.stringify(cart));
+      updateCartCount();
+    }
 
+    // Run on page load
+    updateCartCount();
+  </script>
 </body>
 </html>
