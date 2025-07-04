@@ -208,7 +208,6 @@ localStorage.setItem("latestOrderId", orderId);
     // Pay on Delivery
     setTimeout(() => {
       alert("Order placed successfully!");
-      localStorage.removeItem("cart");
       showLoader(false);
        window.location.href = "receipt.html?orderId=" + orderId;
       window.location.href = "thankyou.html?orderId=" + orderId;
