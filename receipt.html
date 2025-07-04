@@ -24,7 +24,7 @@
       text-align: center;
       color: #1976d2;
     }
-    .order-id {
+    .order-id, p {
       text-align: center;
       margin-bottom: 20px;
       font-weight: bold;
@@ -54,35 +54,6 @@
       font-weight: bold;
     }
 
-.cart-item {
-      display: flex;
-      align-items: center;
-      background: white;
-      border-radius: 16px;
-      margin-bottom: 15px;
-      padding: 15px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    .cart-info {
-      flex: 1;
-    }
-
-    .cart-info h3 {
-      margin: 0 0 6px;
-    }
-
-    .cart-info p {
-      margin: 0;
-      font-size: 16px;
-    }
-
-    .qty {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 8px;
-    }
     @media (max-width: 600px) {
       .cart-item {
         flex-direction: column;
@@ -94,6 +65,20 @@
         margin-bottom: 10px;
       }
 
+    }
+    table {
+      width: 100%;
+      height: auto;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 16px;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+    }
+    thead {
+      font-weight: bold;
     }
   </style>
 </head>
@@ -131,16 +116,16 @@
          </thead>
          <tbody><tr>
          <td>
-           <h3>${item.name}</h3>
+           {item.name}
           </td>
-          <td>
-           <p>Unit Price: $${item.price.toFixed(2)}</p>
-            </td>
             <td>
                                     <div class="qty">
-                        <h4>Quantity: <span>${item.qty}</span></h4>
-            </div>
+                        <span>${item.qty}</span>
+            </div></td>
+                      <td>
+           {item.price.toFixed(2)}
             </td>
+             <td>{itemTotal.toFixed(2)}</td>
             </tr>
             <tbody>
             </table>
