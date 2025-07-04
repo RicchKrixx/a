@@ -99,8 +99,8 @@
 </head>
 <body>
     <h1>🧾Order Receipt</h1>
-  
-    <h4>Order ID:<div class="order-id" id="orderId"> Loading…</div></h4>
+  <div>
+    Order ID: <span class="order-id" id="orderId"> Loading…</span></div>
 
   <div id="cartContainer"></div>
 
@@ -121,11 +121,33 @@
         itemEl.className = 'cart-item';
         itemEl.innerHTML = `
           <div class="cart-info">
-            <h3>${item.name}</h3>
-            <p>Unit Price: $${item.price.toFixed(2)}</p>
-                        <div class="qty">
+                    <table border="1" cellpadding="10" cellspacing="0">
+          <thead>
+         <tr>
+         <th>Items<th>
+         <th>Qty</th>
+         <th>Price</th>
+         </tr>
+         </thead>
+         <tbody><tr>
+         <td>
+           <h3>${item.name}</h3>
+          </td>
+          <td>
+           <p>Unit Price: $${item.price.toFixed(2)}</p>
+            </td>
+            <td>
+                                    <div class="qty">
                         <h4>Quantity: <span>${item.qty}</span></h4>
             </div>
+            </td>
+            </tr>
+            <tbody>
+            </table>
+          </div>
+            
+           
+
             </div>
           </div>
         `;
