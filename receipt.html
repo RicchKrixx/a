@@ -3,122 +3,139 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Receipt - BizMAX</title>
+  <title>Order Receipt - BizMAX</title>
   <style>
     body {
+      background: #f2f2f2;
       font-family: Arial, sans-serif;
-      background: #f0f9ff;
       padding: 20px;
       color: #333;
     }
-
-    h1 {
-      color: #1976d2;
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
-    .info, .items {
+    .receipt-box {
       background: #fff;
-      border-radius: 12px;
-      padding: 20px;
-      margin-top: 20px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      max-width: 700px;
+      margin: auto;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-
+    h1 {
+      text-align: center;
+      color: #1976d2;
+    }
+    .order-id {
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .info, .items, .total {
+      margin-bottom: 20px;
+    }
     .info p {
       margin: 6px 0;
-      font-size: 16px;
     }
-
-    .items h2 {
-      margin-bottom: 15px;
+    table {
+      width: 100%;
+      border-collapse: collapse;
     }
-
-    .item {
-      display: flex;
-      align-items: center;
-      margin-bottom: 15px;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 10px;
+    table thead {
+      background: #1976d2;
+      color: white;
     }
-
-    .item img {
-      width: 60px;
-      height: 60px;
-      object-fit: cover;
-      border-radius: 10px;
-      margin-right: 15px;
+    table th, table td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: left;
     }
-
-    .item-details {
-      flex: 1;
-    }
-
     .total {
-      font-size: 18px;
-      font-weight: bold;
       text-align: right;
-      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #1976d2;
     }
-
-    .error {
-      color: red;
+    .back-btn {
+      display: block;
+      margin-top: 20px;
       text-align: center;
-      margin-top: 40px;
+      text-decoration: none;
+      padding: 10px 20px;
+      background: #1976d2;
+      color: white;
+      border-radius: 8px;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
+  <div class="receipt-box">
+    <h1>Order Receipt</h1>
+    <div class="order-id" id="orderIdDisplay">Order ID: Loading…</div>
 
-  <h1>🧾 Receipt</h1>
+    <div class="info" id="custInfo"></div>
+    <div class="items">
+      <table id="itemsTable">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Price</th>
+            <th>Qty</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
 
-  <div id="content"></div>
+    <div class="total">Grand Total: $<span id="grandTotal">0.00</span></div>
+
+    <a href="BixMax home.html" class="back-btn">Return to Home</a>
+  </div>
 
   <script>
-    const content = document.getElementById('content');
-
-    // Get orderId from URL
     const params = new URLSearchParams(window.location.search);
     const orderId = params.get('orderId');
+    document.getElementById('orderIdDisplay').textContent = 'Order ID: ' + (orderId || 'Unavailable');
 
-    // Get orders from localStorage
-    const orders = JSON.parse(localStorage.getItem('orders') || '{}');
-    const order = orders[orderId];
-
-    if (!order) {
-      content.innerHTML = <p class="error">❌ Order not found. Invalid or expired Order ID.</p>;
+    if (!orderId) {
+      alert("No Order ID provided.");
     } else {
-      // Build receipt HTML
-      let html = 
-        <div class="info">
-          <p><strong>Order ID:</strong> ${orderId}</p>
+      const orders = JSON.parse(localStorage.getItem('orders') || '{}');
+      const order = orders[orderId];
+
+      if (!order) {
+        alert("Order not found.");
+      } else {
+        // Display customer info
+        const custInfo = document.getElementById('custInfo');
+        custInfo.innerHTML = 
           <p><strong>Name:</strong> ${order.name}</p>
           <p><strong>Email:</strong> ${order.email}</p>
           <p><strong>Phone:</strong> ${order.phone}</p>
           <p><strong>Address:</strong> ${order.address}</p>
-          <p><strong>Payment:</strong> ${order.method === 'online' ? 'Online' : 'Pay on Delivery'}</p>
-        </div>
-        <div class="items">
-          <h2>Items</h2>;
+          <p><strong>Payment Method:</strong> ${order.method}</p>
+        ;
 
-      order.items.forEach(item => {
-        html += 
-          <div class="item">
-            <img src="${item.image}" alt="${item.name}">
-            <div class="item-details">
-              <p><strong>${item.name}</strong></p>
-              <p>Qty: ${item.qty} × $${item.price.toFixed(2)}</p>
-            </div>
-          </div>;
-      });
+        // Display items
+        const tbody = document.querySelector('#itemsTable tbody');
+        tbody.innerHTML = '';
+        let grandTotal = 0;
+        order.cart.forEach(item => {
+          const itemTotal = item.price * item.qty;
+          grandTotal += itemTotal;
+          const row = document.createElement('tr');
+          row.innerHTML = 
+            <td>${item.name}</td>
+            <td>$${item.price.toFixed(2)}</td>
+            <td>${item.qty}</td>
+            <td>$${itemTotal.toFixed(2)}</td>
+          ;
+          tbody.appendChild(row);
+        });
 
-      html += 
-        </div>
-        <div class="total">Grand Total: $${order.amount}</div>
-      ;
-
-      content.innerHTML = html;
+        // Display total
+        document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
+      }
     }
   </script>
 </body>
