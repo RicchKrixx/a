@@ -96,13 +96,17 @@
 
   <div class="total">Total: $<span id="grandTotal">0.00</span></div>
 
-
-  <script>
+ <script>
     const cartContainer = document.getElementById('cartContainer');
     const grandTotalEl = document.getElementById('grandTotal');
     const cartCount = document.getElementById('cartCount');
 
     let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+    function updateCartDisplay() {
+      cartContainer.innerHTML = '';
+      let total = 0;
+      let itemCount = 0;
 
       cart.forEach((item, i) => {
         const itemEl = document.createElement('div');
@@ -112,6 +116,11 @@
           <div class="cart-info">
             <h3>${item.name}</h3>
             <p>Price: $${item.price.toFixed(2)}</p>
+            <div class="qty">
+              <button onclick="changeQty(${i}, -1)">−</button><span>${item.qty}</span>
+              <button onclick="changeQty(${i}, 1)">+</button>
+              <button class="remove-btn" onclick="removeItem(${i})">🗑️</button>
+            </div>
           </div>
         `;
         cartContainer.appendChild(itemEl);
@@ -125,6 +134,36 @@
       localStorage.setItem('grandTotal', total.toFixed(2));
       localStorage.setItem('cart', JSON.stringify(cart));
     }
+
+    function changeQty(index, delta) {
+      cart[index].qty += delta;
+      if (cart[index].qty <= 0) {
+        removeItem(index);
+      } else {
+        updateCartDisplay();
+      }
+    }
+
+    function removeItem(index) {
+      cart.splice(index, 1);
+      updateCartDisplay();
+    }
+
+    function clearCart() {
+      if (confirm("Clear all items from cart?")) {
+        cart = [];
+        updateCartDisplay();
+      }
+    }
+
+    function goToCheckout() {
+      if (cart.length === 0) {
+        alert("🛒 Cart is empty!");
+        return;
+      }
+      window.location.href = "checkout.html";
+    }
+
     updateCartDisplay(); // Run on page load
   </script>
 </body>
