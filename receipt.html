@@ -107,21 +107,6 @@
     <h1>🧾Order Receipt</h1>
     <div class="order-id" id="orderId">Order ID: Loading…</div>
 
-    <div class="info" id="custInfo"></div>
-    <div class="items">
-      <table id="itemsTable">
-        <thead>
-          <tr>
-            <th>Item</th>
-            <th>Price</th>
-            <th>Qty</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-
     <div class="total">Grand Total: $<span id="grandTotal">0.00</span></div>
 
     <a href="BixMax home.html" class="back-btn">Return to Home</a>
@@ -145,7 +130,6 @@
         const itemEl = document.createElement('div');
         itemEl.className = 'cart-item';
         itemEl.innerHTML = `
-          <img src="${item.image}" alt="${item.name}">
           <div class="cart-info">
             <h3>${item.name}</h3>
             <p>Price: $${item.price.toFixed(2)}</p>
