@@ -113,7 +113,7 @@
 <body>
     <h1>🧾Order Receipt</h1>
   
-    <div class="order-id" id="orderId">Order ID: Loading…</div>
+    <p>Order ID:<div class="order-id" id="orderId"> Loading…</div></p>
 
     <div class="total">Grand Total: $<span id="grandTotal">0.00</span></div>
 
@@ -137,10 +137,9 @@
         const itemEl = document.createElement('div');
         itemEl.className = 'cart-item';
         itemEl.innerHTML = `
-         <img src="${item.image}" alt="${item.name}">
           <div class="cart-info">
             <h3>${item.name}</h3>
-            <p>Price: $${item.price.toFixed(2)}</p>
+            <p>Unit Price: $${item.price.toFixed(2)}</p>
                         <div class="qty">
                         <h4>Quantity: <span>${item.qty}</span></h4>
             </div>
