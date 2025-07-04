@@ -169,7 +169,13 @@
         total += item.qty * item.price;
         itemCount += item.qty;
       });
-      
+            grandTotalEl.textContent = total.toFixed(2);
+      cartCount.textContent = itemCount;
+
+      localStorage.setItem('grandTotal', total.toFixed(2));
+      localStorage.setItem('cart', JSON.stringify(cart));
+    }
+
     function changeQty(index, delta) {
       cart[index].qty += delta;
       if (cart[index].qty <= 0) {
