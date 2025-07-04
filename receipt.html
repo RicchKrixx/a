@@ -3,109 +3,123 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Receipt | BizMAX</title>
-
+  <title>Receipt - BizMAX</title>
   <style>
-    /* ---------- Glassy BizMAX card --------- */
-    :root { --glass:rgba(255,255,255,0.12); --blur:25px; --blue:#1976d2; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f9ff;
+      padding: 20px;
+      color: #333;
+    }
 
-    body{
-      margin:0; padding:20px;
-      font-family:Arial,Helvetica,sans-serif;
-      background:linear-gradient(135deg,#1976d2,#00bcd4);
-      color:#fff;
-      min-height:100vh; display:flex; justify-content:center; align-items:flex-start;
+    h1 {
+      color: #1976d2;
+      text-align: center;
+      margin-bottom: 10px;
     }
-    .card{
-      width:100%; max-width:700px;
-      background:var(--glass); backdrop-filter:blur(var(--blur));
-      border-radius:24px; padding:32px;
-      box-shadow:0 0 25px rgba(0,0,0,.35);
+
+    .info, .items {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
     }
-    h1{margin:0 0 8px;text-align:center}
-    .info p{margin:4px 0;font-size:16px}
-    table{width:100%;border-collapse:collapse;margin-top:22px}
-    th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,.2)}
-    th{background:rgba(0,0,0,.25)}
-    .total{margin-top:20px;font-size:20px;font-weight:bold;text-align:right}
-    .warn{color:#ffbaba;text-align:center;font-weight:bold;margin:80px 0}
-    .btn-wrap{margin-top:28px;text-align:center}
-    .btn{
-      display:inline-block;margin:6px;padding:12px 26px;border-radius:26px;
-      background:cyan;color:#000;font-weight:bold;text-decoration:none;
+
+    .info p {
+      margin: 6px 0;
+      font-size: 16px;
     }
-    .btn:hover{background:#00a9b3}
+
+    .items h2 {
+      margin-bottom: 15px;
+    }
+
+    .item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 10px;
+    }
+
+    .item img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-right: 15px;
+    }
+
+    .item-details {
+      flex: 1;
+    }
+
+    .total {
+      font-size: 18px;
+      font-weight: bold;
+      text-align: right;
+      margin-top: 20px;
+    }
+
+    .error {
+      color: red;
+      text-align: center;
+      margin-top: 40px;
+    }
   </style>
 </head>
 <body>
 
-  <!-- will fill via JS -->
-  <div id="card" class="card" style="display:none;">
-    <h1>🧾 Order Receipt</h1>
-    <div class="info" id="custBox"></div>
-    <table id="itemsTable">
-      <thead>
-        <tr><th>Item</th><th>Qty</th><th>Price</th><th>Subtotal</th></tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <p class="total" id="totalLine"></p>
+  <h1>🧾 Receipt</h1>
 
-    <div class="btn-wrap">
-      <a href="index.html" class="btn">🏠 Return Home</a>
-      <a href="order-tracking.html" class="btn">📦 Track Order</a>
-    </div>
-  </div>
+  <div id="content"></div>
 
-  <!-- error state -->
-  <p id="err" class="warn" style="display:none;">❌ Order not found or ID missing.</p>
+  <script>
+    const content = document.getElementById('content');
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  // 1. get ID from URL
-  const orderId = new URLSearchParams(location.search).get('orderId');
-  const orders  = JSON.parse(localStorage.getItem('orders') || '{}');
-  const order   = orders[orderId];
+    // Get orderId from URL
+    const params = new URLSearchParams(window.location.search);
+    const orderId = params.get('orderId');
 
-  if (!order) {               // missing or wrong ID
-    document.getElementById('err').style.display = 'block';
-    return;
-  }
+    // Get orders from localStorage
+    const orders = JSON.parse(localStorage.getItem('orders') || '{}');
+    const order = orders[orderId];
 
-  // 2. Show card
-  document.getElementById('card').style.display = 'block';
+    if (!order) {
+      content.innerHTML = <p class="error">❌ Order not found. Invalid or expired Order ID.</p>;
+    } else {
+      // Build receipt HTML
+      let html = 
+        <div class="info">
+          <p><strong>Order ID:</strong> ${orderId}</p>
+          <p><strong>Name:</strong> ${order.name}</p>
+          <p><strong>Email:</strong> ${order.email}</p>
+          <p><strong>Phone:</strong> ${order.phone}</p>
+          <p><strong>Address:</strong> ${order.address}</p>
+          <p><strong>Payment:</strong> ${order.method === 'online' ? 'Online' : 'Pay on Delivery'}</p>
+        </div>
+        <div class="items">
+          <h2>Items</h2>;
 
-  // 3. customer info
-  document.getElementById('custBox').innerHTML = 
-    <p><strong>Order ID:</strong>  ${order.id}</p>
-    <p><strong>Date:</strong>      ${order.time || '-'}</p>
-    <p><strong>Name:</strong>      ${order.name}</p>
-    <p><strong>Email:</strong>     ${order.email}</p>
-    <p><strong>Phone:</strong>     ${order.phone}</p>
-    <p><strong>Address:</strong>   ${order.address}</p>
-    <p><strong>Payment:</strong>   ${order.method==='online' ? 'Paystack' : 'Pay on Delivery'}</p>
-  ;
+      order.items.forEach(item => {
+        html += 
+          <div class="item">
+            <img src="${item.image}" alt="${item.name}">
+            <div class="item-details">
+              <p><strong>${item.name}</strong></p>
+              <p>Qty: ${item.qty} × $${item.price.toFixed(2)}</p>
+            </div>
+          </div>;
+      });
 
-  // 4. items table
-  const tbody = document.querySelector('#itemsTable tbody');
-  let grand = 0;
-  order.items.forEach(it=>{
-    const sub = it.qty * it.price;
-    grand += sub;
-    tbody.insertAdjacentHTML('beforeend', 
-      <tr>
-        <td>${it.name}</td>
-        <td>${it.qty}</td>
-        <td>$${it.price.toFixed(2)}</td>
-        <td>$${sub.toFixed(2)}</td>
-      </tr>
-    );
-  });
+      html += 
+        </div>
+        <div class="total">Grand Total: $${order.amount}</div>
+      ;
 
-  // 5. total (prefer stored amount if provided)
-  const total = order.amount ? parseFloat(order.amount) : grand;
-  document.getElementById('totalLine').textContent = Grand Total: $${total.toFixed(2)};
-});
-</script>
+      content.innerHTML = html;
+    }
+  </script>
 </body>
 </html>
