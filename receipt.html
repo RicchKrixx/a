@@ -114,12 +114,22 @@
         flex-direction: column;
         align-items: flex-start;
       }
+              .cart-item img {
+        width: 100%;
+        height: auto;
+        margin-bottom: 10px;
+      }
+
     }
   </style>
 </head>
 <body>
+      <header>
+    <h1>My Cart</h1>
+  </header>
+<!---
     <h1>🧾Order Receipt</h1>
-  <!---
+  
     <div class="order-id" id="orderId">Order ID: Loading…</div>
 
     <div class="total">Grand Total: $<span id="grandTotal">0.00</span></div>
@@ -145,6 +155,7 @@
         const itemEl = document.createElement('div');
         itemEl.className = 'cart-item';
         itemEl.innerHTML = `
+         <img src="${item.image}" alt="${item.name}">
           <div class="cart-info">
             <h3>${item.name}</h3>
             <p>Price: $${item.price.toFixed(2)}</p>
