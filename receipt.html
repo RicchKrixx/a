@@ -87,22 +87,6 @@
     <h1>🧾Order Receipt</h1>
   <div>
     Order ID: <span class="order-id" id="orderId"> Loading…</span></div>
-
- <div id="cartContainer">
-  <table id="itemsTable">
-    <thead>
-      <tr>
-        <th>Item</th>
-        <th>Qty</th>
-        <th>Price</th>
-        <th>Total</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-</div>
-  
-
  <script>
 function updateCartDisplay() {
   const tbody = document.querySelector('#itemsTable tbody');
@@ -114,10 +98,25 @@ function updateCartDisplay() {
   cart.forEach((item, i) => {
     const row = document.createElement('tr');
     row.innerHTML = 
-      <td>${item.name}</td>
+       <div id="cartContainer">
+  <table id="itemsTable">
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Qty</th>
+        <th>Price</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+            <td>${item.name}</td>
       <td>${item.qty}</td>
       <td>₵${item.price.toFixed(2)}</td>
       <td>₵${(item.qty * item.price).toFixed(2)}</td>
+      </tbody>
+  </table>
+
+
     ;
     tbody.appendChild(row);
 
