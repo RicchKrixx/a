@@ -149,22 +149,6 @@
       updateCartDisplay();
     }
 
-    function clearCart() {
-      if (confirm("Clear all items from cart?")) {
-        cart = [];
-        updateCartDisplay();
-      }
-    }
-
-    function goToCheckout() {
-      if (cart.length === 0) {
-        alert("🛒 Cart is empty!");
-        return;
-      }
-      window.location.href = "checkout.html";
-    }
-
-    updateCartDisplay(); // Run on page load
   </script>
 </body>
 </html>
