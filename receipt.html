@@ -70,7 +70,7 @@
 <body>
   <div class="receipt-box">
     <h1>Order Receipt</h1>
-    <div class="order-id" id="orderIdDisplay">Order ID: Loading…</div>
+    <div class="order-id" id="orderId">Order ID: Loading…</div>
 
     <div class="info" id="custInfo"></div>
     <div class="items">
@@ -93,19 +93,7 @@
   </div>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const orderId = params.get('orderId');
-    document.getElementById('orderIdDisplay').textContent = 'Order ID: ' + (orderId || 'Unavailable');
 
-    if (!orderId) {
-      alert("No Order ID provided.");
-    } else {
-      const orders = JSON.parse(localStorage.getItem('orders') || '{}');
-      const order = orders[orderId];
-
-      if (!order) {
-        alert("Order not found.");
-      } else {
         // Display customer info
         const custInfo = document.getElementById('custInfo');
         custInfo.innerHTML = 
