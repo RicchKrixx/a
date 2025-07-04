@@ -138,5 +138,12 @@
       }
     }
   </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+  const total = localStorage.getItem("grandTotal") || "0";
+  document.getElementById("grandTotal").textContent = parseFloat(total).toFixed(2);
+});
+
+  </script>
 </body>
 </html>
