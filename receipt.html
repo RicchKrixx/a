@@ -143,7 +143,8 @@
   const total = localStorage.getItem("grandTotal") || "0";
   document.getElementById("grandTotal").textContent = parseFloat(total).toFixed(2);
 });
-
+    const params = new URLSearchParams(window.location.search);
+    let orderId = params.get("orderId") || localStorage.getItem("latestOrderId");
   </script>
 </body>
 </html>
