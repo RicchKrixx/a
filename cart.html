@@ -149,62 +149,90 @@
   </style>
 </head>
 <body>
-<header>
-  <h1>My Cart</h1>
-  <div class="cart-badge">🛒 <span id="cartCount">0</span></div>
-</header>
-<div id="cartContainer"></div>
-<div class="total">Total: $<span id="grandTotal">0.00</span></div>
-<div class="actions">
-  <button onclick="clearCart()">Empty Cart</button>
-  <button onclick="goToCheckout()">Checkout</button>
-</div>
-<script>
-let cart = JSON.parse(localStorage.getItem('cart')||'[]');
 
-function updateCartDisplay(){
-  const container = document.getElementById('cartContainer');
-  container.innerHTML = '';
-  let total=0, qtySum=0;
-  cart.forEach((item,i)=>{
-    total += item.qty*item.price;
-    qtySum += item.qty;
-    container.innerHTML += 
-      <div class="cart-item">
-        <img src="${item.image}" alt="${item.name}">
-        <div class="cart-info">
-          <h3>${item.name}</h3>
-          <p>$${item.price.toFixed(2)}</p>
-          <div class="qty">
-            <button onclick="changeQty(${i},-1)">−</button>
-            <span>${item.qty}</span>
-            <button onclick="changeQty(${i},1)">+</button>
-            <button onclick="removeItem(${i})">🗑️</button>
+  <header>
+    <h1>My Cart</h1>
+    <div class="cart-badge">🛒 <span id="cartCount">0</span></div>
+  </header>
+
+  <div id="cartContainer"></div>
+
+  <div class="total">Total: $<span id="grandTotal">0.00</span></div>
+
+  <div class="actions">
+    <button class="empty-btn" onclick="clearCart()">Empty Cart</button>
+    <button class="checkout-btn" onclick="goToCheckout()">Checkout</button>
+  </div>
+
+  <script>
+    const cartContainer = document.getElementById('cartContainer');
+    const grandTotalEl = document.getElementById('grandTotal');
+    const cartCount = document.getElementById('cartCount');
+
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+    function updateCartDisplay() {
+      cartContainer.innerHTML = '';
+      let total = 0;
+      let itemCount = 0;
+
+      cart.forEach((item, i) => {
+        const itemEl = document.createElement('div');
+        itemEl.className = 'cart-item';
+        itemEl.innerHTML = `
+          <img src="${item.image}" alt="${item.name}">
+          <div class="cart-info">
+            <h3>${item.name}</h3>
+            <p>Price: $${item.price.toFixed(2)}</p>
+            <div class="qty">
+              <button onclick="changeQty(${i}, -1)">−</button><span>${item.qty}</span>
+              <button onclick="changeQty(${i}, 1)">+</button>
+              <button class="remove-btn" onclick="removeItem(${i})">🗑️</button>
+            </div>
           </div>
-        </div>
-      </div>;
-  });
-  localStorage.setItem('cart', JSON.stringify(cart));
-  localStorage.setItem('grandTotal', total.toFixed(2));
-  document.getElementById('grandTotal').textContent = total.toFixed(2);
-  document.getElementById('cartCount').textContent = qtySum;
-}
+        `;
+        cartContainer.appendChild(itemEl);
+        total += item.qty * item.price;
+        itemCount += item.qty;
+      });
 
-function changeQty(i, d){
-  cart[i].qty += d;
-  if(cart[i].qty<1) cart.splice(i,1);
-  updateCartDisplay();
-}
-function removeItem(i){ cart.splice(i,1); updateCartDisplay(); }
-function clearCart(){
-  if(confirm('Clear cart?')) { cart=[]; updateCartDisplay(); }
-}
-function goToCheckout(){
-  if(cart.length) location.href='checkout.html';
-  else alert("Cart is empty");
-}
+      grandTotalEl.textContent = total.toFixed(2);
+      cartCount.textContent = itemCount;
 
-updateCartDisplay();
-</script>
+      localStorage.setItem('grandTotal', total.toFixed(2));
+      localStorage.setItem('cart', JSON.stringify(cart));
+    }
+
+    function changeQty(index, delta) {
+      cart[index].qty += delta;
+      if (cart[index].qty <= 0) {
+        removeItem(index);
+      } else {
+        updateCartDisplay();
+      }
+    }
+
+    function removeItem(index) {
+      cart.splice(index, 1);
+      updateCartDisplay();
+    }
+
+    function clearCart() {
+      if (confirm("Clear all items from cart?")) {
+        cart = [];
+        updateCartDisplay();
+      }
+    }
+
+    function goToCheckout() {
+      if (cart.length === 0) {
+        alert("🛒 Cart is empty!");
+        return;
+      }
+      window.location.href = "checkout.html";
+    }
+
+    updateCartDisplay(); // Run on page load
+  </script>
 </body>
 </html>
