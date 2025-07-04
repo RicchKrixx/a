@@ -25,23 +25,6 @@
       color: #1976d2;
     }
 
-    .cart-badge {
-      position: relative;
-      font-size: 24px;
-      cursor: pointer;
-    }
-
-    .cart-badge span {
-      position: absolute;
-      top: -10px;
-      right: -10px;
-      background: red;
-      color: white;
-      font-size: 12px;
-      border-radius: 50%;
-      padding: 3px 6px;
-    }
-
     .cart-item {
       display: flex;
       align-items: center;
@@ -50,14 +33,6 @@
       margin-bottom: 15px;
       padding: 15px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    .cart-item img {
-      width: 80px;
-      height: 80px;
-      border-radius: 12px;
-      margin-right: 15px;
-      object-fit: cover;
     }
 
     .cart-info {
@@ -80,26 +55,6 @@
       margin-top: 8px;
     }
 
-    .qty button {
-      padding: 5px 10px;
-      font-weight: bold;
-      font-size: 16px;
-      border: none;
-      background: #1976d2;
-      color: white;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    .remove-btn {
-      font-size: 18px;
-      background: none;
-      border: none;
-      color: red;
-      cursor: pointer;
-      margin-left: 10px;
-    }
-
     .total {
       font-size: 20px;
       font-weight: bold;
@@ -110,24 +65,6 @@
       margin-top: 25px;
       display: flex;
       justify-content: space-between;
-    }
-
-    .actions button {
-      padding: 12px 20px;
-      font-size: 16px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .checkout-btn {
-      background: #1976d2;
-      color: white;
-    }
-
-    .empty-btn {
-      background: #ccc;
     }
 
     @media (max-width: 600px) {
@@ -153,17 +90,12 @@
 
   <header>
     <h1>My Cart</h1>
-    <div class="cart-badge">🛒 <span id="cartCount">0</span></div>
   </header>
 
   <div id="cartContainer"></div>
 
   <div class="total">Total: $<span id="grandTotal">0.00</span></div>
 
-  <div class="actions">
-    <button class="empty-btn" onclick="clearCart()">Empty Cart</button>
-    <button class="checkout-btn" onclick="goToCheckout()">Checkout</button>
-  </div>
 
   <script>
     const cartContainer = document.getElementById('cartContainer');
@@ -171,11 +103,6 @@
     const cartCount = document.getElementById('cartCount');
 
     let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-
-    function updateCartDisplay() {
-      cartContainer.innerHTML = '';
-      let total = 0;
-      let itemCount = 0;
 
       cart.forEach((item, i) => {
         const itemEl = document.createElement('div');
@@ -185,11 +112,6 @@
           <div class="cart-info">
             <h3>${item.name}</h3>
             <p>Price: $${item.price.toFixed(2)}</p>
-            <div class="qty">
-              <button onclick="changeQty(${i}, -1)">−</button><span>${item.qty}</span>
-              <button onclick="changeQty(${i}, 1)">+</button>
-              <button class="remove-btn" onclick="removeItem(${i})">🗑️</button>
-            </div>
           </div>
         `;
         cartContainer.appendChild(itemEl);
@@ -203,36 +125,6 @@
       localStorage.setItem('grandTotal', total.toFixed(2));
       localStorage.setItem('cart', JSON.stringify(cart));
     }
-
-    function changeQty(index, delta) {
-      cart[index].qty += delta;
-      if (cart[index].qty <= 0) {
-        removeItem(index);
-      } else {
-        updateCartDisplay();
-      }
-    }
-
-    function removeItem(index) {
-      cart.splice(index, 1);
-      updateCartDisplay();
-    }
-
-    function clearCart() {
-      if (confirm("Clear all items from cart?")) {
-        cart = [];
-        updateCartDisplay();
-      }
-    }
-
-    function goToCheckout() {
-      if (cart.length === 0) {
-        alert("🛒 Cart is empty!");
-        return;
-      }
-      window.location.href = "checkout.html";
-    }
-
     updateCartDisplay(); // Run on page load
   </script>
 </body>
