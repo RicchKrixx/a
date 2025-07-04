@@ -76,6 +76,7 @@
     th, td {
       padding: 12px;
       text-align: left;
+      border: none;
     }
     thead {
       font-weight: bold;
@@ -169,36 +170,22 @@
           <p><strong>Address:</strong> ${order.address}</p>
           <p><strong>Payment Method:</strong> ${order.method}</p>
         ;
-
-        // Display items
-        const tbody = document.querySelector('#itemsTable tbody');
-        tbody.innerHTML = '';
-        let grandTotal = 0;
         order.cart.forEach(item => {
           const itemTotal = item.price * item.qty;
-          grandTotal += itemTotal;
-          const row = document.createElement('tr');
-          row.innerHTML = 
-            <td>${item.name}</td>
-            <td>$${item.price.toFixed(2)}</td>
-            <td>${item.qty}</td>
-            <td>$${itemTotal.toFixed(2)}</td>
-          ;
-          tbody.appendChild(row);
-        });
+  
 
         // Display total
         document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
       }
     }
   </script>
- 
+ <!---
   <script>
     document.addEventListener("DOMContentLoaded", () => {
   const total = localStorage.getItem("grandTotal") || "0";
   document.getElementById("grandTotal").textContent = parseFloat(total).toFixed(2);
 });
-  </script>
+  </script>--->
     <script>
     // Get orderId from URL or localStorage
     const params = new URLSearchParams(window.location.search);
@@ -212,30 +199,7 @@
       document.getElementById("viewReceipt").href = "receipt.html?orderId=" + orderId;
     }
   </script>
-    <script>
 
-    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-
-    function updateCartDisplay() {
-      cartContainer.innerHTML = '';
-      let total = 0;
-      let itemCount = 0;
-
-      cart.forEach((item, i) => {
-        const itemEl = document.createElement('div');
-        itemEl.className = 'cart-item';
-        itemEl.innerHTML = `
-          <div class="cart-info">
-            <h3>${item.name}</h3>
-            <p>Price: $${item.price.toFixed(2)}</p>
-          </div>
-        `;
-        cartContainer.appendChild(itemEl);
-        total += item.qty * item.price;
-        itemCount += item.qty;
-      });
-
-    </script>
       <div class="total">Grand Total: $<span id="grandTotal">0.00</span></div>
   <div>
         <a href="BixMax home.html" class="back-btn">Return to Home</a>
