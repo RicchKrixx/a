@@ -143,8 +143,19 @@
   const total = localStorage.getItem("grandTotal") || "0";
   document.getElementById("grandTotal").textContent = parseFloat(total).toFixed(2);
 });
+  </script>
+    <script>
+    // Get orderId from URL or localStorage
     const params = new URLSearchParams(window.location.search);
     let orderId = params.get("orderId") || localStorage.getItem("latestOrderId");
+
+    if (!orderId) {
+      document.getElementById("orderId").textContent = "Unavailable";
+      document.getElementById("viewReceipt").style.display = "none";
+    } else {
+      document.getElementById("orderId").textContent = orderId;
+      document.getElementById("viewReceipt").href = "receipt.html?orderId=" + orderId;
+    }
   </script>
 </body>
 </html>
