@@ -36,19 +36,6 @@
     .info p {
       margin: 6px 0;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    table thead {
-      background: #1976d2;
-      color: white;
-    }
-    table th, table td {
-      padding: 12px;
-      border: 1px solid #ddd;
-      text-align: left;
-    }
     .total {
       text-align: right;
       font-size: 20px;
@@ -113,12 +100,8 @@
 <body>
     <h1>🧾Order Receipt</h1>
   
-    <p>Order ID:<div class="order-id" id="orderId"> Loading…</div></p>
+    <h4>Order ID:<div class="order-id" id="orderId"> Loading…</div></h4>
 
-    <div class="total">Grand Total: $<span id="grandTotal">0.00</span></div>
-
-    <a href="BixMax home.html" class="back-btn">Return to Home</a>
-  </div>
   <div id="cartContainer"></div>
 
  <script>
@@ -250,5 +233,9 @@
       });
 
     </script>
+      <div class="total">Grand Total: $<span id="grandTotal">0.00</span></div>
+  <div>
+        <a href="BixMax home.html" class="back-btn">Return to Home</a>
+  </div>
 </body>
 </html>
