@@ -76,7 +76,13 @@
       border-bottom: 1px solid #ccc;
       padding-bottom: 8px;
     }
-
+.cart-info {
+        display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+}
   </style>
 </head>
 <body>
@@ -110,11 +116,9 @@
         itemEl.className = 'cart-item';
         itemEl.innerHTML = `
           <div class="cart-info">
-            <h3>${item.name}</h3>
-            <p>Price: $${item.price.toFixed(2)}</p>
-            <div class="qty">
+            <span>${item.name}</span>
+            <span>Price: $${item.price.toFixed(2)}</span>
 <span>${item.qty}</span>
-            </div>
           </div>
         `;
         cartContainer.appendChild(itemEl);
