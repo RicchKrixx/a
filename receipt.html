@@ -87,49 +87,54 @@
     <h1>🧾Order Receipt</h1>
   <div>
     Order ID: <span class="order-id" id="orderId"> Loading…</span></div>
+           <table border="1" cellpadding="10" cellspacing="0">
+          <thead>
+         <tr>
+         <th>Items</th>
+         <th>Qty</th>
+         <th>Price</th>
+         </tr>
+         </thead>
+         <tbody>           <tbody>
+            </table>
+  
  <script>
-function updateCartDisplay() {
-  const tbody = document.querySelector('#itemsTable tbody');
-  tbody.innerHTML = '';               // clear previous rows
+    const cartContainer = document.getElementById('cartContainer');
+    const grandTotalEl = document.getElementById('grandTotal');
+    const cartCount = document.getElementById('cartCount');
 
-  let total = 0;
-  let itemCount = 0;
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
 
-  cart.forEach((item, i) => {
-    const row = document.createElement('tr');
-    row.innerHTML = 
-       <div id="cartContainer">
-  <table id="itemsTable">
-    <thead>
-      <tr>
-        <th>Item</th>
-        <th>Qty</th>
-        <th>Price</th>
-        <th>Total</th>
-      </tr>
-    </thead>
-    <tbody>
-            <td>${item.name}</td>
-      <td>${item.qty}</td>
-      <td>₵${item.price.toFixed(2)}</td>
-      <td>₵${(item.qty * item.price).toFixed(2)}</td>
-      </tbody>
-  </table>
+    function updateCartDisplay() {
+      cartContainer.innerHTML = '';
+      let total = 0;
+      let itemCount = 0;
 
+      cart.forEach((item, i) => {
+        const itemEl = document.createElement('div');
+        itemEl.className = 'cart-item';
+        itemEl.innerHTML = `
+          <div class="cart-info">
+         <td>
+           <h3>${item.name}</h3>
+          </td>
+            <td><h3>${item.qty}</h3></td>
+                      <td>
+           <p>$${item.price.toFixed(2)}</p>
+            </td>
+          </div>
+        `;
+        cartContainer.appendChild(itemEl);
+        total += item.qty * item.price;
+        itemCount += item.qty;
+      });
+            grandTotalEl.textContent = total.toFixed(2);
+      cartCount.textContent = itemCount;
 
-    ;
-    tbody.appendChild(row);
+      localStorage.setItem('grandTotal', total.toFixed(2));
+      localStorage.setItem('cart', JSON.stringify(cart));
+    }
 
-    total += item.qty * item.price;
-    itemCount += item.qty;
-  });
-
-  document.getElementById('grandTotal').textContent = total.toFixed(2);
-  document.getElementById('cartCount').textContent = itemCount;
-
-  localStorage.setItem('grandTotal', total.toFixed(2));
-  localStorage.setItem('cart', JSON.stringify(cart));
-}
     function changeQty(index, delta) {
       cart[index].qty += delta;
       if (cart[index].qty <= 0) {
