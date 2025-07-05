@@ -106,7 +106,7 @@
     const grandTotalEl = document.getElementById('grandTotal');
     const cartCount = document.getElementById('cartCount');
 
-let cart = JSON.parse(localStorage.getItem('cart')  '[]');
+    let cart = JSON.parse(localStorage.getItem('cart')  '[]');
 
     function updateCartDisplay() {
       cartContainer.innerHTML = '';
@@ -127,10 +127,11 @@ let cart = JSON.parse(localStorage.getItem('cart')  '[]');
             </td>
           </div>
         ;
-      ;
-      tbody.appendChild(row);
-      total += item.qty * item.price;
-    });
+         tbody.appendChild(row);
+        cartContainer.appendChild(itemEl);
+        total += item.qty * item.price;
+        itemCount += item.qty;
+      });
             grandTotalEl.textContent = total.toFixed(2);
       cartCount.textContent = itemCount;
 
@@ -155,14 +156,15 @@ let cart = JSON.parse(localStorage.getItem('cart')  '[]');
   </script>
    <script>
 
-    // Show customer info
-    custInfo.innerHTML = 
-      <p><strong>Name:</strong> ${cust.name}</p>
-      <p><strong>Email:</strong> ${order.email}</p>
-      <p><strong>Phone:</strong> ${order.phone}</p>
-      <p><strong>Address:</strong> ${order.address}</p>
-      <p><strong>Payment Method:</strong> ${order.method}</p>
-    ;
+        // Display customer info
+        const custInfo = document.getElementById('custInfo');
+        custInfo.innerHTML = 
+          <p><strong>Name:</strong> ${order.custName}</p>
+          <p><strong>Email:</strong> ${order.email}</p>
+          <p><strong>Phone:</strong> ${order.phone}</p>
+          <p><strong>Address:</strong> ${order.address}</p>
+          <p><strong>Payment Method:</strong> ${order.method}</p>
+        ;
         order.cart.forEach(item => {
           const itemTotal = item.price * item.qty;
   
@@ -192,7 +194,7 @@ let cart = JSON.parse(localStorage.getItem('cart')  '[]');
       document.getElementById("viewReceipt").href = "receipt.html?orderId=" + orderId;
     }
   </script>
-      <div class="total">Grand Total: $<span id="grandTotal">0.00</span></div>
+      <div class="total">Total: $<span id="grandTotal">0.00</span></div>
   <div>
         <a href="BixMax home.html" class="back-btn">Return to Home</a>
   </div>
