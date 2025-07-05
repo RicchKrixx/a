@@ -1,86 +1,47 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BizMAX | Cart</title>
-
-
-  <!---
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Order Receipt - BizMAX</title>
+  <title>BizMAX | Cart</title>
   <style>
     body {
-      background: #f2f2f2;
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      color: #333;
-    }
-    .receipt-box {
-      background: #fff;
-      max-width: 700px;
-      margin: auto;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    h1 {
-      text-align: center;
-      color: #1976d2;
-    }
-    .order-id {
-      text-align: center;
-      margin-bottom: 20px;
-      font-weight: bold;
-      font-size: 18px;
-    }
-    .info, .items, .total {
-      margin-bottom: 20px;
-    }
-    .info p {
-      margin: 6px 0;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    table thead {
-      background: #1976d2;
-      color: white;
-    }
-    table th, table td {
-      padding: 12px;
-      border: 1px solid #ddd;
-      text-align: left;
-    }
-    .total {
-      text-align: right;
-      font-size: 20px;
-      font-weight: bold;
-      color: #1976d2;
-    }
-    .back-btn {
-      display: block;
-      margin-top: 20px;
-      text-align: center;
-      text-decoration: none;
-      padding: 10px 20px;
-      background: #1976d2;
-      color: white;
-      border-radius: 8px;
-      font-weight: bold;
-    }
-  -->
-  <style>
-        body {
       margin: 0;
       font-family: Arial, sans-serif;
       background: #e0f7fa;
       padding: 20px;
       color: #333;
-.cart-item {
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    header h1 {
+      color: #1976d2;
+    }
+
+    .cart-badge {
+      position: relative;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .cart-badge span {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      background: red;
+      color: white;
+      font-size: 12px;
+      border-radius: 50%;
+      padding: 3px 6px;
+    }
+
+    .cart-item {
       display: flex;
       align-items: center;
       background: white;
@@ -88,6 +49,14 @@
       margin-bottom: 15px;
       padding: 15px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .cart-item img {
+      width: 80px;
+      height: 80px;
+      border-radius: 12px;
+      margin-right: 15px;
+      object-fit: cover;
     }
 
     .cart-info {
@@ -109,37 +78,93 @@
       gap: 10px;
       margin-top: 8px;
     }
+
+    .qty button {
+      padding: 5px 10px;
+      font-weight: bold;
+      font-size: 16px;
+      border: none;
+      background: #1976d2;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .remove-btn {
+      font-size: 18px;
+      background: none;
+      border: none;
+      color: red;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    .total {
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
+    .actions {
+      margin-top: 25px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .actions button {
+      padding: 12px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .checkout-btn {
+      background: #1976d2;
+      color: white;
+    }
+
+    .empty-btn {
+      background: #ccc;
+    }
+
     @media (max-width: 600px) {
       .cart-item {
         flex-direction: column;
         align-items: flex-start;
       }
-              .cart-item img {
+
+      .cart-item img {
         width: 100%;
         height: auto;
         margin-bottom: 10px;
       }
 
+      .actions {
+        flex-direction: column;
+        gap: 12px;
+      }
     }
   </style>
 </head>
 <body>
-      <header>
+
+  <header>
     <h1>My Cart</h1>
+    <div class="cart-badge">🛒 <span id="cartCount">0</span></div>
   </header>
-<!---
-    <h1>🧾Order Receipt</h1>
-  
-    <div class="order-id" id="orderId">Order ID: Loading…</div>
 
-    <div class="total">Grand Total: $<span id="grandTotal">0.00</span></div>
-
-    <a href="BixMax home.html" class="back-btn">Return to Home</a>
-  </div>
---->
   <div id="cartContainer"></div>
 
- <script>
+  <div class="total">Total: $<span id="grandTotal">0.00</span></div>
+
+  <div class="actions">
+    <button class="empty-btn" onclick="clearCart()">Empty Cart</button>
+    <button class="checkout-btn" onclick="goToCheckout()">Checkout</button>
+  </div>
+
+  <script>
     const cartContainer = document.getElementById('cartContainer');
     const grandTotalEl = document.getElementById('grandTotal');
     const cartCount = document.getElementById('cartCount');
@@ -155,13 +180,14 @@
         const itemEl = document.createElement('div');
         itemEl.className = 'cart-item';
         itemEl.innerHTML = `
-         <img src="${item.image}" alt="${item.name}">
+          <img src="${item.image}" alt="${item.name}">
           <div class="cart-info">
             <h3>${item.name}</h3>
             <p>Price: $${item.price.toFixed(2)}</p>
-                        <div class="qty">
-                        <h4>Quantity: <span>${item.qty}</span></h4>
-            </div>
+            <div class="qty">
+              <button onclick="changeQty(${i}, -1)">−</button><span>${item.qty}</span>
+              <button onclick="changeQty(${i}, 1)">+</button>
+              <button class="remove-btn" onclick="removeItem(${i})">🗑️</button>
             </div>
           </div>
         `;
@@ -169,7 +195,14 @@
         total += item.qty * item.price;
         itemCount += item.qty;
       });
-      
+
+      grandTotalEl.textContent = total.toFixed(2);
+      cartCount.textContent = itemCount;
+
+      localStorage.setItem('grandTotal', total.toFixed(2));
+      localStorage.setItem('cart', JSON.stringify(cart));
+    }
+
     function changeQty(index, delta) {
       cart[index].qty += delta;
       if (cart[index].qty <= 0) {
@@ -183,87 +216,23 @@
       cart.splice(index, 1);
       updateCartDisplay();
     }
-    updateCartDisplay(); // Run on page load
-  </script>
-     <!---
-   <script>
 
-        // Display customer info
-        const custInfo = document.getElementById('custInfo');
-        custInfo.innerHTML = 
-          <p><strong>Name:</strong> ${order.name}</p>
-          <p><strong>Email:</strong> ${order.email}</p>
-          <p><strong>Phone:</strong> ${order.phone}</p>
-          <p><strong>Address:</strong> ${order.address}</p>
-          <p><strong>Payment Method:</strong> ${order.method}</p>
-        ;
-
-        // Display items
-        const tbody = document.querySelector('#itemsTable tbody');
-        tbody.innerHTML = '';
-        let grandTotal = 0;
-        order.cart.forEach(item => {
-          const itemTotal = item.price * item.qty;
-          grandTotal += itemTotal;
-          const row = document.createElement('tr');
-          row.innerHTML = 
-            <td>${item.name}</td>
-            <td>$${item.price.toFixed(2)}</td>
-            <td>${item.qty}</td>
-            <td>$${itemTotal.toFixed(2)}</td>
-          ;
-          tbody.appendChild(row);
-        });
-
-        // Display total
-        document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
+    function clearCart() {
+      if (confirm("Clear all items from cart?")) {
+        cart = [];
+        updateCartDisplay();
       }
     }
-  </script>
- 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-  const total = localStorage.getItem("grandTotal") || "0";
-  document.getElementById("grandTotal").textContent = parseFloat(total).toFixed(2);
-});
-  </script>
-    <script>
-    // Get orderId from URL or localStorage
-    const params = new URLSearchParams(window.location.search);
-    let orderId = params.get("orderId") || localStorage.getItem("latestOrderId");
 
-    if (!orderId) {
-      document.getElementById("orderId").textContent = "Unavailable";
-      document.getElementById("viewReceipt").style.display = "none";
-    } else {
-      document.getElementById("orderId").textContent = orderId;
-      document.getElementById("viewReceipt").href = "receipt.html?orderId=" + orderId;
+    function goToCheckout() {
+      if (cart.length === 0) {
+        alert("🛒 Cart is empty!");
+        return;
+      }
+      window.location.href = "checkout.html";
     }
+
+    updateCartDisplay(); // Run on page load
   </script>
-    <script>
-
-    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-
-    function updateCartDisplay() {
-      cartContainer.innerHTML = '';
-      let total = 0;
-      let itemCount = 0;
-
-      cart.forEach((item, i) => {
-        const itemEl = document.createElement('div');
-        itemEl.className = 'cart-item';
-        itemEl.innerHTML = `
-          <div class="cart-info">
-            <h3>${item.name}</h3>
-            <p>Price: $${item.price.toFixed(2)}</p>
-          </div>
-        `;
-        cartContainer.appendChild(itemEl);
-        total += item.qty * item.price;
-        itemCount += item.qty;
-      });
-
-    </script>
-  --->
 </body>
 </html>
