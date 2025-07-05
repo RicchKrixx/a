@@ -73,7 +73,7 @@
     
     <div>
       <a href="receipt.html" id="viewReceipt" class="btn">📄 View Receipt</a>
-      <a href="index.html" class="btn">🏠 Return Home</a>
+      <a href="index.html" id="homeBtn" class="btn">🏠 Return Home</a>
     </div>
   </div>
 
@@ -90,5 +90,11 @@
       document.getElementById("viewReceipt").href = "receipt.html?orderId=" + orderId;
     }
   </script>
+	<script>
+  document.getElementById("homeBtn").addEventListener("click", function () {
+    localStorage.removeItem("cart");
+    localStorage.removeItem("grandTotal");
+  });
+</script>
 </body>
 </html>
