@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Food Checkout</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #e0f7fa;
+      padding: 20px;
+    }
+    .card {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #1976d2;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-top: 6px;
+      font-size: 16px;
+    }
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 14px;
+      font-size: 18px;
+      background: #1976d2;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .total {
+      text-align: center;
+      font-weight: bold;
+      font-size: 18px;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>🍔 Food Checkout</h2>
+    <div class="total">Total: $<span id="grandTotal">0.00</span></div>
+
+    <label>Name</label>
+    <input id="custName" required />
+
+    <label>Phone</label>
+    <input id="custPhone" required />
+
+    <label>Address</label>
+    <textarea id="custAddr" rows="3" required></textarea>
+
+    <button onclick="placeOrder()">Place Order</button>
+  </div>
+
+  <script>
+    // Display total
+    document.getElementById('grandTotal').textContent =
+      parseFloat(localStorage.getItem('grandTotal') || '0').toFixed(2);
+
+    function placeOrder() {
+      const name = document.getElementById("custName").value.trim();
+      const phone = document.getElementById("custPhone").value.trim();
+      const address = document.getElementById("custAddr").value.trim();
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      const total = parseFloat(localStorage.getItem("grandTotal") || "0");
+
+      if (!name  !phone  !address || cart.length === 0) {
+        alert("Please fill in all fields and make sure the cart is not empty.");
+        return;
+      }
+
+      const foodOrder = {
+        name,
+        phone,
+        address,
+        total,
+        cart,
+        placedAt: new Date().toISOString()
+      };
+
+      localStorage.setItem("foodOrder", JSON.stringify(foodOrder));
+      alert("Order placed successfully!");
+
+      window.location = "food tracking.html";
+    }
+  </script>
+</body>
+</html>
