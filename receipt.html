@@ -87,6 +87,7 @@
     <h1>🧾Order Receipt</h1>
   <div>
     Order ID: <span class="order-id" id="orderId"> Loading…</span></div>
+  <div id="cartContainer">
            <table border="1" cellpadding="10" cellspacing="0">
           <thead>
          <tr>
@@ -97,7 +98,7 @@
          </thead>
          <tbody>           <tbody>
             </table>
-  
+  </div>
  <script>
     const cartContainer = document.getElementById('cartContainer');
     const grandTotalEl = document.getElementById('grandTotal');
@@ -123,7 +124,8 @@
            <p>$${item.price.toFixed(2)}</p>
             </td>
           </div>
-        `;
+        ;
+         tbody.appendChild(row);
         cartContainer.appendChild(itemEl);
         total += item.qty * item.price;
         itemCount += item.qty;
