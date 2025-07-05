@@ -88,6 +88,9 @@
         .cart-info p {
       text-align: center !important;
         }
+            .cart-info b {
+      text-align: left !important;
+        }
   </style>
 </head>
 <body id="pageBody" class="container">
@@ -125,7 +128,7 @@
         itemEl.innerHTML = `
           <div class="cart-info">
           <ul class="inline-table">
-            <li>${item.name}</li>
+            <li><b>${item.name}</b></li>
             <li><p>${item.qty}</p></li>
             <li><h4>$${item.price.toFixed(2)}</h4></li>
 </ul>
