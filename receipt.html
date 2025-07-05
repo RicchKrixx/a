@@ -39,25 +39,22 @@
       border-bottom: 1px solid #ccc;
       padding-bottom: 8px;
     }
-    .inline-table {
-  list-style: none; /* Removes default bullets */
+.inline-table {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .inline-table li {
   display: inline-block;
-  width: 100px; /* Fixed width for table-like alignment */
-  margin-right: 2px;
-  text-align: center; /* Center text for table-like appearance */
+  width: 100px; /* Adjust as needed */
+  margin-right: 5px; /* Reduced space between items */
+  text-align: center;
 }
 
-/* Optional: Remove margin from the last item to avoid extra space */
 .inline-table li:last-child {
-  margin-right: 0;
-}
-    .inline-table li:first-child {
-  margin-left: 0;
-}
-        .receipt-box {
+  margin-right: 0; /* No extra space after last item */
+}        .receipt-box {
       background: #fff;
       max-width: 700px;
       margin: auto;
