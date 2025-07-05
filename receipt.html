@@ -49,7 +49,7 @@
 .inline-table li {
   display: inline-block;
   width: 100px; /* Adjust as needed */
-  margin-right: 10px; /* Reduced space between items */
+  margin-right: 20px; /* Reduced space between items */
   margin-bottom: 20px;
 }
 
@@ -153,6 +153,10 @@
       } else {
         updateCartDisplay();
       }
+    }
+        function removeItem(index) {
+      cart.splice(index, 1);
+      updateCartDisplay();
     }
     updateCartDisplay(); // Run on page load
    
