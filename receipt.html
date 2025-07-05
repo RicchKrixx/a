@@ -169,6 +169,44 @@
     updateCartDisplay(); // Run on page load
   </script>
 --->
+      <script>
+    const params = new URLSearchParams(window.location.search);
+    const orderId = params.get("orderId")  localStorage.getItem("latestOrderId")  "Unavailable";
+    document.getElementById("orderId").textContent = orderId;
+
+    const orders = JSON.parse(localStorage.getItem("orders") || "{}");
+    const order = orders[orderId];
+
+    if (!order) {
+      document.getElementById("itemsList").innerHTML = "<p>Order not found.</p>";
+      return;
+    }
+
+    const itemsList = document.getElementById("itemsList");
+    let total = 0;
+
+    order.cart.forEach(item => {
+      const row = document.createElement("div");
+      row.className = "item-row";
+      row.innerHTML = 
+        <span>${item.name}</span>
+        <span>${item.qty}</span>
+        <span>$${item.price.toFixed(2)}</span>
+      ;
+      itemsList.appendChild(row);
+      total += item.qty * item.price;
+    });
+
+    document.getElementById("grandTotal").textContent = total.toFixed(2);
+
+    document.getElementById("custInfo").innerHTML = 
+      <p><strong>Name:</strong> ${order.custName}</p>
+      <p><strong>Email:</strong> ${order.email}</p>
+      <p><strong>Phone:</strong> ${order.phone}</p>
+      <p><strong>Address:</strong> ${order.address}</p>
+      <p><strong>Payment Method:</strong> ${order.method}</p>
+    ;
+  </script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
   const total = localStorage.getItem("grandTotal")  "0";
