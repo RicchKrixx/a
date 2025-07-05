@@ -79,9 +79,8 @@
 .cart-info {
         display: flex;
       justify-content: space-between;
-      font-weight: bold;
       margin-bottom: 10px;
-      padding-bottom: 8px;
+      padding: 6px 0;
 }
   </style>
 </head>
@@ -117,8 +116,9 @@
         itemEl.innerHTML = `
           <div class="cart-info">
             <span>${item.name}</span>
-            <span>Price: $${item.price.toFixed(2)}</span>
-<span>${item.qty}</span>
+            <span>${item.qty}</span>
+            <span>$${item.price.toFixed(2)}</span>
+
           </div>
         `;
         cartContainer.appendChild(itemEl);
