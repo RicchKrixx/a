@@ -64,13 +64,13 @@
     <h2>🍽️ Food Order Checkout</h2>
 
     <label for="custName">Full Name</label>
-    <input type="text" id="custName" placeholder="John Doe" />
+    <input type="text" id="custName" placeholder="John Doe" required/>
 
     <label for="custPhone">Phone Number</label>
-    <input type="tel" id="custPhone" placeholder="055 123 4567" />
+    <input type="tel" id="custPhone" placeholder="055 123 4567" required/>
 
     <label for="custAddr">Delivery Address</label>
-    <textarea id="custAddr" rows="3" placeholder="Street • City • etc."></textarea>
+    <textarea id="custAddr" rows="3" placeholder="Street • City • etc."required></textarea>
 
     <div class="total">Total: $<span id="grandTotal">0.00</span></div>
 
@@ -83,23 +83,6 @@
     document.getElementById("grandTotal").textContent = total.toFixed(2);
   });
  </script>
-  <script>
-   btn.addEventListener('click', (e) => {
-  e.preventDefault();
-
-  const name = document.getElementById('custName').value.trim();
-  const email = document.getElementById('custEmail').value.trim();
-  const phone = document.getElementById('custPhone').value.trim();
-  const address = document.getElementById('custAddr').value.trim();
-
-  if (!name  !email  !phone || !address) {
-    alert("Please fill all fields.");
-    return;
-  }
-
-  // If all filled, continue here:
-  alert("Order placed successfully!"); // or your actual logic
-});
-</script>
+ 
 </body>
 </html>
