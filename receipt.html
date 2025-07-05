@@ -87,54 +87,45 @@
     <h1>🧾Order Receipt</h1>
   <div>
     Order ID: <span class="order-id" id="orderId"> Loading…</span></div>
-<div id="cartContainer">
- <script>
-    const cartContainer = document.getElementById('cartContainer');
-    const grandTotalEl = document.getElementById('grandTotal');
-    const cartCount = document.getElementById('cartCount');
+ <div id="cartSection"></div>
+<script>
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  const cartSection = document.getElementById('cartSection');
+  const grandTotalEl = document.getElementById('grandTotal');
 
-    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  let total = 0;
+  let tableHTML = 
+    <table style="width:100%; border-collapse:collapse;">
+      <thead>
+        <tr>
+          <th style="text-align:left; padding:8px;">Item</th>
+          <th style="text-align:left; padding:8px;">Qty</th>
+          <th style="text-align:left; padding:8px;">Price</th>
+        </tr>
+      </thead>
+      <tbody>
+  ;
 
-    function updateCartDisplay() {
-      cartContainer.innerHTML = '';
-      let total = 0;
-      let itemCount = 0;
+  cart.forEach(item => {
+    tableHTML += 
+      <tr>
+        <td style="padding:8px;">${item.name}</td>
+        <td style="padding:8px;">${item.qty}</td>
+        <td style="padding:8px;">$${item.price.toFixed(2)}</td>
+      </tr>
+    ;
+    total += item.qty * item.price;
+  });
 
-      cart.forEach((item, i) => {
-        const itemEl = document.createElement('div');
-        itemEl.className = 'cart-item';
-        itemEl.innerHTML = `
-          <div class="cart-info">
-                    <table>
-          <thead>
-         <tr>
-         <th>Items</th>
-         <th>Qty</th>
-         <th>Price</th>
-         </tr>
-         </thead>
-         <tbody><tr>
-         <td>
-           <h3>${item.name}</h3>
-          </td>
-            <td><h3>${item.qty}</h3></td>
-                      <td>
-           <p>$${item.price.toFixed(2)}</p>
-            </td>
-            </tr>
-            <tbody>
-            </table>
-          </div>
-            
-           
+  tableHTML += </tbody></table>;
+  cartSection.innerHTML = tableHTML;
+  grandTotalEl.textContent = total.toFixed(2);
 
-            </div>
-          </div>
-        `;
-        cartContainer.appendChild(itemEl);
-        total += item.qty * item.price;
-        itemCount += item.qty;
-      });
+  // Set Order ID
+  const params = new URLSearchParams(location.search);
+  const orderId = params.get("orderId")  localStorage.getItem("latestOrderId")  "Unavailable";
+  document.getElementById("orderId").textContent = orderId;
+</script>
             grandTotalEl.textContent = total.toFixed(2);
       cartCount.textContent = itemCount;
 
