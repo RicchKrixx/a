@@ -100,74 +100,98 @@
          <tbody>           <tbody>
             </table>
   </div>
+
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const cartContainer = document.getElementById("cartContainer");
-    const grandTotalEl = document.getElementById("grandTotal");
-    const orderIdEl = document.getElementById("orderId");
-    const custInfo = document.getElementById("custInfo");
+    const cartContainer = document.getElementById('cartContainer');
+    const grandTotalEl = document.getElementById('grandTotal');
+    const cartCount = document.getElementById('cartCount');
 
-    // Get order ID from URL
-    const params = new URLSearchParams(window.location.search);
-    const orderId = params.get("orderId") || localStorage.getItem("latestOrderId");
+let cart = JSON.parse(localStorage.getItem('cart') || '[]');
 
-    if (!orderId) {
-      orderIdEl.textContent = "Unavailable";
-      return;
+    function updateCartDisplay() {
+      cartContainer.innerHTML = '';
+      let total = 0;
+      let itemCount = 0;
+
+      cart.forEach((item, i) => {
+        const itemEl = document.createElement('div');
+        itemEl.className = 'cart-item';
+        itemEl.innerHTML = `
+          <div class="cart-info">
+         <td>
+           <h3>${item.name}</h3>
+          </td>
+            <td><h3>${item.qty}</h3></td>
+                      <td>
+           <p>$${item.price.toFixed(2)}</p>
+            </td>
+          </div>
+        ;
+      ;
+      tbody.appendChild(row);
+      total += item.qty * item.price;
+    });
+            grandTotalEl.textContent = total.toFixed(2);
+      cartCount.textContent = itemCount;
+
+      localStorage.setItem('grandTotal', total.toFixed(2));
+      localStorage.setItem('cart', JSON.stringify(cart));
     }
 
-    orderIdEl.textContent = orderId;
-
-    // Load order from localStorage
-    const orders = JSON.parse(localStorage.getItem("orders") || "{}");
-    const order = orders[orderId];
-
-    if (!order) {
-      cartContainer.innerHTML = "<p style='color:red;text-align:center;'>Order not found!</p>";
-      return;
+    function changeQty(index, delta) {
+      cart[index].qty += delta;
+      if (cart[index].qty <= 0) {
+        removeItem(index);
+      } else {
+        updateCartDisplay();
+      }
     }
+
+    function removeItem(index) {
+      cart.splice(index, 1);
+      updateCartDisplay();
+    }
+    updateCartDisplay(); // Run on page load
+  </script>
+   <script>
 
     // Show customer info
     custInfo.innerHTML = 
-      <p><strong>Name:</strong> ${order.custName}</p>
+      <p><strong>Name:</strong> ${cust.name}</p>
       <p><strong>Email:</strong> ${order.email}</p>
       <p><strong>Phone:</strong> ${order.phone}</p>
       <p><strong>Address:</strong> ${order.address}</p>
       <p><strong>Payment Method:</strong> ${order.method}</p>
     ;
+        order.cart.forEach(item => {
+          const itemTotal = item.price * item.qty;
+  
 
-    // Build the cart table
-    const table = document.createElement("table");
-    table.innerHTML = 
-      <thead>
-        <tr>
-          <th>Item</th>
-          <th>Qty</th>
-          <th>Price</th>
-        </tr>
-      </thead>
-      <tbody id="tableBody"></tbody>
-    ;
-    const tbody = table.querySelector("#tableBody");
+        // Display total
+        document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
+      }
+    }
+  </script>
 
-    let total = 0;
-    order.cart.forEach(item => {
-      const row = document.createElement("tr");
-      row.innerHTML = 
-        <td>${item.name}</td>
-        <td>${item.qty}</td>
-        <td>$${item.price.toFixed(2)}</td>
-      ;
-      tbody.appendChild(row);
-      total += item.qty * item.price;
-    });
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+  const total = localStorage.getItem("grandTotal")  "0";
+  document.getElementById("grandTotal").textContent = parseFloat(total).toFixed(2);
+});
+  </script>
+    <script>
+    // Get orderId from URL or localStorage
+    const params = new URLSearchParams(window.location.search);
+    let orderId = params.get("orderId") || localStorage.getItem("latestOrderId");
 
-    cartContainer.innerHTML = ""; // Clear placeholder
-    cartContainer.appendChild(table);
-    grandTotalEl.textContent = total.toFixed(2);
-  });
-</script>
-
+    if (!orderId) {
+      document.getElementById("orderId").textContent = "Unavailable";
+      document.getElementById("viewReceipt").style.display = "none";
+    } else {
+      document.getElementById("orderId").textContent = orderId;
+      document.getElementById("viewReceipt").href = "receipt.html?orderId=" + orderId;
+    }
+  </script>
       <div class="total">Grand Total: $<span id="grandTotal">0.00</span></div>
   <div>
         <a href="BixMax home.html" class="back-btn">Return to Home</a>
