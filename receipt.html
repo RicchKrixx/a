@@ -42,9 +42,9 @@
   margin-bottom: 20px;
 }
 
-.inline-table li:last-child {
-  margin-right: 0; /* No extra space after last item */
-}
+        .cart-info h3 {
+      text-align: right !important;
+    }
 .receipt-box {
       background: #fff;
       width: 100%;
@@ -57,7 +57,7 @@
       text-align: center;
       color: #1976d2;
     }
-    .order-id, p {
+    .order-id, h2 {
       text-align: center;
       margin-bottom: 20px;
       font-weight: bold;
@@ -90,8 +90,9 @@
 <body>
 
     <h1>🧾Order Receipt</h1>
+  <h2>
     <div>
-    Order ID: <span class="order-id" id="orderId"> Loading…</span></div>
+    Order ID: <span class="order-id" id="orderId"> Loading…</span></div></h2>
   <section class="receipt-box">
  
     <div class="heading">
@@ -123,7 +124,7 @@
           <ul class="inline-table">
             <li>${item.name}</li>
             <li><p>${item.qty}</p></li>
-            <li>$${item.price.toFixed(2)}</li>
+            <li><h3>$${item.price.toFixed(2)}</h3></li>
 </ul>
           </div>
         `;
