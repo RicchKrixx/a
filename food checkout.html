@@ -83,24 +83,27 @@
     document.getElementById("grandTotal").textContent = total.toFixed(2);
   });
  </script>
- <script>
-  const btn = document.getElementById('actionBtn');
+  <script>
+actionBtn.addEventListener("click", (e) => {
+  e.preventDefault();
 
-  btn.addEventListener('click', (e) => {
-    e.preventDefault();
+  const name = document.getElementById("custName").value.trim();
+  const email = document.getElementById("custEmail").value.trim();
+  const phone = document.getElementById("custPhone").value.trim();
+  const address = document.getElementById("custAddr").value.trim();
+  const method = payMethod.value;
+  const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
+  const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
 
-    const name = document.getElementById('custName').value.trim();
-    const phone = document.getElementById('custPhone').value.trim();
-    const address = document.getElementById('custAddr').value.trim();
+  if (!(name && email && phone && address)) {
+    alert("Please fill in all customer details.");
+    return;
+  }
 
-    if (!name  !phone  !address) {
-      alert("Please fill all fields.");
-      return;
-    }
-
-    alert("✅ All fields are filled. Order can proceed.");
-    // You can continue your order logic here (save, send, etc.)
-  });
-</script>
+  if (grandTotal <= 0 || cartItems.length === 0) {
+    alert("Cart is empty or total is 0.");
+    return;
+  }
+    </script>
 </body>
 </html>
