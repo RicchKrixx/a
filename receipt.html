@@ -122,7 +122,7 @@
     const grandTotalEl = document.getElementById('grandTotal');
     const cartCount = document.getElementById('cartCount');
 
-    let cart = JSON.parse(localStorage.getItem('cart')  '[]');
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
 
     function updateCartDisplay() {
       cartContainer.innerHTML = '';
@@ -196,7 +196,9 @@
     <script>
     // Get orderId from URL or localStorage
     const params = new URLSearchParams(window.location.search);
-    let orderId = params.get("orderId")  localStorage.getItem("latestOrderId");if (!orderId) {
+    let orderId = params.get("orderId") || localStorage.getItem("latestOrderId");
+
+    if (!orderId) {
       document.getElementById("orderId").textContent = "Unavailable";
       document.getElementById("viewReceipt").style.display = "none";
     } else {
