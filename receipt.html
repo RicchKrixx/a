@@ -116,31 +116,54 @@
          <span>Qty</span>
          <span>Price</span>
   </div>
-  <div id="itemList"></div>
-
+<div id="cartContainer">
  <script>
     const cartContainer = document.getElementById('cartContainer');
     const grandTotalEl = document.getElementById('grandTotal');
     const cartCount = document.getElementById('cartCount');
-   
-   let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
 
     function updateCartDisplay() {
       cartContainer.innerHTML = '';
       let total = 0;
       let itemCount = 0;
-      
-    order.cart.forEach(item => {
-      const row = document.createElement("div");
-      row.className = "item-row";
-      row.innerHTML = 
-        <span>${item.name}</span>
-        <span>${item.qty}</span>
-        <span>$${item.price.toFixed(2)}</span>
-      ;
-      itemsList.appendChild(row);
-      total += item.qty * item.price;
-    });
+
+      cart.forEach((item, i) => {
+        const itemEl = document.createElement('div');
+        itemEl.className = 'cart-item';
+        itemEl.innerHTML = `
+          <div class="cart-info">
+                    <table border="1" cellpadding="10" cellspacing="0">
+          <thead>
+         <tr>
+         <th>Items</th>
+         <th>Qty</th>
+         <th>Price</th>
+         </tr>
+         </thead>
+         <tbody><tr>
+         <td>
+           <h3>${item.name}</h3>
+          </td>
+            <td><h3>${item.qty}</h3></td>
+                      <td>
+           <p>$${item.price.toFixed(2)}</p>
+            </td>
+            </tr>
+            <tbody>
+            </table>
+          </div>
+            
+           
+
+            </div>
+          </div>
+        `;
+        cartContainer.appendChild(itemEl);
+        total += item.qty * item.price;
+        itemCount += item.qty;
+      });
             grandTotalEl.textContent = total.toFixed(2);
       cartCount.textContent = itemCount;
 
@@ -163,6 +186,7 @@
     }
     updateCartDisplay(); // Run on page load
   </script>
+
 
      
   <script>
