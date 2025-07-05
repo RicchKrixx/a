@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Order Receipt - BizMAX</title>
+  <title>Order Receipt - BixMAX</title>
   <style>
     body {
       background: #f2f2f2;
@@ -53,22 +52,8 @@
       border-radius: 8px;
       font-weight: bold;
     }
-
-    @media (max-width: 600px) {
-      .cart-item {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-              .cart-item img {
-        width: 100%;
-        height: auto;
-        margin-bottom: 10px;
-      }
-
-    }
     table {
       width: 100%;
-      height: auto;
       border-collapse: collapse;
       margin-top: 20px;
       font-size: 16px;
@@ -81,105 +66,86 @@
     thead {
       font-weight: bold;
     }
+    @media (max-width: 600px) {
+      table {
+        font-size: 14px;
+      }
+      th, td {
+        padding: 8px;
+      }
+    }
   </style>
 </head>
 <body>
-    <h1>🧾Order Receipt</h1>
-  <div>
-    Order ID: <span class="order-id" id="orderId"> Loading…</span></div>
-<div id="cartContainer">
- <script>
+  <div class="receipt-box">
+    <h1>🧾 Order Receipt</h1>
+    <div>Order ID: <span class="order-id" id="orderId">Loading…</span></div>
+    <div id="cartContainer">
+      <!-- Table structure will be created dynamically -->
+    </div>
+    <div class="total">Total: $<span id="grandTotal">0.00</span></div>
+    <div>
+      <a href="BixMax home.html" class="back-btn">Return to Home</a>
+    </div>
+  </div>
+
+  <script>
     const cartContainer = document.getElementById('cartContainer');
     const grandTotalEl = document.getElementById('grandTotal');
-    const cartCount = document.getElementById('cartCount');
+    const orderIdEl = document.getElementById('orderId');
 
     let cart = JSON.parse(localStorage.getItem('cart') || '[]');
 
     function updateCartDisplay() {
-      cartContainer.innerHTML = '';
+      cartContainer.innerHTML = ''; // Clear previous content
       let total = 0;
       let itemCount = 0;
 
-      cart.forEach((item, i) => {
-        const itemEl = document.createElement('div');
-        itemEl.className = 'cart-item';
-        itemEl.innerHTML = `
-          <div class="cart-info">
-                    <table border="1" cellpadding="10" cellspacing="0">
-          <thead>
-         <tr>
-         <th>Items</th>
-         <th>Qty</th>
-         <th>Price</th>
-         </tr>
-         </thead>
-         <tbody><tr>
-         <td>
-           <h3>${item.name}</h3>
-          </td>
-            <td><h3>${item.qty}</h3></td>
-                      <td>
-           <p>$${item.price.toFixed(2)}</p>
-            </td>
-            </tr>
-            <tbody>
-            </table>
-          </div>
-            
-           
+      // Create a single table
+      const tableEl = document.createElement('table');
+      tableEl.innerHTML = 
+        <thead>
+          <tr>
+            <th>Items</th>
+            <th>Qty</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      ;
+      const tbody = tableEl.querySelector('tbody');
 
-            </div>
-          </div>
-        `;
-        cartContainer.appendChild(itemEl);
+      // Add rows for each item
+      cart.forEach((item) => {
+        const row = document.createElement('tr');
+        row.innerHTML = 
+          <td>${item.name}</td>
+          <td>${item.qty}</td>
+          <td>$${item.price.toFixed(2)}</td>
+        ;
+        tbody.appendChild(row);
         total += item.qty * item.price;
         itemCount += item.qty;
       });
-            grandTotalEl.textContent = total.toFixed(2);
-      cartCount.textContent = itemCount;
+
+      cartContainer.appendChild(tableEl);
+      grandTotalEl.textContent = total.toFixed(2);
 
       localStorage.setItem('grandTotal', total.toFixed(2));
       localStorage.setItem('cart', JSON.stringify(cart));
     }
 
-    function changeQty(index, delta) {
-      cart[index].qty += delta;
-      if (cart[index].qty <= 0) {
-        removeItem(index);
-      } else {
-        updateCartDisplay();
-      }
-    }
-
-    function removeItem(index) {
-      cart.splice(index, 1);
-      updateCartDisplay();
-    }
-    updateCartDisplay(); // Run on page load
-  </script>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-  const total = localStorage.getItem("grandTotal")  "0";
-  document.getElementById("grandTotal").textContent = parseFloat(total).toFixed(2);
-});
-  </script>
-    <script>
-    // Get orderId from URL or localStorage
+    // Handle order ID
     const params = new URLSearchParams(window.location.search);
-    let orderId = params.get("orderId") || localStorage.getItem("latestOrderId");
-
+    let orderId = params.get('orderId') || localStorage.getItem('latestOrderId');
     if (!orderId) {
-      document.getElementById("orderId").textContent = "Unavailable";
-      document.getElementById("viewReceipt").style.display = "none";
+      orderIdEl.textContent = 'Unavailable';
     } else {
-      document.getElementById("orderId").textContent = orderId;
-      document.getElementById("viewReceipt").href = "receipt.html?orderId=" + orderId;
+      orderIdEl.textContent = orderId;
     }
+
+    // Initialize display
+    updateCartDisplay();
   </script>
-      <div class="total">Total: $<span id="grandTotal">0.00</span></div>
-  <div>
-        <a href="BixMax home.html" class="back-btn">Return to Home</a>
-  </div>
 </body>
 </html>
