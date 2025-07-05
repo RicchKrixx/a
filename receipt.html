@@ -1,207 +1,196 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Order Receipt - BizMAX</title>
-  <style>
-    body {
-      background: #f2f2f2;
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      color: #333;
-    }
-    .receipt-box {
-      background: #fff;
-      max-width: 700px;
-      margin: auto;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    h1 {
-      text-align: center;
-      color: #1976d2;
-    }
-    .order-id, p {
-      text-align: center;
-      margin-bottom: 20px;
-      font-weight: bold;
-      font-size: 18px;
-    }
-    .info, .items, .total {
-      margin-bottom: 20px;
-    }
-    .info p {
-      margin: 6px 0;
-    }
-    .total {
-      text-align: right;
-      font-size: 20px;
-      font-weight: bold;
-      color: #1976d2;
-    }
-    .back-btn {
-      display: block;
-      margin-top: 20px;
-      text-align: center;
-      text-decoration: none;
-      padding: 10px 20px;
-      background: #1976d2;
-      color: white;
-      border-radius: 8px;
-      font-weight: bold;
-    }
+<!DOCTYPE html>  <html lang="en">  
+<head>  
+  <meta charset="UTF-8" />  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>  
+  <title>Order Receipt - BizMAX</title>  
+  <style>  
+    body {  
+      background: #f2f2f2;  
+      font-family: Arial, sans-serif;  
+      padding: 20px;  
+      color: #333;  
+    }  
+    .receipt-box {  
+      background: #fff;  
+      max-width: 700px;  
+      margin: auto;  
+      padding: 30px;  
+      border-radius: 16px;  
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);  
+    }  
+    h1 {  
+      text-align: center;  
+      color: #1976d2;  
+    }  
+    .order-id, p {  
+      text-align: center;  
+      margin-bottom: 20px;  
+      font-weight: bold;  
+      font-size: 18px;  
+    }  
+    .info, .items, .total {  
+      margin-bottom: 20px;  
+    }  
+    .info p {  
+      margin: 6px 0;  
+    }  
+    .total {  
+      text-align: right;  
+      font-size: 20px;  
+      font-weight: bold;  
+      color: #1976d2;  
+    }  
+    .back-btn {  
+      display: block;  
+      margin-top: 20px;  
+      text-align: center;  
+      text-decoration: none;  
+      padding: 10px 20px;  
+      background: #1976d2;  
+      color: white;  
+      border-radius: 8px;  
+      font-weight: bold;  
+    }  @media (max-width: 600px) {  
+  .cart-item {  
+    flex-direction: column;  
+    align-items: flex-start;  
+  }  
+          .cart-item img {  
+    width: 100%;  
+    height: auto;  
+    margin-bottom: 10px;  
+  }  
 
-    @media (max-width: 600px) {
-      .cart-item {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-              .cart-item img {
-        width: 100%;
-        height: auto;
-        margin-bottom: 10px;
-      }
+}  
+table {  
+  width: 100%;  
+  height: auto;  
+  border-collapse: collapse;  
+  margin-top: 20px;  
+  font-size: 16px;  
+}  
+th, td {  
+  padding: 12px;  
+  text-align: left;  
+  border: none;  
+}  
+thead {  
+  font-weight: bold;  
+}
 
-    }
-    table {
-      width: 100%;
-      height: auto;
-      border-collapse: collapse;
-      margin-top: 20px;
-      font-size: 16px;
-    }
-    th, td {
-      padding: 12px;
-      text-align: left;
-      border: none;
-    }
-    thead {
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-    <h1>🧾Order Receipt</h1>
-  <div>
-    Order ID: <span class="order-id" id="orderId"> Loading…</span></div>
-
-  <div id="cartContainer"></div>
-
- <script>
-    const cartContainer = document.getElementById('cartContainer');
-    const grandTotalEl = document.getElementById('grandTotal');
-    const cartCount = document.getElementById('cartCount');
-
-    let cart = JSON.parse(localStorage.getItem('cart')'[]');
-
-    function updateCartDisplay() {
-      cartContainer.innerHTML = '';
-      let total = 0;
-      let itemCount = 0;
-
-      cart.forEach((item, i) => {
-        const itemEl = document.createElement('div');
-        itemEl.className = 'cart-item';
-        itemEl.innerHTML = `
-          <div class="cart-info">
-                    <table border="1" cellpadding="10" cellspacing="0">
-          <thead>
-         <tr>
-         <th>Items</th>
-         <th>Qty</th>
-         <th>Price</th>
-         </tr>
-         </thead>
-         <tbody><tr>
-         <td>
-           <h3>${item.name}</h3>
-          </td>
-            <td><h3>${item.qty}</h3></td>
-                      <td>
-           <p>$${item.price.toFixed(2)}</p>
-            </td>
-            </tr>
-            <tbody>
-            </table>
-          </div>
-            
-           
-
-            </div>
-          </div>
-        `;
-        cartContainer.appendChild(itemEl);
-        total += item.qty * item.price;
-        itemCount += item.qty;
-      });
-            grandTotalEl.textContent = total.toFixed(2);
-      cartCount.textContent = itemCount;
-
-      localStorage.setItem('grandTotal', total.toFixed(2));
-      localStorage.setItem('cart', JSON.stringify(cart));
-    }
-
-    function changeQty(index, delta) {
-      cart[index].qty += delta;
-      if (cart[index].qty <= 0) {
-        removeItem(index);
-      } else {
-        updateCartDisplay();
-      }
-    }
-
-    function removeItem(index) {
-      cart.splice(index, 1);
-      updateCartDisplay();
-    }
-    updateCartDisplay(); // Run on page load
-  </script>
-   <script>
-
-        // Display customer info
-        const custInfo = document.getElementById('custInfo');
-        custInfo.innerHTML = 
-          <p><strong>Name:</strong> ${order.custName}</p>
-          <p><strong>Email:</strong> ${order.email}</p>
-          <p><strong>Phone:</strong> ${order.phone}</p>
-          <p><strong>Address:</strong> ${order.address}</p>
-          <p><strong>Payment Method:</strong> ${order.method}</p>
-        ;
-        order.cart.forEach(item => {
-          const itemTotal = item.price * item.qty;
+  </style>  
+</head>  
+<body>  
+    <h1>🧾Order Receipt</h1>  
+  <div>  
+    Order ID: <span class="order-id" id="orderId"> Loading…</span></div>    <div id="cartContainer"></div>   <script>  
+    const cartContainer = document.getElementById('cartContainer');  
+    const grandTotalEl = document.getElementById('grandTotal');  
+    const cartCount = document.getElementById('cartCount');  
   
+    let cart = JSON.parse(localStorage.getItem('cart')'[]');  
+  
+    function updateCartDisplay() {  
+      cartContainer.innerHTML = '';  
+      let total = 0;  
+      let itemCount = 0;  
+  
+      cart.forEach((item, i) => {  
+        const itemEl = document.createElement('div');  
+        itemEl.className = 'cart-item';  
+        itemEl.innerHTML =   
+          <div class="cart-info">  
+                    <table border="1" cellpadding="10" cellspacing="0">  
+          <thead>  
+         <tr>  
+         <th>Items</th>  
+         <th>Qty</th>  
+         <th>Price</th>  
+         </tr>  
+         </thead>  
+         <tbody><tr>  
+         <td>  
+           <h3>${item.name}</h3>  
+          </td>  
+            <td><h3>${item.qty}</h3></td>  
+                      <td>  
+           <p>$${item.price.toFixed(2)}</p>  
+            </td>  
+            </tr>  
+            <tbody>  
+            </table>  
+          </div>  
+              
+             
+  
+            </div>  
+          </div>  
+        ;  
+        cartContainer.appendChild(itemEl);  
+        total += item.qty * item.price;  
+        itemCount += item.qty;  
+      });  
+            grandTotalEl.textContent = total.toFixed(2);  
+      cartCount.textContent = itemCount;  
+  
+      localStorage.setItem('grandTotal', total.toFixed(2));  
+      localStorage.setItem('cart', JSON.stringify(cart));  
+    }  
+  
+    function changeQty(index, delta) {  
+      cart[index].qty += delta;  
+      if (cart[index].qty <= 0) {  
+        removeItem(index);  
+      } else {  
+        updateCartDisplay();  
+      }  
+    }  
+  
+    function removeItem(index) {  
+      cart.splice(index, 1);  
+      updateCartDisplay();  
+    }updateCartDisplay(); // Run on page load  
+  </script>     <script>  
+  
+        // Display customer info  
+        const custInfo = document.getElementById('custInfo');  
+        custInfo.innerHTML =   
+          <p><strong>Name:</strong> ${order.custName}</p>  
+          <p><strong>Email:</strong> ${order.email}</p>  
+          <p><strong>Phone:</strong> ${order.phone}</p>  
+          <p><strong>Address:</strong> ${order.address}</p>  
+          <p><strong>Payment Method:</strong> ${order.method}</p>  
+        ;  
+        order.cart.forEach(item => {  
+          const itemTotal = item.price * item.qty;  
+    
+  
+        // Display total  
+        document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);  
+      }  
+    }  
+  </script>    <script>  
+    document.addEventListener("DOMContentLoaded", () => {  
+  const total = localStorage.getItem("grandTotal")  "0";  
+  document.getElementById("grandTotal").textContent = parseFloat(total).toFixed(2);  
+});  
+  </script>  <script>  
+// Get orderId from URL or localStorage  
+const params = new URLSearchParams(window.location.search);  
+let orderId = params.get("orderId") || localStorage.getItem("latestOrderId");  
 
-        // Display total
-        document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
-      }
-    }
-  </script>
+if (!orderId) {  
+  document.getElementById("orderId").textContent = "Unavailable";  
+  document.getElementById("viewReceipt").style.display = "none";  
+} else {  
+  document.getElementById("orderId").textContent = orderId;  
+  document.getElementById("viewReceipt").href = "receipt.html?orderId=" + orderId;  
+}
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-  const total = localStorage.getItem("grandTotal")  "0";
-  document.getElementById("grandTotal").textContent = parseFloat(total).toFixed(2);
-});
-  </script>
-    <script>
-    // Get orderId from URL or localStorage
-    const params = new URLSearchParams(window.location.search);
-    let orderId = params.get("orderId") || localStorage.getItem("latestOrderId");
+  </script>  <div class="total">Grand Total: $<span id="grandTotal">0.00</span></div>
 
-    if (!orderId) {
-      document.getElementById("orderId").textContent = "Unavailable";
-      document.getElementById("viewReceipt").style.display = "none";
-    } else {
-      document.getElementById("orderId").textContent = orderId;
-      document.getElementById("viewReceipt").href = "receipt.html?orderId=" + orderId;
-    }
-  </script>
-
-      <div class="total">Grand Total: $<span id="grandTotal">0.00</span></div>
-  <div>
-        <a href="BixMax home.html" class="back-btn">Return to Home</a>
-  </div>
-</body>
+  <div>  
+        <a href="BixMax home.html" class="back-btn">Return to Home</a>  
+  </div>  
+</body>  
 </html>
