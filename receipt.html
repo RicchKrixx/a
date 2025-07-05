@@ -39,6 +39,7 @@
   display: inline-block;
   width: 100px; /* Adjust as needed */
   margin-bottom: 5px;
+  border-bottom: 1px dotted #ccc;
 }
 
        .cart-info h5 {
@@ -83,10 +84,7 @@
     }
         .cart-info p {
       text-align: center !important;
-    }
-.cart-info h3 {
-  font-weight: bold;
-}
+
   </style>
 </head>
 <body>
@@ -124,7 +122,7 @@
         itemEl.innerHTML = `
           <div class="cart-info">
           <ul class="inline-table">
-            <li><h3>${item.name}</h3></li>
+            <li>${item.name}</li>
             <li><p>${item.qty}</p></li>
             <li><h4>$${item.price.toFixed(2)}</h4></li>
 </ul>
