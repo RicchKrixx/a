@@ -81,51 +81,69 @@
     thead {
       font-weight: bold;
     }
+        .heading {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 8px;
+    }
+
+    .item-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px dotted #ccc;
+    }
+
+    .total {
+      text-align: right;
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
   </style>
 </head>
 <body>
     <h1>🧾Order Receipt</h1>
   <div>
     Order ID: <span class="order-id" id="orderId"> Loading…</span></div>
- <div id="cartSection"></div>
-<script>
-  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-  const cartSection = document.getElementById('cartSection');
-  const grandTotalEl = document.getElementById('grandTotal');
+  <div class="heading">
+         <span>Items</span>
+         <span>Qty</span>
+         <span>Price</span>
+  </div>
+  <div id="itemList">
+ <script>
+    const cartContainer = document.getElementById('cartContainer');
+    const grandTotalEl = document.getElementById('grandTotal');
+    const cartCount = document.getElementById('cartCount');
 
-  let total = 0;
-  let tableHTML = 
-    <table style="width:100%; border-collapse:collapse;">
-      <thead>
-        <tr>
-          <th style="text-align:left; padding:8px;">Item</th>
-          <th style="text-align:left; padding:8px;">Qty</th>
-          <th style="text-align:left; padding:8px;">Price</th>
-        </tr>
-      </thead>
-      <tbody>
-  ;
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
 
-  cart.forEach(item => {
-    tableHTML += 
-      <tr>
-        <td style="padding:8px;">${item.name}</td>
-        <td style="padding:8px;">${item.qty}</td>
-        <td style="padding:8px;">$${item.price.toFixed(2)}</td>
-      </tr>
-    ;
-    total += item.qty * item.price;
-  });
+    function updateCartDisplay() {
+      cartContainer.innerHTML = '';
+      let total = 0;
+      let itemCount = 0;
 
-  tableHTML += </tbody></table>;
-  cartSection.innerHTML = tableHTML;
-  grandTotalEl.textContent = total.toFixed(2);
+      cart.forEach((item, i) => {
+        const itemEl = document.createElement('div');
+        itemEl.className = 'cart-item';
+        itemEl.innerHTML = `
+          <div class="cart-info">
 
-  // Set Order ID
-  const params = new URLSearchParams(location.search);
-  const orderId = params.get("orderId")  localStorage.getItem("latestOrderId")  "Unavailable";
-  document.getElementById("orderId").textContent = orderId;
-
+           <span>${item.name}</span>
+            <span>${item.qty}</span>
+           <span>$${item.price.toFixed(2)}</span>
+      
+          </div>
+        `;
+        cartContainer.appendChild(itemEl);
+        total += item.qty * item.price;
+        itemCount += item.qty;
+      });
             grandTotalEl.textContent = total.toFixed(2);
       cartCount.textContent = itemCount;
 
