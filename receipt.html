@@ -119,7 +119,7 @@
   <div id="cartContainer"></div>
    <div class="total">Total: $<span id="grandTotal">0.00</span></div>
      </section>
-     <a href="BixMax home.html" class="back-btn">Return to Home</a>
+     <a href="BixMax home.html" id="homeBtn" class="back-btn">Return to Home</a>
 </div>
   <script>
     const cartContainer = document.getElementById('cartContainer');
@@ -190,6 +190,16 @@
   const total = localStorage.getItem("grandTotal")  "0";
   document.getElementById("grandTotal").textContent = parseFloat(total).toFixed(2);
 });
+	          // Handle go home button
+    const homeBtn = document.getElementById("homeBtn");
+    homeBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      // Clear the cart ONLY when user clicks this
+      localStorage.removeItem("cart");
+      window.location.href = "index.html"; // or home page URL
+    });
+  });
+</script>
   </script>
 </body>
 </html>
