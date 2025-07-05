@@ -37,29 +37,7 @@
       border-radius: 6px;
       padding: 5px 10px;
     }
-      .cart-b {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 30px;
-    }
-    .cart-icon {
-      position: relative;
-      font-size: 22px;
-      text-decoration: none;
-      color: white;
-    }
-    #cartCount {
-      position: absolute;
-      top: -8px;
-      right: -12px;
-      background: red;
-      color: white;
-      font-size: 14px;
-      font-weight: bold;
-      border-radius: 50%;
-      padding: 2px 6px;
-    }
+   
 
     /* Full-screen Sliding Menu */
     .menu-overlay {
@@ -302,7 +280,6 @@ body {
 
 </head>
 <body id="pageBody" class="container">
-<a href="cart.html" class="cart-icon">🛒<span id="cartCount">0</span></a>
   <div class="menu-toggle" onclick="toggleMenu()">☰</div>
 
   <div id="fullMenu" class="menu-overlay">
@@ -377,26 +354,6 @@ function toggleMenu() {
     document.body.style.overflow = 'hidden'; // Disable scroll
   }
 }
-</script>
-  <script>
-    function updateCartCount() {
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      const count = cart.reduce((sum, item) => sum + item.qty, 0);
-      document.getElementById("cartCount").textContent = count;
-    }function addToCart(name, img, price) {
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      const existing = cart.find(item => item.name === name);
-      if (existing) {
-        existing.qty += 1;
-      } else {
-        cart.push({ name, image: img, price, qty: 1 });
-      }
-      localStorage.setItem("cart", JSON.stringify(cart));
-      updateCartCount();
-    }
-
-    // Run on page load
-    updateCartCount();
-  </script>		
+</script>		
 </body>
 </html>
