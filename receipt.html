@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BizMAX | Cart</title>
+  <title>BizMAX | Receipt</title>
   <style>
      * { margin: 0; padding: 0; box-sizing: border-box; }
    html, body {
@@ -190,16 +190,13 @@
   const total = localStorage.getItem("grandTotal")  "0";
   document.getElementById("grandTotal").textContent = parseFloat(total).toFixed(2);
 });
-	          // Handle go home button
-    const homeBtn = document.getElementById("homeBtn");
-    homeBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      // Clear the cart ONLY when user clicks this
-      localStorage.removeItem("cart");
-      window.location.href = "BixMax home.html"; // or home page URL
-    });
+
+  </script>
+	<script>
+  document.getElementById("homeBtn").addEventListener("click", function () {
+    localStorage.removeItem("cart");
+    localStorage.removeItem("grandTotal");
   });
 </script>
-  </script>
 </body>
 </html>
