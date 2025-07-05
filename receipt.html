@@ -88,25 +88,14 @@
   <div>
     Order ID: <span class="order-id" id="orderId"> Loading…</span></div>
   <div id="custInfo"></div>
-  <div id="cartContainer">
-           <table border="1" cellpadding="10" cellspacing="0">
-          <thead>
-         <tr>
-         <th>Items</th>
-         <th>Qty</th>
-         <th>Price</th>
-         </tr>
-         </thead>
-         <tbody>           <tbody>
-            </table>
-  </div>
 
-<script>
+
+ <script>
     const cartContainer = document.getElementById('cartContainer');
     const grandTotalEl = document.getElementById('grandTotal');
     const cartCount = document.getElementById('cartCount');
 
-    let cart = JSON.parse(localStorage.getItem('cart')  '[]');
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
 
     function updateCartDisplay() {
       cartContainer.innerHTML = '';
@@ -118,6 +107,15 @@
         itemEl.className = 'cart-item';
         itemEl.innerHTML = `
           <div class="cart-info">
+                    <table border="1" cellpadding="10" cellspacing="0">
+          <thead>
+         <tr>
+         <th>Items</th>
+         <th>Qty</th>
+         <th>Price</th>
+         </tr>
+         </thead>
+         <tbody><tr>
          <td>
            <h3>${item.name}</h3>
           </td>
@@ -125,9 +123,16 @@
                       <td>
            <p>$${item.price.toFixed(2)}</p>
             </td>
+            </tr>
+            <tbody>
+            </table>
           </div>
-        ;
-         tbody.appendChild(row);
+            
+           
+
+            </div>
+          </div>
+        `;
         cartContainer.appendChild(itemEl);
         total += item.qty * item.price;
         itemCount += item.qty;
@@ -153,26 +158,6 @@
       updateCartDisplay();
     }
     updateCartDisplay(); // Run on page load
-  </script>
-   <script>
-
-        // Display customer info
-        const custInfo = document.getElementById('custInfo');
-        custInfo.innerHTML = 
-          <p><strong>Name:</strong> ${order.custName}</p>
-          <p><strong>Email:</strong> ${order.email}</p>
-          <p><strong>Phone:</strong> ${order.phone}</p>
-          <p><strong>Address:</strong> ${order.address}</p>
-          <p><strong>Payment Method:</strong> ${order.method}</p>
-        ;
-        order.cart.forEach(item => {
-          const itemTotal = item.price * item.qty;
-  
-
-        // Display total
-        document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
-      }
-    }
   </script>
 
   <script>
