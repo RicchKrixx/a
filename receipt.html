@@ -64,13 +64,23 @@
       border-radius: 16px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
+        h1 {
+      text-align: center;
+      color: #1976d2;
+    }
+    .order-id, p {
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: bold;
+      font-size: 18px;
+    }
   </style>
 </head>
 <body>
 
-  <header>
-    <h1>My Cart</h1>
-  </header>
+    <h1>🧾Order Receipt</h1>
+    <div>
+    Order ID: <span class="order-id" id="orderId"> Loading…</span></div>
   <section class="receipt-box">
  
     <div class="heading">
@@ -126,28 +136,18 @@
         updateCartDisplay();
       }
     }
-
-    function removeItem(index) {
-      cart.splice(index, 1);
-      updateCartDisplay();
-    }
-
-    function clearCart() {
-      if (confirm("Clear all items from cart?")) {
-        cart = [];
-        updateCartDisplay();
-      }
-    }
-
-    function goToCheckout() {
-      if (cart.length === 0) {
-        alert("🛒 Cart is empty!");
-        return;
-      }
-      window.location.href = "checkout.html";
-    }
-
     updateCartDisplay(); // Run on page load
+     // Get orderId from URL or localStorage
+    const params = new URLSearchParams(window.location.search);
+    let orderId = params.get("orderId") || localStorage.getItem("latestOrderId");
+
+    if (!orderId) {
+      document.getElementById("orderId").textContent = "Unavailable";
+      document.getElementById("viewReceipt").style.display = "none";
+    } else {
+      document.getElementById("orderId").textContent = orderId;
+      document.getElementById("viewReceipt").href = "receipt.html?orderId=" + orderId;
+    }
   </script>
   </section>
 </body>
