@@ -122,7 +122,7 @@
     const grandTotalEl = document.getElementById('grandTotal');
     const cartCount = document.getElementById('cartCount');
 
-    let cart = JSON.parse(localStorage.getItem('cart')  '[]');
+    let cart = JSON.parse(localStorage.getItem('cart')'[]');
 
     function updateCartDisplay() {
       cartContainer.innerHTML = '';
@@ -186,6 +186,26 @@
     }
     updateCartDisplay(); // Run on page load
   </script>
+   <script>
+
+        // Display customer info
+        const custInfo = document.getElementById('custInfo');
+        custInfo.innerHTML = 
+          <p><strong>Name:</strong> ${order.custName}</p>
+          <p><strong>Email:</strong> ${order.email}</p>
+          <p><strong>Phone:</strong> ${order.phone}</p>
+          <p><strong>Address:</strong> ${order.address}</p>
+          <p><strong>Payment Method:</strong> ${order.method}</p>
+        ;
+        order.cart.forEach(item => {
+          const itemTotal = item.price * item.qty;
+  
+
+        // Display total
+        document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
+      }
+    }
+  </script>
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -206,7 +226,8 @@
       document.getElementById("viewReceipt").href = "receipt.html?orderId=" + orderId;
     }
   </script>
-      <div class="total">Total: $<span id="grandTotal">0.00</span></div>
+
+      <div class="total">Grand Total: $<span id="grandTotal">0.00</span></div>
   <div>
         <a href="BixMax home.html" class="back-btn">Return to Home</a>
   </div>
