@@ -122,18 +122,14 @@
     const cartContainer = document.getElementById('cartContainer');
     const grandTotalEl = document.getElementById('grandTotal');
     const cartCount = document.getElementById('cartCount');
-    const orders = JSON.parse(localStorage.getItem("orders") || "{}");
-    const order = orders[orderId];
+   
+   let cart = JSON.parse(localStorage.getItem('cart') || '[]');
 
-    if (!order) {
-      document.getElementById("itemsList").innerHTML = "<p>Order not found.</p>";
-      return;
-    }
-
-    const itemsList = document.getElementById("itemsList");
-    let total = 0;
- let itemCount = 0;
-    
+    function updateCartDisplay() {
+      cartContainer.innerHTML = '';
+      let total = 0;
+      let itemCount = 0;
+      
     order.cart.forEach(item => {
       const row = document.createElement("div");
       row.className = "item-row";
