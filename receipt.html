@@ -68,6 +68,15 @@
         align-items: flex-start;
       }
     }
+       .heading {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 8px;
+    }
+
   </style>
 </head>
 <body>
@@ -75,7 +84,11 @@
   <header>
     <h1>My Cart</h1>
   </header>
-
+    <div class="heading">
+      <span>Item</span>
+      <span>Qty</span>
+      <span>Price</span>
+    </div>
   <div id="cartContainer"></div>
 
   <div class="total">Total: $<span id="grandTotal">0.00</span></div>
