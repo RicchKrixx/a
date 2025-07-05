@@ -24,20 +24,6 @@
       color: #1976d2;
     }
 
-    .cart-badge {
-      position: relative;
-      font-size: 24px;
-      cursor: pointer;
-    }
-
-    .cart-item {
-      display: flex;
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-
     .cart-info {
       flex: 1;
     }
@@ -90,6 +76,14 @@
 .inline-table li:last-child {
   margin-right: 0;
 }
+        .receipt-box {
+      background: #fff;
+      max-width: 700px;
+      margin: auto;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
   </style>
 </head>
 <body>
@@ -97,6 +91,7 @@
   <header>
     <h1>My Cart</h1>
   </header>
+  <section class="receipt-box">
    <div id="cartContainer"></div>
     <div class="heading">
       <span>Item</span>
@@ -174,5 +169,6 @@
 
     updateCartDisplay(); // Run on page load
   </script>
+  </section>
 </body>
 </html>
