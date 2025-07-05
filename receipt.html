@@ -42,7 +42,7 @@
 }
 
        .cart-info h5 {
-      text-align: right;
+      text-align: right !important;
            margin-right: 0 !important; 
     }
 .receipt-box {
@@ -126,7 +126,7 @@ h3 {
           <ul class="inline-table">
             <li><h3>${item.name}</h3></li>
             <li><p>${item.qty}</p></li>
-            <li><h4>$${item.price}</h4></li>
+            <li><h4>$${item.price.toFixed(2)}</h4></li>
 </ul>
           </div>
         `;
