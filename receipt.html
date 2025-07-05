@@ -41,8 +41,9 @@
   margin-bottom: 10px;
 }
 
-        .cart-info h3 {
-      text-align: right !important;
+        .cart-info h4 {
+      text-align: right;
+           margin-right: 0; 
     }
 .receipt-box {
       background: #fff;
@@ -57,7 +58,7 @@
       color: #1976d2;
     }
     .order-id, h2 {
-      text-align: center;
+      text-align: left;
       margin-bottom: 20px;
       font-weight: bold;
       font-size: 18px;
@@ -123,7 +124,7 @@
           <ul class="inline-table">
             <li>${item.name}</li>
             <li><p>${item.qty}</p></li>
-            <li><h3>$${item.price.toFixed(2)}</h3></li>
+            <li><h4>$${item.price.toFixed(2)}</h4></li>
 </ul>
           </div>
         `;
