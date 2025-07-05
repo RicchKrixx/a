@@ -76,6 +76,23 @@
       border-bottom: 1px solid #ccc;
       padding-bottom: 8px;
     }
+    .inline-table {
+  list-style: none; /* Removes default bullets */
+  padding: 0;
+  margin: 0;
+}
+
+.inline-table li {
+  display: inline-block;
+  width: 100px; /* Fixed width for table-like alignment */
+  margin-right: 20px; /* Space between items */
+  text-align: center; /* Center text for table-like appearance */
+}
+
+/* Optional: Remove margin from the last item to avoid extra space */
+.inline-table li:last-child {
+  margin-right: 0;
+}
   </style>
 </head>
 <body>
@@ -109,10 +126,11 @@
         itemEl.className = 'cart-item';
         itemEl.innerHTML = `
           <div class="cart-info">
-            <span>${item.name}</span>
-            <span>${item.qty}</span>
-            <span>$${item.price.toFixed(2)}</span>
-
+          <ul class="inline-table">
+            <li>${item.name}</li>
+            <li>${item.qty}</li>
+            <li>$${item.price.toFixed(2)}</li>
+</ul>
           </div>
         `;
         cartContainer.appendChild(itemEl);
