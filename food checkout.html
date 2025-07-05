@@ -3,19 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Food Checkout</title>
+  <title>Food Checkout | BizMAX</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #e0f7fa;
+      background: #f3faff;
       padding: 20px;
     }
-    .card {
-      max-width: 600px;
+    .box {
+      max-width: 500px;
       margin: auto;
       background: white;
-      padding: 30px;
-      border-radius: 16px;
+      padding: 24px;
+      border-radius: 14px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     h2 {
@@ -23,17 +23,23 @@
       color: #1976d2;
     }
     label {
-      font-weight: bold;
       display: block;
       margin-top: 15px;
+      font-weight: bold;
     }
     input, textarea {
       width: 100%;
-      padding: 12px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
+      padding: 10px;
       margin-top: 6px;
-      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    .total {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center;
+      color: #1976d2;
     }
     button {
       margin-top: 20px;
@@ -43,66 +49,55 @@
       background: #1976d2;
       color: white;
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
       cursor: pointer;
-    }
-    .total {
-      text-align: center;
-      font-weight: bold;
-      font-size: 18px;
-      margin: 20px 0;
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h2>🍔 Food Checkout</h2>
+
+  <div class="box">
+    <h2>🍽️ Food Checkout</h2>
+
+    <label>Full Name</label>
+    <input type="text" id="custName" placeholder="John Doe" />
+
+    <label>Phone Number</label>
+    <input type="tel" id="custPhone" placeholder="055 123 4567" />
+
+    <label>Delivery Address</label>
+    <textarea id="custAddr" rows="3" placeholder="Street, City"></textarea>
+
     <div class="total">Total: $<span id="grandTotal">0.00</span></div>
 
-    <label>Name</label>
-    <input id="custName" placeholder="John Doe" required />
-
-    <label>Phone</label>
-    <input id="custPhone" placeholder="055 123 4567" required />
-
-    <label>Address</label>
-    <textarea id="custAddr" rows="3" placeholder="Location" required></textarea>
-
-    <button id="placeOrderBtn">Place Order</button>
+    <button onclick="placeOrder()">Place Order</button>
   </div>
 
   <script>
-    const totalSpan = document.getElementById('grandTotal');
-    const placeOrderBtn = document.getElementById('placeOrderBtn');
+    // Load and show grand total
+    const grandTotal = parseFloat(localStorage.getItem('grandTotal') || '0');
+    document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
 
-    // Load and display total
-    const total = parseFloat(localStorage.getItem('grandTotal') || '0');
-    totalSpan.textContent = total.toFixed(2);
-
-    placeOrderBtn.addEventListener('click', () => {
+    function placeOrder() {
       const name = document.getElementById("custName").value.trim();
       const phone = document.getElementById("custPhone").value.trim();
-      const address = document.getElementById("custAddr").value.trim();
-      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      const addr = document.getElementById("custAddr").value.trim();
 
-      if (!name  !phone  !address || cart.length === 0) {
-        alert("❌ Please fill all fields and make sure your cart is not empty.");
+      if (!name  !phone  !addr) {
+        alert("Please fill in all fields");
         return;
       }
 
-      const foodOrder = {
-        name,
-        phone,
-        address,
-        total,
-        cart,
-        placedAt: new Date().toISOString()
+      const order = {
+        customer: { name, phone, addr },
+        total: grandTotal.toFixed(2),
+        placedAt: new Date().toLocaleString()
       };
 
-      localStorage.setItem("foodOrder", JSON.stringify(foodOrder));
-      alert("✅ Order placed successfully!");
-      window.location = "food tracking.html";
-    });
+      localStorage.setItem("foodFinalOrder", JSON.stringify(order));
+      window.location.href = "food tracking.html";
+    }
   </script>
+
 </body>
 </html>
