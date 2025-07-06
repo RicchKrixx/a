@@ -333,5 +333,25 @@
 
   updateCartCount();
 </script>
+ <script>
+  function addAndGoToCart(img) {
+    const name = img.dataset.name;
+    const price = parseFloat(img.dataset.price);
+    const imgSrc = img.dataset.img;
+
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const existing = cart.find(item => item.name === name);
+
+    if (existing) {
+      existing.qty++;
+    } else {
+      cart.push({ name, price, img: imgSrc, qty: 1 });
+    }
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartCount();
+    window.location.href = 'cart.html';
+  }
+</script>
  </body>
 </html>
