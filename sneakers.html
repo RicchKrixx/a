@@ -433,5 +433,23 @@
     window.location.href = 'cart.html';
   }
 </script>
+	<script>
+function toggleMenu() {
+  const menu = document.getElementById('fullMenu');
+  const toggle = document.querySelector('.menu-toggle');
+  const bottomBar = document.getElementById('bottomBar');
+
+  if (menu.classList.contains('show')) {
+    menu.classList.remove('show', 'animate');
+    toggle.style.display = 'block';
+    document.body.style.overflow = ''; // Enable scroll
+  } else {
+    menu.classList.add('show');
+    setTimeout(() => menu.classList.add('animate'), 50);
+    toggle.style.display = 'none';
+    document.body.style.overflow = 'hidden'; // Disable scroll
+  }
+}
+</script>
  </body>
 </html>
