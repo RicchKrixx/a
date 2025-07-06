@@ -124,19 +124,20 @@
     }
 
     /* Full-screen Sliding Menu */
-    .menu-overlay {
-      position: fixed;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: #2d2d2d;
-      color: white;
-      z-index: 1500;
-      flex-direction: column;
-      padding: 20px;
-      transition: left 0.3s ease-in-out;
-    }
+.menu-overlay {
+  position:fixed;
+  top:0;
+  left:-100vw;          /* 👈 full-width off-screen */
+  width:100%;
+  height:100%;
+  background:#2d2d2d;
+  color:white;
+  z-index:1500;
+  display:flex;         /* you already rely on flex */
+  flex-direction:column;
+  padding:20px;
+  transition:left .3s ease-in-out;
+}
     .menu-overlay.show { left: 0; }
 
     .menu-header {
