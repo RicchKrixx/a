@@ -133,7 +133,6 @@
       background: #2d2d2d;
       color: white;
       z-index: 1500;
-      display: flex;
       flex-direction: column;
       padding: 20px;
       transition: left 0.3s ease-in-out;
@@ -243,7 +242,8 @@
 
   <div class="product">
     <img src="pp.jpeg" alt="Shirt" style="cursor:pointer"
-     onclick="addAndGoToCart('Classic Shirt', 'pp.jpeg', 30)">
+          onclick="addAndGoToCart(this)"
+     data-name="Classic Shirt" data-price="12.99" data-img="pp.jpeg">
     <h3>Classic Shirt</h3>
     <p>GH¢12.99</p>
     <button onclick="addToCart(this)" data-name="Classic Shirt" data-price="12.99" data-img="pp.jpeg">Add to Cart</button>
@@ -255,7 +255,7 @@
      data-name="Denim Jacket" data-price="25.00" data-img="pp.jpeg">
     <h3>Denim Jacket</h3>
     <p>GH¢25.00</p>
-<button onclick="addToCart(this)" data-name="Denim Jacket" data-price="25.00" data-img="">Add to Cart</button>
+    <button onclick="addToCart(this)" data-name="Denim Jacket" data-price="25.00" data-img="">Add to Cart</button>
   </div>
 
   <div class="product">
