@@ -1,24 +1,101 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Food Checkout Test</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BizMAX | Food Checkout</title>
+  <style>
+    body {
+      background: #e0f7fa;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      color: #333;
+    }
+
+    .checkout-box {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 16px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #1976d2;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 14px;
+      font-weight: bold;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      margin-top: 6px;
+      font-size: 16px;
+    }
+
+    .total {
+      text-align: center;
+      font-size: 20px;
+      margin: 20px 0;
+      font-weight: bold;
+      color: #1976d2;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      background: #1976d2;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1259a4;
+    }
+  </style>
 </head>
 <body>
-  <h2>Food Checkout</h2>
 
-  <input id="custName" placeholder="Full Name"><br><br>
-  <input id="custPhone" placeholder="Phone Number"><br><br>
-  <textarea id="custAddr" placeholder="Delivery Address"></textarea><br><br>
+  <div class="checkout-box">
+    <h1>🍔 Food Checkout</h1>
 
-  <p>Total to Pay: $<span id="grandTotal">0.00</span></p>
-  <button id="placeOrderBtn">Place Order</button>
+    <div class="total">Grand Total: $<span id="grandTotal">0.00</span></div>
+
+    <label for="custName">Full Name</label>
+    <input type="text" id="custName" placeholder="e.g. John Doe" />
+
+    <label for="custPhone">Phone Number</label>
+    <input type="tel" id="custPhone" placeholder="e.g. 055 123 4567" />
+
+    <label for="custAddr">Delivery Address</label>
+    <textarea id="custAddr" rows="3" placeholder="e.g. Street, Area, City"></textarea>
+
+    <button id="placeOrderBtn">Place Order</button>
+  </div>
 
   <script>
-    // Simulate grand total (test only)
-    localStorage.setItem("grandTotal", "45.00");
-    document.getElementById("grandTotal").textContent = localStorage.getItem("grandTotal");
+    // ✅ Load grand total from localStorage
+    document.addEventListener("DOMContentLoaded", () => {
+      const total = localStorage.getItem("grandTotal") || "0";
+      document.getElementById("grandTotal").textContent = parseFloat(total).toFixed(2);
+    });
 
-    document.getElementById("placeOrderBtn").addEventListener("click", function () {
+    // ✅ Handle place order
+    document.getElementById("placeOrderBtn").addEventListener("click", () => {
       const name = document.getElementById("custName").value.trim();
       const phone = document.getElementById("custPhone").value.trim();
       const address = document.getElementById("custAddr").value.trim();
@@ -28,8 +105,13 @@
         return;
       }
 
-      alert("✅ Order submitted successfully!");
+      // You can store or send this data wherever you want
+      alert(✅ Order Placed!\n\nName: ${name}\nPhone: ${phone}\nAddress: ${address});
+
+      // Optional: clear fields or redirect
+      // location.href = 'thankyou.html';
     });
   </script>
+
 </body>
 </html>
