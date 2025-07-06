@@ -84,33 +84,108 @@
   });
  </script>
 <script>
-  document.getElementById("placeOrderBtn").addEventListener("click", function (e) {
-    e.preventDefault();
+document.addEventListener("DOMContentLoaded", () => {
+  const total = localStorage.getItem("grandTotal") || "0";
+  document.getElementById("grandTotal").textContent = parseFloat(total).toFixed(2);
+});
 
-    const name = document.getElementById("custName").value.trim();
-    const phone = document.getElementById("custPhone").value.trim();
-    const address = document.getElementById("custAddr").value.trim();
-    const total = localStorage.getItem("grandTotal") || "0";
+// Elements
+const payMethod = document.getElementById("payMethod");
+const actionBtn = document.getElementById("actionBtn");
 
-    if (!name  !phone  !address) {
-      alert("Please fill all fields.");
-      return;
-    }
+// Change button label
+payMethod.addEventListener("change", () => {
+  actionBtn.textContent = payMethod.value === "online" ? "Pay Now" : "Place Order";
+});
 
-    const order = {
-      name,
-      phone,
-      address,
-      total: parseFloat(total).toFixed(2),
-      timestamp: new Date().toLocaleString()
-    };
+// Show loader
+function showLoader(show) {
+  document.getElementById("loader").style.display = show ? "flex" : "none";
+}
 
-    // Store or send the order
-    localStorage.setItem("foodOrder", JSON.stringify(order));
-    
-    alert("✅ Order placed successfully!");
-    window.location.href = "food tracking.html"; // or wherever you want
-  });
+// Generate unique Order ID
+function generateOrderId() {
+  return "BX" + Date.now().toString(36).toUpperCase();
+}
+
+// Main logic
+actionBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+
+  const name = document.getElementById("custName").value.trim();
+  const email = document.getElementById("custEmail").value.trim();
+  const phone = document.getElementById("custPhone").value.trim();
+  const address = document.getElementById("custAddr").value.trim();
+  const method = payMethod.value;
+  const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
+  const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
+
+  if (!(name && email && phone && address)) {
+    alert("Please fill in all customer details.");
+    return;
+  }
+
+  if (grandTotal <= 0 || cartItems.length === 0) {
+    alert("Cart is empty or total is 0.");
+    return;
+  }
+
+  const orderId = generateOrderId();
+
+  // Save order to localStorage
+  const orderData = {
+    id: orderId,
+    name,
+    email,
+    phone,
+    address,
+    method,
+    items: cartItems,
+    total: grandTotal
+  };
+
+  const allOrders = JSON.parse(localStorage.getItem("orders") || "{}");
+  allOrders[orderId] = orderData;
+  localStorage.setItem("orders", JSON.stringify(allOrders));
+localStorage.setItem("latestOrderId", orderId);
+
+  showLoader(true);
+
+  if (method === "online") {
+    // Paystack
+    PaystackPop.setup({
+      key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxx', // Replace with your real key
+      email: email,
+      amount: Math.round(grandTotal * 100),
+      currency: "GHS",
+      metadata: {
+        custom_fields: [
+          { display_name: "Name", value: name },
+          { display_name: "Phone", value: phone },
+          { display_name: "Address", value: address }
+        ]
+      },
+      callback: function (response) {
+        alert("Payment successful! Ref: " + response.reference);
+        localStorage.removeItem("cart");
+        showLoader(false);
+        window.location.href = "thankyou.html?orderId=" + orderId;
+      },
+      onClose: function () {
+        showLoader(false);
+        alert("Payment cancelled.");
+      }
+    }).openIframe();
+  } else {
+    // Pay on Delivery
+    setTimeout(() => {
+      alert("Order placed successfully!");
+      showLoader(false);
+       window.location.href = "receipt.html?orderId=" + orderId;
+      window.location.href = "thankyou.html?orderId=" + orderId;
+    }, 1500);
+  }
+});
 </script>
 </body>
 </html>
