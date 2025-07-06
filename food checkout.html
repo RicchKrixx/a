@@ -84,26 +84,30 @@
   });
  </script>
   <script>
-actionBtn.addEventListener("click", (e) => {
-  e.preventDefault();
+    function placeFoodOrder() {
+      const name = document.getElementById("custName").value.trim();
+      const phone = document.getElementById("custPhone").value.trim();
+      const addr = document.getElementById("custAddr").value.trim();
 
-  const name = document.getElementById("custName").value.trim();
-  const email = document.getElementById("custEmail").value.trim();
-  const phone = document.getElementById("custPhone").value.trim();
-  const address = document.getElementById("custAddr").value.trim();
-  const method = payMethod.value;
-  const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
-  const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
+      if (!name  !phone  !addr) {
+        alert("Please fill in all fields.");
+        return;
+      }
 
-  if (!(name && email && phone && address)) {
-    alert("Please fill in all customer details.");
-    return;
-  }
+      const foodOrder = {
+        name,
+        phone,
+        address: addr,
+        amount: total.toFixed(2),
+        timestamp: new Date().toLocaleString()
+      };
 
-  if (grandTotal <= 0 || cartItems.length === 0) {
-    alert("Cart is empty or total is 0.");
-    return;
-  }
-    </script>
+      // Save order to localStorage for tracking
+      localStorage.setItem("currentFoodOrder", JSON.stringify(foodOrder));
+
+      // Redirect to food tracking page
+      window.location.href = "food-track.html";
+    }
+  </script>
 </body>
 </html>
