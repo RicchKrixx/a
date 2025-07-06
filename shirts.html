@@ -39,32 +39,31 @@
       text-align: center;
       margin-bottom: 20px;
     }
-    .grid {
+    .products {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 20px;
     }
-    .item {
+    .product {
       background: white;
       border-radius: 12px;
       padding: 10px;
       text-align: center;
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
-    .item img {
-      width: 100%;
+    .product img {
+      width: 50%;
       border-radius: 12px;
-      max-height: 160px;
+      max-height: 80px;
       object-fit: cover;
     }
-    .item h3 {
+    .product h3 {
       margin: 10px 0 5px;
     }
-    .item p {
+    .product p {
       font-weight: bold;
       color: #333;
     }
-    .item button {
+    .product button {
       background: #1976d2;
       color: white;
       border: none;
@@ -72,7 +71,7 @@
       border-radius: 8px;
       cursor: pointer;
     }
-    .item button:hover {
+    .product button:hover {
       background: #135ca3;
     }
   </style>
@@ -86,33 +85,151 @@
   </header>
   <div class="container">
     <h2>All Shirt Products</h2>
-    <div class="grid">
-      <div class="item" data-name="Casual Shirt" data-price="25" data-img="pp.jpeg">
-        <img src="pp.jpeg" alt="Casual Shirt">
-        <h3>Casual Shirt</h3>
-        <p>$25</p>
-        <button onclick="addToCart(this)">Add to Cart</button>
-      </div>
-      <div class="item" data-name="Formal Shirt" data-price="30" data-img="shirt2.jpg">
-        <img src="shirt2.jpg" alt="Formal Shirt">
-        <h3>Formal Shirt</h3>
-        <p>$30</p>
-        <button onclick="addToCart(this)">Add to Cart</button>
-      </div>
-      <div class="item" data-name="Flannel Shirt" data-price="28" data-img="shirt3.jpg">
-        <img src="shirt3.jpg" alt="Flannel Shirt">
-        <h3>Flannel Shirt</h3>
-        <p>$28</p>
-        <button onclick="addToCart(this)">Add to Cart</button>
-      </div>
-      <div class="item" data-name="Denim Shirt" data-price="35" data-img="shirt4.jpg">
-        <img src="shirt4.jpg" alt="Denim Shirt">
-        <h3>Denim Shirt</h3>
-        <p>$35</p>
-        <button onclick="addToCart(this)">Add to Cart</button>
-      </div>
-    </div>
-  </div>  <script>
+  <div class="products">
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Shirt">
+    <h3>Classic Shirt</h3>
+    <p>$12.99</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Denim Jacket">
+    <h3>Denim Jacket</h3>
+    <p>$25.00</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Sneakers">
+    <h3>White Sneakers</h3>
+    <p>$30.00</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Glasses">
+    <h3>Black Sunglasses</h3>
+    <p>$8.00</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Dress">
+    <h3>Floral Dress</h3>
+    <p>$19.50</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="T-Shirt">
+    <h3>Graphic T-Shirt</h3>
+    <p>$10.00</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Jeans">
+    <h3>Blue Jeans</h3>
+    <p>$18.00</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Cap">
+    <h3>Baseball Cap</h3>
+    <p>$6.99</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Chain">
+    <h3>Gold Chain</h3>
+    <p>$22.00</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Skirt">
+    <h3>Mini Skirt</h3>
+    <p>$14.50</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Shoes">
+    <h3>Formal Shoes</h3>
+    <p>$27.99</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Sweater">
+    <h3>Winter Sweater</h3>
+    <p>$20.00</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Heels">
+    <h3>Red Heels</h3>
+    <p>$24.99</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Watch">
+    <h3>Wrist Watch</h3>
+    <p>$15.00</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Hoodie">
+    <h3>Casual Hoodie</h3>
+    <p>$17.50</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Belt">
+    <h3>Leather Belt</h3>
+    <p>$9.99</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Backpack">
+    <h3>Stylish Backpack</h3>
+    <p>$16.00</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Tank Top">
+    <h3>Summer Tank Top</h3>
+    <p>$7.50</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Leggings">
+    <h3>Black Leggings</h3>
+    <p>$12.00</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Scarf">
+    <h3>Patterned Scarf</h3>
+    <p>$5.00</p>
+    <button>Add to Cart</button>
+  </div>
+
+</div>
+  </div> 
+  <script>
     function addToCart(button) {
       const item = button.closest('.item');
       const cart = JSON.parse(localStorage.getItem('cart') || '[]');
