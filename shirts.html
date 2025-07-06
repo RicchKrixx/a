@@ -1,140 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Menu 2x2</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+  <meta charset="UTF-8">
+  <title>Product Menu</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
 
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
+    .menu-container {
+      max-width: 800px;
+      margin: auto;
+    }
 
-        .product-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
 
-        .product-card {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            text-align: center;
-            padding: 20px;
-            transition: transform 0.3s ease;
-        }
+    .product-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+      text-align: center;
+      transition: 0.3s;
+    }
 
-        .product-card:hover {
-            transform: translateY(-5px);
-        }
+    .product-card:hover {
+      transform: translateY(-5px);
+    }
 
-        .product-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
+    .product-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+    }
 
-        .product-title {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-            color: #333;
-        }
+    .product-info {
+      padding: 10px;
+    }
 
-        .product-price {
-            color: #2ecc71;
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-        }
+    .product-name {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+    }
 
-        .product-description {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-        }
+    .product-price {
+      color: #00aaff;
+      margin-top: 5px;
+      font-size: 14px;
+    }
 
-        .buy-button {
-            background: #3498db;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .buy-button:hover {
-            background: #2980b9;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .product-container {
-                grid-template-columns: 1fr;
-                max-width: 400px;
-            }
-
-            .product-card {
-                margin-bottom: 20px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .product-card {
-                padding: 15px;
-            }
-
-            .product-image {
-                height: 150px;
-            }
-        }
-    </style>
+    @media (max-width: 600px) {
+      .product-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="product-container">
-        <div class="product-card">
-            <img src="https://via.placeholder.com/300x200" alt="Product 1" class="product-image">
-            <h2 class="product-title">Product 1</h2>
-            <p class="product-price">$29.99</p>
-            <p class="product-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-            <button class="buy-button">Buy Now</button>
+  <div class="menu-container">
+    <h2>Product Menu</h2>
+    <div class="product-grid">
+      <div class="product-card">
+        <img src="https://via.placeholder.com/300x150" alt="Product 1">
+        <div class="product-info">
+          <div class="product-name">Product 1</div>
+          <div class="product-price">GHS 20.00</div>
         </div>
-
-        <div class="product-card">
-            <img src="https://via.placeholder.com/300x200" alt="Product 2" class="product-image">
-            <h2 class="product-title">Product 2</h2>
-            <p class="product-price">$49.99</p>
-            <p class="product-description">Ut enim ad minim veniam, quis nostrud exercitation.</p>
-            <button class="buy-button">Buy Now</button>
+      </div>
+      <div class="product-card">
+        <img src="https://via.placeholder.com/300x150" alt="Product 2">
+        <div class="product-info">
+          <div class="product-name">Product 2</div>
+          <div class="product-price">GHS 25.00</div>
         </div>
-
-        <div class="product-card">
-            <img src="https://via.placeholder.com/300x200" alt="Product 3" class="product-image">
-            <h2 class="product-title">Product 3</h2>
-            <p class="product-price">$19.99</p>
-            <p class="product-description">Duis aute irure dolor in reprehenderit in voluptate.</p>
-            <button class="buy-button">Buy Now</button>
+      </div>
+      <div class="product-card">
+        <img src="https://via.placeholder.com/300x150" alt="Product 3">
+        <div class="product-info">
+          <div class="product-name">Product 3</div>
+          <div class="product-price">GHS 18.00</div>
         </div>
-
-        <div class="product-card">
-            <img src="https://via.placeholder.com/300x200" alt="Product 4" class="product-image">
-            <h2 class="product-title">Product 4</h2>
-            <p class="product-price">$39.99</p>
-            <p class="product-description">Excepteur sint occaecat cupidatat non proident.</p>
-            <button class="buy-button">Buy Now</button>
+      </div>
+      <div class="product-card">
+        <img src="https://via.placeholder.com/300x150" alt="Product 4">
+        <div class="product-info">
+          <div class="product-name">Product 4</div>
+          <div class="product-price">GHS 30.00</div>
         </div>
+      </div>
     </div>
+  </div>
 </body>
 </html>
