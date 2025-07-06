@@ -1,28 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
+
+ 
+<!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Product Menu</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shirts - BixMAX</title>
   <style>
     body {
-      font-family: sans-serif;
-      background: #f4f4f4;
+      font-family: Arial, sans-serif;
+      background: lightblue;
       margin: 0;
-      padding: 20px;
+      padding: 0;
     }
-
-    .menu-container {
+    header {
+      background: #1976d2;
+      color: #fff;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cart-icon {
+      position: relative;
+      cursor: pointer;
+    }
+    .cart-icon span {
+      background: red;
+      color: white;
+      font-size: 14px;
+      padding: 2px 6px;
+      border-radius: 50%;
+      position: absolute;
+      top: -10px;
+      right: -10px;
+    }
+    .container {
+      padding: 5px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .container {
       max-width: 800px;
       margin: auto;
     }
 
-    .product-grid {
+    .products {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 15px;
     }
 
-    .product-card {
+    .product {
       background: white;
       border-radius: 12px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
@@ -31,72 +61,235 @@
       transition: 0.3s;
     }
 
-    .product-card:hover {
+    .product:hover {
       transform: translateY(-5px);
     }
 
-    .product-card img {
+    .product img {
       width: 100%;
       height: 150px;
       object-fit: cover;
     }
 
-    .product-info {
-      padding: 10px;
-    }
-
-    .product-name {
-      font-size: 16px;
-      font-weight: bold;
-      color: #333;
-    }
-
-    .product-price {
-      color: #00aaff;
-      margin-top: 5px;
-      font-size: 14px;
-    }
-
+  
     @media (max-width: 600px) {
       .product-grid {
         grid-template-columns: 1fr;
       }
     }
+    .product h3 {
+      font-size: 16px;
+      margin: 6px 0;
+    }
+
+    .product p {
+      font-size: 15px;
+      font-weight: bold;
+    }
+
+    .product button {
+      background: var(--blue);
+      color: white;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 8px;
+      font-weight: bold;
+    }
+
+    .product button:hover {
+      background: #008b8b;
+    }
+
+    @media (max-width: 500px) {
+      .products {
+        gap: 12px;
+      }
+      .product {
+        min-width: 150px;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="menu-container">
-    <h2>Product Menu</h2>
-    <div class="product-grid">
-      <div class="product-card">
-        <img src="https://via.placeholder.com/300x150" alt="Product 1">
-        <div class="product-info">
-          <div class="product-name">Product 1</div>
-          <div class="product-price">GHS 20.00</div>
-        </div>
-      </div>
-      <div class="product-card">
-        <img src="https://via.placeholder.com/300x150" alt="Product 2">
-        <div class="product-info">
-          <div class="product-name">Product 2</div>
-          <div class="product-price">GHS 25.00</div>
-        </div>
-      </div>
-      <div class="product-card">
-        <img src="https://via.placeholder.com/300x150" alt="Product 3">
-        <div class="product-info">
-          <div class="product-name">Product 3</div>
-          <div class="product-price">GHS 18.00</div>
-        </div>
-      </div>
-      <div class="product-card">
-        <img src="https://via.placeholder.com/300x150" alt="Product 4">
-        <div class="product-info">
-          <div class="product-name">Product 4</div>
-          <div class="product-price">GHS 30.00</div>
-        </div>
-      </div>
+  <header>
+    <h1>Shirts - BixMAX</h1>
+    <div class="cart-icon" onclick="window.location.href='cart.html'">
+      🛒 <span id="cart-count">0</span>
     </div>
+  </header>
+  
+  <div class="container">
+    <h2>All Shirt Products</h2>
+  <div class="products">
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Shirt">
+    <h3>Classic Shirt</h3>
+    <p>$12.99</p>
+    <button>Add to Cart</button>
   </div>
-</body>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Denim Jacket">
+    <h3>Denim Jacket</h3>
+    <p>$25.00</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Sneakers">
+    <h3>White Sneakers</h3>
+    <p>$30.00</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Glasses">
+    <h3>Black Sunglasses</h3>
+    <p>$8.00</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Dress">
+    <h3>Floral Dress</h3>
+    <p>$19.50</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="T-Shirt">
+    <h3>Graphic T-Shirt</h3>
+    <p>$10.00</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Jeans">
+    <h3>Blue Jeans</h3>
+    <p>$18.00</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Cap">
+    <h3>Baseball Cap</h3>
+    <p>$6.99</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Chain">
+    <h3>Gold Chain</h3>
+    <p>$22.00</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Skirt">
+    <h3>Mini Skirt</h3>
+    <p>$14.50</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Shoes">
+    <h3>Formal Shoes</h3>
+    <p>$27.99</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Sweater">
+    <h3>Winter Sweater</h3>
+    <p>$20.00</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Heels">
+    <h3>Red Heels</h3>
+    <p>$24.99</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Watch">
+    <h3>Wrist Watch</h3>
+    <p>$15.00</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Hoodie">
+    <h3>Casual Hoodie</h3>
+    <p>$17.50</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Belt">
+    <h3>Leather Belt</h3>
+    <p>$9.99</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Backpack">
+    <h3>Stylish Backpack</h3>
+    <p>$16.00</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Tank Top">
+    <h3>Summer Tank Top</h3>
+    <p>$7.50</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Leggings">
+    <h3>Black Leggings</h3>
+    <p>$12.00</p>
+    <button>Add to Cart</button>
+  </div>
+
+  <div class="product">
+    <img src="pp.jpeg" alt="Scarf">
+    <h3>Patterned Scarf</h3>
+    <p>$5.00</p>
+    <button>Add to Cart</button>
+  </div>
+
+</div>
+  </div> 
+  <script>
+    function addToCart(button) {
+      const item = button.closest('.item');
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const name = item.dataset.name;
+      const price = parseFloat(item.dataset.price);
+      const img = item.dataset.img;
+      const existing = cart.find(i => i.name === name);
+
+      if (existing) {
+        existing.qty++;
+      } else {
+        cart.push({ name, price, img, qty: 1 });
+      }
+      localStorage.setItem('cart', JSON.stringify(cart));
+      updateCartCount();
+    }
+
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+      document.getElementById('cart-count').textContent = totalQty;
+    }
+
+    updateCartCount();
+  </script></body>
 </html>
