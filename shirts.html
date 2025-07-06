@@ -98,10 +98,6 @@
       font-weight: bold;
     }
 
-    button:hover {
-      background: #008b8b;
-    }
-
     .product button:hover {
       background: blue;
     }
@@ -270,30 +266,32 @@
 
 </div>
   </div> 
-  <script>
-    function addToCart(button) {
-      const item = button.closest('.item');
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      const name = item.dataset.name;
-      const price = parseFloat(item.dataset.price);
-      const img = item.dataset.img;
-      const existing = cart.find(i => i.name === name);
+ <script>
+  function addToCart(button) {
+    const name = button.dataset.name;
+    const price = parseFloat(button.dataset.price);
+    const img = button.dataset.img;
 
-      if (existing) {
-        existing.qty++;
-      } else {
-        cart.push({ name, price, img, qty: 1 });
-      }
-      localStorage.setItem('cart', JSON.stringify(cart));
-      updateCartCount();
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const existing = cart.find(item => item.name === name);
+
+    if (existing) {
+      existing.qty++;
+    } else {
+      cart.push({ name, price, img, qty: 1 });
     }
 
-    function updateCartCount() {
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
-      document.getElementById('cart-count').textContent = totalQty;
-    }
-
+    localStorage.setItem('cart', JSON.stringify(cart));
     updateCartCount();
-  </script></body>
+  }
+
+  function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+    document.getElementById('cart-count').textContent = totalQty;
+  }
+
+  updateCartCount();
+</script>
+ </body>
 </html>
