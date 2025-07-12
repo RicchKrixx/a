@@ -327,15 +327,17 @@ footer {
 </div>
   <footer>&copy; BixMAX 2025. All rights reserved.</footer>
   <!-- Script -->
- <script>
+<script>
   function updateCartCount() {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
     const count = cart.reduce((sum, item) => sum + item.qty, 0);
     document.getElementById("cartCount").textContent = count;
+
+    const cartIcon = document.querySelector(".cart-icon");
+    cartIcon.classList.toggle("has-items", count > 0);
   }
 
   function addToCart(name, img, price) {
-    // Add to localStorage cart
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
     const existing = cart.find(item => item.name === name);
     if (existing) {
@@ -345,17 +347,18 @@ footer {
     }
     localStorage.setItem("cart", JSON.stringify(cart));
     updateCartCount();
-if ("vibrate" in navigator) {
-  navigator.vibrate(100); // Vibrate for 100ms
-}
 
-    // Shake the cart icon
-    const cartIcon = document.querySelector(".cart-icon"); // use class, not ID
+    // Optional vibration
+    if ("vibrate" in navigator) {
+      navigator.vibrate(100);
+    }
+
+    // Shake cart icon
+    const cartIcon = document.querySelector(".cart-icon");
     cartIcon.classList.remove("shake"); // reset if already shaking
-    void cartIcon.offsetWidth; // trigger reflow to restart animation
+    void cartIcon.offsetWidth; // trigger reflow
     cartIcon.classList.add("shake");
 
-    // Remove class after animation ends
     cartIcon.addEventListener("animationend", () => {
       cartIcon.classList.remove("shake");
     }, { once: true });
@@ -363,16 +366,6 @@ if ("vibrate" in navigator) {
 
   // Run on page load
   updateCartCount();
-
-</script>
-<script>
-function updateCartCount() {
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];
-  const count = cart.reduce((sum, item) => sum + item.qty, 0);
-  document.getElementById("cartCount").textContent = count;
-  const cartIcon = document.querySelector(".cart-icon");
-  cartIcon.classList.toggle("has-items", count > 0);
-}
 </script>
 </body>
 </html>
