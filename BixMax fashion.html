@@ -151,6 +151,18 @@ footer {
         flex-direction: column;
         align-content: center;
 }
+@keyframes shake {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+  100% { transform: translateX(0); }
+}
+
+.shake {
+  animation: shake 0.5s;
+}
   </style>
 </head>
 <body>
@@ -319,5 +331,19 @@ footer {
     // Run on page load
     updateCartCount();
   </script>
+<script>
+  function addToCart(itemId) {
+    // Your normal add to cart logic here...
+
+    // Shake the cart icon
+    const cartIcon = document.getElementById("cart-icon");
+    cartIcon.classList.add("shake");
+
+    // Remove the class after animation ends so it can be reused
+    cartIcon.addEventListener("animationend", () => {
+      cartIcon.classList.remove("shake");
+    }, { once: true });
+  }
+</script>
 </body>
 </html>
