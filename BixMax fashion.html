@@ -335,6 +335,7 @@ footer {
   }
 
   function addToCart(name, img, price) {
+    // Add to localStorage cart
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
     const existing = cart.find(item => item.name === name);
     if (existing) {
@@ -345,22 +346,19 @@ footer {
     localStorage.setItem("cart", JSON.stringify(cart));
     updateCartCount();
 
-    // Shake animation
-    const cartIcon = document.getElementById("cartIcon");
-    cartIcon.classList.remove("shake");
-    void cartIcon.offsetWidth; // reflow
+    // Shake the cart icon
+    const cartIcon = document.querySelector(".cart-icon"); // use class, not ID
+    cartIcon.classList.remove("shake"); // reset if already shaking
+    void cartIcon.offsetWidth; // trigger reflow to restart animation
     cartIcon.classList.add("shake");
 
+    // Remove class after animation ends
     cartIcon.addEventListener("animationend", () => {
       cartIcon.classList.remove("shake");
     }, { once: true });
-
-    // Optional: Vibration
-    if ("vibrate" in navigator) {
-      navigator.vibrate(100);
-    }
   }
 
+  // Run on page load
   updateCartCount();
 </script>
 </body>
