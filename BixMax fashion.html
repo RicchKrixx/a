@@ -151,6 +151,7 @@ footer {
         flex-direction: column;
         align-content: center;
 }
+/* Shake animation */
 @keyframes shake {
   0% { transform: translateX(0); }
   20% { transform: translateX(-4px); }
@@ -161,22 +162,22 @@ footer {
 }
 
 .shake {
-  animation: shake 0.5s;
+  animation: shake 0.4s ease;
 }
-.cart-icon.has-items {
+
+/* Always glowing */
+.glow {
   animation: brightGlow 1.5s infinite ease-in-out;
   color: cyan;
   text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
 }
+
 @keyframes brightGlow {
-  0% {
+  0%, 100% {
     text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
   }
   50% {
     text-shadow: 0 0 15px #0ff, 0 0 25px #0ff, 0 0 35px #0ff;
-  }
-  100% {
-    text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
   }
 }
   </style>
@@ -186,7 +187,7 @@ footer {
             <h1>BixMAX</h1>
         <h3>All-in-One Online Shop</h3>
 
-<a href="cart.html" class="cart-icon" id="cartIcon">🛒<span id="cartCount">0</span></a>
+<a href="cart.html" class="cart-icon glow" id="cartIcon">🛒<span id="cartCount">0</span></a>
 
     </header>
 <div class="container">
@@ -331,9 +332,6 @@ footer {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
     const count = cart.reduce((sum, item) => sum + item.qty, 0);
     document.getElementById("cartCount").textContent = count;
-
-    const cartIcon = document.getElementById("cartIcon");
-    cartIcon.classList.toggle("has-items", count > 0);
   }
 
   function addToCart(name, img, price) {
@@ -347,20 +345,20 @@ footer {
     localStorage.setItem("cart", JSON.stringify(cart));
     updateCartCount();
 
-    // Optional vibration
-    if ("vibrate" in navigator) {
-      navigator.vibrate(100);
-    }
-
-    // Shake the cart icon
+    // Shake animation
     const cartIcon = document.getElementById("cartIcon");
-    cartIcon.classList.remove("shake"); // Reset
-    void cartIcon.offsetWidth; // Force reflow
+    cartIcon.classList.remove("shake");
+    void cartIcon.offsetWidth; // reflow
     cartIcon.classList.add("shake");
 
     cartIcon.addEventListener("animationend", () => {
       cartIcon.classList.remove("shake");
     }, { once: true });
+
+    // Optional: Vibration
+    if ("vibrate" in navigator) {
+      navigator.vibrate(100);
+    }
   }
 
   updateCartCount();
