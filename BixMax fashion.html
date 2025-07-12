@@ -311,39 +311,39 @@ footer {
 </div>
   <footer>&copy; BixMAX 2025. All rights reserved.</footer>
   <!-- Script -->
-  <script>
-    function updateCartCount() {
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      const count = cart.reduce((sum, item) => sum + item.qty, 0);
-      document.getElementById("cartCount").textContent = count;
-    }function addToCart(name, img, price) {
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      const existing = cart.find(item => item.name === name);
-      if (existing) {
-        existing.qty += 1;
-      } else {
-        cart.push({ name, image: img, price, qty: 1 });
-      }
-      localStorage.setItem("cart", JSON.stringify(cart));
-      updateCartCount();
-    }
+ <script>
+  function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const count = cart.reduce((sum, item) => sum + item.qty, 0);
+    document.getElementById("cartCount").textContent = count;
+  }
 
-    // Run on page load
+  function addToCart(name, img, price) {
+    // Add to localStorage cart
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const existing = cart.find(item => item.name === name);
+    if (existing) {
+      existing.qty += 1;
+    } else {
+      cart.push({ name, image: img, price, qty: 1 });
+    }
+    localStorage.setItem("cart", JSON.stringify(cart));
     updateCartCount();
-  </script>
-<script>
-  function addToCart() {
-    // Your normal add to cart logic here...
 
     // Shake the cart icon
-    const cartIcon = document.getElementById("cart-icon");
+    const cartIcon = document.querySelector(".cart-icon"); // use class, not ID
+    cartIcon.classList.remove("shake"); // reset if already shaking
+    void cartIcon.offsetWidth; // trigger reflow to restart animation
     cartIcon.classList.add("shake");
 
-    // Remove the class after animation ends so it can be reused
+    // Remove class after animation ends
     cartIcon.addEventListener("animationend", () => {
       cartIcon.classList.remove("shake");
     }, { once: true });
   }
+
+  // Run on page load
+  updateCartCount();
 </script>
 </body>
 </html>
