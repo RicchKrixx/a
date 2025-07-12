@@ -163,6 +163,14 @@ footer {
 .shake {
   animation: shake 0.5s;
 }
+.cart-icon.has-items {
+  box-shadow: 0 0 15px cyan;
+  animation: pulseCart 2s infinite;
+}
+@keyframes pulseCart {
+  0%, 100% { box-shadow: 0 0 10px cyan; }
+  50% { box-shadow: 0 0 20px white; }
+}
   </style>
 </head>
 <body>
@@ -347,6 +355,14 @@ if ("vibrate" in navigator) {
 
   // Run on page load
   updateCartCount();
+
+function updateCartCount() {
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const count = cart.reduce((sum, item) => sum + item.qty, 0);
+  document.getElementById("cartCount").textContent = count;
+  const cartIcon = document.querySelector(".cart-icon");
+  cartIcon.classList.toggle("has-items", count > 0);
+}
 </script>
 </body>
 </html>
