@@ -275,7 +275,16 @@ body {
   animation: backgroundShift 20s infinite linear;
   transition: background-color 1s ease;
 }  
-    
+   .flash-deal {
+  text-align: center;
+  background: darkcyan;
+  color: white;
+  padding: 8px 20px;
+  margin: 10px auto;
+  font-weight: bold;
+  border-radius: 12px;
+  box-shadow: 0 0 10px cyan;
+} 
     </style>
 
 </head>
@@ -307,6 +316,7 @@ body {
 	     
 	  
     </header>
+<p id="flashDeal" class="flash-deal">🔥 Get 20% off on all sneakers!</p>
     <div class="products" id="slider">
 	    
         <h2 align="center">Popular Products</h2>
@@ -354,6 +364,18 @@ function toggleMenu() {
     document.body.style.overflow = 'hidden'; // Disable scroll
   }
 }
+
+const flashMessages = [
+  "🔥 Get 20% off on all sneakers!",
+  "🎁 Free delivery on orders over $50!",
+  "🧢 New arrivals every week!",
+  "💳 Pay on delivery now available!",
+];
+let dealIndex = 0;
+setInterval(() => {
+  dealIndex = (dealIndex + 1) % flashMessages.length;
+  document.getElementById("flashDeal").textContent = flashMessages[dealIndex];
+}, 4000);
 </script>		
 </body>
 </html>
