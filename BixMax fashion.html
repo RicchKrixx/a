@@ -164,12 +164,12 @@ footer {
   animation: shake 0.5s;
 }
 .cart-icon.has-items {
-  box-shadow: 0 0 15px cyan;
-  animation: pulseCart 2s infinite;
+  animation: softPulse 2s infinite;
 }
-@keyframes pulseCart {
-  0%, 100% { box-shadow: 0 0 10px cyan; }
-  50% { box-shadow: 0 0 20px white; }
+
+@keyframes softPulse {
+  0%, 100% { text-shadow: 0 0 6px cyan; }
+  50% { text-shadow: 0 0 12px white; }
 }
   </style>
 </head>
