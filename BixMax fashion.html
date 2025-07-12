@@ -329,6 +329,9 @@ footer {
     }
     localStorage.setItem("cart", JSON.stringify(cart));
     updateCartCount();
+if ("vibrate" in navigator) {
+  navigator.vibrate(100); // Vibrate for 100ms
+}
 
     // Shake the cart icon
     const cartIcon = document.querySelector(".cart-icon"); // use class, not ID
