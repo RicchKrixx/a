@@ -164,12 +164,20 @@ footer {
   animation: shake 0.5s;
 }
 .cart-icon.has-items {
-  animation: softPulse 2s infinite;
+  animation: brightGlow 1.5s infinite ease-in-out;
+  color: cyan;
+  text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
 }
-
-@keyframes softPulse {
-  0%, 100% { text-shadow: 0 0 6px cyan; }
-  50% { text-shadow: 0 0 12px white; }
+@keyframes brightGlow {
+  0% {
+    text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
+  }
+  50% {
+    text-shadow: 0 0 15px #0ff, 0 0 25px #0ff, 0 0 35px #0ff;
+  }
+  100% {
+    text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
+  }
 }
   </style>
 </head>
