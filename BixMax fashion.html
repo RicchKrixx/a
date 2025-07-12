@@ -364,6 +364,8 @@ if ("vibrate" in navigator) {
   // Run on page load
   updateCartCount();
 
+</script>
+<script>
 function updateCartCount() {
   const cart = JSON.parse(localStorage.getItem("cart")) || [];
   const count = cart.reduce((sum, item) => sum + item.qty, 0);
