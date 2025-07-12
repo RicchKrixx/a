@@ -186,9 +186,8 @@ footer {
             <h1>BixMAX</h1>
         <h3>All-in-One Online Shop</h3>
 
-<div class="cart-icon" cartIcon>
-<a href="cart.html">🛒<span id="cartCount">0</span></a>
-</div>
+<a href="cart.html" class="cart-icon" id="cartIcon">🛒<span id="cartCount">0</span></a>
+
     </header>
 <div class="container">
   <!-- Fashion Sections -->
@@ -333,7 +332,7 @@ footer {
     const count = cart.reduce((sum, item) => sum + item.qty, 0);
     document.getElementById("cartCount").textContent = count;
 
-    const cartIcon = document.querySelector(".cart-icon");
+    const cartIcon = document.getElementById("cartIcon");
     cartIcon.classList.toggle("has-items", count > 0);
   }
 
@@ -353,10 +352,10 @@ footer {
       navigator.vibrate(100);
     }
 
-    // Shake cart icon
-    const cartIcon = document.querySelector(".cart-icon");
-    cartIcon.classList.remove("shake"); // reset if already shaking
-    void cartIcon.offsetWidth; // trigger reflow
+    // Shake the cart icon
+    const cartIcon = document.getElementById("cartIcon");
+    cartIcon.classList.remove("shake"); // Reset
+    void cartIcon.offsetWidth; // Force reflow
     cartIcon.classList.add("shake");
 
     cartIcon.addEventListener("animationend", () => {
@@ -364,7 +363,6 @@ footer {
     }, { once: true });
   }
 
-  // Run on page load
   updateCartCount();
 </script>
 </body>
