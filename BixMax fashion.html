@@ -19,7 +19,7 @@ border-box;
 }
     .cart-icon {
       position: fixed;
-      font-size: 30px;
+      font-size: 350px;
       text-decoration: none;
       color: white;
       margin-bottom: 30px;
@@ -144,7 +144,9 @@ footer {
 </head>
 <body>
 <div class="container">
-  
+
+   <a href="cart.html" class="cart-icon">🛒<span id="cartCount">0</span></a>
+ 
   <!-- Fashion Sections -->
     <div class="category">
       <div class="cat-header">
@@ -279,9 +281,7 @@ footer {
       </div>
     </div>
 </div>
-  <a href="cart.html" class="cart-icon">🛒<span id="cartCount">0</span></a>
-
-        <footer>&copy; BixMAX 2025. All rights reserved.</footer>
+  <footer>&copy; BixMAX 2025. All rights reserved.</footer>
   <!-- Script -->
   <script>
     function updateCartCount() {
