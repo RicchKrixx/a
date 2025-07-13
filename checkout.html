@@ -4,7 +4,107 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Grand Total</title>
-  <style>
+  <style id="style1">
+    :root {
+      --glass: #ffffff18;
+      --blur: 25px;
+      --blue: #1976d2;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: lightblue;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .card {
+      width: 100%;
+      max-width: 620px;
+      background: var(--glass);
+      border-radius: 20px;
+      padding: 28px;
+      border: 5px solid rgba(255, 255, 255, .1);
+      backdrop-filter: blur(var(--blur));
+      box-shadow: 0 0 30px rgba(0, 0, 0, .2);
+      color: #fff;
+    }
+    h1, h2 {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+    label {
+      display: block;
+      margin: 14px 0 6px;
+      font-weight: bold;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      background: rgba(255, 255, 255, .15);
+      color: #fff;
+      font-size: 16px;
+    }
+    input::placeholder, textarea::placeholder {
+      color: #eee;
+    }
+    .summary {
+      background: rgba(0, 0, 0, .25);
+      padding: 20px;
+      border-radius: 16px;
+      border: 2px solid rgba(255, 255, 255, .15);
+      margin-bottom: 24px;
+    }
+    .summary p {
+      margin: 6px 0;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    button {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 14px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      background: var(--blue);
+      color: #fff;
+    }
+    #loader {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, .6);
+      z-index: 1000;
+    }
+    .spin {
+      width: 60px;
+      height: 60px;
+      border: 7px solid #eee;
+      border-top: 7px solid var(--blue);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+
+
+
+  <style id="style2" disabled>
     body {
       background: #101820;
       color: #00ffff;
@@ -104,6 +204,9 @@
   </style>
 </head>
 <body>
+ <button onclick="switchStyle()" style="position:fixed;top:15px;right:15px;padding:10px;border:none;border-radius:8px;background:darkcyan;color:white;">
+    🎨 Switch Style
+  </button>
 <!--
 <div class="total-box">
     <h1>CHECKOUT</h1>
@@ -269,5 +372,18 @@
     const total = parseFloat(saved).toFixed(2);
     document.getElementById("grandTotal").textContent = "GH¢" + total;
   </script>
+<script>
+    function switchStyle() {
+      const style1 = document.getElementById("style1");
+      const style2 = document.getElementById("style2");
+
+      if (style1.disabled) {
+        style1.disabled = false;
+        style2.disabled = true;
+      } else {
+        style1.disabled = true;
+        style2.disabled = false;
+      }
+    }
 </body>
 </html>
