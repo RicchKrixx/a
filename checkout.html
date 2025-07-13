@@ -16,6 +16,12 @@
       margin: 0;
       text-align: center;
     }
+    .total-box {
+      background: #111928;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 0 15px cyan;
+    }
     .card {
       background: #111928;
       padding: 30px;
@@ -101,10 +107,11 @@
   </style>
 </head>
 <body>
-<div class="card">
+<div class="total-box">
     <h1>CHECKOUT</h1>
     <span id="grandTotal">GH¢0.00</span>
- 
+ </div>
+<div class="card">
     <div id="custInfo">
       <label>Full Name</label>
       <input id="custName" placeholder="John Doe" required>
