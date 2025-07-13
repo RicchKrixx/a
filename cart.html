@@ -183,11 +183,11 @@
           <img src="${item.image}" alt="${item.name}">
           <div class="cart-info">
             <h3>${item.name}</h3>
-            <p>Price: GH¢$${item.price.toFixed(2)}</p>
+            <p>Price: GH¢${item.price.toFixed(2)}</p>
             <div class="qty">
               <button onclick="changeQty(${i}, -1)">−</button><span>${item.qty}</span>
               <button onclick="changeQty(${i}, 1)">+</button>
-              <button class="remove-btn" onclick="removeItem(${i})">🗑️</button>
+              <button class="remove-btn" onclick="removeItem(${i})">Remove🗑️</button>
             </div>
           </div>
         `;
