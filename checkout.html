@@ -232,8 +232,6 @@
       // Pay on Delivery
       setTimeout(() => {
         alert("Order placed successfully!");
-        localStorage.removeItem("cart");
-        showLoader(false);
         window.location.href = "thankyou.html?orderId=" + orderId;
       }, 1500);
     }
