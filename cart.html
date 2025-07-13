@@ -182,7 +182,6 @@ align-items: center;
           <div class="cart-info">
             <h3>${item.name}</h3>
             <p>Price: GH¢${item.price.toFixed(2)}</p>
-<div id="cartVarries"></div>
             <div class="qty">
               <button class="btn" onclick="changeQty(${i}, -1)">−</button><span>${item.qty}</span>
               <button class="btn" onclick="changeQty(${i}, 1)">+</button>
@@ -234,30 +233,6 @@ align-items: center;
 
     updateCartDisplay(); // Run on page load
   </script>
-<script>
-function displayCart() {
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
-  const cartContainer = document.getElementById("cartVarries");
-  cartContainer.innerHTML = "";
 
-  cart.forEach((item, index) => {
-    cartContainer.innerHTML += `
-        <label>Color:
-          <select onchange="updateOption(${index}, 'color', this.value)">
-            <option value="Red" ${item.color === 'Red' ? 'selected' : ''}>Red</option>
-            <option value="Blue" ${item.color === 'Blue' ? 'selected' : ''}>Blue</option>
-            <option value="Green" ${item.color === 'Green' ? 'selected' : ''}>Green</option>
-          </select>
-        </label>
-        
-        <label>Size:
-          <select onchange="updateOption(${index}, 'size', this.value)">
-            <option value="S" ${item.size === 'S' ? 'selected' : ''}>S</option>
-            <option value="M" ${item.size === 'M' ? 'selected' : ''}>M</option>
-            <option value="L" ${item.size === 'L' ? 'selected' : ''}>L</option>
-          </select>
-        </label>
-       
-</script>
 </body>
 </html>
