@@ -9,9 +9,6 @@
       background: #101820;
       color: #00ffff;
       font-family: Arial, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       height: auto;
       margin: 0;
       text-align: center;
@@ -252,7 +249,7 @@
         const lat = pos.coords.latitude.toFixed(6);
         const lng = pos.coords.longitude.toFixed(6);
         const link = `https://www.google.com/maps?q=${lat},${lng}`;
-        const text = `📍My Current Location:\nLatitude: ${lat}, Longitude: ${lng}\n(Google Maps: ${link})`;
+        const text = `\n(Google Maps: ${link})`;
         document.getElementById("custAddr").value = text;
       },
       (err) => {
