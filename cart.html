@@ -157,6 +157,38 @@
         gap: 12px;
       }
     }
+.image-slider {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin-right: 20px;
+}
+
+.slider-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.slider-controls {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+}
+
+.slider-controls button {
+  font-size: 12px;
+  padding: 2px 6px;
+  border: none;
+  border-radius: 6px;
+  background: #1976d2;
+  color: white;
+  cursor: pointer;
+}
   </style>
 </head>
 <body>
@@ -195,7 +227,13 @@
         const itemEl = document.createElement('div');
         itemEl.className = 'cart-item';
         itemEl.innerHTML = `
-          <img src="${item.image}" alt="${item.name}">
+          <div class="image-slider" id="slider-${i}">
+  <img src="${item.images[0]}" id="slide-img-${i}" class="slider-img" alt="${item.name}">
+  <div class="slider-controls">
+    <button onclick="prevImage(${i})">⟨</button>
+    <button onclick="nextImage(${i})">⟩</button>
+  </div>
+</div>
           <div class="cart-info">
             <h3>${item.name}</h3>
             <p>Price: GH¢${item.price.toFixed(2)}</p>
@@ -271,7 +309,19 @@
       }
       window.location.href = "checkout.html";
     }
+let currentIndexes = cart.map(() => 0); // one index per item
 
+function nextImage(index) {
+  if (!cart[index].images) return;
+  currentIndexes[index] = (currentIndexes[index] + 1) % cart[index].images.length;
+  document.getElementById(`slide-img-${index}`).src = cart[index].images[currentIndexes[index]];
+}
+
+function prevImage(index) {
+  if (!cart[index].images) return;
+  currentIndexes[index] = (currentIndexes[index] - 1 + cart[index].images.length) % cart[index].images.length;
+  document.getElementById(`slide-img-${index}`).src = cart[index].images[currentIndexes[index]];
+}
     updateCartDisplay(); // Run on page load
   </script>
 
