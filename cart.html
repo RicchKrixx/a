@@ -212,6 +212,19 @@
 
     renderCart();
   </script>
+<script>
+function calculateTotal(cart) {
+  let total = 0;
+  cart.forEach(item => {
+    total += item.price * item.qty;
+  });
 
+  // Save grand total for checkout
+  localStorage.setItem("grandTotal", total.toFixed(2));
+
+  // Update cart total display
+  document.getElementById("cartTotal").textContent = "GH¢" + total.toFixed(2);
+}
+</script>
 </body>
 </html>
