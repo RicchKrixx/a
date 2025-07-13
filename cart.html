@@ -52,11 +52,37 @@
       flex-wrap: wrap;
     }
 
-    .cart-item img {
+    .image-slider {
+      position: relative;
       width: 80px;
       height: 80px;
-      border-radius: 120px;
       margin-right: 20px;
+    }
+
+    .slider-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .slider-controls {
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 5px;
+    }
+
+    .slider-controls button {
+      font-size: 12px;
+      padding: 2px 6px;
+      border: none;
+      border-radius: 6px;
+      background: #1976d2;
+      color: white;
+      cursor: pointer;
     }
 
     .cart-info {
@@ -146,10 +172,14 @@
         align-items: flex-start;
       }
 
-      .cart-item img {
+      .image-slider {
         width: 100%;
         height: auto;
         margin-bottom: 10px;
+      }
+
+      .slider-img {
+        border-radius: 16px;
       }
 
       .actions {
@@ -157,38 +187,6 @@
         gap: 12px;
       }
     }
-.image-slider {
-  position: relative;
-  width: 80px;
-  height: 80px;
-  margin-right: 20px;
-}
-
-.slider-img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.slider-controls {
-  position: absolute;
-  bottom: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 5px;
-}
-
-.slider-controls button {
-  font-size: 12px;
-  padding: 2px 6px;
-  border: none;
-  border-radius: 6px;
-  background: #1976d2;
-  color: white;
-  cursor: pointer;
-}
   </style>
 </head>
 <body>
@@ -213,27 +211,38 @@
     const cartCount = document.getElementById('cartCount');
 
     let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    let currentIndexes = [];
 
     function updateCartDisplay() {
       cartContainer.innerHTML = '';
       let total = 0;
       let itemCount = 0;
+      currentIndexes = [];
 
       cart.forEach((item, i) => {
-        // Set default values if missing
         item.color = item.color || "Red";
         item.size = item.size || "M";
+
+        // Fix: if item has no images array, convert the old image to images[]
+        if (!item.images && item.image) {
+          item.images = [item.image];
+        }
+
+        // Set index default for each item
+        currentIndexes.push(0);
 
         const itemEl = document.createElement('div');
         itemEl.className = 'cart-item';
         itemEl.innerHTML = `
           <div class="image-slider" id="slider-${i}">
-  <img src="${item.images[0]}" id="slide-img-${i}" class="slider-img" alt="${item.name}">
-  <div class="slider-controls">
-    <button onclick="prevImage(${i})">⟨</button>
-    <button onclick="nextImage(${i})">⟩</button>
-  </div>
-</div>
+            <img src="${item.images[0]}" id="slide-img-${i}" class="slider-img" alt="${item.name}">
+            ${item.images.length > 1 ? `
+              <div class="slider-controls">
+                <button onclick="prevImage(${i})">⟨</button>
+                <button onclick="nextImage(${i})">⟩</button>
+              </div>` : ``}
+          </div>
+
           <div class="cart-info">
             <h3>${item.name}</h3>
             <p>Price: GH¢${item.price.toFixed(2)}</p>
@@ -309,19 +318,19 @@
       }
       window.location.href = "checkout.html";
     }
-let currentIndexes = cart.map(() => 0); // one index per item
 
-function nextImage(index) {
-  if (!cart[index].images) return;
-  currentIndexes[index] = (currentIndexes[index] + 1) % cart[index].images.length;
-  document.getElementById(`slide-img-${index}`).src = cart[index].images[currentIndexes[index]];
-}
+    function nextImage(index) {
+      const images = cart[index].images;
+      currentIndexes[index] = (currentIndexes[index] + 1) % images.length;
+      document.getElementById(`slide-img-${index}`).src = images[currentIndexes[index]];
+    }
 
-function prevImage(index) {
-  if (!cart[index].images) return;
-  currentIndexes[index] = (currentIndexes[index] - 1 + cart[index].images.length) % cart[index].images.length;
-  document.getElementById(`slide-img-${index}`).src = cart[index].images[currentIndexes[index]];
-}
+    function prevImage(index) {
+      const images = cart[index].images;
+      currentIndexes[index] = (currentIndexes[index] - 1 + images.length) % images.length;
+      document.getElementById(`slide-img-${index}`).src = images[currentIndexes[index]];
+    }
+
     updateCartDisplay(); // Run on page load
   </script>
 
