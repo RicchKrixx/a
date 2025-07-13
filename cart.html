@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -11,201 +10,190 @@
       background: #e0f7fa;
       padding: 20px;
       color: #333;
-    }
+    }header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
 
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 30px;
-    }
+header h1 {
+  color: #1976d2;
+}
 
-    header h1 {
-      color: #1976d2;
-    }
+.cart-badge {
+  position: relative;
+  font-size: 24px;
+  cursor: pointer;
+}
 
-    .cart-badge {
-      position: relative;
-      font-size: 24px;
-      cursor: pointer;
-    }
+.cart-badge span {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: red;
+  color: white;
+  font-size: 12px;
+  border-radius: 50%;
+  padding: 3px 6px;
+}
 
-    .cart-badge span {
-      position: absolute;
-      top: -10px;
-      right: -10px;
-      background: red;
-      color: white;
-      font-size: 12px;
-      border-radius: 50%;
-      padding: 3px 6px;
-    }
+.cart-item {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 16px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  margin-bottom: 15px;
+  padding: 15px;
+  flex-wrap: wrap;
+}
 
-    .cart-item {
-      display: flex;
-      align-items: center;
-      background: rgba(255, 255, 255, 0.8);
-      border-radius: 16px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      margin-bottom: 15px;
-      padding: 15px;
-      flex-wrap: wrap;
-    }
+.image-slider {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin-right: 20px;
+}
 
-    .image-slider {
-      position: relative;
-      width: 80px;
-      height: 80px;
-      margin-right: 20px;
-    }
+.slider-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
 
-    .slider-img {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      object-fit: cover;
-    }
+.slider-controls {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+}
 
-    .slider-controls {
-      position: absolute;
-      bottom: -20px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 5px;
-    }
+.slider-controls button {
+  font-size: 12px;
+  padding: 2px 6px;
+  border: none;
+  border-radius: 6px;
+  background: #1976d2;
+  color: white;
+  cursor: pointer;
+}
 
-    .slider-controls button {
-      font-size: 12px;
-      padding: 2px 6px;
-      border: none;
-      border-radius: 6px;
-      background: #1976d2;
-      color: white;
-      cursor: pointer;
-    }
+.cart-info {
+  flex: 1;
+}
 
-    .cart-info {
-      flex: 1;
-    }
+.cart-info h3 {
+  margin: 0 0 6px;
+}
 
-    .cart-info h3 {
-      margin: 0 0 6px;
-    }
+.cart-info p {
+  margin: 4px 0;
+  font-size: 16px;
+}
 
-    .cart-info p {
-      margin: 4px 0;
-      font-size: 16px;
-    }
+.variation-info {
+  margin-top: 6px;
+  font-size: 14px;
+  color: cyan;
+  font-weight: bold;
+  text-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
+}
 
-    .qty {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
-      align-items: center;
-    }
+.qty {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  align-items: center;
+}
 
-    .qty button {
-      padding: 6px 12px;
-      font-weight: bold;
-      font-size: 16px;
-      color: white;
-      border: none;
-      background: #1976d2;
-      cursor: pointer;
-      border-radius: 8px;
-    }
+.qty button {
+  padding: 6px 12px;
+  font-weight: bold;
+  font-size: 16px;
+  color: white;
+  border: none;
+  background: #1976d2;
+  cursor: pointer;
+  border-radius: 8px;
+}
 
-    .remove-btn {
-      font-size: 16px;
-      background: none;
-      border: none;
-      color: red;
-      cursor: pointer;
-      margin-left: 10px;
-    }
+.remove-btn {
+  font-size: 16px;
+  background: none;
+  border: none;
+  color: red;
+  cursor: pointer;
+  margin-left: 10px;
+}
 
-    .variation-select {
-      margin: 5px 0;
-      padding: 6px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      background: rgba(255, 255, 255, 0.9);
-      font-weight: bold;
-    }
+.total {
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 20px;
+}
 
-    .total {
-      font-size: 20px;
-      font-weight: bold;
-      margin-top: 20px;
-    }
+.actions {
+  margin-top: 25px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
 
-    .actions {
-      margin-top: 25px;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-    }
+.actions button {
+  padding: 12px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  min-width: 120px;
+}
 
-    .actions button {
-      padding: 12px 20px;
-      font-size: 16px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: bold;
-      min-width: 120px;
-    }
+.checkout-btn {
+  background: #1976d2;
+  color: white;
+}
 
-    .checkout-btn {
-      background: #1976d2;
-      color: white;
-    }
+.empty-btn {
+  background: #ccc;
+}
 
-    .empty-btn {
-      background: #ccc;
-    }
+@media (max-width: 600px) {
+  .cart-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 
-    @media (max-width: 600px) {
-      .cart-item {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+  .image-slider {
+    width: 100%;
+    height: auto;
+    margin-bottom: 10px;
+  }
 
-      .image-slider {
-        width: 100%;
-        height: auto;
-        margin-bottom: 10px;
-      }
+  .slider-img {
+    border-radius: 16px;
+  }
 
-      .slider-img {
-        border-radius: 16px;
-      }
+  .actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
 
-      .actions {
-        flex-direction: column;
-        gap: 12px;
-      }
-    }
   </style>
 </head>
 <body>
-
   <header>
     <h1>My Cart</h1>
     <div class="cart-badge">🛒 <span id="cartCount">0</span></div>
-  </header>
-
-  <div id="cartContainer"></div>
-
-  <div class="total">Total: GH¢<span id="grandTotal">0.00</span></div>
-
-  <div class="actions">
+  </header>  <div id="cartContainer"></div>  <div class="total">Total: GH¢<span id="grandTotal">0.00</span></div>  <div class="actions">
     <button class="empty-btn" onclick="clearCart()">Empty Cart</button>
     <button class="checkout-btn" onclick="goToCheckout()">Checkout</button>
-  </div>
-
-  <script>
+  </div>  <script>
     const cartContainer = document.getElementById('cartContainer');
     const grandTotalEl = document.getElementById('grandTotal');
     const cartCount = document.getElementById('cartCount');
@@ -220,51 +208,28 @@
       currentIndexes = [];
 
       cart.forEach((item, i) => {
-        item.color = item.color || "Red";
-        item.size = item.size || "M";
-
-        // Fix: if item has no images array, convert the old image to images[]
-        if (!item.images && item.image) {
-          item.images = [item.image];
-        }
-
-        // Set index default for each item
+        if (!item.color) item.color = 'Red';
+        if (!item.size) item.size = 'M';
+        if (!item.images && item.image) item.images = [item.image];
         currentIndexes.push(0);
 
         const itemEl = document.createElement('div');
         itemEl.className = 'cart-item';
         itemEl.innerHTML = `
-          <div class="image-slider" id="slider-${i}">
+          <div class="image-slider">
             <img src="${item.images[0]}" id="slide-img-${i}" class="slider-img" alt="${item.name}">
             ${item.images.length > 1 ? `
               <div class="slider-controls">
                 <button onclick="prevImage(${i})">⟨</button>
                 <button onclick="nextImage(${i})">⟩</button>
-              </div>` : ``}
+              </div>` : ''}
           </div>
 
           <div class="cart-info">
             <h3>${item.name}</h3>
             <p>Price: GH¢${item.price.toFixed(2)}</p>
-
-            <label>Color:
-              <select class="variation-select" onchange="updateVariation(${i}, 'color', this.value)">
-                <option value="Red" ${item.color === "Red" ? "selected" : ""}>Red</option>
-                <option value="Blue" ${item.color === "Blue" ? "selected" : ""}>Blue</option>
-                <option value="Green" ${item.color === "Green" ? "selected" : ""}>Green</option>
-                <option value="Black" ${item.color === "Black" ? "selected" : ""}>Black</option>
-              </select>
-            </label><br>
-
-            <label>Size:
-              <select class="variation-select" onchange="updateVariation(${i}, 'size', this.value)">
-                <option value="S" ${item.size === "S" ? "selected" : ""}>S</option>
-                <option value="M" ${item.size === "M" ? "selected" : ""}>M</option>
-                <option value="L" ${item.size === "L" ? "selected" : ""}>L</option>
-                <option value="XL" ${item.size === "XL" ? "selected" : ""}>XL</option>
-              </select>
-            </label>
-
+            <p class="variation-info">Color: ${item.color}</p>
+            <p class="variation-info">Size: ${item.size}</p>
             <div class="qty">
               <button onclick="changeQty(${i}, -1)">−</button>
               <span>${item.qty}</span>
@@ -280,13 +245,7 @@
 
       grandTotalEl.textContent = total.toFixed(2);
       cartCount.textContent = itemCount;
-
       localStorage.setItem('grandTotal', total.toFixed(2));
-      localStorage.setItem('cart', JSON.stringify(cart));
-    }
-
-    function updateVariation(index, key, value) {
-      cart[index][key] = value;
       localStorage.setItem('cart', JSON.stringify(cart));
     }
 
@@ -331,8 +290,6 @@
       document.getElementById(`slide-img-${index}`).src = images[currentIndexes[index]];
     }
 
-    updateCartDisplay(); // Run on page load
-  </script>
-
-</body>
+    updateCartDisplay();
+  </script></body>
 </html>
