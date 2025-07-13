@@ -218,5 +218,83 @@
   // ✅ Initial render
   renderCart();
 </script>
+
+
+
+
+  <script>
+    const cartContainer = document.getElementById('cartContainer');
+    const grandTotalEl = document.getElementById('grandTotal');
+    const cartCount = document.getElementById('cartCount');
+
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+    function updateCartDisplay() {
+      cartContainer.innerHTML = '';
+      let total = 0;
+      let itemCount = 0;
+
+      cart.forEach((item, i) => {
+        const itemEl = document.createElement('div');
+        itemEl.className = 'cart-item';
+        itemEl.innerHTML = `
+          <img src="${item.image}" alt="${item.name}">
+          <div class="cart-info">
+            <h3>${item.name}</h3>
+            <p>Price: GH¢${item.price.toFixed(2)}</p>
+            <div class="qty">
+              <button class="btn" onclick="changeQty(${i}, -1)">−</button><span>${item.qty}</span>
+              <button class="btn" onclick="changeQty(${i}, 1)">+</button>
+              <button class="remove-btn" onclick="removeItem(${i})">Remove🗑️</button>
+            </div>
+
+          </div>
+        `;
+        cartContainer.appendChild(itemEl);
+        total += item.qty * item.price;
+        itemCount += item.qty;
+      });
+
+      grandTotalEl.textContent = total.toFixed(2);
+      cartCount.textContent = itemCount;
+
+      localStorage.setItem('grandTotal', total.toFixed(2));
+      localStorage.setItem('cart', JSON.stringify(cart));
+    }
+
+    function changeQty(index, delta) {
+      cart[index].qty += delta;
+      if (cart[index].qty <= 0) {
+        removeItem(index);
+      } else {
+        updateCartDisplay();
+      }
+    }
+
+    function removeItem(index) {
+      cart.splice(index, 1);
+      updateCartDisplay();
+    }
+
+    function clearCart() {
+      if (confirm("Clear all items from cart?")) {
+        cart = [];
+        updateCartDisplay();
+      }
+    }
+
+    function goToCheckout() {
+      if (cart.length === 0) {
+        alert("🛒 Cart is empty!");
+        return;
+      }
+      window.location.href = "checkout.html";
+    }
+
+    updateCartDisplay(); // Run on page load
+  </script>
+
+</body>
+</html>
 </body>
 </html>
