@@ -378,9 +378,30 @@ footer {
       <button onclick="confirmAddToCart()">Confirm</button>
     </div>
   </div>
+  <div class="modal" id="variationModal">
+    <div class="modal-content">
+      <h3>Select Variations</h3>
+      <label>Color:
+        <select id="selectColo">
+          <option value="white">Red</option>
+          <option value="Blue">Blue</option>
+          <option value="Black">Black</option>
+        </select>
+      </label>
+      <label>Size:
+        <select id="selectSiz">
+          <option value="38">38</option>
+          <option value="39">39</option>
+          <option value="40">40</option>
+          <option value="41">41</option>
+        </select>
+      </label>
+      <button onclick="confirmAddToCart()">Confirm</button>
+    </div>
+  </div>
 
   <script>
-    const variationItems = ['Nike Air', 'Summer Dress', 'Evening Gown'];
+    const variationItems = [ 'Summer Dress', 'Evening Gown'];
     let pendingItem = null;
 
     function updateCartCount() {
