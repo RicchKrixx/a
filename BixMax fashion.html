@@ -357,108 +357,116 @@ footer {
 </div>
   <footer>&copy; BixMAX 2025. All rights reserved.</footer>
   <!-- Script -->
-  <div class="modal" id="variationModal">
-    <div class="modal-content">
-      <h3>Select Variations</h3>
-      <label>Color:
-        <select id="selectColor">
-          <option value="Red">Red</option>
-          <option value="Blue">Blue</option>
-          <option value="Black">Black</option>
-        </select>
-      </label>
-      <label>Size:
-        <select id="selectSize">
-          <option value="S">S</option>
-          <option value="M">M</option>
-          <option value="L">L</option>
-          <option value="XL">XL</option>
-        </select>
-      </label>
-      <button onclick="confirmAddToCart()">Confirm</button>
-    </div>
-  </div>
-  <div class="modal" id="variationModal">
-    <div class="modal-content">
-      <h3>Select Variations</h3>
-      <label>Color:
-        <select id="selectColo">
-          <option value="white">Red</option>
-          <option value="Blue">Blue</option>
-          <option value="Black">Black</option>
-        </select>
-      </label>
-      <label>Size:
-        <select id="selectSiz">
-          <option value="38">38</option>
-          <option value="39">39</option>
-          <option value="40">40</option>
-          <option value="41">41</option>
-        </select>
-      </label>
-      <button onclick="confirmAddToCart()">Confirm</button>
-    </div>
-  </div>
+<!-- 🔘 Variation Popup HTML (injects dynamically by script) -->
 
-  <script>
-    const variationItems = [ 'Summer Dress', 'Evening Gown'];
-    let pendingItem = null;
+<script>
+  // 👇 Only these items require variation popup
+  const variationItems = {
+    "Nike Air": { color: ["Red", "White"], size: ["42", "43", "44"] },
+    "Summer Dress": { color: ["Blue", "Yellow"], size: ["S", "M", "L"] },
+    "Ray-Ban": { color: ["Black", "Gold"] }
+  };
 
-    function updateCartCount() {
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      const count = cart.reduce((sum, item) => sum + item.qty, 0);
-      document.getElementById("cartCount").textContent = count;
+  const cartCountEl = document.getElementById("cartCount");
+
+  function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const count = cart.reduce((sum, item) => sum + item.qty, 0);
+    cartCountEl.textContent = count;
+  }
+
+  function addToCart(name, img, price) {
+    if (variationItems[name]) {
+      showVariationPopup(name, img, price, variationItems[name]);
+    } else {
+      saveToCart({ name, image: img, price, qty: 1 });
     }
+  }
 
-    function addToCart(name, img, price) {
-      if (variationItems.includes(name)) {
-        pendingItem = { name, img, price };
-        document.getElementById("variationModal").style.display = "flex";
-        return;
-      }
-      pushToCart({ name, image: img, price, qty: 1 });
+  function saveToCart(item) {
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const existing = cart.find(i =>
+      i.name === item.name &&
+      (!i.color || i.color === item.color) &&
+      (!i.size || i.size === item.size)
+    );
+    if (existing) {
+      existing.qty += 1;
+    } else {
+      cart.push(item);
     }
-
-    function confirmAddToCart() {
-      const color = document.getElementById("selectColor").value;
-      const size = document.getElementById("selectSize").value;
-      const item = {
-        name: pendingItem.name,
-        image: pendingItem.img,
-        price: pendingItem.price,
-        color,
-        size,
-        qty: 1
-      };
-      pushToCart(item);
-      document.getElementById("variationModal").style.display = "none";
-    }
-
-    function pushToCart(item) {
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      const existing = cart.find(i => i.name === item.name && i.color === item.color && i.size === item.size);
-      if (existing) {
-        existing.qty += 1;
-      } else {
-        cart.push(item);
-      }
-      localStorage.setItem("cart", JSON.stringify(cart));
-      updateCartCount();
-
-      const cartIcon = document.querySelector(".cart-icon");
-      cartIcon.classList.remove("shake");
-      void cartIcon.offsetWidth;
-      cartIcon.classList.add("shake");
-      cartIcon.addEventListener("animationend", () => cartIcon.classList.remove("shake"), { once: true });
-    }
-
-    window.onclick = e => {
-      if (e.target === document.getElementById("variationModal")) {
-        document.getElementById("variationModal").style.display = "none";
-      }
-    }
-
+    localStorage.setItem("cart", JSON.stringify(cart));
     updateCartCount();
-  </script>
+    animateCartIcon();
+  }
+
+  function animateCartIcon() {
+    const cartIcon = document.querySelector(".cart-icon");
+    cartIcon.classList.remove("shake");
+    void cartIcon.offsetWidth;
+    cartIcon.classList.add("shake");
+    cartIcon.addEventListener("animationend", () => {
+      cartIcon.classList.remove("shake");
+    }, { once: true });
+  }
+
+  function showVariationPopup(name, img, price, variations) {
+    const overlay = document.createElement("div");
+    overlay.style.cssText = `
+      position:fixed;top:0;left:0;width:100%;height:100%;
+      background:rgba(0,0,0,0.6);display:flex;justify-content:center;align-items:center;z-index:9999;
+    `;
+
+    const popup = document.createElement("div");
+    popup.style.cssText = `
+      background:white;padding:20px;border-radius:14px;width:90%;max-width:340px;text-align:center;
+      box-shadow:0 0 20px cyan;
+    `;
+
+    let optionsHTML = "";
+    if (variations.color) {
+      optionsHTML += `
+        <label style="font-weight:bold;">Color:
+          <select id="popupColor">
+            ${variations.color.map(c => `<option value="${c}">${c}</option>`).join("")}
+          </select>
+        </label><br><br>
+      `;
+    }
+    if (variations.size) {
+      optionsHTML += `
+        <label style="font-weight:bold;">Size:
+          <select id="popupSize">
+            ${variations.size.map(s => `<option value="${s}">${s}</option>`).join("")}
+          </select>
+        </label><br><br>
+      `;
+    }
+
+    popup.innerHTML = `
+      <h3>Select Options</h3>
+      <p style="margin-bottom:10px;font-weight:bold;">${name}</p>
+      ${optionsHTML}
+      <button onclick="confirmVariation('${name}','${img}',${price})" style="padding:10px 20px;background:#1976d2;color:white;border:none;border-radius:8px;">Confirm</button>
+      <br><br>
+      <button onclick="this.closest('div').parentNode.remove()" style="background:none;color:red;border:none;">Cancel</button>
+    `;
+
+    overlay.appendChild(popup);
+    document.body.appendChild(overlay);
+  }
+
+  function confirmVariation(name, img, price) {
+    const color = document.getElementById("popupColor")?.value;
+    const size = document.getElementById("popupSize")?.value;
+    const item = { name, image: img, price, qty: 1 };
+    if (color) item.color = color;
+    if (size) item.size = size;
+    saveToCart(item);
+    document.querySelector("body > div:last-child").remove(); // remove popup
+  }
+
+  updateCartCount(); // on load
+</script>
 </body>
 </html>
