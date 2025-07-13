@@ -11,7 +11,6 @@
       background: #e0f7fa;
       padding: 20px;
       color: #333;
-align-items: center !important;
     }
 
     header {
@@ -44,15 +43,20 @@ align-items: center !important;
 
     .cart-item {
       display: flex;
-      align-items: center !important;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 16px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       margin-bottom: 15px;
       padding: 15px;
+      flex-wrap: wrap;
     }
 
     .cart-item img {
       width: 80px;
       height: 80px;
       border-radius: 120px;
+      margin-right: 20px;
     }
 
     .cart-info {
@@ -61,40 +65,47 @@ align-items: center !important;
 
     .cart-info h3 {
       margin: 0 0 6px;
-align-items: center;
     }
 
     .cart-info p {
-      margin: 0;
+      margin: 4px 0;
       font-size: 16px;
-align-items: center;
     }
 
     .qty {
       display: flex;
-      align-content: right;
       gap: 10px;
-      margin-top: 8px;
+      margin-top: 10px;
+      align-items: center;
     }
 
-    .qty btn {
-      padding: 5px 10px;
+    .qty button {
+      padding: 6px 12px;
       font-weight: bold;
       font-size: 16px;
       color: white;
       border: none;
       background: #1976d2;
       cursor: pointer;
-      border-radius: 40px;
+      border-radius: 8px;
     }
 
     .remove-btn {
-      font-size: 18px;
+      font-size: 16px;
       background: none;
       border: none;
       color: red;
       cursor: pointer;
-      margin-right: 10px !important;
+      margin-left: 10px;
+    }
+
+    .variation-select {
+      margin: 5px 0;
+      padding: 6px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      background: rgba(255, 255, 255, 0.9);
+      font-weight: bold;
     }
 
     .total {
@@ -107,15 +118,17 @@ align-items: center;
       margin-top: 25px;
       display: flex;
       justify-content: space-between;
+      flex-wrap: wrap;
     }
 
     .actions button {
       padding: 12px 20px;
       font-size: 16px;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
       font-weight: bold;
+      min-width: 120px;
     }
 
     .checkout-btn {
@@ -134,7 +147,7 @@ align-items: center;
       }
 
       .cart-item img {
-        width: 90%;
+        width: 100%;
         height: auto;
         margin-bottom: 10px;
       }
@@ -175,6 +188,10 @@ align-items: center;
       let itemCount = 0;
 
       cart.forEach((item, i) => {
+        // Set default values if missing
+        item.color = item.color || "Red";
+        item.size = item.size || "M";
+
         const itemEl = document.createElement('div');
         itemEl.className = 'cart-item';
         itemEl.innerHTML = `
@@ -182,12 +199,31 @@ align-items: center;
           <div class="cart-info">
             <h3>${item.name}</h3>
             <p>Price: GH¢${item.price.toFixed(2)}</p>
-            <div class="qty">
-              <button class="btn" onclick="changeQty(${i}, -1)">−</button><span>${item.qty}</span>
-              <button class="btn" onclick="changeQty(${i}, 1)">+</button>
-              <button class="remove-btn" onclick="removeItem(${i})">Remove🗑️</button>
-            </div>
 
+            <label>Color:
+              <select class="variation-select" onchange="updateVariation(${i}, 'color', this.value)">
+                <option value="Red" ${item.color === "Red" ? "selected" : ""}>Red</option>
+                <option value="Blue" ${item.color === "Blue" ? "selected" : ""}>Blue</option>
+                <option value="Green" ${item.color === "Green" ? "selected" : ""}>Green</option>
+                <option value="Black" ${item.color === "Black" ? "selected" : ""}>Black</option>
+              </select>
+            </label><br>
+
+            <label>Size:
+              <select class="variation-select" onchange="updateVariation(${i}, 'size', this.value)">
+                <option value="S" ${item.size === "S" ? "selected" : ""}>S</option>
+                <option value="M" ${item.size === "M" ? "selected" : ""}>M</option>
+                <option value="L" ${item.size === "L" ? "selected" : ""}>L</option>
+                <option value="XL" ${item.size === "XL" ? "selected" : ""}>XL</option>
+              </select>
+            </label>
+
+            <div class="qty">
+              <button onclick="changeQty(${i}, -1)">−</button>
+              <span>${item.qty}</span>
+              <button onclick="changeQty(${i}, 1)">+</button>
+              <button class="remove-btn" onclick="removeItem(${i})">🗑 Remove</button>
+            </div>
           </div>
         `;
         cartContainer.appendChild(itemEl);
@@ -199,6 +235,11 @@ align-items: center;
       cartCount.textContent = itemCount;
 
       localStorage.setItem('grandTotal', total.toFixed(2));
+      localStorage.setItem('cart', JSON.stringify(cart));
+    }
+
+    function updateVariation(index, key, value) {
+      cart[index][key] = value;
       localStorage.setItem('cart', JSON.stringify(cart));
     }
 
