@@ -146,85 +146,77 @@
     <button class="checkout-btn" onclick="goToCheckout()">Checkout</button>
   </div>
 
-  <script>
-    const cartContainer = document.getElementById("cartContainer");
-    const grandTotalEl = document.getElementById("grandTotal");
-    let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+ <script>
+  const cartContainer = document.getElementById("cartContainer");
+  const grandTotalEl = document.getElementById("grandTotal");
+  let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
-    function renderCart() {
-      cartContainer.innerHTML = "";
-      let total = 0;
+  function renderCart() {
+    cartContainer.innerHTML = "";
+    let total = 0;
 
-      cart.forEach((item, i) => {
-        const div = document.createElement("div");
-        div.className = "cart-item";
-        div.innerHTML = `
-          <img src="${item.image}" alt="${item.name}">
-          <div class="info">
-            <h3>${item.name}</h3>
-            <p>GH¢${item.price.toFixed(2)}</p>
-            ${item.color || item.size ? `
-              <p class="variation">
-                ${item.color ? `Color: ${item.color}` : ""}
-                ${item.size ? `Size: ${item.size}` : ""}
-              </p>` : ""}
-            <div class="qty-controls">
-              <button onclick="changeQty(${i}, -1)">−</button>
-              <span>${item.qty}</span>
-              <button onclick="changeQty(${i}, 1)">+</button>
-              <button class="remove-btn" onclick="removeItem(${i})">🗑 Remove</button>
-            </div>
+    cart.forEach((item, i) => {
+      const div = document.createElement("div");
+      div.className = "cart-item";
+      div.innerHTML = `
+        <img src="${item.image}" alt="${item.name}">
+        <div class="info">
+          <h3>${item.name}</h3>
+          <p>GH¢${item.price.toFixed(2)}</p>
+          ${item.color || item.size ? `
+            <p class="variation">
+              ${item.color ? `Color: ${item.color}` : ""}
+              ${item.size ? `Size: ${item.size}` : ""}
+            </p>` : ""}
+          <div class="qty-controls">
+            <button onclick="changeQty(${i}, -1)">−</button>
+            <span>${item.qty}</span>
+            <button onclick="changeQty(${i}, 1)">+</button>
+            <button class="remove-btn" onclick="removeItem(${i})">🗑 Remove</button>
           </div>
-        `;
-        cartContainer.appendChild(div);
-        total += item.price * item.qty;
-      });
+        </div>
+      `;
+      cartContainer.appendChild(div);
+      total += item.price * item.qty;
+    });
 
-      grandTotalEl.textContent = total.toFixed(2);
-      localStorage.setItem("cart", JSON.stringify(cart));
-    }
+    grandTotalEl.textContent = total.toFixed(2);
 
-    function changeQty(index, delta) {
-      cart[index].qty += delta;
-      if (cart[index].qty <= 0) cart.splice(index, 1);
-      renderCart();
-    }
+    // ✅ Save grand total to localStorage
+    localStorage.setItem("grandTotal", total.toFixed(2));
 
-    function removeItem(index) {
-      cart.splice(index, 1);
-      renderCart();
-    }
+    // ✅ Save updated cart to localStorage
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }
 
-    function clearCart() {
-      if (confirm("Clear all items?")) {
-        cart = [];
-        renderCart();
-      }
-    }
-
-    function goToCheckout() {
-      if (cart.length === 0) {
-        alert("Your cart is empty!");
-        return;
-      }
-      window.location.href = "checkout.html";
-    }
-
+  function changeQty(index, delta) {
+    cart[index].qty += delta;
+    if (cart[index].qty <= 0) cart.splice(index, 1);
     renderCart();
-  </script>
-<script>
-function calculateTotal(cart) {
-  let total = 0;
-  cart.forEach(item => {
-    total += item.price * item.qty;
-  });
+  }
 
-  // Save grand total for checkout
-  localStorage.setItem("grandTotal", total.toFixed(2));
+  function removeItem(index) {
+    cart.splice(index, 1);
+    renderCart();
+  }
 
-  // Update cart total display
-  document.getElementById("cartTotal").textContent = "GH¢" + total.toFixed(2);
-}
+  function clearCart() {
+    if (confirm("Clear all items?")) {
+      cart = [];
+      renderCart();
+    }
+  }
+
+  function goToCheckout() {
+    if (cart.length === 0) {
+      alert("Your cart is empty!");
+      return;
+    }
+    window.location.href = "checkout.html";
+  }
+
+  // ✅ Initial render
+  renderCart();
 </script>
 </body>
 </html>
