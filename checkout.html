@@ -97,6 +97,7 @@
       <input id="custPhone" type="tel" placeholder="055 123 4567" required>
       <label>Delivery Address</label>
       <textarea id="custAddr" rows="3" placeholder="Street • City" required></textarea>
+<button onclick="getLocation()" style="margin-top:10px;margin-bottom:14px;padding:10px;font-size:14px;border:none;border-radius:10px;background:darkcyan;color:white;">📍 Use My Location</button>
     </div>
     <label>Payment Method</label>
     <select id="payMethod">
@@ -213,6 +214,32 @@
       }, 1500);
     }
   });
+
+function getLocation() {
+  if (!navigator.geolocation) {
+    alert("Geolocation is not supported by your browser.");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const lat = position.coords.latitude.toFixed(6);
+      const lng = position.coords.longitude.toFixed(6);
+      const link = `https://www.google.com/maps?q=${lat},${lng}`;
+      const text = `Lat: ${lat}, Lng: ${lng}\n${link}`;
+      document.getElementById("custAddr").value = text;
+    },
+    (error) => {
+      alert("Unable to retrieve your location.");
+      console.error(error);
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 0
+    }
+  );
+}
 </script>
 </body>
 </html>
