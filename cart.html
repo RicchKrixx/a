@@ -80,15 +80,15 @@ align-content: center;
       margin-top: 8px;
     }
 
-    .qty button {
+    .qty btn {
       padding: 5px 10px;
       font-weight: bold;
       font-size: 16px;
+      color: white;
       border: none;
       background: #1976d2;
-      color: white;
-      border-radius: 6px;
       cursor: pointer;
+      border-radius: 40px;
     }
 
     .remove-btn {
@@ -186,11 +186,11 @@ align-content: center;
             <h3>${item.name}</h3>
             <p>Price: GH¢${item.price.toFixed(2)}</p>
             <div class="qty">
-              <button onclick="changeQty(${i}, -1)">−</button><span>${item.qty}</span>
-              <button onclick="changeQty(${i}, 1)">+</button>
-             
+              <button class="btn" onclick="changeQty(${i}, -1)">−</button><span>${item.qty}</span>
+              <button class="btn" onclick="changeQty(${i}, 1)">+</button>
+              <button class="remove-btn" onclick="removeItem(${i})">Remove🗑️</button>
             </div>
- <button class="remove-btn" onclick="removeItem(${i})">Remove🗑️</button>
+
           </div>
         `;
         cartContainer.appendChild(itemEl);
