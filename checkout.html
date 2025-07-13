@@ -5,114 +5,79 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>BizMAX | Checkout</title>
   <style>
-    :root {
-      --glass: #ffffff18;
-      --blur: 25px;
-      --blue: #1976d2;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
+    :root{--glass:#ffffff18;--blur:25px;--blue:#1976d2}
+    *{box-sizing:border-box;margin:0;padding:0}
     body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: lightblue;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
+      font-family:Arial,Helvetica,sans-serif;
+      background:lightblue;
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:20px;
     }
-
     .card {
-      width: 100%;
-      max-width: 620px;
-      background: var(--glass);
-      border-radius: 20px;
-      padding: 28px;
-      border: 5px solid rgba(255,255,255,.1);
-      backdrop-filter: blur(var(--blur));
-      box-shadow: 0 0 30px rgba(0,0,0,.2);
-      color: #fff;
+      width:100%;
+      max-width:620px;
+      background:var(--glass);
+      border-radius:20px;
+      padding:28px;
+      border:5px solid rgba(255,255,255,.1);
+      backdrop-filter:blur(var(--blur));
+      box-shadow:0 0 30px rgba(0,0,0,.2);
+      color:#fff;
     }
-
-    h1, h2 {
-      text-align: center;
-      margin-bottom: 18px;
-    }
-
-    label {
-      display: block;
-      margin: 14px 0 6px;
-      font-weight: bold;
-    }
-
+    h1,h2{text-align:center;margin-bottom:18px}
+    label{display:block;margin:14px 0 6px;font-weight:bold}
     input, textarea, select {
-      width: 100%;
-      padding: 12px;
-      border-radius: 12px;
-      border: none;
-      background: rgba(255,255,255,.15);
-      color: #fff;
-      font-size: 16px;
+      width:100%;
+      padding:12px;
+      border-radius:12px;
+      border:none;
+      background:rgba(255,255,255,.15);
+      color:#fff;
+      font-size:16px;
     }
-
-    input::placeholder,
-    textarea::placeholder {
-      color: #eee;
-    }
-
+    input::placeholder,textarea::placeholder{color:#eee}
     .summary {
-      background: rgba(0,0,0,.25);
-      padding: 20px;
-      border-radius: 16px;
-      border: 2px solid rgba(255,255,255,.15);
-      margin-bottom: 24px;
+      background:rgba(0,0,0,.25);
+      padding:20px;
+      border-radius:16px;
+      border:2px solid rgba(255,255,255,.15);
+      margin-bottom:24px;
     }
-
-    .summary p {
-      margin: 6px 0;
-      font-size: 18px;
-      font-weight: bold;
-    }
-
+    .summary p{margin:6px 0;font-size:18px;font-weight:bold}
     button {
-      width: 100%;
-      padding: 16px;
-      border: none;
-      border-radius: 14px;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      background: var(--blue);
-      color: #fff;
+      width:100%;
+      padding:16px;
+      border:none;
+      border-radius:14px;
+      font-size:18px;
+      font-weight:bold;
+      cursor:pointer;
+      background:var(--blue);
+      color:#fff;
     }
-
     #loader {
-      position: fixed;
-      inset: 0;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0,0,0,.6);
-      z-index: 1000;
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(0,0,0,.6);
+      z-index:1000;
     }
-
     .spin {
-      width: 60px;
-      height: 60px;
-      border: 7px solid #eee;
-      border-top: 7px solid var(--blue);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
+      width:60px;
+      height:60px;
+      border:7px solid #eee;
+      border-top:7px solid var(--blue);
+      border-radius:50%;
+      animation:spin 1s linear infinite;
     }
-
     @keyframes spin {
-      0% { transform: rotate(0) }
-      100% { transform: rotate(360deg) }
+      0% {transform:rotate(0)}
+      100% {transform:rotate(360deg)}
     }
   </style>
 </head>
@@ -126,23 +91,18 @@
     <div id="custInfo">
       <label>Full Name</label>
       <input id="custName" placeholder="John Doe" required>
-
       <label>Email</label>
       <input id="custEmail" type="email" placeholder="john@example.com" required>
-
       <label>Phone Number</label>
       <input id="custPhone" type="tel" placeholder="055 123 4567" required>
-
       <label>Delivery Address</label>
       <textarea id="custAddr" rows="3" placeholder="Street • City" required></textarea>
     </div>
-
     <label>Payment Method</label>
     <select id="payMethod">
       <option value="delivery">Pay on Delivery</option>
       <option value="online">Pay Online</option>
     </select>
-
     <button id="actionBtn">Place Order</button>
   </div>
 
@@ -153,108 +113,106 @@
     </div>
   </div>
 
-  <script src="https://js.paystack.co/v1/inline.js"></script>
-  <script>
-    // ✅ Display grand total immediately
+<script src="https://js.paystack.co/v1/inline.js"></script>
+<script>
+  window.addEventListener("load", () => {
     const total = localStorage.getItem("grandTotal") || "0";
-    document.getElementById("grandTotal").textContent = parseFloat(total).toFixed(2);
+    const grandTotalEl = document.getElementById("grandTotal");
+    if (grandTotalEl) {
+      grandTotalEl.textContent = parseFloat(total).toFixed(2);
+    }
+  });
 
-    // Elements
-    const payMethod = document.getElementById("payMethod");
-    const actionBtn = document.getElementById("actionBtn");
+  const payMethod = document.getElementById("payMethod");
+  const actionBtn = document.getElementById("actionBtn");
 
-    // Change button label
-    payMethod.addEventListener("change", () => {
-      actionBtn.textContent = payMethod.value === "online" ? "Pay Now" : "Place Order";
-    });
+  payMethod.addEventListener("change", () => {
+    actionBtn.textContent = payMethod.value === "online" ? "Pay Now" : "Place Order";
+  });
 
-    // Show loader
-    function showLoader(show) {
-      document.getElementById("loader").style.display = show ? "flex" : "none";
+  function showLoader(show) {
+    document.getElementById("loader").style.display = show ? "flex" : "none";
+  }
+
+  function generateOrderId() {
+    return "BX" + Date.now().toString(36).toUpperCase();
+  }
+
+  actionBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById("custName").value.trim();
+    const email = document.getElementById("custEmail").value.trim();
+    const phone = document.getElementById("custPhone").value.trim();
+    const address = document.getElementById("custAddr").value.trim();
+    const method = payMethod.value;
+    const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
+    const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
+
+    if (!(name && email && phone && address)) {
+      alert("Please fill in all customer details.");
+      return;
     }
 
-    // Generate unique Order ID
-    function generateOrderId() {
-      return "BX" + Date.now().toString(36).toUpperCase();
+    if (grandTotal <= 0 || cartItems.length === 0) {
+      alert("Cart is empty or total is 0.");
+      return;
     }
 
-    // Main logic
-    actionBtn.addEventListener("click", (e) => {
-      e.preventDefault();
+    const orderId = generateOrderId();
 
-      const name = document.getElementById("custName").value.trim();
-      const email = document.getElementById("custEmail").value.trim();
-      const phone = document.getElementById("custPhone").value.trim();
-      const address = document.getElementById("custAddr").value.trim();
-      const method = payMethod.value;
-      const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
-      const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
+    const orderData = {
+      id: orderId,
+      name,
+      email,
+      phone,
+      address,
+      method,
+      items: cartItems,
+      total: grandTotal
+    };
 
-      if (!(name && email && phone && address)) {
-        alert("Please fill in all customer details.");
-        return;
-      }
+    const allOrders = JSON.parse(localStorage.getItem("orders") || "{}");
+    allOrders[orderId] = orderData;
+    localStorage.setItem("orders", JSON.stringify(allOrders));
+    localStorage.setItem("latestOrderId", orderId);
 
-      if (grandTotal <= 0 || cartItems.length === 0) {
-        alert("Cart is empty or total is 0.");
-        return;
-      }
+    showLoader(true);
 
-      const orderId = generateOrderId();
-
-      // Save order to localStorage
-      const orderData = {
-        id: orderId,
-        name,
-        email,
-        phone,
-        address,
-        method,
-        items: cartItems,
-        total: grandTotal
-      };
-
-      const allOrders = JSON.parse(localStorage.getItem("orders") || "{}");
-      allOrders[orderId] = orderData;
-      localStorage.setItem("orders", JSON.stringify(allOrders));
-      localStorage.setItem("latestOrderId", orderId);
-
-      showLoader(true);
-
-      if (method === "online") {
-        // Paystack payment
-        PaystackPop.setup({
-          key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxx', // Replace with your live/public test key
-          email: email,
-          amount: Math.round(grandTotal * 100),
-          currency: "GHS",
-          metadata: {
-            custom_fields: [
-              { display_name: "Name", value: name },
-              { display_name: "Phone", value: phone },
-              { display_name: "Address", value: address }
-            ]
-          },
-          callback: function (response) {
-            alert("Payment successful! Ref: " + response.reference);
-            localStorage.removeItem("cart");
-            showLoader(false);
-            window.location.href = "thankyou.html?orderId=" + orderId;
-          },
-          onClose: function () {
-            showLoader(false);
-            alert("Payment cancelled.");
-          }
-        }).openIframe();
-      } else {
-        // Pay on Delivery
-        setTimeout(() => {
-          alert("Order placed successfully!");
+    if (method === "online") {
+      PaystackPop.setup({
+        key: 'pk_test_xxxxxxxxxxxxxxxxxx', // Replace this with your actual Paystack public key
+        email: email,
+        amount: Math.round(grandTotal * 100),
+        currency: "GHS",
+        metadata: {
+          custom_fields: [
+            { display_name: "Name", value: name },
+            { display_name: "Phone", value: phone },
+            { display_name: "Address", value: address }
+          ]
+        },
+        callback: function (response) {
+          alert("Payment successful! Ref: " + response.reference);
+          localStorage.removeItem("cart");
           showLoader(false);
           window.location.href = "thankyou.html?orderId=" + orderId;
-        }, 1500);
-      }
-    });
-  </script>
+        },
+        onClose: function () {
+          showLoader(false);
+          alert("Payment cancelled.");
+        }
+      }).openIframe();
+    } else {
+      // Pay on Delivery
+      setTimeout(() => {
+        alert("Order placed successfully!");
+        localStorage.removeItem("cart");
+        showLoader(false);
+        window.location.href = "thankyou.html?orderId=" + orderId;
+      }, 1500);
+    }
+  });
+</script>
 </body>
 </html>
