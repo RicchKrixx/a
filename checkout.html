@@ -16,7 +16,7 @@
       margin: 0;
       text-align: center;
     }
-    .total-box, card {
+    .card {
       background: #111928;
       padding: 30px;
       border-radius: 16px;
@@ -101,12 +101,10 @@
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Checkout</h1>
-<div class="total-box">
-    <h1>Your Grand Total</h1>
+<div class="card">
+    <h1>CHECKOUT</h1>
     <span id="grandTotal">GH¢0.00</span>
-  </div>
+ 
     <div id="custInfo">
       <label>Full Name</label>
       <input id="custName" placeholder="John Doe" required>
@@ -139,7 +137,6 @@
       <div class="spin"></div>
       <p style="margin-top:14px;font-size:18px;font-weight:bold">Processing…</p>
     </div>
-  </div>
 
 <script src="https://js.paystack.co/v1/inline.js"></script>
 <script>
