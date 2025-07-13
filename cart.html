@@ -7,209 +7,220 @@
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
+      font-family: Arial, sans-serif;
+      background: #e0f7fa;
       padding: 20px;
       color: #333;
-    }header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-  background: #1976d2;
-  color: white;
-  padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 0 20px cyan;
-}
+    }
 
-header h1 {
-  margin: 0;
-}
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
 
-.cart-badge {
-  position: relative;
-  font-size: 24px;
-  cursor: pointer;
-}
+    header h1 {
+      color: #1976d2;
+      text-shadow: 0 0 10px cyan;
+    }
 
-.cart-badge span {
-  position: absolute;
-  top: -10px;
-  right: -10px;
-  background: red;
-  color: white;
-  font-size: 12px;
-  border-radius: 50%;
-  padding: 3px 6px;
-}
+    .cart-badge {
+      position: relative;
+      font-size: 28px;
+      cursor: pointer;
+      color: darkcyan;
+      text-shadow: 0 0 8px cyan;
+    }
 
-.cart-item {
-  display: flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 20px;
-  box-shadow: 0 8px 20px rgba(0, 255, 255, 0.3);
-  margin-bottom: 20px;
-  padding: 20px;
-  flex-wrap: wrap;
-  transition: transform 0.3s ease;
-}
+    .cart-badge span {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      background: red;
+      color: white;
+      font-size: 12px;
+      border-radius: 50%;
+      padding: 3px 6px;
+      box-shadow: 0 0 5px white;
+    }
 
-.cart-item:hover {
-  transform: scale(1.02);
-}
+    .cart-item {
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 0 15px rgba(0,255,255,0.4);
+      margin-bottom: 20px;
+      padding: 15px;
+      flex-wrap: wrap;
+      transition: transform 0.2s ease;
+    }
 
-.image-slider {
-  position: relative;
-  width: 90px;
-  height: 90px;
-  margin-right: 20px;
-}
+    .cart-item:hover {
+      transform: scale(1.02);
+    }
 
-.slider-img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-  box-shadow: 0 0 10px cyan;
-}
+    .image-slider {
+      position: relative;
+      width: 90px;
+      height: 90px;
+      margin-right: 20px;
+    }
 
-.slider-controls {
-  position: absolute;
-  bottom: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 5px;
-}
+    .slider-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 0 10px cyan;
+    }
 
-.slider-controls button {
-  font-size: 12px;
-  padding: 2px 6px;
-  border: none;
-  border-radius: 6px;
-  background: #1976d2;
-  color: white;
-  cursor: pointer;
-}
+    .slider-controls {
+      position: absolute;
+      bottom: -22px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 5px;
+    }
 
-.cart-info {
-  flex: 1;
-}
+    .slider-controls button {
+      font-size: 12px;
+      padding: 2px 6px;
+      border: none;
+      border-radius: 6px;
+      background: #1976d2;
+      color: white;
+      cursor: pointer;
+    }
 
-.cart-info h3 {
-  margin: 0 0 8px;
-  color: #1976d2;
-}
+    .cart-info {
+      flex: 1;
+    }
 
-.glow-tag {
-  display: inline-block;
-  margin: 4px 8px 8px 0;
-  padding: 6px 12px;
-  border-radius: 16px;
-  background: #0ff;
-  color: #000;
-  font-weight: bold;
-  text-shadow: 0 0 6px #0ff;
-  box-shadow: 0 0 8px #0ff;
-}
+    .cart-info h3 {
+      margin: 0 0 6px;
+      font-size: 18px;
+    }
 
-.qty {
-  display: flex;
-  gap: 10px;
-  margin-top: 12px;
-  align-items: center;
-}
+    .cart-info p {
+      margin: 4px 0;
+      font-size: 16px;
+    }
 
-.qty button {
-  padding: 6px 12px;
-  font-weight: bold;
-  font-size: 16px;
-  color: white;
-  border: none;
-  background: #1976d2;
-  cursor: pointer;
-  border-radius: 8px;
-  box-shadow: 0 0 8px #1976d2;
-}
+    .variation-select {
+      margin: 4px 0;
+      padding: 6px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      background: #f0f8ff;
+      font-weight: bold;
+    }
 
-.remove-btn {
-  font-size: 16px;
-  background: none;
-  border: none;
-  color: red;
-  cursor: pointer;
-  margin-left: 10px;
-}
+    .qty {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      align-items: center;
+    }
 
-.total {
-  font-size: 22px;
-  font-weight: bold;
-  margin-top: 30px;
-  text-align: center;
-  color: #1976d2;
-  text-shadow: 0 0 6px cyan;
-}
+    .qty button {
+      padding: 6px 12px;
+      font-weight: bold;
+      font-size: 16px;
+      color: white;
+      border: none;
+      background: #1976d2;
+      cursor: pointer;
+      border-radius: 8px;
+      box-shadow: 0 0 5px cyan;
+    }
 
-.actions {
-  margin-top: 25px;
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  flex-wrap: wrap;
-}
+    .remove-btn {
+      font-size: 16px;
+      background: none;
+      border: none;
+      color: red;
+      cursor: pointer;
+      margin-left: 10px;
+    }
 
-.actions button {
-  padding: 14px 24px;
-  font-size: 16px;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: bold;
-  box-shadow: 0 0 10px cyan;
-}
+    .total {
+      font-size: 22px;
+      font-weight: bold;
+      margin-top: 20px;
+      color: #1976d2;
+      text-shadow: 0 0 5px cyan;
+    }
 
-.checkout-btn {
-  background: #1976d2;
-  color: white;
-}
+    .actions {
+      margin-top: 25px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
 
-.empty-btn {
-  background: #ccc;
-}
+    .actions button {
+      padding: 12px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      min-width: 120px;
+    }
 
-@media (max-width: 600px) {
-  .cart-item {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+    .checkout-btn {
+      background: #1976d2;
+      color: white;
+      box-shadow: 0 0 8px cyan;
+    }
 
-  .image-slider {
-    width: 100%;
-    height: auto;
-    margin-bottom: 10px;
-  }
+    .empty-btn {
+      background: #ccc;
+    }
 
-  .slider-img {
-    border-radius: 16px;
-  }
+    @media (max-width: 600px) {
+      .cart-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
 
-  .actions {
-    flex-direction: column;
-    gap: 12px;
-  }
-}
+      .image-slider {
+        width: 100%;
+        height: auto;
+        margin-bottom: 10px;
+      }
 
+      .slider-img {
+        border-radius: 16px;
+      }
+
+      .actions {
+        flex-direction: column;
+        gap: 12px;
+      }
+    }
   </style>
 </head>
-<body>  <header>
-    <h1>🛍 BizMAX Cart</h1>
+<body>
+
+  <header>
+    <h1>My Cart</h1>
     <div class="cart-badge">🛒 <span id="cartCount">0</span></div>
-  </header>  <div id="cartContainer"></div>  <div class="total">Total: GH¢<span id="grandTotal">0.00</span></div>  <div class="actions">
+  </header>
+
+  <div id="cartContainer"></div>
+
+  <div class="total">Total: GH¢<span id="grandTotal">0.00</span></div>
+
+  <div class="actions">
     <button class="empty-btn" onclick="clearCart()">Empty Cart</button>
     <button class="checkout-btn" onclick="goToCheckout()">Checkout</button>
-  </div>  <script>
+  </div>
+
+  <script>
     const cartContainer = document.getElementById('cartContainer');
     const grandTotalEl = document.getElementById('grandTotal');
     const cartCount = document.getElementById('cartCount');
@@ -224,15 +235,37 @@ header h1 {
       currentIndexes = [];
 
       cart.forEach((item, i) => {
-        if (!item.color) item.color = "Red";
-        if (!item.size) item.size = "M";
+        // Fallback for old format
         if (!item.images && item.image) item.images = [item.image];
+
         currentIndexes.push(0);
+
+        let variationHTML = '';
+        if (item.hasVariation) {
+          variationHTML = `
+            <label>Color:
+              <select class="variation-select" onchange="updateVariation(${i}, 'color', this.value)">
+                <option value="Red" ${item.color === "Red" ? "selected" : ""}>Red</option>
+                <option value="Blue" ${item.color === "Blue" ? "selected" : ""}>Blue</option>
+                <option value="Green" ${item.color === "Green" ? "selected" : ""}>Green</option>
+                <option value="Black" ${item.color === "Black" ? "selected" : ""}>Black</option>
+              </select>
+            </label><br>
+
+            <label>Size:
+              <select class="variation-select" onchange="updateVariation(${i}, 'size', this.value)">
+                <option value="S" ${item.size === "S" ? "selected" : ""}>S</option>
+                <option value="M" ${item.size === "M" ? "selected" : ""}>M</option>
+                <option value="L" ${item.size === "L" ? "selected" : ""}>L</option>
+                <option value="XL" ${item.size === "XL" ? "selected" : ""}>XL</option>
+              </select>
+            </label>`;
+        }
 
         const itemEl = document.createElement('div');
         itemEl.className = 'cart-item';
         itemEl.innerHTML = `
-          <div class="image-slider">
+          <div class="image-slider" id="slider-${i}">
             <img src="${item.images[0]}" id="slide-img-${i}" class="slider-img" alt="${item.name}">
             ${item.images.length > 1 ? `
               <div class="slider-controls">
@@ -240,11 +273,11 @@ header h1 {
                 <button onclick="nextImage(${i})">⟩</button>
               </div>` : ``}
           </div>
+
           <div class="cart-info">
             <h3>${item.name}</h3>
-            <div class="glow-tag">🎨 ${item.color}</div>
-            <div class="glow-tag">📏 ${item.size}</div>
             <p>Price: GH¢${item.price.toFixed(2)}</p>
+            ${variationHTML}
             <div class="qty">
               <button onclick="changeQty(${i}, -1)">−</button>
               <span>${item.qty}</span>
@@ -261,8 +294,12 @@ header h1 {
 
       grandTotalEl.textContent = total.toFixed(2);
       cartCount.textContent = itemCount;
-
       localStorage.setItem('grandTotal', total.toFixed(2));
+      localStorage.setItem('cart', JSON.stringify(cart));
+    }
+
+    function updateVariation(index, key, value) {
+      cart[index][key] = value;
       localStorage.setItem('cart', JSON.stringify(cart));
     }
 
@@ -308,5 +345,7 @@ header h1 {
     }
 
     updateCartDisplay();
-  </script></body>
+  </script>
+
+</body>
 </html>
