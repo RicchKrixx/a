@@ -29,14 +29,11 @@
       <h2>Order Summary</h2>
       <p>Total to Pay: GH¢<span id="grandTotal">0.00</span></p>
     </div>
-  <script>
-    const cartContainer = document.getElementById("cartContainer");
-    const grandTotalEl = document.getElementById("grandTotal");
-    let cart = JSON.parse(localStorage.getItem("cart") || "[]");
-
-    function renderCart() {
-      cartContainer.innerHTML = "";
-      let total = 0;
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    const total = localStorage.getItem("grandTotal") || "0";
+    document.getElementById("grandTotal").textContent = parseFloat(total).toFixed(2);
+  });
 </script>
   <script>
 
