@@ -30,13 +30,6 @@ width: 100%;
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; overflow-x: hidden; font-family: Arial, sans-serif; }
 
-    .container {
-      padding-top: 0px; /* Allow space for top menu */
-      padding-bottom: 80px; /* Allow space for bottom bar */
-      min-height: 100vh;
-      background-color: lightblue;
-      align-content: center;
-    }
     .card h1 {
       font-size: 32px;
       margin-bottom: 15px;
@@ -107,11 +100,10 @@ width: 100%;
     }
   </style>
 </head>
-<body class="container">
+<body class="class">
   <button onclick="switchStyle()" style="position:fixed;top:15px;right:15px;padding:10px;border:none;border-radius:8px;">
     🎨
   </button>
-  <div class="card">
     <h1>CHECKOUT</h1>
     <span id="grandTotal">GH¢0.00</span>
     <div id="custInfo">
@@ -143,7 +135,6 @@ width: 100%;
   <div id="loader">
     <div style="text-align:center;color:#fff">
       <div class="spin"></div>
-    </div>
 </div>
 </div>
 <script src="https://js.paystack.co/v1/inline.js"></script>
