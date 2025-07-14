@@ -245,7 +245,7 @@
         const lng = pos.coords.longitude.toFixed(6);
         const link = `https://www.google.com/maps?q=${lat},${lng}`;
      
- const text = '${link})';       document.getElementById("custAddr").value = text;
+ const text = '\n(${link})';       document.getElementById("custAddr").value = text;
       },
       (err) => {
         alert("Unable to retrieve your location.");
