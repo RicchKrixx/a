@@ -10,10 +10,6 @@
       padding: 30px;
       border-radius: 16px;
       box-shadow: 0 0 15px cyan;
-      color: #fff;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 0 15px cyan;
     }
   </style>
 
@@ -105,9 +101,10 @@
   <button onclick="switchStyle()" style="position:fixed;top:15px;right:15px;padding:10px;border:none;border-radius:8px;">
     🎨
   </button>
+  <div class="card">
     <h1>CHECKOUT</h1>
     <span id="grandTotal">GH¢0.00</span>
-  <div class="card">
+
     <div id="custInfo">
       <label>Full Name</label>
       <input id="custName" placeholder="John Doe" required>
@@ -248,7 +245,7 @@
         const lng = pos.coords.longitude.toFixed(6);
         const link = `https://www.google.com/maps?q=${lat},${lng}`;
      
- const text = ${link})';       document.getElementById("custAddr").value = text;
+ const text = '${link})';       document.getElementById("custAddr").value = text;
       },
       (err) => {
         alert("Unable to retrieve your location.");
