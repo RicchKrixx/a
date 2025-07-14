@@ -313,7 +313,7 @@ body {
         const lng = pos.coords.longitude.toFixed(6);
         const link = `https://www.google.com/maps?q=${lat},${lng}`;
      
-        document.getElementById("custAddr").value = text;
+ const text = ${link})';       document.getElementById("custAddr").value = text;
       },
       (err) => {
         alert("Unable to retrieve your location.");
@@ -337,9 +337,9 @@ body {
       const style1 = document.getElementById("style1");
       const style2 = document.getElementById("style2");
 
-      if (style1.disabled) {
-        style1.disabled = true;
-        style2.disabled = false;
+      if (style2.disabled) {
+        style1.disabled = false;
+        style2.disabled = true;
       } else {
         style1.disabled = true;
         style2.disabled = false;
