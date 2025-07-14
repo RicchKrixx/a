@@ -271,12 +271,12 @@ margin-bottom: 20px;
       const style2 = document.getElementById("style2");
       const style1 = document.getElementById("style1");
 
-      if (style1.disabled) {
-        style1.disabled = false;
-        style2.disabled = true;
-      } else {
-        style1.disabled = true;
+      if (style2.disabled) {
         style2.disabled = false;
+        style1.disabled = true;
+      } else {
+        style2.disabled = true;
+        style1.disabled = false;
       }
     }
 </script>
