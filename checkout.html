@@ -40,20 +40,13 @@ body {
     }
     input::placeholder, textarea::placeholder {
       color: #eee;
-    }
-    .summary {
-      background: rgba(0, 0, 0, .25);
-      padding: 20px;
-      border-radius: 16px;
-      border: 2px solid rgba(255, 255, 255, .15);
-      margin-bottom: 24px;
-    }
-    .summary p {
+   }
+    .card p {
       margin: 6px 0;
       font-size: 18px;
       font-weight: bold;
     }
-    button {
+    .card button {
       width: 100%;
       padding: 16px;
       border: none;
@@ -97,23 +90,17 @@ body {
       margin: 0;
       text-align: center;
     }
-    .summary {
-      background: #111928;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 0 15px cyan;
-    }
     .card {
       background: #111928;
       padding: 30px;
       border-radius: 16px;
       box-shadow: 0 0 15px cyan;
     }
-    .summary h1 {
+    .card h1 {
       font-size: 28px;
       margin-bottom: 15px;
     }
-    .summary span {
+    .card span {
       font-size: 32px;
       font-weight: bold;
       color: #00ffff;
@@ -142,7 +129,7 @@ body {
       color: #eee;
     
     }
-    button {
+    .card button {
       width: 100%;
       padding: 16px;
       border: none;
@@ -180,7 +167,7 @@ body {
   <button onclick="switchStyle()" style="position:fixed;top:15px;right:15px;padding:10px;border:none;border-radius:8px;color:white;backgroun:none">
     🎨
   </button>
-<div class="summary">
+<div class="card">
     <h1>CHECKOUT</h1>
     <span id="grandTotal">GH¢0.00</span>
   
@@ -200,7 +187,6 @@ body {
       <button onclick="getLocation()" style="margin-top:10px;margin-bottom:14px;padding:10px;font-size:14px;border:none;border-radius:10px;background:darkcyan;color:white;">
         📍 Use My Location
       </button>
-    </div>
 
     <label>Payment Method</label>
     <select id="payMethod">
