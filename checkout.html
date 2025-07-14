@@ -245,7 +245,7 @@
         const lng = pos.coords.longitude.toFixed(6);
         const link = `https://www.google.com/maps?q=${lat},${lng}`;
      
- const text = `\n(${link})`;       document.getElementById("custAddr").value = text;
+ const text = `\n${link}`;       document.getElementById("custAddr").value = text;
       },
       (err) => {
         alert("Unable to retrieve your location.");
@@ -266,8 +266,8 @@
   </script>
 <script>
     function switchStyle() {
-      const style1 = document.getElementById("style1");
       const style2 = document.getElementById("style2");
+      const style1 = document.getElementById("style1");
 
       if (style1.disabled) {
         style1.disabled = false;
