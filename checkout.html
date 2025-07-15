@@ -215,66 +215,35 @@ input, textarea, select {
 
     showLoader(true);
 
-    if (method === "online") {
-      // ⚠️ Optional: Uncomment if you later use Paystack
-      /*
-      PaystackPop.setup({
-        key: 'pk_test_xxxxxxxxxxxxxxxxxx', // Replace with your Paystack public key
-        email: email,
-        amount: Math.round(grandTotal * 100),
-        currency: "GHS",
-        callback: function (response) {
-          alert("Payment successful! Ref: " + response.reference);
-          sendOrderToSheet(orderData, orderId);
-        },
-        onClose: function () {
-          showLoader(false);
-          alert("Payment cancelled.");
-        }
-      }).openIframe();
-      return;
-      */
-
-      // For now, treat "online" as delivery (mock)
-      alert("Online payment not connected yet. Using Pay on Delivery.");
-    }
-
     sendOrderToSheet(orderData, orderId);
   });
 
   function sendOrderToSheet(orderData, orderId) {
     fetch("https://script.google.com/macros/s/AKfycby5oFSBenWE9SWrV2DQ6qnN9a9VBicLGdahyI9NWVci3iiA3GXawI1P2UdrpMFjgu_e/exec", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    id: orderId,
-    name,
-    email,
-    phone,
-    address,
-    method,
-    total: grandTotal,
-    items: cartItems.map(i => `${i.name} × ${i.qty}`).join(", ")
-  })
-})
-.then(res => res.text())
-.then(text => {
-  alert("📩 Response from Google Script:\n\n" + text);
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(orderData)
+    })
+    .then(res => res.text())
+    .then(text => {
+      alert("📩 Response from Google Script:\n\n" + text);
 
-  if (text.includes("Success")) {
-    showLoader(false);
-    window.location.href = "thankyou.html?orderId=" + orderId;
-  } else {
-    showLoader(false);
-    alert("❌ Script Error:\n" + text);
+      if (text.includes("Success")) {
+        // localStorage.removeItem("cart"); // optional
+        showLoader(false);
+        window.location.href = "thankyou.html?orderId=" + orderId;
+      } else {
+        showLoader(false);
+        alert("❌ Script Error:\n" + text);
+      }
+    })
+    .catch(err => {
+      showLoader(false);
+      alert("❌ Network Error:\n" + err.message);
+    });
   }
-})
-.catch(err => {
-  showLoader(false);
-  alert("❌ Network Error:\n" + err.message);
-});
 </script>
 
 <script>
@@ -304,6 +273,11 @@ input, textarea, select {
   }
 </script>
 
+<script>
+  const saved = localStorage.getItem("grandTotal") || "0";
+  const total = parseFloat(saved).toFixed(2);
+  document.getElementById("grandTotal").textContent = "GH¢" + total;
+</script>
 <script>
   const saved = localStorage.getItem("grandTotal") || "0";
   const total = parseFloat(saved).toFixed(2);
