@@ -239,10 +239,6 @@ input, textarea, select {
     alert("Order placed successfully!");
     window.location.href = "thankyou.html?orderId=" + orderId;
   })
-  .catch((err) => {
-    showLoader(false);
-    console.error(err);
-    alert("Failed to send order to SheetDB.");
   });
 });
 </script>
