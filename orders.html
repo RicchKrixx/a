@@ -78,7 +78,7 @@ fetch(sheetdbUrl)
         <p><strong>Items:</strong></p>
         <ul>${order.items.split(",").map(i => `<li>${i.trim()}</li>`).join("")}</ul>
       `;
-      container.appendChild(div);
+      container.prepend(div);
     });
   })
   .catch(err => {
