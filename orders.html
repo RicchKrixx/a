@@ -48,63 +48,60 @@
          font-size:16px;border-radius:12px;border:1px solid #ccc;">
 <div id="ordersContainer" class="loading">Loading orders...</div>
 
-<script>
+<<script>
 const container = document.getElementById("ordersContainer");
+const searchInput = document.getElementById("searchInput");
+const sheetdbUrl = "https://sheetdb.io/api/v1/51rb7ntp647j8"; // Replace with your URL
+let shownOrderIds = new Set();
 
-// Replace with your actual SheetDB API URL
-const sheetdbUrl = "https://sheetdb.io/api/v1/51rb7ntp647j8";  // 👈 Replace this
+function addOrderToTop(order) {
+  const div = document.createElement("div");
+  div.className = "order";
+  div.innerHTML = `
+    <h2>Order ID: ${order.id}</h2>
+    <p><strong>Name:</strong> ${order.name}</p>
+    <p><strong>Email:</strong> ${order.email}</p>
+    <p><strong>Phone:</strong> ${order.phone}</p>
+    <p><strong>Address:</strong> ${order.address}</p>
+    <p><strong>Method:</strong> ${order.method}</p>
+    <p><strong>Total:</strong> GH¢ ${order.total}</p>
+    <p><strong>Items:</strong></p>
+    <ul>${order.items.split(",").map(i => `<li>${i.trim()}</li>`).join("")}</ul>
+  `;
+  container.prepend(div); // ✅ New orders appear at the top
+}
 
-fetch(sheetdbUrl)
-  .then(res => res.json())
-  .then(data => {
-    if (!data || data.length === 0) {
-      container.innerHTML = "<p class='loading'>No orders found.</p>";
-      return;
-    }
-
-    container.innerHTML = ""; // Clear loading
-
-    data.forEach(order => {
-      const div = document.createElement("div");
-      div.className = "order";
-      div.innerHTML = `
-        <h2>Order ID: ${order.id}</h2>
-        <p><strong>Name:</strong> ${order.name}</p>
-        <p><strong>Email:</strong> ${order.email}</p>
-        <p><strong>Phone:</strong> ${order.phone}</p>
-        <p><strong>Address:</strong> ${order.address}</p>
-        <p><strong>Method:</strong> ${order.method}</p>
-        <p><strong>Total:</strong> GH¢ ${order.total}</p>
-        <p><strong>Items:</strong></p>
-        <ul>${order.items.split(",").map(i => `<li>${i.trim()}</li>`).join("")}</ul>
-      `;
-      container.prepend(div);
+function fetchNewOrders() {
+  fetch(sheetdbUrl)
+    .then(res => res.json())
+    .then(data => {
+      data.forEach(order => {
+        if (!shownOrderIds.has(order.id)) {
+          shownOrderIds.add(order.id);
+          addOrderToTop(order);
+        }
+      });
+    })
+    .catch(err => {
+      console.error("Fetch failed:", err);
     });
-  })
-  .catch(err => {
-    console.error(err);
-    container.innerHTML = "<p class='loading'>Failed to load orders.</p>";
-  });
-</script>
-<script>
-  setInterval(() => {
-    location.reload();
-  }, 10000); // refresh every 10 seconds
-</script>
-<script>
-document.getElementById("searchInput").addEventListener("input", function () {
-  const searchTerm = this.value.toLowerCase();
-  const orders = document.querySelectorAll(".order");
+}
 
+// ✅ Search stays working (input isn't cleared)
+searchInput.addEventListener("input", function () {
+  const term = this.value.toLowerCase();
+  const orders = document.querySelectorAll(".order");
   orders.forEach(order => {
-    const idText = order.querySelector("h2").textContent.toLowerCase(); // e.g. "Order ID: BX728F"
-    if (idText.includes(searchTerm)) {
-      order.style.display = "block";
-    } else {
-      order.style.display = "none";
-    }
+    const idText = order.querySelector("h2").textContent.toLowerCase();
+    order.style.display = idText.includes(term) ? "block" : "none";
   });
 });
+
+// ✅ Initial load
+fetchNewOrders();
+
+// ✅ Fetch new orders every 10 seconds without resetting the page
+setInterval(fetchNewOrders, 10000);
 </script>
 </body>
 </html>
