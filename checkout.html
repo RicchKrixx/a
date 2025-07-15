@@ -212,7 +212,7 @@ input, textarea, select {
   }
 
   // ✅ Send to SheetDB
-  fetch("https://sheetdb.io/api/v1/YOUR_API_ID", {
+  fetch("https://sheetdb.io/api/v1/644lwr2o2t014", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -233,7 +233,7 @@ input, textarea, select {
     return res.json();
   })
   .then(() => {
-    localStorage.removeItem("cart");
+    //localStorage.removeItem("cart");
     localStorage.setItem("latestOrderId", orderId);
     showLoader(false);
     alert("Order placed successfully!");
