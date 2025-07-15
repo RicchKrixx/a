@@ -163,7 +163,6 @@ input, textarea, select {
 </div>
 <script src="https://js.paystack.co/v1/inline.js"></script>
 <script>
-
   const payMethod = document.getElementById("payMethod");
   const actionBtn = document.getElementById("actionBtn");
 
@@ -179,66 +178,93 @@ input, textarea, select {
     return "BX" + Date.now().toString(36).toUpperCase();
   }
 
- actionBtn.addEventListener("click", (e) => {
-  e.preventDefault();
+  actionBtn.addEventListener("click", (e) => {
+    e.preventDefault();
 
-  const name = document.getElementById("custName").value.trim();
-  const email = document.getElementById("custEmail").value.trim();
-  const phone = document.getElementById("custPhone").value.trim();
-  const address = document.getElementById("custAddr").value.trim();
-  const method = payMethod.value;
-  const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
-  const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
+    const name = document.getElementById("custName").value.trim();
+    const email = document.getElementById("custEmail").value.trim();
+    const phone = document.getElementById("custPhone").value.trim();
+    const address = document.getElementById("custAddr").value.trim();
+    const method = payMethod.value;
+    const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
+    const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
 
-  if (!(name && email && phone && address)) {
-    alert("Please fill in all customer details.");
-    return;
-  }
+    if (!(name && email && phone && address)) {
+      alert("Please fill in all customer details.");
+      return;
+    }
 
-  if (grandTotal <= 0 || cartItems.length === 0) {
-    alert("Cart is empty or total is 0.");
-    return;
-  }
+    if (grandTotal <= 0 || cartItems.length === 0) {
+      alert("Cart is empty or total is 0.");
+      return;
+    }
 
-  const orderId = "BX" + Date.now().toString(36).toUpperCase();
-  const itemsString = cartItems.map(i => `${i.name} × ${i.qty}`).join(", ");
+    const orderId = generateOrderId();
+    const itemsString = cartItems.map(i => `${i.name} × ${i.qty}`).join(", ");
 
-  showLoader(true);
+    const orderData = {
+      id: orderId,
+      name,
+      email,
+      phone,
+      address,
+      method,
+      total: grandTotal,
+      items: itemsString
+    };
 
-  if (method === "online") {
-    // ✅ Replace with your Paystack logic or remove this block if not using
-    alert("Online payment not configured. Using delivery method for now.");
-    showLoader(false);
-    return;
-  }
+    showLoader(true);
 
-  // ✅ Send to SheetDB
- fetch("https://script.google.com/macros/s/AKfycbzeo99XMZ9vaiJr1heDr08NvRzG3705qHhAninYXf31BJXPdzv8fM7h2_g6xoNMElse/exec", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify(orderData)
-})
-  .then(res => {
-    if (!res.ok) throw new Error("Network error");
-    return res.json();
-  })
-  .then(() => {
-    //localStorage.removeItem("cart");
-  showLoader(false);
-  alert("Order saved to SheetDB successfully!");
-  window.location.href = "thankyou.html?orderId=" + orderId;
-})
-.catch((err) => {
-  showLoader(false);
-  alert("Failed to send order to SheetDB.");
-  console.error(err);
+    if (method === "online") {
+      // ⚠️ Optional: Uncomment if you later use Paystack
+      /*
+      PaystackPop.setup({
+        key: 'pk_test_xxxxxxxxxxxxxxxxxx', // Replace with your Paystack public key
+        email: email,
+        amount: Math.round(grandTotal * 100),
+        currency: "GHS",
+        callback: function (response) {
+          alert("Payment successful! Ref: " + response.reference);
+          sendOrderToSheet(orderData, orderId);
+        },
+        onClose: function () {
+          showLoader(false);
+          alert("Payment cancelled.");
+        }
+      }).openIframe();
+      return;
+      */
+
+      // For now, treat "online" as delivery (mock)
+      alert("Online payment not connected yet. Using Pay on Delivery.");
+    }
+
+    sendOrderToSheet(orderData, orderId);
   });
-});
-</script>
-<script>
 
+  function sendOrderToSheet(orderData, orderId) {
+    fetch("https://script.google.com/macros/s/AKfycbzeo99XMZ9vaiJr1heDr08NvRzG3705qHhAninYXf31BJXPdzv8fM7h2_g6xoNMElse/exec", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(orderData)
+    })
+    .then(res => res.text())
+    .then(response => {
+      showLoader(false);
+      alert("✅ Order sent successfully!");
+      // Optional: clear cart if you ever want
+      // localStorage.removeItem("cart");
+      window.location.href = "thankyou.html?orderId=" + orderId;
+    })
+    .catch(err => {
+      showLoader(false);
+      alert("❌ Failed to send order.");
+      console.error(err);
+    });
+  }
+</script>
+
+<script>
   function getLocation() {
     if (!navigator.geolocation) {
       alert("Geolocation not supported.");
@@ -250,8 +276,7 @@ input, textarea, select {
         const lat = pos.coords.latitude.toFixed(6);
         const lng = pos.coords.longitude.toFixed(6);
         const link = `https://www.google.com/maps?q=${lat},${lng}`;
-     
- const text = `\n${link}`;       document.getElementById("custAddr").value = text;
+        document.getElementById("custAddr").value = link;
       },
       (err) => {
         alert("Unable to retrieve your location.");
@@ -265,11 +290,12 @@ input, textarea, select {
     );
   }
 </script>
-  <script>
-    const saved = localStorage.getItem("grandTotal") || "0";
-    const total = parseFloat(saved).toFixed(2);
-    document.getElementById("grandTotal").textContent = "GH¢" + total;
-  </script>
+
+<script>
+  const saved = localStorage.getItem("grandTotal") || "0";
+  const total = parseFloat(saved).toFixed(2);
+  document.getElementById("grandTotal").textContent = "GH¢" + total;
+</script>
 <script>
     function switchStyle() {
       const style2 = document.getElementById("style2");
