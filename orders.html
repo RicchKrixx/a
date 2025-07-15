@@ -83,6 +83,11 @@ fetch(sheetdbUrl)
     container.innerHTML = "<p class='loading'>Failed to load orders.</p>";
   });
 </script>
+<script>
+  setInterval(() => {
+    location.reload();
+  }, 10000); // refresh every 10 seconds
+</script>
 
 </body>
 </html>
