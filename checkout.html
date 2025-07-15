@@ -244,24 +244,37 @@ input, textarea, select {
 
   function sendOrderToSheet(orderData, orderId) {
     fetch("https://script.google.com/macros/s/AKfycby5oFSBenWE9SWrV2DQ6qnN9a9VBicLGdahyI9NWVci3iiA3GXawI1P2UdrpMFjgu_e/exec", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(orderData)
-    })
-    .then(res => res.text())
-    .then(response => {
-      showLoader(false);
-      alert("✅ Order sent successfully!");
-      // Optional: clear cart if you ever want
-      // localStorage.removeItem("cart");
-      window.location.href = "thankyou.html?orderId=" + orderId;
-    })
-    .catch(err => {
-      showLoader(false);
-      alert("❌ Failed to send order.");
-      console.error(err);
-    });
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    id: orderId,
+    name,
+    email,
+    phone,
+    address,
+    method,
+    total: grandTotal,
+    items: cartItems.map(i => `${i.name} × ${i.qty}`).join(", ")
+  })
+})
+.then(res => res.text())
+.then(text => {
+  alert("📩 Response from Google Script:\n\n" + text);
+
+  if (text.includes("Success")) {
+    showLoader(false);
+    window.location.href = "thankyou.html?orderId=" + orderId;
+  } else {
+    showLoader(false);
+    alert("❌ Script Error:\n" + text);
   }
+})
+.catch(err => {
+  showLoader(false);
+  alert("❌ Network Error:\n" + err.message);
+});
 </script>
 
 <script>
