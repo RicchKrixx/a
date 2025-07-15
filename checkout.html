@@ -29,6 +29,10 @@ align-content: center;
       margin-top: 6px;
       font-weight: bold;
     }
+    input::placeholder, textarea::placeholder {
+      color: black;
+    opacity: 0.6;
+    }
   </style>
 
 
@@ -59,7 +63,10 @@ align-content: center;
       font-weight: bold;
       color: white; 
     }
-    
+        input::placeholder, textarea::placeholder {
+      color: #eee;
+    opacity: 0.6;
+    }
 </style>
 <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -79,10 +86,7 @@ input, textarea, select {
       color: #fff;
       font-size: 16px;
     }
-    input::placeholder, textarea::placeholder {
-      color: #eee;
-    opacity: 0.6;
-    }
+
     .card button {
       width: 100%;
       padding: 16px;
