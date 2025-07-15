@@ -213,22 +213,13 @@ input, textarea, select {
   }
 
   // ✅ Send to SheetDB
-  fetch("https://sheetdb.io/api/v1/51rb7ntp647j8", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      data: [{
-        id: orderId,
-        name: name,
-        email: email,
-        phone: phone,
-        address: address,
-        method: method,
-        total: grandTotal,
-        items: itemsString
-      }]
-    })
-  })
+ fetch("https://script.google.com/macros/s/AKfycbzeo99XMZ9vaiJr1heDr08NvRzG3705qHhAninYXf31BJXPdzv8fM7h2_g6xoNMElse/exec", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(orderData)
+})
   .then(res => {
     if (!res.ok) throw new Error("Network error");
     return res.json();
