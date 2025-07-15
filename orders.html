@@ -91,6 +91,7 @@
 </style>
 </head>
 <body>
+<audio id="notifySound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
 
 <h1>🧾 BizMAX Orders</h1>
 <input type="text" id="searchInput" placeholder="Search Order ID..." 
@@ -127,9 +128,28 @@ function fetchNewOrders() {
     .then(data => {
       data.forEach(order => {
         if (!shownOrderIds.has(order.id)) {
-          shownOrderIds.add(order.id);
-          addOrderToTop(order);
-        }
+  shownOrderIds.add(order.id);
+  addOrderToTop(order);
+
+  // 🔔 Notify
+  document.getElementById("notifySound").play();
+  console.log("🆕 New order: " + order.id);
+
+  // Optional popup
+  const alertBox = document.createElement("div");
+  alertBox.textContent = "🆕 New Order: " + order.id;
+  alertBox.style = `
+    position: fixed; top: 20px; right: 20px;
+    background: #00b894; color: white;
+    padding: 14px 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    z-index: 9999;
+    font-size: 1rem;
+  `;
+  document.body.appendChild(alertBox);
+  setTimeout(() => alertBox.remove(), 4000); // Auto-dismiss after 4s
+}
       });
     })
     .catch(err => {
