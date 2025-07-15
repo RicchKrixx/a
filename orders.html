@@ -3,175 +3,177 @@
 <head>
   <meta charset="UTF-8" />
   <title>All Orders - BizMAX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-  :root {
-    font-size: 16px; /* Prevent input zooming on mobile */
-  }
-
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-
-  body {
-    font-family: 'Segoe UI', sans-serif;
-    background: #f0f8ff;
-    padding: 20px;
-    color: #222;
-  }
-
-  h1 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #0a4d7a;
-    text-shadow: 0 0 2px #cce6ff;
-  }
-
-  #searchInput {
-    display: block;
-    margin: 0 auto 30px auto;
-    padding: 14px 20px;
-    font-size: 1rem;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 400px;
-    border: 1px solid #ccc;
-    box-shadow: 0 0 5px #b3e0ff;
-    background: #fff;
-  }
-
-  .order {
-    background: #ffffff;
-    border-radius: 14px;
-    padding: 18px 20px;
-    margin: 15px auto;
-    max-width: 720px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-    transition: all 0.3s ease;
-    border-left: 6px solid #0a4d7a;
-  }
-
-  .order:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.1);
-  }
-
-  .order h2 {
-    font-size: 1.2rem;
-    color: #0a4d7a;
-    margin-bottom: 10px;
-  }
-
-  .order p {
-    margin: 5px 0;
-    font-size: 0.95rem;
-    color: #444;
-  }
-
-  .order ul {
-    margin-top: 10px;
-    padding-left: 18px;
-  }
-
-  .order ul li {
-    font-size: 0.95rem;
-    color: #555;
-    list-style-type: disc;
-  }
-
-  @media (max-width: 500px) {
     :root {
-      font-size: 15px;
+      font-size: 16px;
     }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f8ff;
+      padding: 20px;
+      color: #222;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #0a4d7a;
+      text-shadow: 0 0 2px #cce6ff;
+    }
+
+    #searchInput {
+      display: block;
+      margin: 0 auto 30px auto;
+      padding: 14px 20px;
+      font-size: 1rem;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      border: 1px solid #ccc;
+      box-shadow: 0 0 5px #b3e0ff;
+      background: #fff;
+    }
+
     .order {
-      padding: 16px 14px;
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin: 15px auto;
+      max-width: 720px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      transition: all 0.3s ease;
+      border-left: 6px solid #0a4d7a;
     }
-  }
-</style>
+
+    .order:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    }
+
+    .order h2 {
+      font-size: 1.2rem;
+      color: #0a4d7a;
+      margin-bottom: 10px;
+    }
+
+    .order p {
+      margin: 5px 0;
+      font-size: 0.95rem;
+      color: #444;
+    }
+
+    .order ul {
+      margin-top: 10px;
+      padding-left: 18px;
+    }
+
+    .order ul li {
+      font-size: 0.95rem;
+      color: #555;
+      list-style-type: disc;
+    }
+
+    @media (max-width: 500px) {
+      :root {
+        font-size: 15px;
+      }
+      .order {
+        padding: 16px 14px;
+      }
+    }
+  </style>
 </head>
 <body>
+
 <audio id="notifySound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
 
 <h1>🧾 BizMAX Orders</h1>
-<input type="text" id="searchInput" placeholder="Search Order ID..." 
-  style="display:block;margin:20px auto;padding:12px 20px;width:90%;max-width:400px;
-         font-size:16px;border-radius:12px;border:1px solid #ccc;">
-<div id="ordersContainer" class="loading">Loading orders...</div>
+<input type="text" id="searchInput" placeholder="Search Order ID..." />
+
+<div id="ordersContainer">Loading orders...</div>
 
 <script>
-const container = document.getElementById("ordersContainer");
-const searchInput = document.getElementById("searchInput");
-const sheetdbUrl = "https://sheetdb.io/api/v1/51rb7ntp647j8"; // Replace with your URL
-let shownOrderIds = new Set();
+  const container = document.getElementById("ordersContainer");
+  const searchInput = document.getElementById("searchInput");
+  const sheetdbUrl = "https://sheetdb.io/api/v1/51rb7ntp647j8"; // ✅ Replace with your SheetDB API
 
-function addOrderToTop(order) {
-  const div = document.createElement("div");
-  div.className = "order";
-  div.innerHTML = `
-    <h2>Order ID: ${order.id}</h2>
-    <p><strong>Name:</strong> ${order.name}</p>
-    <p><strong>Email:</strong> ${order.email}</p>
-    <p><strong>Phone:</strong> ${order.phone}</p>
-    <p><strong>Address:</strong> ${order.address}</p>
-    <p><strong>Method:</strong> ${order.method}</p>
-    <p><strong>Total:</strong> GH¢ ${order.total}</p>
-    <p><strong>Items:</strong></p>
-    <ul>${order.items.split(",").map(i => `<li>${i.trim()}</li>`).join("")}</ul>
-  `;
-  container.prepend(div); // ✅ New orders appear at the top
-}
+  let shownOrderIds = new Set();
+  container.textContent = ""; // Clear initial text
 
-function fetchNewOrders() {
-  fetch(sheetdbUrl)
-    .then(res => res.json())
-    .then(data => {
-      data.forEach(order => {
-        if (!shownOrderIds.has(order.id)) {
-  shownOrderIds.add(order.id);
-  addOrderToTop(order);
+  function addOrderToTop(order) {
+    const div = document.createElement("div");
+    div.className = "order";
+    div.innerHTML = `
+      <h2>Order ID: ${order.id}</h2>
+      <p><strong>Name:</strong> ${order.name}</p>
+      <p><strong>Email:</strong> ${order.email}</p>
+      <p><strong>Phone:</strong> ${order.phone}</p>
+      <p><strong>Address:</strong> ${order.address}</p>
+      <p><strong>Method:</strong> ${order.method}</p>
+      <p><strong>Total:</strong> GH¢ ${order.total}</p>
+      <p><strong>Items:</strong></p>
+      <ul>${order.items.split(",").map(i => `<li>${i.trim()}</li>`).join("")}</ul>
+    `;
+    container.prepend(div);
+  }
 
-  // 🔔 Notify
-  document.getElementById("notifySound").play();
-  console.log("🆕 New order: " + order.id);
+  function fetchNewOrders() {
+    fetch(sheetdbUrl)
+      .then(res => res.json())
+      .then(data => {
+        data.forEach(order => {
+          if (!shownOrderIds.has(order.id)) {
+            shownOrderIds.add(order.id);
+            addOrderToTop(order);
 
-  // Optional popup
-  const alertBox = document.createElement("div");
-  alertBox.textContent = "🆕 New Order: " + order.id;
-  alertBox.style = `
-    position: fixed; top: 20px; right: 20px;
-    background: #00b894; color: white;
-    padding: 14px 20px;
-    border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    z-index: 9999;
-    font-size: 1rem;
-  `;
-  document.body.appendChild(alertBox);
-  setTimeout(() => alertBox.remove(), 4000); // Auto-dismiss after 4s
-}
-      });
-    })
-    .catch(err => {
-      console.error("Fetch failed:", err);
+            // 🔔 Notify
+            document.getElementById("notifySound").play();
+
+            // 📢 Popup Alert
+            const alertBox = document.createElement("div");
+            alertBox.textContent = "🆕 New Order: " + order.id;
+            alertBox.style = `
+              position: fixed; top: 20px; right: 20px;
+              background: #00b894; color: white;
+              padding: 14px 20px;
+              border-radius: 12px;
+              box-shadow: 0 0 10px rgba(0,0,0,0.2);
+              z-index: 9999;
+              font-size: 1rem;
+            `;
+            document.body.appendChild(alertBox);
+            setTimeout(() => alertBox.remove(), 4000);
+
+            // 🚀 Auto-scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        });
+      })
+      .catch(err => console.error("Fetch error:", err));
+  }
+
+  // ✅ Search Functionality
+  searchInput.addEventListener("input", () => {
+    const term = searchInput.value.toLowerCase();
+    const orders = document.querySelectorAll(".order");
+    orders.forEach(order => {
+      const idText = order.querySelector("h2").textContent.toLowerCase();
+      order.style.display = idText.includes(term) ? "block" : "none";
     });
-}
-
-// ✅ Search stays working (input isn't cleared)
-searchInput.addEventListener("input", function () {
-  const term = this.value.toLowerCase();
-  const orders = document.querySelectorAll(".order");
-  orders.forEach(order => {
-    const idText = order.querySelector("h2").textContent.toLowerCase();
-    order.style.display = idText.includes(term) ? "block" : "none";
   });
-});
 
-// ✅ Initial load
-fetchNewOrders();
-
-// ✅ Fetch new orders every 1 second without resetting the page
-setInterval(fetchNewOrders, 1000);
+  // 🚀 Load initially and every 1 second
+  fetchNewOrders();
+  setInterval(fetchNewOrders, 1000);
 </script>
+
 </body>
 </html>
