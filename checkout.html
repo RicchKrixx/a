@@ -234,7 +234,6 @@ input, textarea, select {
     return res.json();
   })
   .then(() => {
-    localStorage.removeItem("cart");
     localStorage.setItem("latestOrderId", orderId);
     showLoader(false);
     alert("Order placed successfully!");
