@@ -43,6 +43,9 @@
 <body>
 
 <h1>🧾 BizMAX Orders</h1>
+<input type="text" id="searchInput" placeholder="Search Order ID..." 
+  style="display:block;margin:20px auto;padding:12px 20px;width:90%;max-width:400px;
+         font-size:16px;border-radius:12px;border:1px solid #ccc;">
 <div id="ordersContainer" class="loading">Loading orders...</div>
 
 <script>
@@ -88,6 +91,20 @@ fetch(sheetdbUrl)
     location.reload();
   }, 10000); // refresh every 10 seconds
 </script>
+<script>
+document.getElementById("searchInput").addEventListener("input", function () {
+  const searchTerm = this.value.toLowerCase();
+  const orders = document.querySelectorAll(".order");
 
+  orders.forEach(order => {
+    const idText = order.querySelector("h2").textContent.toLowerCase(); // e.g. "Order ID: BX728F"
+    if (idText.includes(searchTerm)) {
+      order.style.display = "block";
+    } else {
+      order.style.display = "none";
+    }
+  });
+});
+</script>
 </body>
 </html>
