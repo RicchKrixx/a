@@ -302,28 +302,37 @@ input, textarea, select {
     }
 </script>
 <script>
-// Pay on Delivery
-fetch("https://ricchkrixx.github.io/a/order.html", {
+// Pay on Delivery → Send order to SheetDB
+fetch("https://sheetdb.io/api/v1/51rb7ntp647j8", {
   method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify(orderData)
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    data: [{
+      id: orderId,
+      name: name,
+      email: email,
+      phone: phone,
+      address: address,
+      method: method,
+      total: grandTotal,
+      items: cartItems.map(i => `${i.name} × ${i.qty}`).join(", ")
+    }]
+  })
 })
 .then(res => {
-  if (!res.ok) throw new Error("Network response was not ok");
-  return res.json(); // or .text() depending on the server
+  if (!res.ok) throw new Error("Network error");
+  return res.json();
 })
 .then(() => {
   localStorage.removeItem("cart");
   showLoader(false);
-  alert("Order sent successfully!");
+  alert("Order saved to SheetDB successfully!");
   window.location.href = "thankyou.html?orderId=" + orderId;
 })
 .catch((err) => {
   showLoader(false);
+  alert("Failed to send order to SheetDB.");
   console.error(err);
-  alert("Failed to send order.");
 });
 </script>
 </body>
