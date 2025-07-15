@@ -128,7 +128,7 @@ input, textarea, select {
 <div class="card">
     <h1>CHECKOUT</h1>
     <span>Amount to pay:<p id="grandTotal">GH¢0.00</p></span>
-<form action="https://ricchkrixx.io/a/orders.html" method="POST">
+<form action="https://ricchkrixx.github.io/a/orders.html" method="POST">
     <div id="custInfo">
       <label>Full Name</label>
       <input id="custName" placeholder="John Doe" required>
@@ -300,6 +300,31 @@ input, textarea, select {
         style1.disabled = false;
       }
     }
+</script>
+<script>
+// Pay on Delivery
+fetch("https://ricchkrixx.github.io/a/order.html", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(orderData)
+})
+.then(res => {
+  if (!res.ok) throw new Error("Network response was not ok");
+  return res.json(); // or .text() depending on the server
+})
+.then(() => {
+  localStorage.removeItem("cart");
+  showLoader(false);
+  alert("Order sent successfully!");
+  window.location.href = "thankyou.html?orderId=" + orderId;
+})
+.catch((err) => {
+  showLoader(false);
+  console.error(err);
+  alert("Failed to send order.");
+});
 </script>
 </body>
 </html>
