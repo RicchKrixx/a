@@ -234,11 +234,16 @@ input, textarea, select {
     return res.json();
   })
   .then(() => {
-    localStorage.setItem("latestOrderId", orderId);
-    showLoader(false);
-    alert("Order placed successfully!");
-    window.location.href = "thankyou.html?orderId=" + orderId;
-  })
+    localStorage.removeItem("cart");
+  showLoader(false);
+  alert("Order saved to SheetDB successfully!");
+  window.location.href = "thankyou.html?orderId=" + orderId;
+})
+.catch((err) => {
+  showLoader(false);
+  alert("Failed to send order to SheetDB.");
+  console.error(err);
+});
   });
 });
 </script>
