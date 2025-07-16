@@ -232,23 +232,21 @@ input, textarea, select {
     items: itemsString
   })
 })
-    .then(res => {
-      if (!res.ok) throw new Error("Network error");
-      return res.json();
-    })
-    .then(() => {
-      // localStorage.removeItem("cart"); // Optional
-      localStorage.setItem("latestOrderId", orderId);
-      showLoader(false);
-      alert("Order placed successfully!");
-      window.location.href = "thankyou.html?orderId=" + orderId;
-    })
-    .catch((err) => {
-      showLoader(false);
-      console.error(err);
-      alert("Failed to send order to Google Apps Script.");
-    });
-  });
+.then(res => {
+  if (!res.ok) throw new Error("Network error");
+  return res.text(); // ✅ Use text, not json
+})
+.then(text => {
+  localStorage.setItem("latestOrderId", orderId);
+  showLoader(false);
+  alert("Order placed successfully!");
+  window.location.href = "thankyou.html?orderId=" + orderId;
+})
+.catch((err) => {
+  showLoader(false);
+  console.error(err);
+  alert("Failed to send order to Google Apps Script.");
+});
 </script>
 
 <script>
