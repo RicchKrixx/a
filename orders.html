@@ -115,7 +115,6 @@
     });
   }, { once: true });
 </script>
-<!--
 <script>
   const container = document.getElementById("ordersContainer");
   const searchInput = document.getElementById("searchInput");
@@ -152,81 +151,6 @@
 
             // 🔔 Notify
             document.getElementById("notifySound").play();
-
-            // 📢 Popup Alert
-            const alertBox = document.createElement("div");
-            alertBox.textContent = "🆕 New Order: " + order.id;
-            alertBox.style = `
-              position: fixed; top: 20px; right: 20px;
-              background: #00b894; color: white;
-              padding: 14px 20px;
-              border-radius: 12px;
-              box-shadow: 0 0 10px rgba(0,0,0,0.2);
-              z-index: 9999;
-              font-size: 1rem;
-            `;
-            document.body.appendChild(alertBox);
-            setTimeout(() => alertBox.remove(), 4000);
-
-            // 🚀 Auto-scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }
-        });
-      })
-      .catch(err => console.error("Fetch error:", err));
-  }
-
-  // ✅ Search Functionality
-  searchInput.addEventListener("input", () => {
-    const term = searchInput.value.toLowerCase();
-    const orders = document.querySelectorAll(".order");
-    orders.forEach(order => {
-      const idText = order.querySelector("h2").textContent.toLowerCase();
-      order.style.display = idText.includes(term) ? "block" : "none";
-    });
-  });
-
-  // 🚀 Load initially and every 1 second
-  fetchNewOrders();
-  setInterval(fetchNewOrders, 1000);
-</script>
--->
-<script>
-  const container = document.getElementById("ordersList");
-  const searchInput = document.getElementById("searchInput");
-  const shownOrderIds = new Set();
-
-  // ✅ Replace with your actual deployed Apps Script Web App URL
-  const googleScriptURL = "https://script.google.com/macros/s/AKfycbx4Dix8Vccb3xyfA1EDfP28mRmooMPGXdZDkFw62XV5Z68AcjV5RKpbAOJH0m_9sZtl/exec";
-
-  function addOrderToTop(order) {
-    const div = document.createElement("div");
-    div.className = "order";
-    div.innerHTML = `
-      <h2>Order ID: ${order.id}</h2>
-      <p><strong>Name:</strong> ${order.name}</p>
-      <p><strong>Email:</strong> ${order.email}</p>
-      <p><strong>Phone:</strong> ${order.phone}</p>
-      <p><strong>Address:</strong> ${order.address}</p>
-      <p><strong>Method:</strong> ${order.method}</p>
-      <p><strong>Total:</strong> GH¢ ${order.total}</p>
-      <p><strong>Items:</strong></p>
-      <ul>${order.items.split(",").map(i => `<li>${i.trim()}</li>`).join("")}</ul>
-    `;
-    container.prepend(div);
-  }
-
-  function fetchNewOrders() {
-    fetch(googleScriptURL)
-      .then(res => res.json())
-      .then(data => {
-        data.forEach(order => {
-          if (!shownOrderIds.has(order.id)) {
-            shownOrderIds.add(order.id);
-            addOrderToTop(order);
-
-            // 🔔 Notify
-            document.getElementById("notifySound")?.play();
 
             // 📢 Popup Alert
             const alertBox = document.createElement("div");
