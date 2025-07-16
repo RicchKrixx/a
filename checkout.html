@@ -149,7 +149,7 @@ input, textarea, select {
     <label>Payment Method</label>
     <select id="payMethod">
       <option value="payment on delivery">Pay on Delivery</option>
-      <option value="paid">Pay Online</option>
+      <option value="Paid">Pay Online</option>
     </select>
 
     <button id="actionBtn">Place Order</button>
@@ -167,7 +167,7 @@ input, textarea, select {
   const actionBtn = document.getElementById("actionBtn");
 
   payMethod.addEventListener("change", () => {
-    actionBtn.textContent = payMethod.value === "paid" ? "Pay Now" : "Place Order";
+    actionBtn.textContent = payMethod.value === "Paid" ? "Pay Now" : "Place Order";
   });
 
   function showLoader(show) {
@@ -242,7 +242,7 @@ input, textarea, select {
 
     showLoader(true);
 
-    if (method === "online") {
+    if (method === "Paid") {
       PaystackPop.setup({
         key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxx', // 🔁 Replace with your public key
         email: email,
@@ -251,7 +251,7 @@ input, textarea, select {
         ref: orderId,
         callback: function(response) {
           // ✅ Only send order if payment is successful
-          method = "online"; // optional but just to be sure
+          method = "Paid"; // optional but just to be sure
           sendOrderToSheetDB();
         },
         onClose: function() {
