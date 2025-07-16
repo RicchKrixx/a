@@ -162,89 +162,102 @@ input, textarea, select {
 </form>
 </div>
 <script src="https://js.paystack.co/v1/inline.js"></script>
-<script>
-  document.getElementById("checkoutForm").addEventListener("submit", e => e.preventDefault());
-</script>
-<script>
-  const payMethod = document.getElementById("payMethod");
-  const actionBtn = document.getElementById("actionBtn");
 
-  payMethod.addEventListener("change", () => {
-    actionBtn.textContent = payMethod.value === "paid" ? "Pay Now" : "Place Order";
+<script>
+  // Wait for DOM to be ready
+  document.addEventListener("DOMContentLoaded", () => {
+    const payMethod = document.getElementById("payMethod");
+    const actionBtn = document.getElementById("actionBtn");
+
+    // Switch "Place Order" button text
+    payMethod.addEventListener("change", () => {
+      actionBtn.textContent = payMethod.value === "paid" ? "Pay Now" : "Place Order";
+    });
+
+    // Loader toggle
+    function showLoader(show) {
+      document.getElementById("loader").style.display = show ? "flex" : "none";
+    }
+
+    // Order ID generator
+    function generateOrderId() {
+      return "BX" + Date.now().toString(36).toUpperCase();
+    }
+
+    // Button click to process order
+    actionBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("custName").value.trim();
+      const email = document.getElementById("custEmail").value.trim();
+      const phone = document.getElementById("custPhone").value.trim();
+      const address = document.getElementById("custAddr").value.trim();
+      const method = payMethod.value;
+      const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
+      const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
+
+      if (!(name && email && phone && address)) {
+        alert("Please fill in all customer details.");
+        return;
+      }
+
+      if (grandTotal <= 0 || cartItems.length === 0) {
+        alert("Cart is empty or total is 0.");
+        return;
+      }
+
+      const orderId = generateOrderId();
+
+      const itemsString = cartItems.map(i => {
+        let details = `${i.name}`;
+        if (i.color) details += ` (${i.color}`;
+        if (i.size) details += i.color ? `, ${i.size})` : ` (${i.size})`;
+        if (!i.color && !i.size) details += '';
+        return `${details} × ${i.qty}`;
+      }).join(", ");
+
+      showLoader(true);
+
+      // ✅ Send to Google Apps Script
+      fetch("https://script.google.com/macros/s/AKfycbzBeCS6QdNnP-6HAtQnc63flI056OLSqgdk3YZWYVnZmD0Nx38x1zWQ9Nd1BuRZVcot/exec", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          id: orderId,
+          name: name,
+          email: email,
+          phone: phone,
+          address: address,
+          method: method,
+          total: grandTotal,
+          items: itemsString
+        })
+      })
+      .then(res => {
+        if (!res.ok) throw new Error("Network error");
+        return res.text();
+      })
+      .then(response => {
+        console.log("✅ GAS Response:", response);
+        localStorage.setItem("latestOrderId", orderId);
+        showLoader(false);
+        alert("Order placed successfully!");
+        window.location.href = "thankyou.html?orderId=" + orderId;
+      })
+      .catch(error => {
+        showLoader(false);
+        console.error("❌ Error sending order:", error);
+        alert("Failed to send order. Please check your connection and try again.");
+      });
+    });
+
+    // Show grand total
+    const savedTotal = localStorage.getItem("grandTotal") || "0";
+    document.getElementById("grandTotal").textContent = "GH¢" + parseFloat(savedTotal).toFixed(2);
   });
-
-  function showLoader(show) {
-    document.getElementById("loader").style.display = show ? "flex" : "none";
-  }
-
-  function generateOrderId() {
-    return "BX" + Date.now().toString(36).toUpperCase();
-  }
-
-  actionBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-
-    const name = document.getElementById("custName").value.trim();
-    const email = document.getElementById("custEmail").value.trim();
-    const phone = document.getElementById("custPhone").value.trim();
-    const address = document.getElementById("custAddr").value.trim();
-    const method = payMethod.value;
-    const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
-    const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
-
-    if (!(name && email && phone && address)) {
-      alert("Please fill in all customer details.");
-      return;
-    }
-
-    if (grandTotal <= 0 || cartItems.length === 0) {
-      alert("Cart is empty or total is 0.");
-      return;
-    }
-
-    const orderId = generateOrderId();
-
-    const itemsString = cartItems.map(i => {
-      let details = `${i.name}`;
-      if (i.color) details += ` (${i.color}`;
-      if (i.size) details += i.color ? `, ${i.size})` : ` (${i.size})`;
-      if (!i.color && !i.size) details += '';
-      return `${details} × ${i.qty}`;
-    }).join(", ");
-
-    showLoader(true);
-// ✅ Send to Google Apps Script
-fetch("https://script.google.com/macros/s/AKfycbzBeCS6QdNnP-6HAtQnc63flI056OLSqgdk3YZWYVnZmD0Nx38x1zWQ9Nd1BuRZVcot/exec", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    id: orderId,
-    name: name,
-    email: email,
-    phone: phone,
-    address: address,
-    method: method,
-    total: grandTotal,
-    items: itemsString
-  })
-})
-.then(res => res.text())
-.then(response => {
-  console.log("✅ GAS Response:", response);
-  localStorage.setItem("latestOrderId", orderId);
-  showLoader(false);
-  alert("Order placed successfully!");
-  window.location.href = "thankyou.html?orderId=" + orderId;
-})
-.catch(error => {
-  showLoader(false);
-  console.error("❌ Error sending order:", error);
-  alert("Failed to send order. Please check your connection and try again.");
-});
 </script>
-
 <script>
   function getLocation() {
     if (!navigator.geolocation) {
