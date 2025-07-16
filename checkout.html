@@ -167,7 +167,7 @@ input, textarea, select {
   const actionBtn = document.getElementById("actionBtn");
 
   payMethod.addEventListener("change", () => {
-    actionBtn.textContent = payMethod.value === "online" ? "Pay Now" : "Place Order";
+    actionBtn.textContent = payMethod.value === "paid" ? "Pay Now" : "Place Order";
   });
 
   function showLoader(show) {
@@ -201,53 +201,48 @@ input, textarea, select {
 
     const orderId = generateOrderId();
 
-    // ✅ Include variation in the items string
     const itemsString = cartItems.map(i => {
-  let details = `${i.name}`;
-  if (i.color) details += ` (${i.color}`;
-  if (i.size) details += i.color ? `, ${i.size})` : ` (${i.size})`;
-  if (!i.color && !i.size) details += '';
-  return `${details} × ${i.qty}`;
-}).join(", ");
+      let details = `${i.name}`;
+      if (i.color) details += ` (${i.color}`;
+      if (i.size) details += i.color ? `, ${i.size})` : ` (${i.size})`;
+      if (!i.color && !i.size) details += '';
+      return `${details} × ${i.qty}`;
+    }).join(", ");
+
     showLoader(true);
 
-    if (method === "online") {
-      alert("Online payment not configured. Using delivery method for now.");
+    // Send to Google Apps Script (your new URL)
+    fetch("https://script.google.com/macros/s/AKfycbzBeCS6QdNnP-6HAtQnc63flI056OLSqgdk3YZWYVnZmD0Nx38x1zWQ9Nd1BuRZVcot/exec", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: orderId,
+        name: name,
+        email: email,
+        phone: phone,
+        address: address,
+        method: method,
+        total: grandTotal,
+        items: itemsString
+      })
+    })
+    .then(res => {
+      if (!res.ok) throw new Error("Network error");
+      return res.text();
+    })
+    .then(text => {
+      console.log("GAS response:", text);
+      localStorage.setItem("latestOrderId", orderId);
       showLoader(false);
-      return;
-    }
-
-  // ✅ Send to Google Apps Script 
-fetch("https://script.google.com/macros/s/AKfycbzF_cs0lajTzcOmeOAtli5kI_8K_x-f4I7ZQUAKUhYYVLhkzmv2lZcf2CoECaWetR-r/exec", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    id: orderId,
-    name: name,
-    email: email,
-    phone: phone,
-    address: address,
-    method: method,
-    total: grandTotal,
-    items: itemsString
-  })
-})
-.then(res => {
-  if (!res.ok) throw new Error("Network error");
-  return res.text(); // ✅ Get plain text response from Apps Script
-})
-.then(text => {
-  console.log("GAS response:", text);
-  localStorage.setItem("latestOrderId", orderId);
-  showLoader(false);
-  alert("Order placed successfully!");
-  window.location.href = "thankyou.html?orderId=" + orderId;
-})
-.catch((err) => {
-  showLoader(false);
-  console.error("POST to GAS failed:", err);
-  alert("❌ Failed to send order. Please check your internet or try again.");
-});
+      alert("✅ Order placed successfully!");
+      window.location.href = "thankyou.html?orderId=" + orderId;
+    })
+    .catch((err) => {
+      showLoader(false);
+      console.error("POST failed:", err);
+      alert("❌ Failed to send order. Please check your internet and try again.");
+    });
+  });
 </script>
 
 <script>
