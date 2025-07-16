@@ -217,7 +217,7 @@ input, textarea, select {
       return;
     }
 
-    // ✅ Send to SheetDB
+    // ✅ Send to Google Apps Script 
     fetch("https://script.google.com/macros/s/AKfycbx4Dix8Vccb3xyfA1EDfP28mRmooMPGXdZDkFw62XV5Z68AcjV5RKpbAOJH0m_9sZtl/exec", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -248,7 +248,7 @@ input, textarea, select {
     .catch((err) => {
       showLoader(false);
       console.error(err);
-      alert("Failed to send order to SheetDB.");
+      alert("Failed to send order to Google Apps Script.");
     });
   });
 </script>
