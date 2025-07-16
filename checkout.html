@@ -1,187 +1,305 @@
-<!-- FIXED FULLY WORKING BIZMAX CHECKOUT PAGE --><!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Checkout</title>
   <style id="style1">
     html, body { height: 100%; overflow-x: hidden; font-family: Arial, sans-serif;
-      align-content: center; padding: 10px; border-radius: 16px;
-      box-shadow: 0 0 15px black; background: lightblue; }
-    .card h1 { font-size: 32px; margin-bottom: 15px; font-weight: bold; color: #fff; text-shadow: 0 0 5px #fff; }
-    .card span { font-size: 20px; font-weight: bold; color: #fff; }
-    label { display: block; margin-top: 6px; font-weight: bold; }
-    input::placeholder, textarea::placeholder { color: black; opacity: 0.5; }
+align-content: center;
+      padding: 10px;
+ border-radius: 16px;
+      box-shadow: 0 0 15px black;
+background: lightblue;
+    }
+.card h1 {
+      font-size: 32px;
+      margin-bottom: 15px;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 0 0 5px #fff;
+    }
+    .card span {
+      font-size: 20px;
+      font-weight: bold;
+      color: #fff;
+    }
+    label {
+      display: block;
+      margin-top: 6px;
+      font-weight: bold;
+    }
+    input::placeholder, textarea::placeholder {
+      color: black;
+    opacity: 0.5;
+    }
   </style>
+
+
   <style id="style2" disabled>
     html, body { height: 100%; overflow-x: hidden; font-family: Arial, sans-serif;
-      align-content: center; background: #111928; padding: 10px;
-      border-radius: 16px; box-shadow: 0 0 15px cyan; }
-    .card h1, .card span, label { color: #00ffff; text-shadow: 0 0 5px #00ffff; font-weight: bold; }
-    input::placeholder, textarea::placeholder { color: #eee; opacity: 0.6; }
-  </style>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    h1, h2 { text-align: center; margin-bottom: 18px; }
-    input, textarea, select {
-      width: 100%; padding: 12px; border-radius: 12px; border: none;
-      background: rgba(255, 255, 255, .15); color: #fff; font-size: 16px;
+align-content: center;
+      background: #111928;
+      padding: 10px;
+      border-radius: 16px;
+      box-shadow: 0 0 15px cyan;
     }
+ .card h1 {
+      font-size: 32px;
+      margin-bottom: 15px;
+      font-weight: bold;
+      color: #00ffff;
+      text-shadow: 0 0 5px #00ffff;
+    }
+    .card span {
+      font-size: 20px;
+      font-weight: bold;
+      color: #00ffff;
+      text-shadow: 0 0 5px #00ffff;
+    }
+    label {
+      display: block;
+      margin-top: 6px;
+      font-weight: bold;
+      color: white; 
+    }
+        input::placeholder, textarea::placeholder {
+      color: #eee;
+    opacity: 0.6;
+    }
+</style>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+
+
+    h1, h2 {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      background: rgba(255, 255, 255, .15);
+      color: #fff;
+      font-size: 16px;
+    }
+
     .card button {
-      width: 100%; padding: 16px; border: none; border-radius: 14px;
-      font-size: 18px; font-weight: bold; cursor: pointer; background: blue; color: #fff;
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 14px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      background: blue;
+      color: #fff;
     }
     #loader {
-      position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
-      background: rgba(0, 0, 0, .6); z-index: 1000;
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, .6);
+      z-index: 1000;
     }
     .spin {
-      width: 60px; height: 60px; border: 7px solid #eee;
-      border-top: 7px solid var(--blue); border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      border: 7px solid #eee;
+      border-top: 7px solid var(--blue);
+      border-radius: 50%;
       animation: spin 1s linear infinite;
     }
-    @keyframes spin { 0% { transform: rotate(0); } 100% { transform: rotate(360deg); } }
+    @keyframes spin {
+      0% { transform: rotate(0); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
-  <button onclick="switchStyle()" style="position:fixed;top:15px;right:15px;padding:0;border:none; background:none;font-size:24px;">🎨</button>
-  <div class="card">
+  <button onclick="switchStyle()" style="position:fixed;top:15px;right:15px;padding:0;border:none; background:none;font-size:24px;">
+    🎨
+  </button>
+<div class="card">
     <h1>CHECKOUT</h1>
     <span>Amount to pay:<p id="grandTotal">GH¢0.00</p></span>
-    <form id="checkoutForm">
+<form id="checkoutForm" onsubmit="return false;">
+    <div id="custInfo">
       <label>Full Name</label>
-      <input id="custName" placeholder="John Doe" required><label>Email</label>
-  <input id="custEmail" type="email" placeholder="john@example.com" required>
+      <input id="custName" placeholder="John Doe" required>
 
-  <label>Phone Number</label>
-  <input id="custPhone" type="tel" placeholder="055 123 4567" required>
+      <label>Email</label>
+      <input id="custEmail" type="email" placeholder="john@example.com" required>
 
-  <label>Delivery Address</label>
-  <textarea id="custAddr" rows="3" placeholder="Street • City" required></textarea>
+      <label>Phone Number</label>
+      <input id="custPhone" type="tel" placeholder="055 123 4567" required>
 
-  <button type="button" onclick="getLocation()" style="margin-top:10px;margin-bottom:14px;padding:10px;font-size:14px;border:none;border-radius:10px;background:darkcyan;color:white;">
-    📍 Use My Location
-  </button>
+      <label>Delivery Address</label>
+      <textarea id="custAddr" rows="3" placeholder="Street • City" required></textarea>
 
-  <label>Payment Method</label>
-  <select id="payMethod">
-    <option value="payment on delivery">Pay on Delivery</option>
-    <option value="paid">Pay Online</option>
-  </select>
+      <button onclick="getLocation()" style="margin-top:10px;margin-bottom:14px;padding:10px;font-size:14px;border:none;border-radius:10px;background:darkcyan;color:white;">
+        📍 Use My Location
+      </button>
 
-  <button type="submit" id="actionBtn">Place Order</button>
+    <label>Payment Method</label>
+    <select id="payMethod">
+      <option value="payment on delivery">Pay on Delivery</option>
+      <option value="paid">Pay Online</option>
+    </select>
+
+    <button id="actionBtn">Place Order</button>
+  </div>
+
+  <div id="loader">
+    <div style="text-align:center;color:#fff">
+      <div class="spin"></div>
+</div>
 </form>
+</div>
+<script src="https://js.paystack.co/v1/inline.js"></script>
+<script>
+  const payMethod = document.getElementById("payMethod");
+  const actionBtn = document.getElementById("actionBtn");
 
-  </div>  <div id="loader"><div style="text-align:center;color:#fff"><div class="spin"></div></div></div>  <script src="https://js.paystack.co/v1/inline.js"></script>  <script>
-    const form = document.getElementById("checkoutForm");
-    const payMethod = document.getElementById("payMethod");
-    const actionBtn = document.getElementById("actionBtn");
+  payMethod.addEventListener("change", () => {
+    actionBtn.textContent = payMethod.value === "online" ? "Pay Now" : "Place Order";
+  });
 
-    payMethod.addEventListener("change", () => {
-      actionBtn.textContent = payMethod.value === "paid" ? "Pay Now" : "Place Order";
-    });
+  function showLoader(show) {
+    document.getElementById("loader").style.display = show ? "flex" : "none";
+  }
 
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const name = document.getElementById("custName").value.trim();
-      const email = document.getElementById("custEmail").value.trim();
-      const phone = document.getElementById("custPhone").value.trim();
-      const address = document.getElementById("custAddr").value.trim();
-      const method = payMethod.value;
-      const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
-      const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
+  function generateOrderId() {
+    return "BX" + Date.now().toString(36).toUpperCase();
+  }
 
-      if (!(name && email && phone && address)) return alert("Please fill in all customer details.");
-      if (grandTotal <= 0 || cartItems.length === 0) return alert("Cart is empty or total is 0.");
+  actionBtn.addEventListener("click", (e) => {
+    e.preventDefault();
 
-      const orderId = "BX" + Date.now().toString(36).toUpperCase();
-      const itemsString = cartItems.map(i => {
-        let d = `${i.name}`;
-        if (i.color) d += ` (${i.color}`;
-        if (i.size) d += i.color ? `, ${i.size})` : ` (${i.size})`;
-        if (!i.color && !i.size) d += '';
-        return `${d} × ${i.qty}`;
-      }).join(", ");
+    const name = document.getElementById("custName").value.trim();
+    const email = document.getElementById("custEmail").value.trim();
+    const phone = document.getElementById("custPhone").value.trim();
+    const address = document.getElementById("custAddr").value.trim();
+    const method = payMethod.value;
+    const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
+    const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
 
-      const orderData = {
-        id: orderId, name, email, phone, address, method,
-        total: grandTotal, items: itemsString
-      };
+    if (!(name && email && phone && address)) {
+      alert("Please fill in all customer details.");
+      return;
+    }
 
-      if (method === "paid") {
-        // Paystack payment
-        let handler = PaystackPop.setup({
-          key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 🛑 Replace with your public key
+    if (grandTotal <= 0 || cartItems.length === 0) {
+      alert("Cart is empty or total is 0.");
+      return;
+    }
+
+    const orderId = generateOrderId();
+
+    // ✅ Include variation in the items string
+    const itemsString = cartItems.map(i => {
+      const variationText = i.variation ? ` (${i.variation})` : "";
+      return `${i.name}${variationText} × ${i.qty}`;
+    }).join(", ");
+
+    showLoader(true);
+
+    if (method === "online") {
+      alert("Online payment not configured. Using delivery method for now.");
+      showLoader(false);
+      return;
+    }
+
+    // ✅ Send to SheetDB
+    fetch("https://sheetdb.io/api/v1/644lwr2o2t014", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        data: [{
+          id: orderId,
+          name: name,
           email: email,
-          amount: grandTotal * 100,
-          currency: 'GHS',
-          callback: function(response) {
-            sendOrder(orderData);
-          },
-          onClose: function() {
-            alert("Payment was cancelled");
-            showLoader(false);
-          }
-        });
-        showLoader(true);
-        handler.openIframe();
-      } else {
-        showLoader(true);
-        sendOrder(orderData);
-      }
+          phone: phone,
+          address: address,
+          method: method,
+          total: grandTotal,
+          items: itemsString
+        }]
+      })
+    })
+    .then(res => {
+      if (!res.ok) throw new Error("Network error");
+      return res.json();
+    })
+    .then(() => {
+      // localStorage.removeItem("cart"); // Optional
+      localStorage.setItem("latestOrderId", orderId);
+      showLoader(false);
+      alert("Order placed successfully!");
+      window.location.href = "thankyou.html?orderId=" + orderId;
+    })
+    .catch((err) => {
+      showLoader(false);
+      console.error(err);
+      alert("Failed to send order to SheetDB.");
     });
+  });
+</script>
+<script>
+  function getLocation() {
+    if (!navigator.geolocation) {
+      alert("Geolocation not supported.");
+      return;
+    }
 
-    function sendOrder(data) {
-      fetch("https://script.google.com/macros/s/AKfycbzBeCS6QdNnP-6HAtQnc63flI056OLSqgdk3YZWYVnZmD0Nx38x1zWQ9Nd1BuRZVcot/exec", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      })
-      .then(res => {
-        if (!res.ok) throw new Error("Network error");
-        return res.text();
-      })
-      .then(response => {
-        localStorage.setItem("latestOrderId", data.id);
-        showLoader(false);
-        alert("Order placed successfully!");
-        window.location.href = "thankyou.html?orderId=" + data.id;
-      })
-      .catch(err => {
-        showLoader(false);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = pos.coords.latitude.toFixed(6);
+        const lng = pos.coords.longitude.toFixed(6);
+        const link = `https://www.google.com/maps?q=${lat},${lng}`;
+        document.getElementById("custAddr").value = link;
+      },
+      (err) => {
+        alert("Unable to retrieve your location.");
         console.error(err);
-        alert("Failed to send order. Please try again.");
-      });
-    }
-
-    function showLoader(show) {
-      document.getElementById("loader").style.display = show ? "flex" : "none";
-    }
-
-    function getLocation() {
-      if (!navigator.geolocation) return alert("Geolocation not supported.");
-      navigator.geolocation.getCurrentPosition(
-        pos => {
-          const lat = pos.coords.latitude.toFixed(6);
-          const lng = pos.coords.longitude.toFixed(6);
-          const link = `https://www.google.com/maps?q=${lat},${lng}`;
-          document.getElementById("custAddr").value = link;
-        },
-        err => {
-          console.error(err);
-          alert("Unable to get your location.");
-        },
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-      );
-    }
-
-    const saved = localStorage.getItem("grandTotal") || "0";
-    document.getElementById("grandTotal").textContent = "GH¢" + parseFloat(saved).toFixed(2);
-
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
+    );
+  }
+</script>  
+<script>
+  const saved = localStorage.getItem("grandTotal") || "0";
+  const total = parseFloat(saved).toFixed(2);
+  document.getElementById("grandTotal").textContent = "GH¢" + total;
+</script>
+<script>
+  const saved = localStorage.getItem("grandTotal") || "0";
+  const total = parseFloat(saved).toFixed(2);
+  document.getElementById("grandTotal").textContent = "GH¢" + total;
+</script>
+<script>
     function switchStyle() {
-      const s1 = document.getElementById("style1");
-      const s2 = document.getElementById("style2");
-      s2.disabled = !s2.disabled;
-      s1.disabled = !s1.disabled;
+      const style2 = document.getElementById("style2");
+      const style1 = document.getElementById("style1");
+
+      if (style2.disabled) {
+        style2.disabled = false;
+        style1.disabled = true;
+      } else {
+        style2.disabled = true;
+        style1.disabled = false;
+      }
     }
-  </script></body>
+</script>
+
+</body>
 </html>
