@@ -327,6 +327,7 @@ input, textarea, select {
 
     // ✅ Send to Google Apps Script
     fetch("https://script.google.com/macros/s/AKfycbyTmmYinlXEp8VYqbqJn4sXWRPTwIrVEA1bRJgKIlsEUWx0ppymHD3cB6ClkaI2vElj/exec", {
+mode: "no-cors",
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
