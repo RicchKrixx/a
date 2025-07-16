@@ -179,72 +179,76 @@ input, textarea, select {
   }
 
   actionBtn.addEventListener("click", (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const name = document.getElementById("custName").value.trim();
-  const email = document.getElementById("custEmail").value.trim();
-  const phone = document.getElementById("custPhone").value.trim();
-  const address = document.getElementById("custAddr").value.trim();
-  const method = payMethod.value;
-  const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
-  const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
+    const name = document.getElementById("custName").value.trim();
+    const email = document.getElementById("custEmail").value.trim();
+    const phone = document.getElementById("custPhone").value.trim();
+    const address = document.getElementById("custAddr").value.trim();
+    const method = payMethod.value;
+    const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
+    const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
 
-  if (!(name && email && phone && address)) {
-    alert("Please fill in all customer details.");
-    return;
-  }
+    if (!(name && email && phone && address)) {
+      alert("Please fill in all customer details.");
+      return;
+    }
 
-  if (grandTotal <= 0 || cartItems.length === 0) {
-    alert("Cart is empty or total is 0.");
-    return;
-  }
+    if (grandTotal <= 0 || cartItems.length === 0) {
+      alert("Cart is empty or total is 0.");
+      return;
+    }
 
-  const orderId = "BX" + Date.now().toString(36).toUpperCase();
-  const itemsString = cartItems.map(i => `${i.name} × ${i.qty}`).join(", ");
+    const orderId = generateOrderId();
 
-  showLoader(true);
+    // ✅ Include variation in the items string
+    const itemsString = cartItems.map(i => {
+      const variationText = i.variation ? ` (${i.variation})` : "";
+      return `${i.name}${variationText} × ${i.qty}`;
+    }).join(", ");
 
-  if (method === "online") {
-    // ✅ Replace with your Paystack logic or remove this block if not using
-    alert("Online payment not configured. Using delivery method for now.");
-    showLoader(false);
-    return;
-  }
+    showLoader(true);
 
-  // ✅ Send to SheetDB
-  fetch("https://sheetdb.io/api/v1/644lwr2o2t014", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      data: [{
-        id: orderId,
-        name: name,
-        email: email,
-        phone: phone,
-        address: address,
-        method: method,
-        total: grandTotal,
-        items: itemsString
-      }]
+    if (method === "online") {
+      alert("Online payment not configured. Using delivery method for now.");
+      showLoader(false);
+      return;
+    }
+
+    // ✅ Send to SheetDB
+    fetch("https://sheetdb.io/api/v1/644lwr2o2t014", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        data: [{
+          id: orderId,
+          name: name,
+          email: email,
+          phone: phone,
+          address: address,
+          method: method,
+          total: grandTotal,
+          items: itemsString
+        }]
+      })
     })
-  })
-  .then(res => {
-    if (!res.ok) throw new Error("Network error");
-    return res.json();
-  })
-  .then(() => {
-    //localStorage.removeItem("cart");
-    localStorage.setItem("latestOrderId", orderId);
-    showLoader(false);
-    alert("Order placed successfully!");
-    window.location.href = "thankyou.html?orderId=" + orderId;
-  })
-  .catch((err) => {
-    showLoader(false);
-    console.error(err);
-    alert("Failed to send order to SheetDB.");
+    .then(res => {
+      if (!res.ok) throw new Error("Network error");
+      return res.json();
+    })
+    .then(() => {
+      // localStorage.removeItem("cart"); // Optional
+      localStorage.setItem("latestOrderId", orderId);
+      showLoader(false);
+      alert("Order placed successfully!");
+      window.location.href = "thankyou.html?orderId=" + orderId;
+    })
+    .catch((err) => {
+      showLoader(false);
+      console.error(err);
+      alert("Failed to send order to SheetDB.");
+    });
   });
-});
 </script>
 
 <script>
