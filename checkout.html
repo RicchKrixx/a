@@ -210,39 +210,36 @@ input, textarea, select {
     }).join(", ");
 
     showLoader(true);
-
-    // Send to Google Apps Script (your new URL)
-    fetch("https://script.google.com/macros/s/AKfycbzBeCS6QdNnP-6HAtQnc63flI056OLSqgdk3YZWYVnZmD0Nx38x1zWQ9Nd1BuRZVcot/exec", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        id: orderId,
-        name: name,
-        email: email,
-        phone: phone,
-        address: address,
-        method: method,
-        total: grandTotal,
-        items: itemsString
-      })
-    })
-    .then(res => {
-      if (!res.ok) throw new Error("Network error");
-      return res.text();
-    })
-    .then(text => {
-      console.log("GAS response:", text);
-      localStorage.setItem("latestOrderId", orderId);
-      showLoader(false);
-      alert("✅ Order placed successfully!");
-      window.location.href = "thankyou.html?orderId=" + orderId;
-    })
-    .catch((err) => {
-      showLoader(false);
-      console.error("POST failed:", err);
-      alert("❌ Failed to send order. Please check your internet and try again.");
-    });
-  });
+// ✅ Send to Google Apps Script
+fetch("https://script.google.com/macros/s/AKfycbzBeCS6QdNnP-6HAtQnc63flI056OLSqgdk3YZWYVnZmD0Nx38x1zWQ9Nd1BuRZVcot/exec", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    id: orderId,
+    name: name,
+    email: email,
+    phone: phone,
+    address: address,
+    method: method,
+    total: grandTotal,
+    items: itemsString
+  })
+})
+.then(res => res.text())
+.then(response => {
+  console.log("✅ GAS Response:", response);
+  localStorage.setItem("latestOrderId", orderId);
+  showLoader(false);
+  alert("Order placed successfully!");
+  window.location.href = "thankyou.html?orderId=" + orderId;
+})
+.catch(error => {
+  showLoader(false);
+  console.error("❌ Error sending order:", error);
+  alert("Failed to send order. Please check your connection and try again.");
+});
 </script>
 
 <script>
