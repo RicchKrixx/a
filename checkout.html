@@ -217,8 +217,8 @@ input, textarea, select {
       return;
     }
 
-    // ✅ Send to Google Apps Script 
-    fetch("https://script.google.com/macros/s/AKfycbx4Dix8Vccb3xyfA1EDfP28mRmooMPGXdZDkFw62XV5Z68AcjV5RKpbAOJH0m_9sZtl/exec", {
+  // ✅ Send to Google Apps Script 
+fetch("https://script.google.com/macros/s/AKfycbzF_cs0lajTzcOmeOAtli5kI_8K_x-f4I7ZQUAKUhYYVLhkzmv2lZcf2CoECaWetR-r/exec", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
@@ -234,9 +234,10 @@ input, textarea, select {
 })
 .then(res => {
   if (!res.ok) throw new Error("Network error");
-  return res.text(); // ✅ Use text, not json
+  return res.text(); // ✅ Get plain text response from Apps Script
 })
 .then(text => {
+  console.log("GAS response:", text);
   localStorage.setItem("latestOrderId", orderId);
   showLoader(false);
   alert("Order placed successfully!");
@@ -244,8 +245,8 @@ input, textarea, select {
 })
 .catch((err) => {
   showLoader(false);
-  console.error(err);
-  alert("Failed to send order to Google Apps Script.");
+  console.error("POST to GAS failed:", err);
+  alert("❌ Failed to send order. Please check your internet or try again.");
 });
 </script>
 
