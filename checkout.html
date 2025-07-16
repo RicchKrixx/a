@@ -201,53 +201,67 @@ input, textarea, select {
 
     const orderId = generateOrderId();
 
-    // ✅ Include variation in the items string
     const itemsString = cartItems.map(i => {
       const variationText = i.variation ? ` (${i.variation})` : "";
       return `${i.name}${variationText} × ${i.qty}`;
     }).join(", ");
 
+    function sendOrderToSheetDB() {
+      fetch("https://sheetdb.io/api/v1/644lwr2o2t014", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          data: [{
+            id: orderId,
+            name: name,
+            email: email,
+            phone: phone,
+            address: address,
+            method: method,
+            total: grandTotal,
+            items: itemsString
+          }]
+        })
+      })
+      .then(res => {
+        if (!res.ok) throw new Error("Network error");
+        return res.json();
+      })
+      .then(() => {
+        localStorage.setItem("latestOrderId", orderId);
+        showLoader(false);
+        alert("Order placed successfully!");
+        window.location.href = "thankyou.html?orderId=" + orderId;
+      })
+      .catch((err) => {
+        showLoader(false);
+        console.error(err);
+        alert("Failed to send order to SheetDB.");
+      });
+    }
+
     showLoader(true);
 
     if (method === "online") {
-      alert("Online payment not configured. Using delivery method for now.");
-      showLoader(false);
-      return;
+      PaystackPop.setup({
+        key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxx', // 🔁 Replace with your public key
+        email: email,
+        amount: grandTotal * 100, // Convert to kobo
+        currency: "GHS", // Or "NGN", "USD", etc.
+        ref: orderId,
+        callback: function(response) {
+          // ✅ Only send order if payment is successful
+          method = "online"; // optional but just to be sure
+          sendOrderToSheetDB();
+        },
+        onClose: function() {
+          showLoader(false);
+          alert("Payment cancelled.");
+        }
+      }).openIframe();
+    } else {
+      sendOrderToSheetDB();
     }
-
-    // ✅ Send to SheetDB
-    fetch("https://sheetdb.io/api/v1/644lwr2o2t014", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        data: [{
-          id: orderId,
-          name: name,
-          email: email,
-          phone: phone,
-          address: address,
-          method: method,
-          total: grandTotal,
-          items: itemsString
-        }]
-      })
-    })
-    .then(res => {
-      if (!res.ok) throw new Error("Network error");
-      return res.json();
-    })
-    .then(() => {
-      // localStorage.removeItem("cart"); // Optional
-      localStorage.setItem("latestOrderId", orderId);
-      showLoader(false);
-      alert("Order placed successfully!");
-      window.location.href = "thankyou.html?orderId=" + orderId;
-    })
-    .catch((err) => {
-      showLoader(false);
-      console.error(err);
-      alert("Failed to send order to SheetDB.");
-    });
   });
 </script>
 <script>
