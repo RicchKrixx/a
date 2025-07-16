@@ -219,21 +219,19 @@ input, textarea, select {
 
     // ✅ Send to Google Apps Script 
     fetch("https://script.google.com/macros/s/AKfycbx4Dix8Vccb3xyfA1EDfP28mRmooMPGXdZDkFw62XV5Z68AcjV5RKpbAOJH0m_9sZtl/exec", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        data: [{
-          id: orderId,
-          name: name,
-          email: email,
-          phone: phone,
-          address: address,
-          method: method,
-          total: grandTotal,
-          items: itemsString
-        }]
-      })
-    })
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    id: orderId,
+    name: name,
+    email: email,
+    phone: phone,
+    address: address,
+    method: method,
+    total: grandTotal,
+    items: itemsString
+  })
+})
     .then(res => {
       if (!res.ok) throw new Error("Network error");
       return res.json();
