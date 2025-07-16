@@ -167,7 +167,7 @@ input, textarea, select {
   const actionBtn = document.getElementById("actionBtn");
 
   payMethod.addEventListener("change", () => {
-    actionBtn.textContent = payMethod.value === "pay online" ? "Pay Now" : "Place Order";
+    actionBtn.textContent = payMethod.value === "Pay Online" ? "Pay Now" : "Place Order";
   });
 
   function showLoader(show) {
