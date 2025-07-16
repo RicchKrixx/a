@@ -203,10 +203,12 @@ input, textarea, select {
 
     // ✅ Include variation in the items string
     const itemsString = cartItems.map(i => {
-      const variationText = i.variation ? ` (${i.variation})` : "";
-      return `${i.name}${variationText} × ${i.qty}`;
-    }).join(", ");
-
+  let details = `${i.name}`;
+  if (i.color) details += ` (${i.color}`;
+  if (i.size) details += i.color ? `, ${i.size})` : ` (${i.size})`;
+  if (!i.color && !i.size) details += '';
+  return `${details} × ${i.qty}`;
+}).join(", ");
     showLoader(true);
 
     if (method === "online") {
