@@ -163,6 +163,9 @@ input, textarea, select {
 </div>
 <script src="https://js.paystack.co/v1/inline.js"></script>
 <script>
+  document.getElementById("checkoutForm").addEventListener("submit", e => e.preventDefault());
+</script>
+<script>
   const payMethod = document.getElementById("payMethod");
   const actionBtn = document.getElementById("actionBtn");
 
