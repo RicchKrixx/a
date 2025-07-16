@@ -326,37 +326,33 @@ input, textarea, select {
     showLoader(true);
 
     // ✅ Send to Google Apps Script
-    fetch("https://script.google.com/macros/s/AKfycbx4Dix8Vccb3xyfA1EDfP28mRmooMPGXdZDkFw62XV5Z68AcjV5RKpbAOJH0m_9sZtl/exec", {
-mode: "no-cors",
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        id: orderId,
-        name,
-        email,
-        phone,
-        address,
-        method,
-        total: grandTotal,
-        items: itemsString
-      })
-    })
-    .then(res => res.text())
-    .then(text => {
-      if (text.toLowerCase().includes("success")) {
-        localStorage.setItem("latestOrderId", orderId);
-        showLoader(false);
-        window.location.href = "thankyou.html?orderId=" + orderId;
-      } else {
-        showLoader(false);
-        alert("❌ Script Error: " + text);
-      }
-    })
-    .catch(err => {
-      showLoader(false);
-      alert("❌ Network Error: " + err.message);
-    });
-  });
+   fetch("https://script.google.com/macros/s/AKfycbx4Dix8Vccb3xyfA1EDfP28mRmooMPGXdZDkFw62XV5Z68AcjV5RKpbAOJH0m_9sZtl/exec", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    id: orderId,
+    name: name,
+    email: email,
+    phone: phone,
+    address: address,
+    method: method,
+    total: grandTotal,
+    items: itemsString
+  })
+})
+.then(res => res.text())
+.then(text => {
+  // ✅ Removed success check
+  localStorage.setItem("latestOrderId", orderId);
+  showLoader(false);
+  window.location.href = "thankyou.html?orderId=" + orderId;
+})
+.catch(err => {
+  showLoader(false);
+  alert("❌ Network Error:\n" + err.message);
+});
 </script>
 <script>
   function getLocation() {
