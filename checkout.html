@@ -286,10 +286,6 @@ input, textarea, select {
   const payMethod = document.getElementById("payMethod");
   const actionBtn = document.getElementById("actionBtn");
 
-  payMethod.addEventListener("change", () => {
-    actionBtn.textContent = payMethod.value === "online" ? "Pay Now" : "Place Order";
-  });
-
   function showLoader(show) {
     document.getElementById("loader").style.display = show ? "flex" : "none";
   }
@@ -315,41 +311,31 @@ input, textarea, select {
     }
 
     if (grandTotal <= 0 || cartItems.length === 0) {
-      alert("Cart is empty or total is 0.");
+      alert("Cart is empty.");
       return;
     }
 
     const orderId = generateOrderId();
-
     const itemsString = cartItems.map(i => {
-      let details = `${i.name}`;
-      if (i.color) details += ` (${i.color}`;
-      if (i.size) details += i.color ? `, ${i.size})` : ` (${i.size})`;
-      if (!i.color && !i.size) details += '';
-      return `${details} × ${i.qty}`;
+      let item = i.name;
+      if (i.color) item += ` (${i.color}`;
+      if (i.size) item += i.color ? `, ${i.size})` : ` (${i.size})`;
+      return `${item} × ${i.qty}`;
     }).join(", ");
 
     showLoader(true);
 
-    if (method === "online") {
-      alert("Online payment not configured. Using delivery method for now.");
-      showLoader(false);
-      return;
-    }
-
-    // ✅ Google Apps Script POST
-    fetch("https://script.google.com/macros/s/AKfycbyTmmYinlXEp8VYqbqJn4sXWRPTwIrVEA1bRJgKIlsEUWx0ppymHD3cB6ClkaI2vElj/exec", {
+    // ✅ Send to Google Apps Script
+    fetch("PASTE_YOUR_SCRIPT_URL_HERE", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         id: orderId,
-        name: name,
-        email: email,
-        phone: phone,
-        address: address,
-        method: method,
+        name,
+        email,
+        phone,
+        address,
+        method,
         total: grandTotal,
         items: itemsString
       })
@@ -362,16 +348,15 @@ input, textarea, select {
         window.location.href = "thankyou.html?orderId=" + orderId;
       } else {
         showLoader(false);
-        alert("❌ Script Error:\n" + text);
+        alert("❌ Script Error: " + text);
       }
     })
     .catch(err => {
       showLoader(false);
-      alert("❌ Network Error:\n" + err.message);
+      alert("❌ Network Error: " + err.message);
     });
   });
 </script>
-
 <script>
   function getLocation() {
     if (!navigator.geolocation) {
