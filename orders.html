@@ -99,7 +99,22 @@
 <input type="text" id="searchInput" placeholder="Search Order ID..." />
 
 <div id="ordersContainer">Loading orders...</div>
+<audio id="keepAwakeAudio" loop playsinline style="display:none">
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_3357cfb74e.mp3?filename=silence-10s.mp3" type="audio/mp3">
+</audio>
 
+<script>
+  const audio = document.getElementById("keepAwakeAudio");
+
+  // iOS requires a user gesture to start audio
+  window.addEventListener("touchstart", () => {
+    audio.play().then(() => {
+      console.log("✅ Audio playing to keep screen awake on iOS");
+    }).catch(err => {
+      console.error("❌ Audio play failed:", err);
+    });
+  }, { once: true });
+</script>
 <script>
   const container = document.getElementById("ordersContainer");
   const searchInput = document.getElementById("searchInput");
@@ -174,6 +189,30 @@
   fetchNewOrders();
   setInterval(fetchNewOrders, 1000);
 </script>
+<script>
+let wakeLock = null;
 
+async function requestWakeLock() {
+  try {
+    wakeLock = await navigator.wakeLock.request('screen');
+    console.log("✅ Screen Wake Lock active");
+
+    // Re-activate on visibility change
+    document.addEventListener("visibilitychange", () => {
+      if (wakeLock !== null && document.visibilityState === "visible") {
+        requestWakeLock();
+      }
+    });
+  } catch (err) {
+    console.error("❌ Wake Lock failed:", err);
+  }
+}
+
+if ("wakeLock" in navigator) {
+  requestWakeLock();
+} else {
+  console.warn("Wake Lock API not supported on this browser.");
+}
+</script>
 </body>
 </html>
