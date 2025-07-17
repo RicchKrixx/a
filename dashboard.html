@@ -3,182 +3,208 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BixMAX Dashboard</title>
+  <title>BizMAX Dashboard</title>
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-storage-compat.js"></script>
   <style>
     body {
-      font-family: sans-serif;
-      background: #f4f9fb;
       margin: 0;
-      padding: 0;
-      text-align: center;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f8ff;
     }
-    .container {
-      max-width: 500px;
+    .dashboard {
+      max-width: 400px;
       margin: auto;
       padding: 20px;
-    }
-    .profile {
+      background: white;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      border-radius: 16px;
+      margin-top: 30px;
       position: relative;
-      width: 150px;
-      height: 150px;
+    }
+    .profile-pic-wrapper {
+      position: relative;
+      width: 120px;
+      height: 120px;
       margin: auto;
     }
-    .profile img {
+    .profile-pic {
       width: 100%;
       height: 100%;
       border-radius: 50%;
       object-fit: cover;
-      border: 4px solid #00bcd4;
-      cursor: pointer;
+      border: 4px solid #4fc3f7;
     }
-    .verified {
+    .verified-badge {
       position: absolute;
-      bottom: 5px;
-      right: 5px;
+      bottom: 0;
+      right: 0;
       background: #4caf50;
       color: white;
-      padding: 4px 6px;
+      padding: 3px 6px;
+      border-radius: 50%;
       font-size: 12px;
-      border-radius: 8px;
+      border: 2px solid white;
     }
-    .dropdown {
+    .pic-dropdown {
       display: none;
-      position: absolute;
-      background: white;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      border-radius: 5px;
-      padding: 10px;
-      z-index: 1;
-      top: 160px;
-      left: 50%;
-      transform: translateX(-50%);
+      text-align: center;
+      margin-top: 10px;
     }
-    .dropdown button {
-      display: block;
-      margin: 5px auto;
-      padding: 8px 16px;
-      background: #00bcd4;
-      color: white;
+    .pic-dropdown button {
+      margin: 5px;
+      padding: 6px 12px;
       border: none;
-      border-radius: 5px;
+      background: #4fc3f7;
+      color: white;
+      border-radius: 8px;
       cursor: pointer;
     }
-    .info {
+    .name {
+      text-align: center;
+      font-size: 20px;
+      margin-top: 10px;
+    }
+    .order-history {
       margin-top: 20px;
     }
-    .info a, .info button {
-      display: block;
-      margin: 10px auto;
-      padding: 10px 20px;
-      background: #0077aa;
+    .order-history h3 {
+      font-size: 16px;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 4px;
+    }
+    .order-history ul {
+      padding-left: 20px;
+    }
+    .btn {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .btn a, .btn button {
+      padding: 8px 14px;
+      background: #0288d1;
       color: white;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       text-decoration: none;
+      cursor: pointer;
     }
-    @media (max-width: 500px) {
-      .profile {
-        width: 120px;
-        height: 120px;
-      }
+    input[type="file"] {
+      display: none;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Welcome to BixMAX Dashboard</h2>
 
-    <div class="profile" onclick="toggleDropdown()">
-      <img id="profilePic" src="https://via.placeholder.com/150" alt="Profile Picture" />
-      <div class="verified">✔ Verified</div>
-      <div class="dropdown" id="dropdownMenu">
-        <input type="file" id="fileInput" accept="image/*" onchange="uploadPicture()" />
-        <button onclick="deletePicture()">Delete Picture</button>
-      </div>
-    </div>
+<div class="dashboard">
+  <div class="profile-pic-wrapper">
+    <img src="https://via.placeholder.com/120" class="profile-pic" id="profilePic" alt="Profile">
+    <span class="verified-badge" id="badge">✔</span>
+  </div>
+  <div class="pic-dropdown" id="picOptions">
+    <label for="uploadPic"><button>Add New</button></label>
+    <button onclick="deletePic()">Delete Picture</button>
+    <input type="file" id="uploadPic" accept="image/*">
+  </div>
+  <div class="name" id="userName">Loading...</div>
 
-    <div class="info">
-      <p id="userEmail">Loading...</p>
-      <a href="index.html">🔙 Back to Home</a>
-      <button onclick="logout()">Logout</button>
-    </div>
+  <div class="order-history">
+    <h3>Order History</h3>
+    <ul id="ordersList">
+      <li>Loading orders...</li>
+    </ul>
   </div>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-storage-compat.js"></script>
+  <div class="btn">
+    <a href="index.html">🏠 Home</a>
+    <button onclick="logout()">Logout</button>
+  </div>
+</div>
 
-  <script>
-    // Your Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-      authDomain: "bixmax-6c24c.firebaseapp.com",
-      projectId: "bixmax-6c24c",
-      storageBucket: "bixmax-6c24c.appspot.com",
-      messagingSenderId: "37740442541",
-      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-    };
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+    authDomain: "bixmax-6c24c.firebaseapp.com",
+    projectId: "bixmax-6c24c",
+    storageBucket: "bixmax-6c24c.appspot.com",
+    messagingSenderId: "37740442541",
+    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+  };
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const storage = firebase.storage();
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const storage = firebase.storage();
 
-    const profilePic = document.getElementById("profilePic");
-    const fileInput = document.getElementById("fileInput");
-    const dropdownMenu = document.getElementById("dropdownMenu");
-    const userEmail = document.getElementById("userEmail");
+  const profilePic = document.getElementById('profilePic');
+  const picOptions = document.getElementById('picOptions');
+  const uploadPic = document.getElementById('uploadPic');
+  const userName = document.getElementById('userName');
+  const ordersList = document.getElementById('ordersList');
 
-    function toggleDropdown() {
-      dropdownMenu.style.display = dropdownMenu.style.display === "block" ? "none" : "block";
+  profilePic.addEventListener('click', () => {
+    picOptions.style.display = picOptions.style.display === 'block' ? 'none' : 'block';
+  });
+
+  auth.onAuthStateChanged(async user => {
+    if (user) {
+      userName.textContent = user.displayName || "Verified Customer";
+      loadProfilePic(user.uid);
+      loadOrderHistory(user.uid);
+    } else {
+      alert("Please sign in first.");
+      window.location.href = "signin.html";
     }
+  });
 
-    function uploadPicture() {
-      const file = fileInput.files[0];
-      if (!file) return;
-      const uid = auth.currentUser.uid;
-      const storageRef = storage.ref(`profile_pics/${uid}`);
-      storageRef.put(file).then(() => {
-        storageRef.getDownloadURL().then(url => {
-          profilePic.src = url;
-          localStorage.setItem("profilePic", url);
-        });
+  uploadPic.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const uid = auth.currentUser.uid;
+    const ref = storage.ref().child(`profilePics/${uid}`);
+    await ref.put(file);
+    const url = await ref.getDownloadURL();
+    profilePic.src = url;
+    await db.collection("users").doc(uid).set({ profilePic: url }, { merge: true });
+    picOptions.style.display = "none";
+  });
+
+  async function loadProfilePic(uid) {
+    const doc = await db.collection("users").doc(uid).get();
+    if (doc.exists && doc.data().profilePic) {
+      profilePic.src = doc.data().profilePic;
+    }
+  }
+
+  async function deletePic() {
+    const uid = auth.currentUser.uid;
+    await storage.ref().child(`profilePics/${uid}`).delete().catch(() => {});
+    await db.collection("users").doc(uid).update({ profilePic: firebase.firestore.FieldValue.delete() });
+    profilePic.src = "https://via.placeholder.com/120";
+    picOptions.style.display = "none";
+  }
+
+  async function loadOrderHistory(uid) {
+    const ordersRef = db.collection("orders").where("userId", "==", uid);
+    const snapshot = await ordersRef.get();
+    ordersList.innerHTML = '';
+    if (snapshot.empty) {
+      ordersList.innerHTML = "<li>No orders yet.</li>";
+    } else {
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        ordersList.innerHTML += `<li>${data.item} - ${data.date}</li>`;
       });
     }
+  }
 
-    function deletePicture() {
-      const uid = auth.currentUser.uid;
-      const storageRef = storage.ref(`profile_pics/${uid}`);
-      storageRef.delete().then(() => {
-        profilePic.src = "https://via.placeholder.com/150";
-        localStorage.removeItem("profilePic");
-      });
-    }
+  function logout() {
+    auth.signOut().then(() => window.location.href = "signin.html");
+  }
+</script>
 
-    function logout() {
-      auth.signOut().then(() => {
-        location.href = "index.html";
-      });
-    }
-
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        userEmail.textContent = user.email;
-        const storedPic = localStorage.getItem("profilePic");
-        if (storedPic) {
-          profilePic.src = storedPic;
-        } else {
-          const uid = user.uid;
-          const storageRef = storage.ref(`profile_pics/${uid}`);
-          storageRef.getDownloadURL().then(url => {
-            profilePic.src = url;
-            localStorage.setItem("profilePic", url);
-          }).catch(() => {});
-        }
-      } else {
-        location.href = "signin.html";
-      }
-    });
-  </script>
 </body>
 </html>
