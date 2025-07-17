@@ -4,94 +4,105 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BizMAX Dashboard</title>
-  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
   <style>
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: #f0f8ff;
-    }
-    .dashboard {
-      max-width: 400px;
-      margin: auto;
+      background: #f0f4f8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       padding: 20px;
+    }
+
+    .dashboard {
       background: white;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      border-radius: 16px;
-      margin-top: 30px;
+      padding: 20px;
+      max-width: 400px;
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      text-align: center;
       position: relative;
     }
-    .profile-pic-wrapper {
+
+    .profile-pic-container {
       position: relative;
       width: 120px;
       height: 120px;
-      margin: auto;
-    }
-    .profile-pic {
-      width: 100%;
-      height: 100%;
+      margin: 0 auto;
       border-radius: 50%;
-      object-fit: cover;
-      border: 4px solid #4fc3f7;
-    }
-    .verified-badge {
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      background: #4caf50;
-      color: white;
-      padding: 3px 6px;
-      border-radius: 50%;
-      font-size: 12px;
-      border: 2px solid white;
-    }
-    .pic-dropdown {
-      display: none;
-      text-align: center;
-      margin-top: 10px;
-    }
-    .pic-dropdown button {
-      margin: 5px;
-      padding: 6px 12px;
-      border: none;
-      background: #4fc3f7;
-      color: white;
-      border-radius: 8px;
+      overflow: hidden;
       cursor: pointer;
     }
-    .name {
-      text-align: center;
-      font-size: 20px;
+
+    .profile-pic-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .verified-badge {
+      position: absolute;
+      bottom: 5px;
+      right: 5px;
+      background: #0af;
+      color: #fff;
+      font-size: 12px;
+      padding: 2px 6px;
+      border-radius: 50px;
+    }
+
+    .dropdown {
+      display: none;
+      position: absolute;
+      top: 140px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .dropdown button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+    }
+
+    .dropdown button:last-child {
+      border-bottom: none;
+    }
+
+    .dashboard h2 {
       margin-top: 10px;
     }
-    .order-history {
-      margin-top: 20px;
-    }
-    .order-history h3 {
-      font-size: 16px;
-      border-bottom: 1px solid #ccc;
-      padding-bottom: 4px;
-    }
-    .order-history ul {
-      padding-left: 20px;
-    }
+
     .btn {
+      padding: 10px 20px;
       margin-top: 20px;
-      display: flex;
-      justify-content: space-between;
-    }
-    .btn a, .btn button {
-      padding: 8px 14px;
-      background: #0288d1;
+      background: #0af;
       color: white;
       border: none;
       border-radius: 6px;
-      text-decoration: none;
       cursor: pointer;
     }
+
+    .link-home {
+      margin-top: 20px;
+      display: inline-block;
+      color: #0af;
+      text-decoration: underline;
+    }
+
     input[type="file"] {
       display: none;
     }
@@ -99,112 +110,90 @@
 </head>
 <body>
 
-<div class="dashboard">
-  <div class="profile-pic-wrapper">
-    <img src="https://via.placeholder.com/120" class="profile-pic" id="profilePic" alt="Profile">
-    <span class="verified-badge" id="badge">✔</span>
-  </div>
-  <div class="pic-dropdown" id="picOptions">
-    <label for="uploadPic"><button>Add New</button></label>
-    <button onclick="deletePic()">Delete Picture</button>
-    <input type="file" id="uploadPic" accept="image/*">
-  </div>
-  <div class="name" id="userName">Loading...</div>
-
-  <div class="order-history">
-    <h3>Order History</h3>
-    <ul id="ordersList">
-      <li>Loading orders...</li>
-    </ul>
+  <div class="dashboard" id="dashboard">
+    <div class="profile-pic-container" id="profilePicContainer">
+      <img id="profilePic" src="https://via.placeholder.com/120" alt="Profile Picture">
+      <div class="verified-badge">✔️</div>
+    </div>
+    <div class="dropdown" id="dropdown">
+      <button onclick="uploadNew()">Upload New</button>
+      <button onclick="removeProfile()">Remove Picture</button>
+    </div>
+    <input type="file" id="fileInput" accept="image/*" />
+    <h2 id="userEmail">Welcome</h2>
+    <button class="btn" onclick="logout()">Logout</button>
+    <a class="link-home" href="index.html">← Back to Home</a>
   </div>
 
-  <div class="btn">
-    <a href="index.html">🏠 Home</a>
-    <button onclick="logout()">Logout</button>
-  </div>
-</div>
+  <script>
+    // 🔥 Firebase Config
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "YOUR_MSG_ID",
+      appId: "YOUR_APP_ID"
+    };
 
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-    authDomain: "bixmax-6c24c.firebaseapp.com",
-    projectId: "bixmax-6c24c",
-    storageBucket: "bixmax-6c24c.appspot.com",
-    messagingSenderId: "37740442541",
-    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-  };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const storage = firebase.storage();
 
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-  const storage = firebase.storage();
+    const profilePic = document.getElementById('profilePic');
+    const fileInput = document.getElementById('fileInput');
+    const dropdown = document.getElementById('dropdown');
+    const profilePicContainer = document.getElementById('profilePicContainer');
+    const userEmail = document.getElementById('userEmail');
 
-  const profilePic = document.getElementById('profilePic');
-  const picOptions = document.getElementById('picOptions');
-  const uploadPic = document.getElementById('uploadPic');
-  const userName = document.getElementById('userName');
-  const ordersList = document.getElementById('ordersList');
+    // 🔁 Toggle dropdown on profile click
+    profilePicContainer.addEventListener('click', () => {
+      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    });
 
-  profilePic.addEventListener('click', () => {
-    picOptions.style.display = picOptions.style.display === 'block' ? 'none' : 'block';
-  });
-
-  auth.onAuthStateChanged(async user => {
-    if (user) {
-      userName.textContent = user.displayName || "Verified Customer";
-      loadProfilePic(user.uid);
-      loadOrderHistory(user.uid);
-    } else {
-      alert("Please sign in first.");
-      window.location.href = "signin.html";
+    // 📤 Upload new picture
+    function uploadNew() {
+      fileInput.click();
     }
-  });
 
-  uploadPic.addEventListener('change', async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const uid = auth.currentUser.uid;
-    const ref = storage.ref().child(`profilePics/${uid}`);
-    await ref.put(file);
-    const url = await ref.getDownloadURL();
-    profilePic.src = url;
-    await db.collection("users").doc(uid).set({ profilePic: url }, { merge: true });
-    picOptions.style.display = "none";
-  });
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      const user = auth.currentUser;
+      if (file && user) {
+        const storageRef = storage.ref(`profiles/${user.uid}`);
+        storageRef.put(file).then(() => {
+          storageRef.getDownloadURL().then(url => {
+            profilePic.src = url;
+            localStorage.setItem('profileURL', url);
+          });
+        });
+      }
+    });
 
-  async function loadProfilePic(uid) {
-    const doc = await db.collection("users").doc(uid).get();
-    if (doc.exists && doc.data().profilePic) {
-      profilePic.src = doc.data().profilePic;
+    // 🗑️ Remove profile
+    function removeProfile() {
+      profilePic.src = 'https://via.placeholder.com/120';
+      localStorage.removeItem('profileURL');
     }
-  }
 
-  async function deletePic() {
-    const uid = auth.currentUser.uid;
-    await storage.ref().child(`profilePics/${uid}`).delete().catch(() => {});
-    await db.collection("users").doc(uid).update({ profilePic: firebase.firestore.FieldValue.delete() });
-    profilePic.src = "https://via.placeholder.com/120";
-    picOptions.style.display = "none";
-  }
+    // 🔐 Auth listener
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        userEmail.textContent = user.email;
+        const stored = localStorage.getItem('profileURL');
+        if (stored) profilePic.src = stored;
+      } else {
+        window.location.href = 'login.html'; // or redirect to sign-in
+      }
+    });
 
-  async function loadOrderHistory(uid) {
-    const ordersRef = db.collection("orders").where("userId", "==", uid);
-    const snapshot = await ordersRef.get();
-    ordersList.innerHTML = '';
-    if (snapshot.empty) {
-      ordersList.innerHTML = "<li>No orders yet.</li>";
-    } else {
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        ordersList.innerHTML += `<li>${data.item} - ${data.date}</li>`;
+    // 🔓 Logout
+    function logout() {
+      auth.signOut().then(() => {
+        localStorage.removeItem('profileURL');
+        window.location.href = 'index.html';
       });
     }
-  }
-
-  function logout() {
-    auth.signOut().then(() => window.location.href = "signin.html");
-  }
-</script>
-
+  </script>
 </body>
 </html>
