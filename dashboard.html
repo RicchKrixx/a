@@ -4,7 +4,90 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dashboard - BizMAX</title>
-  <link rel="stylesheet" href="dashboard.css" />
+  <style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f9f9f9;
+}
+
+.dashboard {
+  padding: 16px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.home-link {
+  text-decoration: none;
+  color: #007bff;
+  font-weight: bold;
+}
+
+.profile {
+  position: relative;
+}
+
+.profile img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid #007bff;
+}
+
+.dropdown {
+  position: absolute;
+  right: 0;
+  top: 60px;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.dropdown label,
+.dropdown button {
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+}
+
+.hidden {
+  display: none;
+}
+
+.user-info {
+  margin-top: 20px;
+}
+
+.badge {
+  display: inline-block;
+  background: #00c853;
+  color: white;
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  margin-left: 10px;
+}
+
+.order-history {
+  margin-top: 30px;
+}
+
+#ordersList li {
+  background: #fff;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+</style>
 </head>
 <body>
   <div class="dashboard">
@@ -37,6 +120,76 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js"></script>
-  <script src="dashboard.js"></script>
+  <script>import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js";
+
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+  authDomain: "bixmax-6c24c.firebaseapp.com",
+  projectId: "bixmax-6c24c",
+  storageBucket: "bixmax-6c24c.appspot.com",
+  messagingSenderId: "37740442541",
+  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+const profilePic = document.getElementById("profilePic");
+const dropdown = document.getElementById("dropdown");
+const uploadInput = document.getElementById("uploadPic");
+const deleteBtn = document.getElementById("deletePic");
+const userEmail = document.getElementById("userEmail");
+const ordersList = document.getElementById("ordersList");
+
+profilePic.addEventListener("click", () => {
+  dropdown.classList.toggle("hidden");
+});
+
+uploadInput.addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const user = auth.currentUser;
+  const picRef = ref(storage, `users/${user.uid}/profile.jpg`);
+  await uploadBytes(picRef, file);
+  const url = await getDownloadURL(picRef);
+  await updateDoc(doc(db, "users", user.uid), { profileURL: url });
+  profilePic.src = url;
+});
+
+deleteBtn.addEventListener("click", async () => {
+  const user = auth.currentUser;
+  const picRef = ref(storage, `users/${user.uid}/profile.jpg`);
+  await deleteObject(picRef);
+  await updateDoc(doc(db, "users", user.uid), { profileURL: "default.png" });
+  profilePic.src = "default.png";
+});
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.href = "signin.html";
+    return;
+  }
+
+  userEmail.textContent = user.email;
+  const userDoc = await getDoc(doc(db, "users", user.uid));
+  const userData = userDoc.data();
+
+  if (userData.profileURL) {
+    profilePic.src = userData.profileURL;
+  }
+
+  // Fetch dummy order history
+  ordersList.innerHTML = `
+    <li>Order #BX123 - Delivered</li>
+    <li>Order #BX456 - In Progress</li>
+    <li>Order #BX789 - Cancelled</li>
+  `;
+});</script>
 </body>
 </html>
