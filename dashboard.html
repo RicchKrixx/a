@@ -3,180 +3,164 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard</title>
+  <title>BizMAX Dashboard</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0; padding: 0;
-      background: #f0f2f5;
-    }
-    header {
-      background: #333;
-      color: white;
-      padding: 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .container {
-      padding: 20px;
-      max-width: 500px;
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+    body { background: #f0f8ff; color: #333; padding: 20px; }
+
+    .dashboard {
+      max-width: 480px;
       margin: auto;
-      text-align: center;
-    }
-    .profile-pic {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 4px solid #00bcd4;
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
       position: relative;
-      cursor: pointer;
     }
-    .verify-badge {
+
+    .profile-container {
+      text-align: center;
+      position: relative;
+    }
+
+    .profile-container img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 3px solid #00bcd4;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .verified-badge {
       position: absolute;
-      right: 5px;
-      bottom: 5px;
-      background: #00c853;
+      bottom: 20px;
+      right: calc(50% - 50px);
+      background: #4caf50;
       color: white;
       font-size: 12px;
-      padding: 2px 6px;
-      border-radius: 20px;
+      padding: 2px 8px;
+      border-radius: 10px;
     }
+
     .dropdown {
       display: none;
-      background: white;
-      border: 1px solid #ccc;
       margin-top: 10px;
-      border-radius: 5px;
+      background: #eee;
+      border-radius: 8px;
       padding: 10px;
     }
+
     .dropdown button {
       display: block;
       width: 100%;
       margin: 5px 0;
       padding: 8px;
-      border: none;
       background: #00bcd4;
+      border: none;
       color: white;
+      border-radius: 8px;
       cursor: pointer;
-      border-radius: 5px;
     }
-    @media (max-width: 600px) {
-      .container {
-        padding: 10px;
+
+    .order-history {
+      margin-top: 20px;
+    }
+
+    .logout {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .logout button {
+      padding: 10px 20px;
+      background: crimson;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .home-link {
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    @media(max-width: 500px) {
+      .dashboard {
+        padding: 16px;
+      }
+
+      .dropdown button {
+        font-size: 14px;
       }
     }
   </style>
 </head>
 <body>
 
-<header>
-  <span>🔥 Dashboard</span>
-  <div>
-    <a href="index.html" style="color:white; margin-right:10px;">Home</a>
-    <button onclick="logout()" style="background:red;color:white;border:none;padding:8px;border-radius:5px;">Logout</button>
-  </div>
-</header>
+<div class="dashboard">
+  <div class="profile-container">
+    <img id="profilePic" src="https://via.placeholder.com/100" alt="Profile Picture" />
+    <span class="verified-badge">Verified</span>
 
-<div class="container">
-  <div style="position: relative; display:inline-block;">
-    <img id="profileImage" src="https://via.placeholder.com/120" alt="Profile Picture" class="profile-pic" />
-    <div class="verify-badge" id="verifyBadge" style="display: none;">✔ Verified</div>
+    <div class="dropdown" id="profileDropdown">
+      <input type="file" id="uploadPic" accept="image/*" style="display:none" />
+      <button onclick="document.getElementById('uploadPic').click()">Upload New Picture</button>
+      <button onclick="deleteProfilePic()">Remove Picture</button>
+    </div>
   </div>
 
-  <div class="dropdown" id="picDropdown">
-    <input type="file" id="picUpload" accept="image/*"/>
-    <button onclick="uploadProfilePic()">Upload New Picture</button>
-    <button onclick="deleteProfilePic()">Delete Picture</button>
+  <div class="order-history">
+    <h3>Your Order History</h3>
+    <p>No orders yet.</p>
   </div>
 
-  <h2 id="username">Welcome</h2>
-  <p>Your order history and account info is below.</p>
+  <div class="logout">
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <div class="home-link">
+    <a href="BixMax home.html">← Back to Home</a>
+  </div>
 </div>
 
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-storage-compat.js"></script>
-
 <script>
-  // Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-  authDomain: "bixmax-6c24c.firebaseapp.com",
-  projectId: "bixmax-6c24c",
-  storageBucket: "bixmax-6c24c.appspot.com",
-  messagingSenderId: "37740442541",
-  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-};
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-  const storage = firebase.storage();
+  const profilePic = document.getElementById("profilePic");
+  const dropdown = document.getElementById("profileDropdown");
+  const uploadInput = document.getElementById("uploadPic");
 
-  const profileImage = document.getElementById('profileImage');
-  const picDropdown = document.getElementById('picDropdown');
-  const picUpload = document.getElementById('picUpload');
-  const username = document.getElementById('username');
-  const verifyBadge = document.getElementById('verifyBadge');
+  // Load from localStorage
+  const savedPic = localStorage.getItem("profilePic");
+  if (savedPic) profilePic.src = savedPic;
 
-  profileImage.addEventListener('click', () => {
-    picDropdown.style.display = picDropdown.style.display === 'block' ? 'none' : 'block';
+  profilePic.addEventListener("click", () => {
+    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
   });
 
-  function uploadProfilePic() {
-    const file = picUpload.files[0];
-    if (!file || !auth.currentUser) return;
+  uploadInput.addEventListener("change", () => {
+    const file = uploadInput.files[0];
+    if (!file) return;
 
-    const ref = storage.ref(`profile_pics/${auth.currentUser.uid}`);
-    ref.put(file).then(() => {
-      return ref.getDownloadURL();
-    }).then(url => {
-      profileImage.src = url;
-      db.collection('users').doc(auth.currentUser.uid).set({
-        photoURL: url,
-        verified: true
-      }, { merge: true });
-      verifyBadge.style.display = 'inline-block';
-      picDropdown.style.display = 'none';
-    });
-  }
+    const reader = new FileReader();
+    reader.onload = () => {
+      profilePic.src = reader.result;
+      localStorage.setItem("profilePic", reader.result);
+    };
+    reader.readAsDataURL(file);
+  });
 
   function deleteProfilePic() {
-    if (!auth.currentUser) return;
-    storage.ref(`profile_pics/${auth.currentUser.uid}`).delete().then(() => {
-      profileImage.src = "https://via.placeholder.com/120";
-      db.collection('users').doc(auth.currentUser.uid).set({
-        photoURL: '',
-        verified: false
-      }, { merge: true });
-      verifyBadge.style.display = 'none';
-      picDropdown.style.display = 'none';
-    });
+    profilePic.src = "https://via.placeholder.com/100";
+    localStorage.removeItem("profilePic");
   }
 
   function logout() {
-    auth.signOut().then(() => {
-      window.location.href = 'auth.html';
-    });
+    alert("Logged out successfully.");
+    // You can clear other user data or redirect here
+    location.href = "auth.html";
   }
-
-  auth.onAuthStateChanged(user => {
-    if (!user) {
-      window.location.href = 'auth.html';
-    } else {
-      username.textContent = `Welcome, ${user.email}`;
-      db.collection('users').doc(user.uid).get().then(doc => {
-        if (doc.exists) {
-          const data = doc.data();
-          if (data.photoURL) profileImage.src = data.photoURL;
-          if (data.verified) verifyBadge.style.display = 'inline-block';
-        }
-      });
-    }
-  });
 </script>
 
 </body>
