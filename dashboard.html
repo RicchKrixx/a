@@ -200,63 +200,61 @@
       appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
     };
 
-    firebase.initializeApp(firebaseConfig);
+   <!-- Add this before your script if not already included -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
 
-    let currentEmail = "";
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        const name = user.displayName || user.email.split('@')[0];
-        document.getElementById("user-name").textContent = name;
-        document.getElementById("user-email").textContent = user.email;
-        currentEmail = user.email;
-        loadOrders(user.email);
-        loadProfileImage(currentEmail);
-      } else {
-        window.location.href = "auth.html";
-      }
-    });
+<script>
+  // Your Firebase config (replace with your actual config)
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    projectId: "YOUR_PROJECT_ID",
+    appId: "YOUR_APP_ID",
+  };
 
-    function logout() {
-      firebase.auth().signOut().then(() => {
-        window.location.href = "auth.html";
-      });
-    }
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
+  const auth = firebase.auth();
 
   function loadOrders(email) {
     const orderList = document.getElementById("order-list");
-    orderList.innerHTML = "<p>Loading orders...</p>";
+    
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        orderList.innerHTML = "<p>Please log in to see your orders.</p>";
+        return;
+      }
 
-    db.collection("orders")
-      .where("email", "==", email)
-      .orderBy("timestamp", "desc")
-      .get()
-      .then(snapshot => {
-        if (snapshot.empty) {
-          orderList.innerHTML = "<p>No orders found</p>";
-          return;
-        }
+      const userRef = db.collection("users").doc(user.uid).collection("orders");
+      userRef.get()
+        .then(snapshot => {
+          if (snapshot.empty) {
+            orderList.innerHTML = "<p>No orders found</p>";
+            return;
+          }
 
-        const ordersHtml = snapshot.docs.map(doc => {
-          const order = doc.data();
-          return `
-            <div class="order">
-              <strong>ID:</strong> ${doc.id}<br>
-              <strong>Item:</strong> ${order.items || "N/A"}<br>
-              <strong>Total:</strong> GH₵${order.total || "0"}<br>
-              <small>${order.date || new Date(order.timestamp?.seconds * 1000).toLocaleString()}</small>
-            </div>
-          `;
-        }).join('');
-
-        orderList.innerHTML = ordersHtml;
-      })
-      .catch(error => {
-        console.error("Error loading orders:", error);
-        orderList.innerHTML = "<p>Failed to load orders</p>";
-      });
+          let html = "";
+          snapshot.forEach(doc => {
+            const order = doc.data();
+            html += `
+              <div class="order">
+                <strong>ID:</strong> ${order.id || doc.id}<br>
+                <strong>Item:</strong> ${order.items}<br>
+                <strong>Total:</strong> GH₵${order.total}<br>
+                <small>${order.date || ''}</small>
+              </div>
+            `;
+          });
+          orderList.innerHTML = html;
+        })
+        .catch(() => {
+          orderList.innerHTML = "<p>Failed to load orders</p>";
+        });
+    });
   }
-
     // Profile image logic
     const profileImage = document.getElementById("profileImage");
     const dropdownMenu = document.getElementById("dropdownMenu");
