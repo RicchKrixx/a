@@ -1,39 +1,72 @@
-<!-- dashboard.html -->
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>BizMAX Dashboard</title>
+  <title>Customer Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
-      background: #001f2f;
-      color: white;
-      font-family: 'Segoe UI', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      flex-direction: column;
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      margin: 0;
+      padding: 20px;
     }
-    button {
-      background: crimson;
+    .dashboard {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+    }
+    .profile-pic {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: #ddd;
+      object-fit: cover;
+      display: block;
+      margin: 0 auto;
+    }
+    .upload {
+      text-align: center;
+      margin: 10px 0;
+    }
+    .verify-status {
+      text-align: center;
+      margin-top: 10px;
+      color: green;
+    }
+    input[type="file"] {
+      display: none;
+    }
+    label.upload-btn {
+      background: #2196f3;
       color: white;
-      border: none;
-      padding: 10px 20px;
-      margin-top: 20px;
-      border-radius: 8px;
+      padding: 8px 16px;
+      border-radius: 20px;
       cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <h2>Welcome to your Dashboard</h2>
-  <p id="userEmail"></p>
-  <button onclick="logout()">Log Out</button>
+  <div class="dashboard">
+    <h2>Welcome to Your Dashboard</h2>
+    <img id="profilePic" class="profile-pic" src="https://via.placeholder.com/100" alt="Profile Picture">
+    <div class="upload">
+      <input type="file" id="imageInput" accept="image/*">
+      <label for="imageInput" class="upload-btn">Upload Profile Picture</label>
+    </div>
+    <div class="verify-status" id="verifyStatus">✔ Verified Customer</div>
+  </div>
 
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-  <script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
     const firebaseConfig = {
       apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
       authDomain: "bixmax-6c24c.firebaseapp.com",
@@ -42,22 +75,30 @@
       messagingSenderId: "37740442541",
       appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
     };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
 
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        document.getElementById("userEmail").textContent = "Logged in as: " + user.email;
-      } else {
-        window.location.href = "auth.html";
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const profilePic = document.getElementById("profilePic");
+    const imageInput = document.getElementById("imageInput");
+
+    imageInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          profilePic.src = reader.result;
+        };
+        reader.readAsDataURL(file);
       }
     });
 
-    function logout() {
-      auth.signOut().then(() => {
-        window.location.href = "auth.html";
-      });
-    }
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        alert("Please sign in first.");
+        window.location.href = "index.html";
+      }
+    });
   </script>
 </body>
 </html>
