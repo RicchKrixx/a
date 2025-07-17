@@ -245,7 +245,7 @@ input, textarea, select {
       } catch (err) {
         showLoader(false);
         console.error(err);
-        alert("🔴 Order failed. Try again later.");
+        alert("🔴 Order failed. Contact Support!.");
       }
     }
 
@@ -280,111 +280,7 @@ input, textarea, select {
     });
   });
 </script>
-<!--
-<script src="https://js.paystack.co/v1/inline.js"></script>
-<script>
-  const payMethod = document.getElementById("payMethod");
-  const actionBtn = document.getElementById("actionBtn");
 
-  payMethod.addEventListener("change", () => {
-    actionBtn.textContent = payMethod.value === "Paid" ? "Pay Now" : "Place Order";
-  });
-
-  function showLoader(show) {
-    document.getElementById("loader").style.display = show ? "flex" : "none";
-  }
-
-  function generateOrderId() {
-    return "BX" + Date.now().toString(36).toUpperCase();
-  }
-
-  actionBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-
-    const name = document.getElementById("custName").value.trim();
-    const email = document.getElementById("custEmail").value.trim();
-    const phone = document.getElementById("custPhone").value.trim();
-    const address = document.getElementById("custAddr").value.trim();
-    const method = payMethod.value;
-    const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
-    const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
-
-    if (!(name && email && phone && address)) {
-      alert("Please fill in all customer details.");
-      return;
-    }
-
-    if (grandTotal <= 0 || cartItems.length === 0) {
-      alert("Cart is empty or total is 0.");
-      return;
-    }
-
-    const orderId = generateOrderId();
-
-    const itemsString = cartItems.map(i => {
-      const variationText = i.variation ? ` (${i.variation})` : "";
-      return `${i.name}${variationText} × ${i.qty}`;
-    }).join(", ");
-
-    function sendOrderToSheetDB() {
-      fetch("https://sheetdb.io/api/v1/oxl1mxxewqbdg", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          data: [{
-            id: orderId,
-            name: name,
-            email: email,
-            phone: phone,
-            address: address,
-            method: method,
-            total: grandTotal,
-            items: itemsString
-          }]
-        })
-      })
-      .then(res => {
-        if (!res.ok) throw new Error("Network error");
-        return res.json();
-      })
-      .then(() => {
-        localStorage.setItem("latestOrderId", orderId);
-        showLoader(false);
-        alert("Order placed successfully!");
-        window.location.href = "thankyou.html?orderId=" + orderId;
-      })
-      .catch((err) => {
-        showLoader(false);
-        console.error(err);
-        alert("🔴Order failed contact support!.");
-      });
-    }
-
-    showLoader(true);
-
-    if (method === "Paid") {
-      PaystackPop.setup({
-        key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxx', // 🔁 Replace with your public key
-        email: email,
-        amount: grandTotal * 100, // Convert to kobo
-        currency: "GHS", // Or "NGN", "USD", etc.
-        ref: orderId,
-        callback: function(response) {
-          // ✅ Only send order if payment is successful
-          method = "Paid"; // optional but just to be sure
-          sendOrderToSheetDB();
-        },
-        onClose: function() {
-          showLoader(false);
-          alert("Payment cancelled.");
-        }
-      }).openIframe();
-    } else {
-      sendOrderToSheetDB();
-    }
-  });
-</script>
--->
 <script>
   function getLocation() {
     if (!navigator.geolocation) {
