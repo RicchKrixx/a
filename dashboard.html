@@ -3,89 +3,191 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BizMAX | Dashboard</title>
+  <title>BizMAX Dashboard</title>
   <style>
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
-      margin: 0;
-      background: #f2f9ff;
-    }
-    .top-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #0077b6;
+      background: #0f172a;
       color: white;
-      padding: 10px 15px;
     }
-    .top-bar h1 {
-      font-size: 18px;
-      margin: 0;
+    .dashboard {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
     }
-    .profile-container {
+
+    .profile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 30px;
       position: relative;
     }
+
     .profile-img {
-      width: 40px;
-      height: 40px;
+      width: 80px;
+      height: 80px;
       border-radius: 50%;
-      background-size: cover;
-      background-position: center;
+      background: url('https://i.postimg.cc/tgBdHrrz/default-pfp.png') no-repeat center/cover;
+      position: relative;
+      border: 3px solid cyan;
       cursor: pointer;
-      border: 2px solid white;
     }
-    .dropdown {
+
+    .verified-badge {
       position: absolute;
-      top: 50px;
-      right: 0;
-      background: white;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      border-radius: 8px;
-      overflow: hidden;
-      z-index: 99;
-      display: none;
+      bottom: 2px;
+      right: 2px;
+      background: blue;
+      color: white;
+      font-size: 12px;
+      border-radius: 50%;
+      padding: 2px 6px;
     }
-    .dropdown label,
-    .dropdown button {
-      display: block;
-      padding: 10px;
+
+    .profile-dropdown {
+      position: absolute;
+      top: 90px;
+      background: #1e293b;
+      border: 1px solid cyan;
+      border-radius: 8px;
+      padding: 5px 0;
+      display: none;
+      z-index: 99;
+      width: 140px;
+      box-shadow: 0 0 10px cyan;
+    }
+
+    .profile-dropdown label,
+    .profile-dropdown button {
+      background: none;
       border: none;
+      color: white;
+      padding: 10px;
       width: 100%;
       text-align: left;
       font-size: 14px;
-      background: none;
       cursor: pointer;
     }
-    .dropdown label:hover,
-    .dropdown button:hover {
-      background: #f0f0f0;
+
+    .profile-dropdown label:hover,
+    .profile-dropdown button:hover {
+      background: #334155;
     }
+
     input[type="file"] {
       display: none;
     }
-    .main {
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .user-info #user-name {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .orders {
+      background: rgba(255, 255, 255, 0.05);
+      border-left: 4px solid cyan;
       padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px cyan;
+      margin-bottom: 20px;
+      width: 100%;
+    }
+
+    .orders h2 {
+      margin-top: 0;
+      font-size: 20px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 5px;
+    }
+
+    .order {
+      margin-bottom: 10px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 8px;
+    }
+
+    .btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .btns button {
+      flex: 1 1 120px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background: cyan;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 10px cyan;
+      transition: background 0.3s;
+    }
+
+    .btns button:hover {
+      background: white;
+    }
+
+    @media (max-width: 500px) {
+      .orders {
+        padding: 15px;
+      }
+
+      .user-info #user-name {
+        font-size: 16px;
+      }
+
+      .btns button {
+        flex: 1 1 100%;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="top-bar">
-    <h1>BizMAX Dashboard</h1>
-    <div class="profile-container">
-      <div id="menuProfileImg" class="profile-img"></div>
-      <div class="dropdown" id="profileDropdown">
-        <label for="uploadInput">📷 Upload Image</label>
-        <input type="file" id="uploadInput" accept="image/*" />
-        <button onclick="removeImage()">🗑️ Remove Image</button>
+  <div class="dashboard">
+    <div class="profile">
+      <div class="profile-img" id="profileImage">
+        <div class="verified-badge">✔</div>
       </div>
+      <div class="profile-dropdown" id="dropdownMenu">
+        <label for="uploadInput">📷 Upload</label>
+        <input type="file" id="uploadInput" accept="image/*" />
+        <button onclick="removeProfileImage()">🗑️ Delete</button>
+      </div>
+      <div class="user-info">
+        <div id="user-name">Loading...</div>
+        <small id="user-email"></small>
+      </div>
+    </div>
+
+    <div class="orders" id="orders">
+      <h2>Order History</h2>
+      <div id="order-list">Loading orders...</div>
+    </div>
+
+    <div class="btns">
+      <button onclick="window.location.href='BixMax home.html'">🏠 Go Home</button>
+      <button onclick="logout()">🚪 Logout</button>
     </div>
   </div>
 
-  <div class="main">
-    <p>Welcome to your dashboard!</p>
-  </div>
-
-  <!-- Firebase scripts -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
@@ -98,54 +200,91 @@
       messagingSenderId: "37740442541",
       appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
     };
+
     firebase.initializeApp(firebaseConfig);
 
-    const profileImg = document.getElementById("menuProfileImg");
-    const dropdown = document.getElementById("profileDropdown");
-    const uploadInput = document.getElementById("uploadInput");
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        const name = user.displayName || user.email.split('@')[0];
+        document.getElementById("user-name").textContent = name;
+        document.getElementById("user-email").textContent = user.email;
+        loadOrders(user.email);
+        loadProfileImage();
+      } else {
+        window.location.href = "auth.html";
+      }
+    });
 
-    function setProfileImage() {
-      const customProfile = localStorage.getItem("customProfile");
-      profileImg.style.backgroundImage = `url('${customProfile || "https://www.svgrepo.com/show/384674/account-avatar-profile-user-11.svg"}')`;
+    function logout() {
+      firebase.auth().signOut().then(() => {
+        window.location.href = "auth.html";
+      });
     }
 
-    function removeImage() {
-      localStorage.removeItem("customProfile");
-      setProfileImage();
-      dropdown.style.display = "none"; // Close dropdown
+    function loadOrders(email) {
+      const orderList = document.getElementById("order-list");
+      fetch("https://sheetdb.io/api/v1/oxl1mxxewqbdg")
+        .then(res => res.json())
+        .then(data => {
+          const userOrders = data.filter(order => order.email === email);
+          if (userOrders.length === 0) {
+            orderList.innerHTML = "<p>No orders found</p>";
+            return;
+          }
+          orderList.innerHTML = userOrders.map(order => `
+            <div class="order">
+              <strong>ID:</strong> ${order.id}<br>
+              <strong>Item:</strong> ${order.items}<br>
+              <strong>Total:</strong> GH₵${order.total}<br>
+              <small>${order.date || ''}</small>
+            </div>
+          `).join('');
+        })
+        .catch(() => {
+          orderList.innerHTML = "<p>Failed to load orders</p>";
+        });
+    }
+
+    const profileImgDiv = document.getElementById("profileImage");
+    const dropdown = document.getElementById("dropdownMenu");
+    const uploadInput = document.getElementById("uploadInput");
+
+    function loadProfileImage() {
+      const savedImg = localStorage.getItem("customProfileImage");
+      if (savedImg) {
+        profileImgDiv.style.backgroundImage = `url('${savedImg}')`;
+      } else {
+        profileImgDiv.style.backgroundImage = `url('https://i.postimg.cc/tgBdHrrz/default-pfp.png')`;
+      }
+    }
+
+    function removeProfileImage() {
+      localStorage.removeItem("customProfileImage");
+      loadProfileImage();
+      dropdown.style.display = "none";
     }
 
     uploadInput.addEventListener("change", function () {
-      const file = uploadInput.files[0];
+      const file = this.files[0];
       if (!file) return;
-
       const reader = new FileReader();
       reader.onload = function (e) {
-        localStorage.setItem("customProfile", e.target.result);
-        setProfileImage();
-        dropdown.style.display = "none"; // Close dropdown
+        localStorage.setItem("customProfileImage", e.target.result);
+        loadProfileImage();
+        dropdown.style.display = "none";
       };
       reader.readAsDataURL(file);
     });
 
-    profileImg.addEventListener("click", () => {
+    profileImgDiv.addEventListener("click", function () {
       dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
     });
 
     document.addEventListener("click", function (e) {
-      if (!profileImg.contains(e.target) && !dropdown.contains(e.target)) {
+      if (!profileImgDiv.contains(e.target) && !dropdown.contains(e.target)) {
         dropdown.style.display = "none";
       }
     });
-
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        setProfileImage(); // Load saved image or fallback
-      }
-    });
-
-    // Initial load
-    setProfileImage();
   </script>
 </body>
 </html>
