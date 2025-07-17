@@ -259,7 +259,7 @@ input, textarea, select {
       }
     }
 
-    showLoader(true);
+<!--    showLoader(true);
 
     onAuthStateChanged(auth, (user) => {
       if (!user) {
@@ -267,7 +267,7 @@ input, textarea, select {
         alert("You must be signed in to place an order.");
         return;
       }
-
+-->
       if (paymentMethod === "Paid") {
         PaystackPop.setup({
           key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxx', // 🔁 Replace with your actual Paystack key
@@ -384,7 +384,6 @@ input, textarea, select {
       total: total.toFixed(2),
       order_items: orderItems
     };
-
     // 📤 Send via EmailJS
     emailjs.send("service_4oajgfk", "template_6smikj", templateParams)
       .then(() => {
