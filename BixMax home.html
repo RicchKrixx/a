@@ -436,31 +436,37 @@ document.getElementById("flashDeal").textContent = flashMessages[dealIndex];
     };
     firebase.initializeApp(firebaseConfig);
 
-    firebase.auth().onAuthStateChanged(user => {
-      const profileImg = document.getElementById('menuProfileImg');
-      const userName = document.getElementById('menuUserName');
-      const userEmail = document.getElementById('menuUserEmail');
-      const authBtn = document.getElementById('authBtn');
-      const dashboardLink = document.getElementById('dashboardLink');
-
-      if (user) {
-        profileImg.style.backgroundImage = `url('${user.photoURL || "https://www.svgrepo.com/show/384674/account-avatar-profile-user-11.svg"}')`;
-        userName.textContent = user.displayName || user.email.split("@")[0];
-        userEmail.textContent = user.email;
-        authBtn.textContent = "🚪 Logout";
-        dashboardLink.style.display = "block";
-
-        authBtn.onclick = () => firebase.auth().signOut();
-      } else {
-        profileImg.style.backgroundImage = `url('https://www.svgrepo.com/show/384674/account-avatar-profile-user-11.svg')`;
-        userName.textContent = "Guest";
-        userEmail.textContent = "";
-        authBtn.textContent = "🔐 Sign In";
-        dashboardLink.style.display = "none";
-
-        authBtn.onclick = () => window.location.href = "auth.html";
-      }
-    });
+    
   </script>
+<script>
+  firebase.auth().onAuthStateChanged(user => {
+    const profileImg = document.getElementById('menuProfileImg');
+    const userName = document.getElementById('menuUserName');
+    const userEmail = document.getElementById('menuUserEmail');
+    const authBtn = document.getElementById('authBtn');
+    const dashboardLink = document.getElementById('dashboardLink');
+
+    if (user) {
+      const savedImg = localStorage.getItem(`profilePic_${user.email}`);
+      const profilePic = savedImg || user.photoURL || "https://www.svgrepo.com/show/384674/account-avatar-profile-user-11.svg";
+
+      profileImg.style.backgroundImage = `url('${profilePic}')`;
+      userName.textContent = user.displayName || user.email.split("@")[0];
+      userEmail.textContent = user.email;
+      authBtn.textContent = "🚪 Logout";
+      dashboardLink.style.display = "block";
+
+      authBtn.onclick = () => firebase.auth().signOut();
+    } else {
+      profileImg.style.backgroundImage = `url('https://www.svgrepo.com/show/384674/account-avatar-profile-user-11.svg')`;
+      userName.textContent = "Guest";
+      userEmail.textContent = "";
+      authBtn.textContent = "🔐 Sign In";
+      dashboardLink.style.display = "none";
+
+      authBtn.onclick = () => window.location.href = "auth.html";
+    }
+  });
+</script>
 </body>  
 </html>
