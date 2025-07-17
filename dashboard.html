@@ -15,23 +15,25 @@
     .dashboard {
       display: flex;
       flex-direction: column;
-      align-items: left;
+      align-items: flex-start;
       padding: 20px;
     }
 
     .profile {
       display: flex;
+      flex-direction: column;
       align-items: center;
       gap: 10px;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
     }
 
     .profile-img {
-      width: 60px;
-      height: 60px;
+      width: 70px;
+      height: 70px;
       border-radius: 50%;
       background: url('https://i.postimg.cc/tgBdHrrz/default-pfp.png') no-repeat center/cover;
       position: relative;
+      border: 3px solid cyan;
     }
 
     .verified-badge {
@@ -42,35 +44,48 @@
       color: white;
       font-size: 12px;
       border-radius: 50%;
-      padding: 2px 5px;
+      padding: 2px 6px;
     }
 
     .user-info {
       display: flex;
       flex-direction: column;
-      align-items: flex-end;
+      align-items: center;
+      text-align: center;
+    }
+
+    .user-info #user-name {
+      font-size: 18px;
+      font-weight: bold;
     }
 
     .orders {
       background: rgba(255, 255, 255, 0.05);
       border-left: 4px solid cyan;
-      padding: 10px 20px;
+      padding: 15px 20px;
       border-radius: 12px;
-      max-width: 400px;
       box-shadow: 0 0 10px cyan;
       margin-bottom: 20px;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .orders h2 {
+      margin-top: 0;
+      font-size: 20px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 5px;
     }
 
     .order {
       margin-bottom: 10px;
       border-bottom: 1px solid #333;
-      padding-bottom: 5px;
+      padding-bottom: 8px;
     }
 
     .btns {
       display: flex;
-      flex-direction: column;
-      align-items: flex-end;
+      flex-direction: row;
       gap: 10px;
     }
 
@@ -83,6 +98,7 @@
       font-weight: bold;
       cursor: pointer;
       box-shadow: 0 0 10px cyan;
+      transition: background 0.3s;
     }
 
     .btns button:hover {
@@ -98,12 +114,15 @@
       <div class="verified-badge">✔</div>
     </div>
     <div class="user-info">
-      <div id="user-name">Welcome</div>
+      <div id="user-name">Loading...</div>
       <small id="user-email"></small>
     </div>
   </div>
 
-  <div class="orders" id="orders">Loading orders...</div>
+  <div class="orders" id="orders">
+    <h2>Your Orders</h2>
+    <div id="order-list">Loading orders...</div>
+  </div>
 
   <div class="btns">
     <button onclick="window.location.href='/'">🏠 Go Home</button>
@@ -116,21 +135,21 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
 <script>
-  // Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-  authDomain: "bixmax-6c24c.firebaseapp.com",
-  projectId: "bixmax-6c24c",
-  storageBucket: "bixmax-6c24c.appspot.com",
-  messagingSenderId: "37740442541",
-  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-};
+  const firebaseConfig = {
+    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+    authDomain: "bixmax-6c24c.firebaseapp.com",
+    projectId: "bixmax-6c24c",
+    storageBucket: "bixmax-6c24c.appspot.com",
+    messagingSenderId: "37740442541",
+    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+  };
+
   firebase.initializeApp(firebaseConfig);
 
   firebase.auth().onAuthStateChanged(user => {
     if (user) {
       const name = user.displayName || user.email.split('@')[0];
-      document.getElementById("user-name").textContent = "Hi, " + name;
+      document.getElementById("user-name").textContent = name;
       document.getElementById("user-email").textContent = user.email;
       loadOrders(user.email);
     } else {
@@ -144,28 +163,27 @@ const firebaseConfig = {
     });
   }
 
-
   function loadOrders(email) {
-    const ordersDiv = document.getElementById("orders");
+    const orderList = document.getElementById("order-list");
     fetch("https://sheetdb.io/api/v1/oxl1mxxewqbdg")
       .then(res => res.json())
       .then(data => {
         const userOrders = data.filter(order => order.email === email);
         if (userOrders.length === 0) {
-          ordersDiv.innerHTML = "<p>No orders found</p>";
+          orderList.innerHTML = "<p>No orders found</p>";
           return;
         }
-        ordersDiv.innerHTML = userOrders.map(order => `
+        orderList.innerHTML = userOrders.map(order => `
           <div class="order">
-            <strong>id:</strong> ${order.orderId}<br>
-            <strong>item:</strong> ${order.item}<br>
-            <strong>total:</strong> GH₵${order.total}<br>
+            <strong>ID:</strong> ${order.orderId}<br>
+            <strong>Item:</strong> ${order.item}<br>
+            <strong>Total:</strong> GH₵${order.total}<br>
             <small>${order.date || ''}</small>
           </div>
         `).join('');
       })
       .catch(() => {
-        ordersDiv.innerHTML = "<p>Failed to load orders</p>";
+        orderList.innerHTML = "<p>Failed to load orders</p>";
       });
   }
 </script>
