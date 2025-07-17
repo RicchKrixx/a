@@ -206,93 +206,94 @@ input, textarea, select {
   }
 
   actionBtn.addEventListener("click", async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const name = document.getElementById("custName").value.trim();
-    const email = document.getElementById("custEmail").value.trim();
-    const phone = document.getElementById("custPhone").value.trim();
-    const address = document.getElementById("custAddr").value.trim();
-    let paymentMethod = payMethod.value;
-    const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
-    const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
+  const name = document.getElementById("custName").value.trim();
+  const email = document.getElementById("custEmail").value.trim();
+  const phone = document.getElementById("custPhone").value.trim();
+  const address = document.getElementById("custAddr").value.trim();
+  let paymentMethod = payMethod.value;
+  const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
+  const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
 
-    if (!(name && email && phone && address)) {
-      alert("Please fill in all customer details.");
+  if (!(name && email && phone && address)) {
+    alert("Please fill in all customer details.");
+    return;
+  }
+
+  if (grandTotal <= 0 || cartItems.length === 0) {
+    alert("Cart is empty or total is 0.");
+    return;
+  }
+
+  const orderId = generateOrderId();
+
+  const itemsString = cartItems.map(i => {
+    const variationText = i.variation ? ` (${i.variation})` : "";
+    return `${i.name}${variationText} × ${i.qty}`;
+  }).join(", ");
+
+  async function sendOrderToFirebase(userId = email) {
+    try {
+      const orderRef = doc(db, "users", userId, "orders", orderId);
+      await setDoc(orderRef, {
+        id: orderId,
+        name: name,
+        email: email,
+        phone: phone,
+        address: address,
+        method: paymentMethod,
+        total: grandTotal,
+        items: itemsString,
+        timestamp: new Date().toISOString()
+      });
+
+      localStorage.setItem("latestOrderId", orderId);
+      showLoader(false);
+      alert("Order placed successfully!");
+      window.location.href = "thankyou.html?orderId=" + orderId;
+    } catch (err) {
+      showLoader(false);
+      console.error(err);
+      alert("🔴 Order failed. Contact Support!.");
+    }
+  }
+
+  showLoader(true);
+
+  onAuthStateChanged(auth, (user) => {
+    // 🔒 Restrict "Pay on Delivery" for guests
+    if (!user && paymentMethod === "payment on delivery") {
+      showLoader(false);
+      alert("⚠️ You must be signed in to use Pay on Delivery.\nWe've switched your method to Pay Online.");
+      payMethod.value = "Paid";
+      actionBtn.textContent = "Pay Now";
       return;
     }
 
-    if (grandTotal <= 0 || cartItems.length === 0) {
-      alert("Cart is empty or total is 0.");
-      return;
+    // 💳 If Paid (online), proceed regardless of auth
+    if (paymentMethod === "Paid") {
+      PaystackPop.setup({
+        key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxx', // replace with real key
+        email: email,
+        amount: grandTotal * 100,
+        currency: "GHS",
+        ref: orderId,
+        callback: function (response) {
+          paymentMethod = "Paid";
+          sendOrderToFirebase(user ? user.uid : email); // guest fallback
+        },
+        onClose: function () {
+          showLoader(false);
+          alert("Payment cancelled.");
+        }
+      }).openIframe();
+    } else {
+      // 🛵 Pay on Delivery (user is guaranteed to be signed in here)
+      sendOrderToFirebase(user.uid);
     }
-
-    const orderId = generateOrderId();
-
-    const itemsString = cartItems.map(i => {
-      const variationText = i.variation ? ` (${i.variation})` : "";
-      return `${i.name}${variationText} × ${i.qty}`;
-    }).join(", ");
-
-    async function sendOrderToFirebase(userId) {
-      try {
-        const orderRef = doc(db, "users", userId, "orders", orderId);
-        await setDoc(orderRef, {
-          id: orderId,
-          name: name,
-          email: email,
-          phone: phone,
-          address: address,
-          method: paymentMethod,
-          total: grandTotal,
-          items: itemsString,
-          timestamp: new Date().toISOString()
-        });
-
-        localStorage.setItem("latestOrderId", orderId);
-        showLoader(false);
-        alert("Order placed successfully!");
-        window.location.href = "thankyou.html?orderId=" + orderId;
-      } catch (err) {
-        showLoader(false);
-        console.error(err);
-        alert("🔴 Order failed. Contact Support!.");
-      }
-    }
-
-   showLoader(true);
-
-    onAuthStateChanged(auth, (user) => {  
-  if (!user) {  
-    showLoader(false);  
-    alert("You must be signed in to place an order.");
-   
-return;
-}
-
-
-
-       
-      if (paymentMethod === "Paid") {
-        PaystackPop.setup({
-          key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxx', // 🔁 Replace with your actual Paystack key
-          email: email,
-          amount: grandTotal * 100,
-          currency: "GHS",
-          ref: orderId,
-          callback: function (response) {
-            paymentMethod = "Paid";
-            sendOrderToFirebase(user.uid);
-          },
-          onClose: function () {
-            showLoader(false);
-            alert("Payment cancelled.");
-          }
-        }).openIframe();
-      } else {
-        sendOrderToFirebase(user.uid);
-      }
-    });
   });
+});
 </script>
 
 <script>
