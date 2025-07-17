@@ -256,35 +256,7 @@
         orderList.innerHTML = "<p>Failed to load orders</p>";
       });
   }
-</script>
-<!--
-<script>
-    function loadOrders(email) {
-      const orderList = document.getElementById("order-list");
-      fetch("https://sheetdb.io/api/v1/oxl1mxxewqbdg")
-        .then(res => res.json())
-        .then(data => {
-          const userOrders = data.filter(order => order.email === email);
-          if (userOrders.length === 0) {
-            orderList.innerHTML = "<p>No orders found</p>";
-            return;
-          }
-          orderList.innerHTML = userOrders.map(order => `
-            <div class="order">
-              <strong>ID:</strong> ${order.id}<br>
-              <strong>Item:</strong> ${order.items}<br>
-              <strong>Total:</strong> GH₵${order.total}<br>
-              <small>${order.date || ''}</small>
-            </div>
-          `).join('');
-        })
-        .catch(() => {
-          orderList.innerHTML = "<p>Failed to load orders</p>";
-        });
-    }
-</script>
--->
-<script>
+
     // Profile image logic
     const profileImage = document.getElementById("profileImage");
     const dropdownMenu = document.getElementById("dropdownMenu");
