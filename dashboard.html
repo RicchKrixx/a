@@ -3,280 +3,149 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BizMAX Dashboard</title>
+  <title>BizMAX | Dashboard</title>
   <style>
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
-      background: #0f172a;
+      margin: 0;
+      background: #f2f9ff;
+    }
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #0077b6;
       color: white;
+      padding: 10px 15px;
     }
-
-    .dashboard {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-      max-width: 800px;
-      margin: 0 auto;
+    .top-bar h1 {
+      font-size: 18px;
+      margin: 0;
     }
-
-    .profile {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 30px;
+    .profile-container {
       position: relative;
     }
-
     .profile-img {
-      width: 80px;
-      height: 80px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
-      background: url('https://i.postimg.cc/tgBdHrrz/default-pfp.png') no-repeat center/cover;
-      border: 3px solid cyan;
+      background-size: cover;
+      background-position: center;
       cursor: pointer;
+      border: 2px solid white;
     }
-
-    .verified-badge {
-      position: absolute;
-      bottom: 12px;
-      right: calc(50% - 40px + 2px);
-      background: blue;
-      color: white;
-      font-size: 12px;
-      border-radius: 50%;
-      padding: 2px 6px;
-    }
-
     .dropdown {
       position: absolute;
-      top: 90px;
-      background: #1e293b;
-      border: 1px solid cyan;
-      border-radius: 8px;
-      display: none;
-      flex-direction: column;
-      padding: 10px;
-      box-shadow: 0 0 10px cyan;
-      z-index: 10;
-    }
-
-    .dropdown button {
-      background: none;
-      color: white;
-      border: none;
-      text-align: left;
-      padding: 6px 10px;
-      cursor: pointer;
-    }
-
-    .dropdown button:hover {
-      background: rgba(0,255,255,0.2);
-    }
-
-    .user-info {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-
-    .user-info #user-name {
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    .orders {
-      background: rgba(255, 255, 255, 0.05);
-      border-left: 4px solid cyan;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px cyan;
-      margin-bottom: 20px;
-      width: 100%;
-    }
-
-    .orders h2 {
-      margin-top: 0;
-      font-size: 20px;
-      border-bottom: 1px solid #333;
-      padding-bottom: 5px;
-    }
-
-    .order {
-      margin-bottom: 10px;
-      border-bottom: 1px solid #333;
-      padding-bottom: 8px;
-    }
-
-    .btns {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      width: 100%;
-    }
-
-    .btns button {
-      flex: 1 1 120px;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      background: cyan;
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
-      box-shadow: 0 0 10px cyan;
-      transition: background 0.3s;
-    }
-
-    .btns button:hover {
+      top: 50px;
+      right: 0;
       background: white;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      border-radius: 8px;
+      overflow: hidden;
+      z-index: 99;
+      display: none;
     }
-
-    @media (max-width: 500px) {
-      .orders {
-        padding: 15px;
-      }
-
-      .user-info #user-name {
-        font-size: 16px;
-      }
-
-      .btns button {
-        flex: 1 1 100%;
-      }
+    .dropdown label,
+    .dropdown button {
+      display: block;
+      padding: 10px;
+      border: none;
+      width: 100%;
+      text-align: left;
+      font-size: 14px;
+      background: none;
+      cursor: pointer;
+    }
+    .dropdown label:hover,
+    .dropdown button:hover {
+      background: #f0f0f0;
+    }
+    input[type="file"] {
+      display: none;
+    }
+    .main {
+      padding: 20px;
     }
   </style>
 </head>
 <body>
-
-<div class="dashboard">
-  <div class="profile">
-    <div class="profile-img" id="profileImg">
-      <div class="verified-badge">✔</div>
-    </div>
-    <div class="dropdown" id="profileDropdown">
-      <button onclick="uploadImage()">📷 Upload Image</button>
-      <button onclick="removeImage()">❌ Delete Image</button>
-    </div>
-    <input type="file" id="uploadInput" accept="image/*" style="display: none;" />
-    <div class="user-info">
-      <div id="user-name">Loading...</div>
-      <small id="user-email"></small>
+  <div class="top-bar">
+    <h1>BizMAX Dashboard</h1>
+    <div class="profile-container">
+      <div id="menuProfileImg" class="profile-img"></div>
+      <div class="dropdown" id="profileDropdown">
+        <label for="uploadInput">📷 Upload Image</label>
+        <input type="file" id="uploadInput" accept="image/*" />
+        <button onclick="removeImage()">🗑️ Remove Image</button>
+      </div>
     </div>
   </div>
 
-  <div class="orders" id="orders">
-    <h2>Order History</h2>
-    <div id="order-list">Loading orders...</div>
+  <div class="main">
+    <p>Welcome to your dashboard!</p>
   </div>
 
-  <div class="btns">
-    <button onclick="window.location.href='BixMax home.html'">🏠 Go Home</button>
-    <button onclick="logout()">🚪 Logout</button>
-  </div>
-</div>
+  <!-- Firebase scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-    authDomain: "bixmax-6c24c.firebaseapp.com",
-    projectId: "bixmax-6c24c",
-    storageBucket: "bixmax-6c24c.appspot.com",
-    messagingSenderId: "37740442541",
-    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-
-  const profileImg = document.getElementById("profileImg");
-  const dropdown = document.getElementById("profileDropdown");
-  const uploadInput = document.getElementById("uploadInput");
-
-  profileImg.addEventListener("click", () => {
-    dropdown.style.display = dropdown.style.display === "flex" ? "none" : "flex";
-  });
-
-  function setProfileImage() {
-    const storedImg = localStorage.getItem("customProfile");
-    if (storedImg) {
-      profileImg.style.backgroundImage = `url('${storedImg}')`;
-    } else {
-      profileImg.style.backgroundImage = `url('https://i.postimg.cc/tgBdHrrz/default-pfp.png')`;
-    }
-  }
-
-  function uploadImage() {
-    uploadInput.click();
-  }
-
-  uploadInput.addEventListener("change", function () {
-    const file = uploadInput.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      const imgData = e.target.result;
-      localStorage.setItem("customProfile", imgData);
-      setProfileImage();
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+      authDomain: "bixmax-6c24c.firebaseapp.com",
+      projectId: "bixmax-6c24c",
+      storageBucket: "bixmax-6c24c.appspot.com",
+      messagingSenderId: "37740442541",
+      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
     };
-    reader.readAsDataURL(file);
-  });
+    firebase.initializeApp(firebaseConfig);
 
-  function removeImage() {
-    localStorage.removeItem("customProfile");
-    setProfileImage();
-  }
+    const profileImg = document.getElementById("menuProfileImg");
+    const dropdown = document.getElementById("profileDropdown");
+    const uploadInput = document.getElementById("uploadInput");
 
-  firebase.auth().onAuthStateChanged(user => {
-    if (user) {
-      const name = user.displayName || user.email.split('@')[0];
-      document.getElementById("user-name").textContent = name;
-      document.getElementById("user-email").textContent = user.email;
-      loadOrders(user.email);
-      setProfileImage();
-    } else {
-      window.location.href = "auth.html";
+    function setProfileImage() {
+      const customProfile = localStorage.getItem("customProfile");
+      profileImg.style.backgroundImage = `url('${customProfile || "https://www.svgrepo.com/show/384674/account-avatar-profile-user-11.svg"}')`;
     }
-  });
 
-  function logout() {
-    firebase.auth().signOut().then(() => {
-      window.location.href = "auth.html";
+    function removeImage() {
+      localStorage.removeItem("customProfile");
+      setProfileImage();
+      dropdown.style.display = "none"; // Close dropdown
+    }
+
+    uploadInput.addEventListener("change", function () {
+      const file = uploadInput.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        localStorage.setItem("customProfile", e.target.result);
+        setProfileImage();
+        dropdown.style.display = "none"; // Close dropdown
+      };
+      reader.readAsDataURL(file);
     });
-  }
 
-  function loadOrders(email) {
-    const orderList = document.getElementById("order-list");
-    fetch("https://sheetdb.io/api/v1/oxl1mxxewqbdg")
-      .then(res => res.json())
-      .then(data => {
-        const userOrders = data.filter(order => order.email === email);
-        if (userOrders.length === 0) {
-          orderList.innerHTML = "<p>No orders found</p>";
-          return;
-        }
-        orderList.innerHTML = userOrders.map(order => `
-          <div class="order">
-            <strong>ID:</strong> ${order.id}<br>
-            <strong>Item:</strong> ${order.items}<br>
-            <strong>Total:</strong> GH₵${order.total}<br>
-            <small>${order.date || ''}</small>
-          </div>
-        `).join('');
-      })
-      .catch(() => {
-        orderList.innerHTML = "<p>Failed to load orders</p>";
-      });
-  }
-</script>
+    profileImg.addEventListener("click", () => {
+      dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    });
 
+    document.addEventListener("click", function (e) {
+      if (!profileImg.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.style.display = "none";
+      }
+    });
+
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        setProfileImage(); // Load saved image or fallback
+      }
+    });
+
+    // Initial load
+    setProfileImage();
+  </script>
 </body>
 </html>
