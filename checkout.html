@@ -1,251 +1,3 @@
-<!DOCTYPE html><html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Checkout</title>
-  <style id="style1">
-    html, body { height: 100%; overflow-x: hidden; font-family: Arial, sans-serif;
-      align-content: center;
-      padding: 10px;
-      border-radius: 16px;
-      box-shadow: 0 0 15px black;
-      background: lightblue;
-    }
-    .card h1 {
-      font-size: 32px;
-      margin-bottom: 15px;
-      font-weight: bold;
-      color: #fff;
-      text-shadow: 0 0 5px #fff;
-    }
-    .card span {
-      font-size: 20px;
-      font-weight: bold;
-      color: #fff;
-    }
-    label {
-      display: block;
-      margin-top: 6px;
-      font-weight: bold;
-    }
-    input::placeholder, textarea::placeholder {
-      color: black;
-      opacity: 0.5;
-    }
-  </style>
-  <style id="style2" disabled>
-    html, body { height: 100%; overflow-x: hidden; font-family: Arial, sans-serif;
-      align-content: center;
-      background: #111928;
-      padding: 10px;
-      border-radius: 16px;
-      box-shadow: 0 0 15px cyan;
-    }
-    .card h1 {
-      font-size: 32px;
-      margin-bottom: 15px;
-      font-weight: bold;
-      color: #00ffff;
-      text-shadow: 0 0 5px #00ffff;
-    }
-    .card span {
-      font-size: 20px;
-      font-weight: bold;
-      color: #00ffff;
-      text-shadow: 0 0 5px #00ffff;
-    }
-    label {
-      display: block;
-      margin-top: 6px;
-      font-weight: bold;
-      color: white; 
-    }
-    input::placeholder, textarea::placeholder {
-      color: #eee;
-      opacity: 0.6;
-    }
-  </style>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    h1, h2 {
-      text-align: center;
-      margin-bottom: 18px;
-    }
-    input, textarea, select {
-      width: 100%;
-      padding: 12px;
-      border-radius: 12px;
-      border: none;
-      background: rgba(255, 255, 255, .15);
-      color: #fff;
-      font-size: 16px;
-    }
-    .card button {
-      width: 100%;
-      padding: 16px;
-      border: none;
-      border-radius: 14px;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      background: blue;
-      color: #fff;
-    }
-    #loader {
-      position: fixed;
-      inset: 0;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0, 0, 0, .6);
-      z-index: 1000;
-    }
-    .spin {
-      width: 60px;
-      height: 60px;
-      border: 7px solid #eee;
-      border-top: 7px solid var(--blue);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0); }
-      100% { transform: rotate(360deg); }
-    }
-  </style>
-</head>
-<body>
-  <button onclick="switchStyle()" style="position:fixed;top:15px;right:15px;padding:0;border:none; background:none;font-size:24px;">
-    🎨
-  </button>
-  <div class="card">
-    <h1>CHECKOUT</h1>
-    <span>Amount to pay:<p id="grandTotal">GH¢0.00</p></span>
-    <form id="checkoutForm" onsubmit="return false;">
-      <div id="custInfo">
-        <label>Full Name</label>
-        <input id="custName" placeholder="John Doe" required><label>Email</label>
-    <input id="custEmail" type="email" placeholder="john@example.com" required>
-
-    <label>Phone Number</label>
-    <input id="custPhone" type="tel" placeholder="055 123 4567" required>
-
-    <label>Delivery Address</label>
-    <textarea id="custAddr" rows="3" placeholder="Street • City" required></textarea>
-
-    <button onclick="getLocation()" style="margin-top:10px;margin-bottom:14px;padding:10px;font-size:14px;border:none;border-radius:10px;background:darkcyan;color:white;">
-      📍 Use My Location
-    </button>
-
-    <label>Payment Method</label>
-    <select id="payMethod">
-      <option value="payment on delivery">Pay on Delivery</option>
-      <option value="Paid">Pay Online</option>
-    </select>
-
-    <button id="actionBtn">Place Order</button>
-  </div>
-  <div id="loader">
-    <div style="text-align:center;color:#fff">
-      <div class="spin"></div>
-    </div>
-  </div>
-</form>
-
-  </div>  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>  <script>
-      const firebaseConfig = {
-    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-    authDomain: "bixmax-6c24c.firebaseapp.com",
-    projectId: "bixmax-6c24c",
-    storageBucket: "bixmax-6c24c.appspot.com",
-    messagingSenderId: "37740442541",
-    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-  };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-  </script>  <script>
-    const payMethod = document.getElementById("payMethod");
-    const actionBtn = document.getElementById("actionBtn");
-    payMethod.addEventListener("change", () => {
-      actionBtn.textContent = payMethod.value === "Paid" ? "Pay Now" : "Place Order";
-    });
-
-    function showLoader(show) {
-      document.getElementById("loader").style.display = show ? "flex" : "none";
-    }
-
-    function generateOrderId() {
-      return "BX" + Date.now().toString(36).toUpperCase();
-    }
-
-    actionBtn.addEventListener("click", async (e) => {
-      e.preventDefault();
-      const user = firebase.auth().currentUser;
-      if (!user) {
-        alert("You must be signed in to place an order.");
-        return;
-      }
-
-      const name = document.getElementById("custName").value.trim();
-      const email = document.getElementById("custEmail").value.trim();
-      const phone = document.getElementById("custPhone").value.trim();
-      const address = document.getElementById("custAddr").value.trim();
-      const method = payMethod.value;
-      const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
-      const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
-
-      if (!(name && email && phone && address)) {
-        alert("Please fill in all customer details.");
-        return;
-      }
-
-      if (grandTotal <= 0 || cartItems.length === 0) {
-        alert("Cart is empty or total is 0.");
-        return;
-      }
-
-      const orderId = generateOrderId();
-      const orderData = {
-        id: orderId,
-        name,
-        email,
-        phone,
-        address,
-        method,
-        total: grandTotal,
-        items: cartItems,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-      };
-
-      async function saveOrderToFirestore() {
-        try {
-          await db.collection("users").doc(user.uid).collection("orders").doc(orderId).set(orderData);
-          localStorage.setItem("latestOrderId", orderId);
-          localStorage.removeItem("cart");
-          showLoader(false);
-          window.location.href = "thankyou.html?orderId=" + orderId;
-        } catch (err) {
-          console.error(err);
-          showLoader(false);
-          alert("Order failed. Please try again.");
-        }
-      }
-
-      showLoader(true);
-
-      if (method === "Paid") {
-        // Call Paystack or other gateway here (not modified)
-        alert("Integrate Paystack payment logic here before saving order.");
-        saveOrderToFirestore();
-      } else {
-        saveOrderToFirestore();
-      }
-    });
-  </script>
-<!--
-</body>
-</html>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -410,6 +162,121 @@ input, textarea, select {
 </form>
 </div>
 <script src="https://js.paystack.co/v1/inline.js"></script>
+<script type="module">
+  // 🔥 Firebase imports
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  // ✅ Your Firebase config (REPLACE this with your actual config)
+  const firebaseConfig = {
+    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+    authDomain: "bixmax-6c24c.firebaseapp.com",
+    projectId: "bixmax-6c24c",
+    storageBucket: "bixmax-6c24c.appspot.com",
+    messagingSenderId: "37740442541",
+    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+  };
+
+  // 🔥 Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+
+  const payMethod = document.getElementById("payMethod");
+  const actionBtn = document.getElementById("actionBtn");
+
+  payMethod.addEventListener("change", () => {
+    actionBtn.textContent = payMethod.value === "Paid" ? "Pay Now" : "Place Order";
+  });
+
+  function showLoader(show) {
+    document.getElementById("loader").style.display = show ? "flex" : "none";
+  }
+
+  function generateOrderId() {
+    return "BX" + Date.now().toString(36).toUpperCase();
+  }
+
+  actionBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById("custName").value.trim();
+    const email = document.getElementById("custEmail").value.trim();
+    const phone = document.getElementById("custPhone").value.trim();
+    const address = document.getElementById("custAddr").value.trim();
+    let method = payMethod.value;
+    const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
+    const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
+
+    if (!(name && email && phone && address)) {
+      alert("Please fill in all customer details.");
+      return;
+    }
+
+    if (grandTotal <= 0 || cartItems.length === 0) {
+      alert("Cart is empty or total is 0.");
+      return;
+    }
+
+    const orderId = generateOrderId();
+
+    const itemsString = cartItems.map(i => {
+      const variationText = i.variation ? ` (${i.variation})` : "";
+      return `${i.name}${variationText} × ${i.qty}`;
+    }).join(", ");
+
+    async function sendOrderToFirebase() {
+      try {
+        await addDoc(collection(db, "Orders"), {
+          id: orderId,
+          name: name,
+          email: email,
+          phone: phone,
+          address: address,
+          method: method,
+          total: grandTotal,
+          items: itemsString,
+          timestamp: new Date().toISOString()
+        });
+
+        localStorage.setItem("latestOrderId", orderId);
+        showLoader(false);
+        alert("Order placed successfully!");
+        window.location.href = "thankyou.html?orderId=" + orderId;
+
+      } catch (err) {
+        showLoader(false);
+        console.error(err);
+        alert("🔴Order failed. Try again later.");
+      }
+    }
+
+    showLoader(true);
+
+    if (method === "Paid") {
+      PaystackPop.setup({
+        key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxx', // 🔁 Replace with your Paystack public key
+        email: email,
+        amount: grandTotal * 100, // Convert to kobo
+        currency: "GHS", // or NGN, USD
+        ref: orderId,
+        callback: function (response) {
+          method = "Paid";
+          sendOrderToFirebase();
+        },
+        onClose: function () {
+          showLoader(false);
+          alert("Payment cancelled.");
+        }
+      }).openIframe();
+    } else {
+      sendOrderToFirebase();
+    }
+  });
+</script>
+<!--
+<script src="https://js.paystack.co/v1/inline.js"></script>
 <script>
   const payMethod = document.getElementById("payMethod");
   const actionBtn = document.getElementById("actionBtn");
@@ -512,6 +379,7 @@ input, textarea, select {
     }
   });
 </script>
+-->
 <script>
   function getLocation() {
     if (!navigator.geolocation) {
@@ -618,6 +486,5 @@ input, textarea, select {
       });
   });
 </script>
--->
 </body>
 </html>
