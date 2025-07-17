@@ -163,12 +163,10 @@ input, textarea, select {
 </div>
 <script src="https://js.paystack.co/v1/inline.js"></script>
 <script type="module">
-  // 🔥 Firebase imports
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-  import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-  // ✅ Your Firebase config (REPLACE this with your actual config)
   const firebaseConfig = {
     apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
     authDomain: "bixmax-6c24c.firebaseapp.com",
@@ -178,7 +176,6 @@ input, textarea, select {
     appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
   };
 
-  // 🔥 Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
   const auth = getAuth(app);
@@ -205,7 +202,7 @@ input, textarea, select {
     const email = document.getElementById("custEmail").value.trim();
     const phone = document.getElementById("custPhone").value.trim();
     const address = document.getElementById("custAddr").value.trim();
-    let method = payMethod.value;
+    let paymentMethod = payMethod.value;
     const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
     const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
 
@@ -226,15 +223,16 @@ input, textarea, select {
       return `${i.name}${variationText} × ${i.qty}`;
     }).join(", ");
 
-    async function sendOrderToFirebase() {
+    async function sendOrderToFirebase(userId) {
       try {
-        await addDoc(collection(db, "Orders"), {
+        const orderRef = doc(db, "users", userId, "orders", orderId);
+        await setDoc(orderRef, {
           id: orderId,
           name: name,
           email: email,
           phone: phone,
           address: address,
-          method: method,
+          method: paymentMethod,
           total: grandTotal,
           items: itemsString,
           timestamp: new Date().toISOString()
@@ -244,35 +242,42 @@ input, textarea, select {
         showLoader(false);
         alert("Order placed successfully!");
         window.location.href = "thankyou.html?orderId=" + orderId;
-
       } catch (err) {
         showLoader(false);
         console.error(err);
-        alert("🔴Order failed. Try again later.");
+        alert("🔴 Order failed. Try again later.");
       }
     }
 
     showLoader(true);
 
-    if (method === "Paid") {
-      PaystackPop.setup({
-        key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxx', // 🔁 Replace with your Paystack public key
-        email: email,
-        amount: grandTotal * 100, // Convert to kobo
-        currency: "GHS", // or NGN, USD
-        ref: orderId,
-        callback: function (response) {
-          method = "Paid";
-          sendOrderToFirebase();
-        },
-        onClose: function () {
-          showLoader(false);
-          alert("Payment cancelled.");
-        }
-      }).openIframe();
-    } else {
-      sendOrderToFirebase();
-    }
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        showLoader(false);
+        alert("You must be signed in to place an order.");
+        return;
+      }
+
+      if (paymentMethod === "Paid") {
+        PaystackPop.setup({
+          key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxx', // 🔁 Replace with your actual Paystack key
+          email: email,
+          amount: grandTotal * 100,
+          currency: "GHS",
+          ref: orderId,
+          callback: function (response) {
+            paymentMethod = "Paid";
+            sendOrderToFirebase(user.uid);
+          },
+          onClose: function () {
+            showLoader(false);
+            alert("Payment cancelled.");
+          }
+        }).openIframe();
+      } else {
+        sendOrderToFirebase(user.uid);
+      }
+    });
   });
 </script>
 <!--
