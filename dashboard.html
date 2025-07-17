@@ -2,23 +2,23 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard - BizMAX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customer Dashboard</title>
   <style>
 body {
-  margin: 0;
   font-family: Arial, sans-serif;
   background: #f9f9f9;
+  margin: 0;
+  padding: 20px;
 }
 
 .dashboard {
-  padding: 16px;
-}
-
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  max-width: 500px;
+  margin: auto;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 20px;
 }
 
 .home-link {
@@ -29,35 +29,30 @@ header {
 
 .profile {
   position: relative;
+  text-align: center;
 }
 
 .profile img {
-  width: 50px;
-  height: 50px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
-  cursor: pointer;
+  object-fit: cover;
   border: 2px solid #007bff;
+  cursor: pointer;
 }
 
 .dropdown {
   position: absolute;
   right: 0;
-  top: 60px;
+  top: 110px;
   background: white;
   border: 1px solid #ccc;
-  padding: 8px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 8px;
   border-radius: 6px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.dropdown label,
-.dropdown button {
-  cursor: pointer;
-  font-size: 14px;
-  color: #333;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 .hidden {
@@ -65,16 +60,16 @@ header {
 }
 
 .user-info {
+  text-align: center;
   margin-top: 20px;
 }
 
 .badge {
-  display: inline-block;
   background: #00c853;
   color: white;
-  font-size: 12px;
-  padding: 3px 8px;
+  padding: 4px 10px;
   border-radius: 12px;
+  font-size: 14px;
   margin-left: 10px;
 }
 
@@ -82,32 +77,42 @@ header {
   margin-top: 30px;
 }
 
+#ordersList {
+  list-style-type: none;
+  padding: 0;
+}
+
 #ordersList li {
   background: #fff;
-  padding: 10px;
-  border-bottom: 1px solid #eee;
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid #ddd;
 }
 </style>
 </head>
 <body>
-  <div class="dashboard">
-    <header>
-      <a href="index.html" class="home-link">🏠 Home</a>
-      <div class="profile">
-        <img id="profilePic" src="default.png" alt="Profile Picture" />
-        <div id="dropdown" class="dropdown hidden">
-          <label for="uploadPic">Add New Picture</label>
-          <input type="file" id="uploadPic" accept="image/*" hidden>
-          <button id="deletePic">Delete Picture</button>
-        </div>
-      </div>
-    </header>
 
+  <div class="dashboard">
+    <!-- Home link -->
+    <a href="index.html" class="home-link">🏠 Home</a>
+    
+    <!-- Profile section -->
+    <div class="profile">
+      <img id="profilePic" src="default.png" alt="Profile Picture" />
+      <div id="dropdown" class="dropdown hidden">
+        <label for="uploadPic">Add New Picture</label>
+        <input type="file" id="uploadPic" accept="image/*" hidden />
+        <button id="deletePic">Delete Picture</button>
+      </div>
+    </div>
+
+    <!-- User information -->
     <section class="user-info">
       <h2 id="userEmail">Loading...</h2>
-      <span id="verifiedBadge" class="badge">✔ Verified</span>
+      <span id="verifiedBadge" class="badge hidden">✔ Verified</span>
     </section>
 
+    <!-- Order history section -->
     <section class="order-history">
       <h3>📦 Order History</h3>
       <ul id="ordersList">
@@ -116,11 +121,15 @@ header {
     </section>
   </div>
 
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js"></script>
-  <script>import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+  
+  <script>
+// Import Firebase SDKs
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js";
@@ -135,33 +144,41 @@ const firebaseConfig = {
   appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
+// DOM Elements
 const profilePic = document.getElementById("profilePic");
 const dropdown = document.getElementById("dropdown");
 const uploadInput = document.getElementById("uploadPic");
 const deleteBtn = document.getElementById("deletePic");
 const userEmail = document.getElementById("userEmail");
+const verifiedBadge = document.getElementById("verifiedBadge");
 const ordersList = document.getElementById("ordersList");
 
+// Toggle profile dropdown
 profilePic.addEventListener("click", () => {
   dropdown.classList.toggle("hidden");
 });
 
+// Upload new profile picture
 uploadInput.addEventListener("change", async (e) => {
   const file = e.target.files[0];
   if (!file) return;
+
   const user = auth.currentUser;
   const picRef = ref(storage, `users/${user.uid}/profile.jpg`);
+
   await uploadBytes(picRef, file);
   const url = await getDownloadURL(picRef);
   await updateDoc(doc(db, "users", user.uid), { profileURL: url });
   profilePic.src = url;
 });
 
+// Delete profile picture
 deleteBtn.addEventListener("click", async () => {
   const user = auth.currentUser;
   const picRef = ref(storage, `users/${user.uid}/profile.jpg`);
@@ -170,26 +187,41 @@ deleteBtn.addEventListener("click", async () => {
   profilePic.src = "default.png";
 });
 
+// Check if user is logged in
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
-    window.location.href = "signin.html";
+    window.location.href = "signin.html"; // Redirect if not signed in
     return;
   }
 
-  userEmail.textContent = user.email;
+  // Show user data
+  userEmail.textContent = `Welcome, ${user.email}`;
   const userDoc = await getDoc(doc(db, "users", user.uid));
   const userData = userDoc.data();
 
+  // Set profile picture if available
   if (userData.profileURL) {
     profilePic.src = userData.profileURL;
+  } else {
+    profilePic.src = "default.png";
   }
 
-  // Fetch dummy order history
-  ordersList.innerHTML = `
-    <li>Order #BX123 - Delivered</li>
-    <li>Order #BX456 - In Progress</li>
-    <li>Order #BX789 - Cancelled</li>
-  `;
-});</script>
+  // Show verified badge if user is verified
+  if (userData.isVerified) {
+    verifiedBadge.classList.remove("hidden");
+  }
+
+  // Fetch and show order history
+  const orders = await getDoc(doc(db, "orders", user.uid));
+  if (orders.exists()) {
+    const orderData = orders.data().orderHistory || [];
+    ordersList.innerHTML = orderData.map(order => `
+      <li>Order #${order.id} - ${order.status}</li>
+    `).join('');
+  } else {
+    ordersList.innerHTML = "<li>No orders found.</li>";
+  }
+});
+</script>
 </body>
 </html>
