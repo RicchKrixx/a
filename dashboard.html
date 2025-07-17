@@ -27,6 +27,7 @@
       align-items: center;
       gap: 10px;
       margin-bottom: 30px;
+      position: relative;
     }
 
     .profile-img {
@@ -34,19 +35,45 @@
       height: 80px;
       border-radius: 50%;
       background: url('https://i.postimg.cc/tgBdHrrz/default-pfp.png') no-repeat center/cover;
-      position: relative;
       border: 3px solid cyan;
+      cursor: pointer;
     }
 
     .verified-badge {
       position: absolute;
-      bottom: 2px;
-      right: 2px;
+      bottom: 12px;
+      right: calc(50% - 40px + 2px);
       background: blue;
       color: white;
       font-size: 12px;
       border-radius: 50%;
       padding: 2px 6px;
+    }
+
+    .dropdown {
+      position: absolute;
+      top: 90px;
+      background: #1e293b;
+      border: 1px solid cyan;
+      border-radius: 8px;
+      display: none;
+      flex-direction: column;
+      padding: 10px;
+      box-shadow: 0 0 10px cyan;
+      z-index: 10;
+    }
+
+    .dropdown button {
+      background: none;
+      color: white;
+      border: none;
+      text-align: left;
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+
+    .dropdown button:hover {
+      background: rgba(0,255,255,0.2);
     }
 
     .user-info {
@@ -128,9 +155,14 @@
 
 <div class="dashboard">
   <div class="profile">
-    <div class="profile-img">
+    <div class="profile-img" id="profileImg">
       <div class="verified-badge">✔</div>
     </div>
+    <div class="dropdown" id="profileDropdown">
+      <button onclick="uploadImage()">📷 Upload Image</button>
+      <button onclick="removeImage()">❌ Delete Image</button>
+    </div>
+    <input type="file" id="uploadInput" accept="image/*" style="display: none;" />
     <div class="user-info">
       <div id="user-name">Loading...</div>
       <small id="user-email"></small>
@@ -164,13 +196,52 @@
 
   firebase.initializeApp(firebaseConfig);
 
+  const profileImg = document.getElementById("profileImg");
+  const dropdown = document.getElementById("profileDropdown");
+  const uploadInput = document.getElementById("uploadInput");
+
+  profileImg.addEventListener("click", () => {
+    dropdown.style.display = dropdown.style.display === "flex" ? "none" : "flex";
+  });
+
+  function setProfileImage() {
+    const storedImg = localStorage.getItem("customProfile");
+    if (storedImg) {
+      profileImg.style.backgroundImage = `url('${storedImg}')`;
+    } else {
+      profileImg.style.backgroundImage = `url('https://i.postimg.cc/tgBdHrrz/default-pfp.png')`;
+    }
+  }
+
+  function uploadImage() {
+    uploadInput.click();
+  }
+
+  uploadInput.addEventListener("change", function () {
+    const file = uploadInput.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const imgData = e.target.result;
+      localStorage.setItem("customProfile", imgData);
+      setProfileImage();
+    };
+    reader.readAsDataURL(file);
+  });
+
+  function removeImage() {
+    localStorage.removeItem("customProfile");
+    setProfileImage();
+  }
+
   firebase.auth().onAuthStateChanged(user => {
     if (user) {
-    
       const name = user.displayName || user.email.split('@')[0];
       document.getElementById("user-name").textContent = name;
       document.getElementById("user-email").textContent = user.email;
       loadOrders(user.email);
+      setProfileImage();
     } else {
       window.location.href = "auth.html";
     }
