@@ -2,226 +2,210 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Customer Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BizMAX Dashboard</title>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
   <style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f9f9f9;
-  margin: 0;
-  padding: 20px;
-}
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3faff;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #0099cc;
+      padding: 15px;
+      text-align: center;
+      color: #fff;
+    }
+    .dashboard {
+      padding: 20px;
+      max-width: 500px;
+      margin: auto;
+      background: #fff;
+      border-radius: 10px;
+      margin-top: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .profile-pic-container {
+      text-align: center;
+      position: relative;
+    }
+    .profile-pic-container img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid #0099cc;
+    }
+    .dropdown {
+      display: none;
+      background: #fff;
+      position: absolute;
+      right: 0;
+      top: 130px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .dropdown button {
+      width: 100%;
+      padding: 10px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .dropdown button:hover {
+      background: #eee;
+    }
+    .verified-badge {
+      background: green;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      margin-top: 10px;
+      display: inline-block;
+    }
+    .order-history {
+      margin-top: 30px;
+    }
+    .order-history h3 {
+      margin-bottom: 10px;
+    }
+    .order-history ul {
+      padding: 0;
+      list-style: none;
+    }
+    .order-history li {
+      background: #eef6ff;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 8px;
+    }
+    .home-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .home-link a {
+      color: #0099cc;
+      text-decoration: none;
+    }
 
-.dashboard {
-  max-width: 500px;
-  margin: auto;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  padding: 20px;
-}
-
-.home-link {
-  text-decoration: none;
-  color: #007bff;
-  font-weight: bold;
-}
-
-.profile {
-  position: relative;
-  text-align: center;
-}
-
-.profile img {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #007bff;
-  cursor: pointer;
-}
-
-.dropdown {
-  position: absolute;
-  right: 0;
-  top: 110px;
-  background: white;
-  border: 1px solid #ccc;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.hidden {
-  display: none;
-}
-
-.user-info {
-  text-align: center;
-  margin-top: 20px;
-}
-
-.badge {
-  background: #00c853;
-  color: white;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 14px;
-  margin-left: 10px;
-}
-
-.order-history {
-  margin-top: 30px;
-}
-
-#ordersList {
-  list-style-type: none;
-  padding: 0;
-}
-
-#ordersList li {
-  background: #fff;
-  padding: 12px;
-  margin: 8px 0;
-  border: 1px solid #ddd;
-}
-</style>
+    @media(max-width: 500px) {
+      .dashboard {
+        margin: 10px;
+      }
+    }
+  </style>
 </head>
 <body>
 
-  <div class="dashboard">
-    <!-- Home link -->
-    <a href="index.html" class="home-link">🏠 Home</a>
-    
-    <!-- Profile section -->
-    <div class="profile">
-      <img id="profilePic" src="default.png" alt="Profile Picture" />
-      <div id="dropdown" class="dropdown hidden">
-        <label for="uploadPic">Add New Picture</label>
-        <input type="file" id="uploadPic" accept="image/*" hidden />
-        <button id="deletePic">Delete Picture</button>
-      </div>
+<header>
+  <h2>Welcome to Your Dashboard</h2>
+</header>
+
+<div class="dashboard">
+  <div class="profile-pic-container">
+    <img id="profilePic" src="https://via.placeholder.com/120" alt="Profile Picture">
+    <div class="dropdown" id="dropdownMenu">
+      <button onclick="uploadNewPic()">Upload New</button>
+      <button onclick="deleteProfilePic()">Delete Picture</button>
     </div>
-
-    <!-- User information -->
-    <section class="user-info">
-      <h2 id="userEmail">Loading...</h2>
-      <span id="verifiedBadge" class="badge hidden">✔ Verified</span>
-    </section>
-
-    <!-- Order history section -->
-    <section class="order-history">
-      <h3>📦 Order History</h3>
-      <ul id="ordersList">
-        <li>Loading orders...</li>
-      </ul>
-    </section>
+    <div id="verifiedBadge" class="verified-badge">✔ Verified</div>
   </div>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js"></script>
-  
-  <script>
-// Import Firebase SDKs
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js";
+  <div class="order-history">
+    <h3>Your Orders</h3>
+    <ul id="orderList">
+      <li>Order #12345 - Delivered</li>
+      <li>Order #67890 - Pending</li>
+    </ul>
+  </div>
 
-// Firebase config
-const firebaseConfig = {
-  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-  authDomain: "bixmax-6c24c.firebaseapp.com",
-  projectId: "bixmax-6c24c",
-  storageBucket: "bixmax-6c24c.appspot.com",
-  messagingSenderId: "37740442541",
-  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-};
+  <div class="home-link">
+    <a href="index.html">← Back to Home</a>
+  </div>
+</div>
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const storage = getStorage(app);
+<script>
+  // Firebase Config
+  const firebaseConfig = {
+    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+    authDomain: "bixmax-6c24c.firebaseapp.com",
+    projectId: "bixmax-6c24c",
+    storageBucket: "bixmax-6c24c.appspot.com",
+    messagingSenderId: "37740442541",
+    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const storage = firebase.storage();
 
-// DOM Elements
-const profilePic = document.getElementById("profilePic");
-const dropdown = document.getElementById("dropdown");
-const uploadInput = document.getElementById("uploadPic");
-const deleteBtn = document.getElementById("deletePic");
-const userEmail = document.getElementById("userEmail");
-const verifiedBadge = document.getElementById("verifiedBadge");
-const ordersList = document.getElementById("ordersList");
+  const profilePic = document.getElementById("profilePic");
+  const dropdownMenu = document.getElementById("dropdownMenu");
 
-// Toggle profile dropdown
-profilePic.addEventListener("click", () => {
-  dropdown.classList.toggle("hidden");
-});
+  // Toggle dropdown
+  profilePic.addEventListener("click", () => {
+    dropdownMenu.style.display = dropdownMenu.style.display === "block" ? "none" : "block";
+  });
 
-// Upload new profile picture
-uploadInput.addEventListener("change", async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
+  // Close dropdown on outside click
+  document.addEventListener("click", (e) => {
+    if (!profilePic.contains(e.target) && !dropdownMenu.contains(e.target)) {
+      dropdownMenu.style.display = "none";
+    }
+  });
 
-  const user = auth.currentUser;
-  const picRef = ref(storage, `users/${user.uid}/profile.jpg`);
-
-  await uploadBytes(picRef, file);
-  const url = await getDownloadURL(picRef);
-  await updateDoc(doc(db, "users", user.uid), { profileURL: url });
-  profilePic.src = url;
-});
-
-// Delete profile picture
-deleteBtn.addEventListener("click", async () => {
-  const user = auth.currentUser;
-  const picRef = ref(storage, `users/${user.uid}/profile.jpg`);
-  await deleteObject(picRef);
-  await updateDoc(doc(db, "users", user.uid), { profileURL: "default.png" });
-  profilePic.src = "default.png";
-});
-
-// Check if user is logged in
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    window.location.href = "signin.html"; // Redirect if not signed in
-    return;
+  // Upload profile picture
+  function uploadNewPic() {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+    fileInput.onchange = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const user = auth.currentUser;
+      if (!user) return;
+      const ref = storage.ref(`profiles/${user.uid}/profile.jpg`);
+      await ref.put(file);
+      const url = await ref.getDownloadURL();
+      profilePic.src = url;
+      localStorage.setItem("profilePic", url);
+    };
+    fileInput.click();
   }
 
-  // Show user data
-  userEmail.textContent = `Welcome, ${user.email}`;
-  const userDoc = await getDoc(doc(db, "users", user.uid));
-  const userData = userDoc.data();
-
-  // Set profile picture if available
-  if (userData.profileURL) {
-    profilePic.src = userData.profileURL;
-  } else {
-    profilePic.src = "default.png";
+  // Delete profile picture
+  async function deleteProfilePic() {
+    const user = auth.currentUser;
+    if (!user) return;
+    const ref = storage.ref(`profiles/${user.uid}/profile.jpg`);
+    await ref.delete();
+    profilePic.src = "https://via.placeholder.com/120";
+    localStorage.removeItem("profilePic");
   }
 
-  // Show verified badge if user is verified
-  if (userData.isVerified) {
-    verifiedBadge.classList.remove("hidden");
-  }
-
-  // Fetch and show order history
-  const orders = await getDoc(doc(db, "orders", user.uid));
-  if (orders.exists()) {
-    const orderData = orders.data().orderHistory || [];
-    ordersList.innerHTML = orderData.map(order => `
-      <li>Order #${order.id} - ${order.status}</li>
-    `).join('');
-  } else {
-    ordersList.innerHTML = "<li>No orders found.</li>";
-  }
-});
+  // Load user data
+  auth.onAuthStateChanged(async (user) => {
+    if (!user) {
+      window.location.href = "signin.html"; // redirect if not signed in
+    } else {
+      const picUrl = localStorage.getItem("profilePic");
+      if (picUrl) profilePic.src = picUrl;
+      else {
+        try {
+          const url = await storage.ref(`profiles/${user.uid}/profile.jpg`).getDownloadURL();
+          profilePic.src = url;
+          localStorage.setItem("profilePic", url);
+        } catch (e) {
+          profilePic.src = "https://via.placeholder.com/120";
+        }
+      }
+    }
+  });
 </script>
+
 </body>
 </html>
