@@ -262,12 +262,23 @@ input, textarea, select {
    showLoader(true);
 
     onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        showLoader(false);
-        alert("You must be signed in to place an order.");
-        return;
-      }
+  const method = document.getElementById("payMethod").value;
 
+  if (!user && method === "delivery") {
+    showLoader(false);
+    alert("Sign in to use Pay on Delivery");
+
+    // Switch payment method to online
+    document.getElementById("payMethod").value = "online";
+    document.getElementById("actionBtn").textContent = "Pay Now";
+
+    return;
+  }
+
+  // If guest chose "Pay Now", or user is signed in → continue
+  submitOrder(user); // your normal order submission logic
+});
+       
       if (paymentMethod === "Paid") {
         PaystackPop.setup({
           key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxx', // 🔁 Replace with your actual Paystack key
