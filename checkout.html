@@ -1,130 +1,251 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Checkout - BizMAX</title>
-  <style>
-    /* 🔒 Keeping your original styles untouched */
-    body {
-      background: #f4f4f4;
-      font-family: Arial, sans-serif;
-      padding: 20px;
+  <title>Checkout</title>
+  <style id="style1">
+    html, body { height: 100%; overflow-x: hidden; font-family: Arial, sans-serif;
+      align-content: center;
+      padding: 10px;
+      border-radius: 16px;
+      box-shadow: 0 0 15px black;
+      background: lightblue;
     }
-    .checkout-box {
-      max-width: 600px;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    .card h1 {
+      font-size: 32px;
+      margin-bottom: 15px;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 0 0 5px #fff;
+    }
+    .card span {
+      font-size: 20px;
+      font-weight: bold;
+      color: #fff;
+    }
+    label {
+      display: block;
+      margin-top: 6px;
+      font-weight: bold;
+    }
+    input::placeholder, textarea::placeholder {
+      color: black;
+      opacity: 0.5;
+    }
+  </style>
+  <style id="style2" disabled>
+    html, body { height: 100%; overflow-x: hidden; font-family: Arial, sans-serif;
+      align-content: center;
+      background: #111928;
+      padding: 10px;
+      border-radius: 16px;
+      box-shadow: 0 0 15px cyan;
+    }
+    .card h1 {
+      font-size: 32px;
+      margin-bottom: 15px;
+      font-weight: bold;
+      color: #00ffff;
+      text-shadow: 0 0 5px #00ffff;
+    }
+    .card span {
+      font-size: 20px;
+      font-weight: bold;
+      color: #00ffff;
+      text-shadow: 0 0 5px #00ffff;
+    }
+    label {
+      display: block;
+      margin-top: 6px;
+      font-weight: bold;
+      color: white; 
+    }
+    input::placeholder, textarea::placeholder {
+      color: #eee;
+      opacity: 0.6;
+    }
+  </style>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    h1, h2 {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      background: rgba(255, 255, 255, .15);
+      color: #fff;
+      font-size: 16px;
+    }
+    .card button {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 14px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      background: blue;
+      color: #fff;
     }
     #loader {
+      position: fixed;
+      inset: 0;
       display: none;
-      text-align: center;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, .6);
+      z-index: 1000;
     }
-    .hidden { display: none; }
+    .spin {
+      width: 60px;
+      height: 60px;
+      border: 7px solid #eee;
+      border-top: 7px solid var(--blue);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
-  <div class="checkout-box">
-    <h2>Checkout</h2>
-    <form id="checkoutForm">
-      <input type="text" placeholder="Full Name" id="fullname" required><br><br>
-      <input type="tel" placeholder="Phone Number" id="phone" required><br><br>
-      <input type="text" placeholder="Address" id="address" required><br><br>
-      <select id="payMethod" required>
-        <option value="cod">Pay on Delivery</option>
-        <option value="online">Pay Online</option>
-      </select><br><br>
-      <button type="submit" id="actionBtn">Place Order</button>
-    </form>
-    <div id="loader">Processing...</div>
+  <button onclick="switchStyle()" style="position:fixed;top:15px;right:15px;padding:0;border:none; background:none;font-size:24px;">
+    🎨
+  </button>
+  <div class="card">
+    <h1>CHECKOUT</h1>
+    <span>Amount to pay:<p id="grandTotal">GH¢0.00</p></span>
+    <form id="checkoutForm" onsubmit="return false;">
+      <div id="custInfo">
+        <label>Full Name</label>
+        <input id="custName" placeholder="John Doe" required><label>Email</label>
+    <input id="custEmail" type="email" placeholder="john@example.com" required>
+
+    <label>Phone Number</label>
+    <input id="custPhone" type="tel" placeholder="055 123 4567" required>
+
+    <label>Delivery Address</label>
+    <textarea id="custAddr" rows="3" placeholder="Street • City" required></textarea>
+
+    <button onclick="getLocation()" style="margin-top:10px;margin-bottom:14px;padding:10px;font-size:14px;border:none;border-radius:10px;background:darkcyan;color:white;">
+      📍 Use My Location
+    </button>
+
+    <label>Payment Method</label>
+    <select id="payMethod">
+      <option value="payment on delivery">Pay on Delivery</option>
+      <option value="Paid">Pay Online</option>
+    </select>
+
+    <button id="actionBtn">Place Order</button>
   </div>
+  <div id="loader">
+    <div style="text-align:center;color:#fff">
+      <div class="spin"></div>
+    </div>
+  </div>
+</form>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-
-  <script>
-    // ✅ Your Firebase Config
+  </div>  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>  <script>
     const firebaseConfig = {
       apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      authDomain: "YOUR_AUTH_DOMAIN",
       projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MSG_ID",
       appId: "YOUR_APP_ID"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+  </script>  <script>
+    const payMethod = document.getElementById("payMethod");
+    const actionBtn = document.getElementById("actionBtn");
+    payMethod.addEventListener("change", () => {
+      actionBtn.textContent = payMethod.value === "Paid" ? "Pay Now" : "Place Order";
+    });
 
-    // ✅ Handle form submission
-    document.getElementById("checkoutForm").addEventListener("submit", async function (e) {
+    function showLoader(show) {
+      document.getElementById("loader").style.display = show ? "flex" : "none";
+    }
+
+    function generateOrderId() {
+      return "BX" + Date.now().toString(36).toUpperCase();
+    }
+
+    actionBtn.addEventListener("click", async (e) => {
       e.preventDefault();
-      const loader = document.getElementById("loader");
-      loader.style.display = "block";
-
-      const fullname = document.getElementById("fullname").value;
-      const phone = document.getElementById("phone").value;
-      const address = document.getElementById("address").value;
-      const payMethod = document.getElementById("payMethod").value;
-      const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
-
-      const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-      const orderId = "BMX" + Date.now();
-
       const user = firebase.auth().currentUser;
       if (!user) {
         alert("You must be signed in to place an order.");
-        loader.style.display = "none";
         return;
       }
 
-      try {
-        await db.collection("users")
-          .doc(user.uid)
-          .collection("orders")
-          .doc(orderId)
-          .set({
-            orderId,
-            fullname,
-            phone,
-            address,
-            payMethod,
-            items: cartItems,
-            total,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-          });
+      const name = document.getElementById("custName").value.trim();
+      const email = document.getElementById("custEmail").value.trim();
+      const phone = document.getElementById("custPhone").value.trim();
+      const address = document.getElementById("custAddr").value.trim();
+      const method = payMethod.value;
+      const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
+      const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
 
-        // ✅ Save to localStorage for thank-you and receipt
-        const orders = JSON.parse(localStorage.getItem("orders") || "{}");
-        orders[orderId] = {
-          fullname, phone, address, payMethod, items: cartItems, total
-        };
-        localStorage.setItem("orders", JSON.stringify(orders));
+      if (!(name && email && phone && address)) {
+        alert("Please fill in all customer details.");
+        return;
+      }
 
-        // ✅ Clear cart and redirect
-        localStorage.removeItem("cart");
-        window.location.href = `thank-you.html?orderId=${orderId}`;
-      } catch (err) {
-        alert("Error placing order: " + err.message);
-        console.error(err);
-        loader.style.display = "none";
+      if (grandTotal <= 0 || cartItems.length === 0) {
+        alert("Cart is empty or total is 0.");
+        return;
+      }
+
+      const orderId = generateOrderId();
+      const orderData = {
+        id: orderId,
+        name,
+        email,
+        phone,
+        address,
+        method,
+        total: grandTotal,
+        items: cartItems,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      async function saveOrderToFirestore() {
+        try {
+          await db.collection("users").doc(user.uid).collection("orders").doc(orderId).set(orderData);
+          localStorage.setItem("latestOrderId", orderId);
+          localStorage.removeItem("cart");
+          showLoader(false);
+          window.location.href = "thankyou.html?orderId=" + orderId;
+        } catch (err) {
+          console.error(err);
+          showLoader(false);
+          alert("Order failed. Please try again.");
+        }
+      }
+
+      showLoader(true);
+
+      if (method === "Paid") {
+        // Call Paystack or other gateway here (not modified)
+        alert("Integrate Paystack payment logic here before saving order.");
+        saveOrderToFirestore();
+      } else {
+        saveOrderToFirestore();
       }
     });
-
-    // ✅ Update button based on payment method
-    document.getElementById("payMethod").addEventListener("change", () => {
-      const actionBtn = document.getElementById("actionBtn");
-      actionBtn.textContent = payMethod.value === "online" ? "Pay Now" : "Place Order";
-    });
   </script>
+<!--
 </body>
 </html>
-<!--
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -441,7 +562,6 @@ input, textarea, select {
       }
     }
 </script>
-<!-- EmailJS Script -->
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script>
   (function() {
@@ -498,6 +618,6 @@ input, textarea, select {
       });
   });
 </script>
+-->
 </body>
 </html>
--->
