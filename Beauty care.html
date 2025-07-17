@@ -1,4 +1,127 @@
-<div class="product">
+
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shirts - BixMAX</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: lightblue;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #1976d2;
+      color: #fff;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cart-icon {
+      position: relative;
+      cursor: pointer;
+    }
+    .cart-icon span {
+      background: red;
+      color: white;
+      font-size: 14px;
+      padding: 2px 6px;
+      border-radius: 50%;
+      position: absolute;
+      top: -10px;
+      right: -10px;
+    }
+    .container {
+      padding: 5px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    .product {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+      text-align: center;
+      transition: 0.3s;
+    }
+
+    .product:hover {
+      transform: translateY(-5px);
+    }
+
+    .product img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+    }
+
+
+    @media (max-width: 600px) {
+      .product-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .product h3 {
+      font-size: 16px;
+      margin: 6px 0;
+    }
+
+    .product p {
+      font-size: 15px;
+      font-weight: bold;
+    }
+
+    .product button {
+      background: #008b8b;
+      color: black;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 8px;
+      font-weight: bold;
+    }
+
+    .product button:hover {
+      background: blue;
+    }
+
+    @media (max-width: 500px) {
+      .products {
+        gap: 12px;
+      }
+      .product {
+        min-width: 150px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Shirts - BixMAX</h1>
+    <div class="cart-icon" onclick="window.location.href='cart.html'">
+      🛒 <span id="cart-count">0</span>
+    </div>
+  </header>
+
+  <div class="container">
+    <h2>All Shirt Products</h2>
+  <div class="products"><div class="product">
   <img src="pp.jpeg" alt="Body Lotion" style="cursor:pointer"
    onclick="addAndGoToCart(this)"
    data-name="Body Lotion" data-price="35.00" data-img="pp.jpeg">
