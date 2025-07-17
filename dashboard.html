@@ -175,8 +175,8 @@
         }
         orderList.innerHTML = userOrders.map(order => `
           <div class="order">
-            <strong>ID:</strong> ${order.orderId}<br>
-            <strong>Item:</strong> ${order.item}<br>
+            <strong>ID:</strong> ${order.id}<br>
+            <strong>Item:</strong> ${order.items}<br>
             <strong>Total:</strong> GH₵${order.total}<br>
             <small>${order.date || ''}</small>
           </div>
