@@ -4,173 +4,168 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BizMAX Dashboard</title>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
       margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+    }
+
+    .dashboard {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
       padding: 20px;
-      background: #f4faff;
-      color: #333;
-      text-align: center;
     }
 
     .profile {
       display: flex;
-      flex-direction: column;
       align-items: center;
+      gap: 10px;
       margin-bottom: 20px;
     }
 
-    .profile-pic-wrapper {
-      position: relative;
-    }
-
-    .profile img {
-      width: 100px;
-      height: 100px;
+    .profile-img {
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid cyan;
+      background: url('https://i.postimg.cc/tgBdHrrz/default-pfp.png') no-repeat center/cover;
+      position: relative;
     }
 
     .verified-badge {
       position: absolute;
-      bottom: -5px;
-      right: -5px;
+      bottom: 2px;
+      right: 2px;
       background: limegreen;
       color: white;
       font-size: 12px;
-      padding: 3px 6px;
       border-radius: 50%;
-      box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+      padding: 2px 5px;
     }
 
-    .user-info h3 {
-      margin-top: 10px;
-      font-size: 20px;
-    }
-
-    nav {
-      margin-top: 15px;
-    }
-
-    nav a, .logout {
-      display: inline-block;
-      margin: 8px;
-      padding: 10px 15px;
-      text-decoration: none;
-      border-radius: 8px;
-      color: white;
-      background: #007bff;
-    }
-
-    .logout {
-      background: crimson;
-      border: none;
-      cursor: pointer;
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
     }
 
     .orders {
-      margin-top: 30px;
+      background: rgba(255, 255, 255, 0.05);
+      border-left: 4px solid cyan;
+      padding: 10px 20px;
+      border-radius: 12px;
+      max-width: 400px;
+      box-shadow: 0 0 10px cyan;
+      margin-bottom: 20px;
+    }
+
+    .order {
+      margin-bottom: 10px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 5px;
+    }
+
+    .btns {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+    }
+
+    .btns button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background: cyan;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 10px cyan;
+    }
+
+    .btns button:hover {
       background: white;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .order-item {
-      border-bottom: 1px solid #eee;
-      padding: 10px 0;
-      text-align: left;
-    }
-
-    .order-item:last-child {
-      border-bottom: none;
     }
   </style>
 </head>
 <body>
 
-<div class="profile">
-  <div class="profile-pic-wrapper">
-    <img id="profile-pic" src="https://i.ibb.co/yNSFjCR/default-avatar.png" alt="Profile" />
-    <div class="verified-badge">✔</div>
+<div class="dashboard">
+  <div class="profile">
+    <div class="profile-img">
+      <div class="verified-badge">✔</div>
+    </div>
+    <div class="user-info">
+      <div id="user-name">Welcome</div>
+      <small id="user-email"></small>
+    </div>
   </div>
-  <div class="user-info">
-    <h3 id="user-name">Loading...</h3>
+
+  <div class="orders" id="orders">Loading orders...</div>
+
+  <div class="btns">
+    <button onclick="window.location.href='/'">🏠 Go Home</button>
+    <button onclick="logout()">🚪 Logout</button>
   </div>
 </div>
 
-<nav>
-  <a href="/BizMax home.html">🏠 Home</a>
-  <button class="logout" onclick="logout()">Logout</button>
-</nav>
-
-<section class="orders">
-  <h2>Your Orders</h2>
-  <div id="order-list">Loading orders...</div>
-</section>
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
 <script>
   // Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-    authDomain: "bixmax-6c24c.firebaseapp.com",
-    projectId: "bixmax-6c24c",
-    storageBucket: "bixmax-6c24c.appspot.com",
-    messagingSenderId: "37740442541",
-    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-  };
-
+const firebaseConfig = {
+  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+  authDomain: "bixmax-6c24c.firebaseapp.com",
+  projectId: "bixmax-6c24c",
+  storageBucket: "bixmax-6c24c.appspot.com",
+  messagingSenderId: "37740442541",
+  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+};
   firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
 
-  const SHEETDB_URL = 'https://sheetdb.io/api/v1/oxl1mxxewqbdg';
-
-  auth.onAuthStateChanged((user) => {
+  firebase.auth().onAuthStateChanged(user => {
     if (user) {
-      const name = user.displayName || user.email;
-      document.getElementById("user-name").textContent = name;
-
-      // Fetch orders
-      fetch(`${SHEETDB_URL}/search?email=${encodeURIComponent(user.email)}`)
-        .then(res => res.json())
-        .then(data => {
-          const orderList = document.getElementById('order-list');
-          console.log("Orders fetched:", data);
-
-          if (!data || data.length === 0) {
-            orderList.innerHTML = '<p>No orders found.</p>';
-            return;
-          }
-
-          orderList.innerHTML = '';
-          data.forEach(order => {
-            orderList.innerHTML += `
-              <div class="order-item">
-                <strong>Order ID:</strong> ${order.orderId || 'N/A'}<br>
-                <strong>Items:</strong> ${order.items || 'N/A'}<br>
-                <strong>Total:</strong> ₵${order.total || '0.00'}
-              </div>
-            `;
-          });
-        })
-        .catch(error => {
-          console.error("Error fetching orders:", error);
-          document.getElementById('order-list').innerHTML = 'Failed to load orders.';
-        });
-
+      const name = user.displayName || user.email.split('@')[0];
+      document.getElementById("user-name").textContent = "Hi, " + name;
+      document.getElementById("user-email").textContent = user.email;
+      loadOrders(user.email);
     } else {
       window.location.href = "auth.html";
     }
   });
 
   function logout() {
-    auth.signOut().then(() => {
+    firebase.auth().signOut().then(() => {
       window.location.href = "auth.html";
     });
+  }
+
+  function loadOrders(email) {
+    const ordersDiv = document.getElementById("orders");
+    fetch("https://sheetdb.io/api/v1/YOUR_SHEETDB_API")
+      .then(res => res.json())
+      .then(data => {
+        const userOrders = data.filter(order => order.email === email);
+        if (userOrders.length === 0) {
+          ordersDiv.innerHTML = "<p>No orders found</p>";
+          return;
+        }
+        ordersDiv.innerHTML = userOrders.map(order => `
+          <div class="order">
+            <strong>id:</strong> ${order.orderId}<br>
+            <strong>item:</strong> ${order.item}<br>
+            <strong>total:</strong> GH₵${order.total}<br>
+            <small>${order.date || ''}</small>
+          </div>
+        `).join('');
+      })
+      .catch(() => {
+        ordersDiv.innerHTML = "<p>Failed to load orders</p>";
+      });
   }
 </script>
 
