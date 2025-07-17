@@ -2,85 +2,80 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BizMAX Dashboard</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f0f4f8;
+      font-family: sans-serif;
       margin: 0;
       padding: 0;
+      background: #f0f8ff;
     }
 
     .dashboard {
-      max-width: 400px;
-      margin: 20px auto;
-      padding: 20px;
+      max-width: 500px;
+      margin: auto;
       background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
       text-align: center;
     }
 
-    .profile-container {
+    .profile-pic-container {
       position: relative;
-      display: inline-block;
+      width: 130px;
+      margin: 0 auto;
     }
 
     .profile-pic {
-      width: 120px;
-      height: 120px;
-      object-fit: cover;
+      width: 130px;
+      height: 130px;
       border-radius: 50%;
-      border: 4px solid #4dc1f7;
-      cursor: pointer;
+      object-fit: cover;
+      border: 3px solid #00bcd4;
     }
 
-    .verified-badge {
+    .verify-badge {
       position: absolute;
-      bottom: 4px;
-      right: 4px;
-      background: #4dc1f7;
+      bottom: 5px;
+      right: 5px;
+      background: #00bcd4;
       color: white;
-      padding: 3px 6px;
-      font-size: 10px;
-      border-radius: 8px;
+      padding: 4px 6px;
+      font-size: 12px;
+      border-radius: 10px;
     }
 
     .dropdown {
-      display: none;
-      position: absolute;
-      top: 130px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      z-index: 10;
-    }
-
-    .dropdown button {
-      background: none;
-      border: none;
-      padding: 10px;
-      width: 100%;
-      text-align: left;
-      cursor: pointer;
-    }
-
-    .dashboard h2 {
       margin-top: 10px;
     }
 
-    .home-link {
-      display: inline-block;
-      margin-top: 20px;
-      text-decoration: none;
-      background: #4dc1f7;
+    .dropdown button {
+      padding: 8px 14px;
+      margin: 5px;
+      border: none;
+      background: #00bcd4;
       color: white;
-      padding: 10px 16px;
-      border-radius: 8px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .logout-btn, .home-link {
+      display: inline-block;
+      margin: 10px;
+      padding: 8px 14px;
+      border: none;
+      background: #ff5252;
+      color: white;
+      border-radius: 10px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    #orders {
+      margin-top: 20px;
+      text-align: left;
     }
 
     input[type="file"] {
@@ -89,37 +84,38 @@
   </style>
 </head>
 <body>
-  <div class="dashboard" id="dashboard" style="display: none;">
-    <div class="profile-container">
-      <img src="" id="profilePic" class="profile-pic" alt="Profile" />
-      <span class="verified-badge">Verified</span>
-      <div class="dropdown" id="profileDropdown">
-        <button onclick="document.getElementById('fileInput').click()">Add New Photo</button>
-        <button onclick="deleteProfilePic()">Delete Photo</button>
-        <button onclick="logout()">Logout</button>
-      </div>
-    </div>
-    <input type="file" id="fileInput" accept="image/*" />
-    <h2 id="userEmail">Welcome</h2>
-    <a href="index.html" class="home-link">← Back to Home</a>
+
+<div class="dashboard" id="dashboard">
+  <h2>Welcome, <span id="userName">User</span></h2>
+  <div class="profile-pic-container">
+    <img id="profilePic" class="profile-pic" src="https://via.placeholder.com/130" />
+    <div class="verify-badge">Verified</div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import {
-      getAuth,
-      onAuthStateChanged,
-      signOut
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import {
-      getStorage,
-      ref,
-      uploadBytes,
-      getDownloadURL,
-      deleteObject
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+  <div class="dropdown">
+    <label for="uploadInput">
+      <button>Upload New Picture</button>
+    </label>
+    <input type="file" id="uploadInput" accept="image/*">
+    <button onclick="deletePicture()">Delete Picture</button>
+  </div>
 
-// Firebase configuration
+  <a class="home-link" href="index.html">Go to Home</a>
+  <button class="logout-btn" onclick="logout()">Logout</button>
+
+  <div id="orders">
+    <h3>Your Orders</h3>
+    <p>No order history yet.</p>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+
+<script>
+  // Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
   authDomain: "bixmax-6c24c.firebaseapp.com",
@@ -129,72 +125,58 @@ const firebaseConfig = {
   appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
 };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth();
-    const storage = getStorage();
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const storage = firebase.storage();
+  const db = firebase.firestore();
 
-    const dashboard = document.getElementById("dashboard");
-    const profilePic = document.getElementById("profilePic");
-    const userEmail = document.getElementById("userEmail");
-    const dropdown = document.getElementById("profileDropdown");
-    const fileInput = document.getElementById("fileInput");
+  // Auto-login check
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      document.getElementById("userName").textContent = user.displayName || user.email;
 
-    profilePic.addEventListener("click", () => {
-      dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
-    });
-
-    document.body.addEventListener("click", (e) => {
-      if (!e.target.closest(".profile-container")) {
-        dropdown.style.display = "none";
-      }
-    });
-
-    fileInput.addEventListener("change", async () => {
-      const file = fileInput.files[0];
-      if (file && auth.currentUser) {
-        const imageRef = ref(storage, `profilePics/${auth.currentUser.uid}`);
-        await uploadBytes(imageRef, file);
-        const url = await getDownloadURL(imageRef);
-        profilePic.src = url;
-        localStorage.setItem("profileURL", url);
-      }
-    });
-
-    const deleteProfilePic = async () => {
-      if (auth.currentUser) {
-        const imageRef = ref(storage, `profilePics/${auth.currentUser.uid}`);
-        try {
-          await deleteObject(imageRef);
-          profilePic.src = "https://via.placeholder.com/120?text=Profile";
-          localStorage.removeItem("profileURL");
-        } catch (err) {
-          alert("No profile picture to delete.");
+      // Get profile pic from Firestore
+      db.collection("users").doc(user.uid).get().then(doc => {
+        if (doc.exists && doc.data().photoURL) {
+          document.getElementById("profilePic").src = doc.data().photoURL;
         }
-      }
-    };
-
-    const logout = () => {
-      signOut(auth).then(() => {
-        localStorage.clear();
-        window.location.href = "auth.html";
       });
-    };
+    } else {
+      window.location.href = "auth.html"; // redirect if not logged in
+    }
+  });
 
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        dashboard.style.display = "block";
-        userEmail.textContent = user.email;
-        try {
-          const imageRef = ref(storage, `profilePics/${user.uid}`);
-          const url = await getDownloadURL(imageRef);
-          profilePic.src = url;
-        } catch {
-          profilePic.src = "https://via.placeholder.com/120?text=Profile";
-        }
-      } else {
-        window.location.href = "auth.html";
-      }
+  // Upload profile pic
+  document.getElementById("uploadInput").addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    const user = auth.currentUser;
+    if (file && user) {
+      const ref = storage.ref(`profilePics/${user.uid}`);
+      await ref.put(file);
+      const url = await ref.getDownloadURL();
+      await db.collection("users").doc(user.uid).set({ photoURL: url }, { merge: true });
+      document.getElementById("profilePic").src = url;
+    }
+  });
+
+  // Delete profile pic
+  async function deletePicture() {
+    const user = auth.currentUser;
+    if (user) {
+      const ref = storage.ref(`profilePics/${user.uid}`);
+      await ref.delete().catch(() => {}); // silent error
+      await db.collection("users").doc(user.uid).update({ photoURL: firebase.firestore.FieldValue.delete() });
+      document.getElementById("profilePic").src = "https://via.placeholder.com/130";
+    }
+  }
+
+  // Logout
+  function logout() {
+    auth.signOut().then(() => {
+      window.location.href = "auth.html";
     });
-  </script>
+  }
+</script>
+
 </body>
 </html>
