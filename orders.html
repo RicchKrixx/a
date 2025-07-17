@@ -102,7 +102,7 @@
 <audio id="keepAwakeAudio" loop playsinline style="display:none">
   <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_3357cfb74e.mp3?filename=silence-10s.mp3" type="audio/mp3">
 </audio>
-
+<!--
 <script>
   const audio = document.getElementById("keepAwakeAudio");
 
@@ -213,6 +213,97 @@ if ("wakeLock" in navigator) {
 } else {
   console.warn("Wake Lock API not supported on this browser.");
 }
+</script>
+-->
+<!-- Firebase App & Firestore -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+    authDomain: "bixmax-6c24c.firebaseapp.com",
+    projectId: "bixmax-6c24c",
+    storageBucket: "bixmax-6c24c.appspot.com",
+    messagingSenderId: "37740442541",
+    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  const container = document.getElementById("ordersContainer");
+  const searchInput = document.getElementById("searchInput");
+  const notifySound = document.getElementById("notifySound");
+
+  let shownOrderIds = new Set();
+  container.textContent = ""; // Clear initial text
+
+  function addOrderToTop(orderId, order) {
+    const div = document.createElement("div");
+    div.className = "order";
+    div.innerHTML = `
+      <h2>Order ID: ${orderId}</h2>
+      <p><strong>Name:</strong> ${order.name}</p>
+      <p><strong>Email:</strong> ${order.email}</p>
+      <p><strong>Phone:</strong> ${order.phone}</p>
+      <p><strong>Address:</strong> ${order.address}</p>
+      <p><strong>Method:</strong> ${order.method}</p>
+      <p><strong>Total:</strong> GH¢ ${order.total}</p>
+      <p><strong>Items:</strong></p>
+      <ul>${order.items.split(",").map(i => `<li>${i.trim()}</li>`).join("")}</ul>
+    `;
+    container.prepend(div);
+  }
+
+  function fetchNewOrders() {
+    db.collection("orders").orderBy("timestamp", "desc").limit(50).get()
+      .then(snapshot => {
+        snapshot.forEach(doc => {
+          const order = doc.data();
+          const orderId = doc.id;
+          if (!shownOrderIds.has(orderId)) {
+            shownOrderIds.add(orderId);
+            addOrderToTop(orderId, order);
+
+            // 🔔 Notify
+            notifySound.play();
+
+            // 📢 Popup
+            const alertBox = document.createElement("div");
+            alertBox.textContent = "🆕 New Order: " + orderId;
+            alertBox.style = `
+              position: fixed; top: 20px; right: 20px;
+              background: #00b894; color: white;
+              padding: 14px 20px;
+              border-radius: 12px;
+              box-shadow: 0 0 10px rgba(0,0,0,0.2);
+              z-index: 9999;
+              font-size: 1rem;
+            `;
+            document.body.appendChild(alertBox);
+            setTimeout(() => alertBox.remove(), 4000);
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        });
+      })
+      .catch(err => console.error("❌ Fetch error:", err));
+  }
+
+  // 🔍 Search
+  searchInput.addEventListener("input", () => {
+    const term = searchInput.value.toLowerCase();
+    const orders = document.querySelectorAll(".order");
+    orders.forEach(order => {
+      const idText = order.querySelector("h2").textContent.toLowerCase();
+      order.style.display = idText.includes(term) ? "block" : "none";
+    });
+  });
+
+  // 🚀 Start polling
+  fetchNewOrders();
+  setInterval(fetchNewOrders, 1000);
 </script>
 </body>
 </html>
