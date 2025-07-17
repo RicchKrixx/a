@@ -260,14 +260,14 @@ input, textarea, select {
     }
 
    showLoader(true);
-<!--
+
     onAuthStateChanged(auth, (user) => {
       if (!user) {
         showLoader(false);
         alert("You must be signed in to place an order.");
         return;
       }
--->
+
       if (paymentMethod === "Paid") {
         PaystackPop.setup({
           key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxx', // 🔁 Replace with your actual Paystack key
