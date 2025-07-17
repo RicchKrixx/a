@@ -166,7 +166,7 @@
 
   firebase.auth().onAuthStateChanged(user => {
     if (user) {
-      const profileImg = document.getElementById('menuProfileImg');
+    
       const name = user.displayName || user.email.split('@')[0];
       document.getElementById("user-name").textContent = name;
       document.getElementById("user-email").textContent = user.email;
