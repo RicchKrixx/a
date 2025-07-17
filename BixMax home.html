@@ -447,10 +447,14 @@ document.getElementById("flashDeal").textContent = flashMessages[dealIndex];
     const dashboardLink = document.getElementById('dashboardLink');
 
     if (user) {
-      const savedImg = localStorage.getItem(`profilePic_${user.email}`);
-      const profilePic = savedImg || user.photoURL || "https://www.svgrepo.com/show/384674/account-avatar-profile-user-11.svg";
+      const emailKey = `profilePic_${user.email}`;
+      const savedImg = localStorage.getItem(emailKey);
+      const defaultImg = "https://www.svgrepo.com/show/384674/account-avatar-profile-user-11.svg";
+      const finalImg = savedImg || user.photoURL || defaultImg;
 
-      profileImg.style.backgroundImage = `url('${profilePic}')`;
+      // ✅ Set the image
+      profileImg.style.backgroundImage = `url('${finalImg}')`;
+
       userName.textContent = user.displayName || user.email.split("@")[0];
       userEmail.textContent = user.email;
       authBtn.textContent = "🚪 Logout";
