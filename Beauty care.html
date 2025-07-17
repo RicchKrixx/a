@@ -300,3 +300,54 @@
   <p>GH¢23.00</p>
   <button onclick="addToCart(this)" data-name="Foot Cream" data-price="23.00" data-img="pp.jpeg">Add to Cart</button>
 </div>
+</div>
+  </div> 
+ <script>
+  function addToCart(button) {
+    const name = button.dataset.name;
+    const price = parseFloat(button.dataset.price);
+    const img = button.dataset.img;
+
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const existing = cart.find(item => item.name === name);
+
+    if (existing) {
+      existing.qty++;
+    } else {
+      cart.push({ name, price, img, qty: 1 });
+    }
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartCount();
+  }
+
+  function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+    document.getElementById('cart-count').textContent = totalQty;
+  }
+
+  updateCartCount();
+</script>
+ <script>
+  function addAndGoToCart(img) {
+    const name = img.dataset.name;
+    const price = parseFloat(img.dataset.price);
+    const imgSrc = img.dataset.img;
+
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const existing = cart.find(item => item.name === name);
+
+    if (existing) {
+      existing.qty++;
+    } else {
+      cart.push({ name, price, img: imgSrc, qty: 1 });
+    }
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartCount();
+    window.location.href = 'cart.html';
+  }
+</script>
+ </body>
+</html>
