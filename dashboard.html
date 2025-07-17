@@ -221,7 +221,46 @@
         window.location.href = "auth.html";
       });
     }
+</script>
+<script>
+  const db = firebase.firestore();
 
+  function loadOrders(email) {
+    const orderList = document.getElementById("order-list");
+    orderList.innerHTML = "<p>Loading orders...</p>";
+
+    db.collection("orders")
+      .where("email", "==", email)
+      .orderBy("timestamp", "desc")
+      .get()
+      .then(snapshot => {
+        if (snapshot.empty) {
+          orderList.innerHTML = "<p>No orders found</p>";
+          return;
+        }
+
+        const ordersHtml = snapshot.docs.map(doc => {
+          const order = doc.data();
+          return `
+            <div class="order">
+              <strong>ID:</strong> ${doc.id}<br>
+              <strong>Item:</strong> ${order.items || "N/A"}<br>
+              <strong>Total:</strong> GH₵${order.total || "0"}<br>
+              <small>${order.date || new Date(order.timestamp?.seconds * 1000).toLocaleString()}</small>
+            </div>
+          `;
+        }).join('');
+
+        orderList.innerHTML = ordersHtml;
+      })
+      .catch(error => {
+        console.error("Error loading orders:", error);
+        orderList.innerHTML = "<p>Failed to load orders</p>";
+      });
+  }
+</script>
+<!--
+<script>
     function loadOrders(email) {
       const orderList = document.getElementById("order-list");
       fetch("https://sheetdb.io/api/v1/oxl1mxxewqbdg")
@@ -245,7 +284,9 @@
           orderList.innerHTML = "<p>Failed to load orders</p>";
         });
     }
-
+</script>
+-->
+<script>
     // Profile image logic
     const profileImage = document.getElementById("profileImage");
     const dropdownMenu = document.getElementById("dropdownMenu");
