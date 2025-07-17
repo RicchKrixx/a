@@ -101,7 +101,7 @@
     </div>
   </div>
   <nav>
-    <a href="/index.html">🏠 Home</a>
+    <a href="/BixMax home.html">🏠 Home</a>
     <button class="logout" onclick="logout()">Logout</button>
   </nav>
 </header>
@@ -126,7 +126,7 @@ const firebaseConfig = {
   const auth = firebase.auth();
 
   // SheetDB API URL
-  const SHEETDB_URL = 'https://sheetdb.io/api/v1/your_sheetdb_id'; // Replace this
+  const SHEETDB_URL = 'https://sheetdb.io/api/v1/oxl1mxxewqbdg'; // Replace this
 
   auth.onAuthStateChanged((user) => {
     if (user) {
@@ -158,13 +158,13 @@ const firebaseConfig = {
         });
 
     } else {
-      window.location.href = "/login.html";
+      window.location.href = "/auth.html";
     }
   });
 
   function logout() {
     auth.signOut().then(() => {
-      window.location.href = "/login.html";
+      window.location.href = "/auth.html";
     });
   }
 </script>
