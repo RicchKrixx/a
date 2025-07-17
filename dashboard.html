@@ -1,199 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>BizMAX Dashboard</title>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
-      margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: #f0f4f8;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
+      margin: 0;
+      background: #f4f8fa;
     }
 
     .dashboard {
+      max-width: 500px;
+      margin: 30px auto;
       background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
       padding: 20px;
-      max-width: 400px;
-      width: 100%;
-      border-radius: 10px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
       text-align: center;
       position: relative;
     }
 
     .profile-pic-container {
       position: relative;
-      width: 120px;
-      height: 120px;
-      margin: 0 auto;
-      border-radius: 50%;
-      overflow: hidden;
+      display: inline-block;
       cursor: pointer;
     }
 
-    .profile-pic-container img {
-      width: 100%;
-      height: 100%;
+    .profile-pic {
+      width: 120px;
+      height: 120px;
       object-fit: cover;
+      border-radius: 50%;
+      border: 4px solid #00c2ff;
     }
 
     .verified-badge {
       position: absolute;
-      bottom: 5px;
-      right: 5px;
-      background: #0af;
-      color: #fff;
-      font-size: 12px;
-      padding: 2px 6px;
-      border-radius: 50px;
+      bottom: 8px;
+      right: 8px;
+      background: #00c2ff;
+      color: white;
+      border-radius: 50%;
+      padding: 5px;
+      font-size: 14px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.2);
     }
 
     .dropdown {
-     display: none;
+      display: none;
       position: absolute;
-      top: 140px;
+      top: 130px;
       left: 50%;
       transform: translateX(-50%);
-      background: white;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      border-radius: 6px;
-      overflow: hidden;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      z-index: 10;
+      padding: 10px;
+      width: 200px;
     }
 
     .dropdown button {
       display: block;
       width: 100%;
-      padding: 10px;
       background: none;
       border: none;
+      text-align: left;
+      padding: 10px;
+      font-size: 15px;
       cursor: pointer;
-      border-bottom: 1px solid #eee;
     }
 
-    .dropdown button:last-child {
-      border-bottom: none;
+    .dropdown button:hover {
+      background-color: #f0f0f0;
     }
 
-    .dashboard h2 {
-      margin-top: 10px;
-    }
-
-    .btn {
-      padding: 10px 20px;
+    .logout-btn {
       margin-top: 20px;
-      background: #0af;
+      background: #ff3d3d;
       color: white;
       border: none;
-      border-radius: 6px;
+      padding: 10px 20px;
+      border-radius: 12px;
       cursor: pointer;
-    }
-
-    .link-home {
-      margin-top: 20px;
-      display: inline-block;
-      color: #0af;
-      text-decoration: underline;
-    }
-
-    input[type="file"] {
-      display: none;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
 
-  <div class="dashboard" id="dashboard">
-    <div class="profile-pic-container" id="profilePicContainer">
-      <img id="profilePic" src="https://via.placeholder.com/120" alt="Profile Picture">
-      <div class="verified-badge">✔️</div>
+<div class="dashboard">
+  <div class="profile-pic-container" onclick="toggleDropdown()">
+    <img src="https://via.placeholder.com/120" class="profile-pic" id="profilePic" />
+    <div class="verified-badge">✔️</div>
+
+    <div class="dropdown" id="dropdownMenu">
+      <button onclick="document.getElementById('fileInput').click()">Add New Picture</button>
+      <button onclick="removeProfilePic()">Delete Picture</button>
     </div>
-    <div class="dropdown" id="dropdown">
-      <button onclick="uploadNew()">Upload New</button>
-      <button onclick="removeProfile()">Remove Picture</button>
-    </div>
-    <input type="file" id="fileInput" accept="image/*" />
-    <h2 id="userEmail">Welcome</h2>
-    <button class="btn" onclick="logout()">Logout</button>
-    <a class="link-home" href="index.html">← Back to Home</a>
   </div>
 
-  <script>
-    // Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-  authDomain: "bixmax-6c24c.firebaseapp.com",
-  projectId: "bixmax-6c24c",
-  storageBucket: "bixmax-6c24c.appspot.com",
-  messagingSenderId: "37740442541",
-  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-};
+  <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="previewImage(event)" />
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const storage = firebase.storage();
+  <h2>Welcome Back 👋</h2>
+  <p>Your dashboard is ready.</p>
 
-    const profilePic = document.getElementById('profilePic');
-    const fileInput = document.getElementById('fileInput');
-    const dropdown = document.getElementById('dropdown');
-    const profilePicContainer = document.getElementById('profilePicContainer');
-    const userEmail = document.getElementById('userEmail');
+  <button class="logout-btn" onclick="logout()">Logout</button>
+</div>
 
-    // 🔁 Toggle dropdown on profile click
-    profilePicContainer.addEventListener('click', () => {
-      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-    });
+<script>
+  const dropdown = document.getElementById("dropdownMenu");
 
-    // 📤 Upload new picture
-    function uploadNew() {
-      fileInput.click();
+  function toggleDropdown() {
+    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+  }
+
+  function previewImage(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('profilePic').src = e.target.result;
+        localStorage.setItem("profilePicture", e.target.result);
+      };
+      reader.readAsDataURL(file);
     }
+    dropdown.style.display = "none";
+  }
 
-    fileInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      const user = auth.currentUser;
-      if (file && user) {
-        const storageRef = storage.ref(`profiles/${user.uid}`);
-        storageRef.put(file).then(() => {
-          storageRef.getDownloadURL().then(url => {
-            profilePic.src = url;
-            localStorage.setItem('profileURL', url);
-          });
-        });
-      }
-    });
+  function removeProfilePic() {
+    document.getElementById('profilePic').src = "https://via.placeholder.com/120";
+    localStorage.removeItem("profilePicture");
+    dropdown.style.display = "none";
+  }
 
-    // 🗑️ Remove profile
-    function removeProfile() {
-      profilePic.src = 'https://via.placeholder.com/120';
-      localStorage.removeItem('profileURL');
+  function logout() {
+    alert("Logged out!");
+    // Add Firebase logout in Step 2
+  }
+
+  // Load saved profile picture
+  window.onload = () => {
+    const savedPic = localStorage.getItem("profilePicture");
+    if (savedPic) {
+      document.getElementById("profilePic").src = savedPic;
     }
+  }
+</script>
 
-    // 🔐 Auth listener
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        userEmail.textContent = user.email;
-        const stored = localStorage.getItem('profileURL');
-        if (stored) profilePic.src = stored;
-      } else {
-        window.location.href = 'login.html'; // or redirect to sign-in
-      }
-    });
-
-    // 🔓 Logout
-    function logout() {
-      auth.signOut().then(() => {
-        localStorage.removeItem('profileURL');
-        window.location.href = 'index.html';
-      });
-    }
-  </script>
 </body>
 </html>
