@@ -452,9 +452,8 @@ document.getElementById("flashDeal").textContent = flashMessages[dealIndex];
       const defaultImg = "https://www.svgrepo.com/show/384674/account-avatar-profile-user-11.svg";
       const finalImg = savedImg || user.photoURL || defaultImg;
 
-      // ✅ Set the image
+      // ✅ Just display the image, no dropdown
       profileImg.style.backgroundImage = `url('${finalImg}')`;
-
       userName.textContent = user.displayName || user.email.split("@")[0];
       userEmail.textContent = user.email;
       authBtn.textContent = "🚪 Logout";
