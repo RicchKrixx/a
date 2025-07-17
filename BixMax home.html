@@ -456,10 +456,7 @@ document.getElementById("flashDeal").textContent = flashMessages[dealIndex];
       return "profileImage_" + email;
     }
 
-    function loadProfileImage(email) {
-      const savedImage = localStorage.getItem(getImageKey(email));
-      if (savedImage) profileImage.src = savedImage;
-    }
+ 
       // ✅ Just display the image, no dropdown
       profileImg.style.backgroundImage = `url('${finalImg}')`;
       userName.textContent = user.displayName || user.email.split("@")[0];
