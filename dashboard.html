@@ -27,24 +27,28 @@
       align-items: center;
     }
 
+    .profile-pic-wrapper {
+      position: relative;
+    }
+
     .profile img {
       width: 60px;
       height: 60px;
       border-radius: 50%;
       object-fit: cover;
       border: 3px solid cyan;
-      position: relative;
     }
 
     .verified-badge {
       position: absolute;
-      bottom: 0;
-      right: 0;
+      bottom: -3px;
+      right: -3px;
       background: limegreen;
       color: white;
       font-size: 10px;
-      padding: 2px 5px;
-      border-radius: 10px;
+      padding: 2px 6px;
+      border-radius: 50%;
+      box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
     }
 
     .user-info {
@@ -92,7 +96,7 @@
 
 <header>
   <div class="profile">
-    <div style="position: relative;">
+    <div class="profile-pic-wrapper">
       <img id="profile-pic" src="https://i.ibb.co/yNSFjCR/default-avatar.png" alt="Profile" />
       <div class="verified-badge">✔</div>
     </div>
@@ -101,7 +105,7 @@
     </div>
   </div>
   <nav>
-    <a href="/BixMax home.html">🏠 Home</a>
+    <a href="/BizMax home.html">🏠 Home</a>
     <button class="logout" onclick="logout()">Logout</button>
   </nav>
 </header>
@@ -112,36 +116,38 @@
 </section>
 
 <script>
- // Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-  authDomain: "bixmax-6c24c.firebaseapp.com",
-  projectId: "bixmax-6c24c",
-  storageBucket: "bixmax-6c24c.appspot.com",
-  messagingSenderId: "37740442541",
-  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-};
+  // Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+    authDomain: "bixmax-6c24c.firebaseapp.com",
+    projectId: "bixmax-6c24c",
+    storageBucket: "bixmax-6c24c.appspot.com",
+    messagingSenderId: "37740442541",
+    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+  };
 
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
 
-  // SheetDB API URL
-  const SHEETDB_URL = 'https://sheetdb.io/api/v1/oxl1mxxewqbdg'; // Replace this
+  const SHEETDB_URL = 'https://sheetdb.io/api/v1/oxl1mxxewqbdg';
 
   auth.onAuthStateChanged((user) => {
     if (user) {
       const name = user.displayName || user.email;
       document.getElementById("user-name").textContent = name;
 
-      // Fetch orders from SheetDB
-      fetch(`${SHEETDB_URL}/search?email=${user.email}`)
+      // Fetch orders
+      fetch(`${SHEETDB_URL}/search?email=${encodeURIComponent(user.email)}`)
         .then(res => res.json())
         .then(data => {
           const orderList = document.getElementById('order-list');
-          if (data.length === 0) {
+          console.log("Orders fetched:", data);
+
+          if (!data || data.length === 0) {
             orderList.innerHTML = '<p>No orders found.</p>';
             return;
           }
+
           orderList.innerHTML = '';
           data.forEach(order => {
             orderList.innerHTML += `
@@ -153,7 +159,8 @@ const firebaseConfig = {
             `;
           });
         })
-        .catch(() => {
+        .catch(error => {
+          console.error("Error fetching orders:", error);
           document.getElementById('order-list').innerHTML = 'Failed to load orders.';
         });
 
