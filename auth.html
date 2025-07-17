@@ -1,50 +1,151 @@
+<!-- auth.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login | BizMAX</title>
+  <title>BizMAX | Sign In / Sign Up</title>
   <style>
-    body { font-family: Arial; background: #f0f0f0; padding: 30px; text-align: center; }
-    input, button { padding: 10px; margin: 8px; width: 80%; max-width: 300px; }
-    #authBox { background: white; padding: 20px; border-radius: 8px; display: inline-block; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #001f2f;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #fff;
+    }
+    .container {
+      background: #0b2e45;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 0 15px cyan;
+      width: 90%;
+      max-width: 400px;
+    }
+    .tabs {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 1rem;
+    }
+    .tabs button {
+      background: transparent;
+      border: none;
+      color: cyan;
+      font-size: 1.1rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      transition: 0.3s;
+    }
+    .tabs button.active {
+      font-weight: bold;
+      border-bottom: 2px solid cyan;
+    }
+    form {
+      display: none;
+      flex-direction: column;
+    }
+    form.active {
+      display: flex;
+    }
+    input {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+    }
+    button.submit-btn {
+      background: cyan;
+      color: black;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    .msg {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: lightgreen;
+    }
   </style>
 </head>
 <body>
-  <div id="authBox">
-    <h2>Sign In / Sign Up</h2>
-    <input type="email" id="email" placeholder="Email" /><br />
-    <input type="password" id="password" placeholder="Password" /><br />
-    <button onclick="signUp()">Sign Up</button>
-    <button onclick="signIn()">Sign In</button>
-    <p id="msg"></p>
+  <div class="container">
+    <div class="tabs">
+      <button id="showLogin" class="active">Sign In</button>
+      <button id="showSignup">Sign Up</button>
+    </div>
+
+    <form id="loginForm" class="active">
+      <input type="email" id="loginEmail" placeholder="Email" required />
+      <input type="password" id="loginPassword" placeholder="Password" required />
+      <button class="submit-btn" type="submit">Login</button>
+    </form>
+
+    <form id="signupForm">
+      <input type="email" id="signupEmail" placeholder="Email" required />
+      <input type="password" id="signupPassword" placeholder="Password" required />
+      <button class="submit-btn" type="submit">Register</button>
+    </form>
+
+    <div class="msg" id="message"></div>
   </div>
 
-  <script type="module">
-    import { auth } from './firebase.js';
-    import { createUserWithEmailAndPassword, signInWithEmailAndPassword } 
-      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+      authDomain: "bixmax-6c24c.firebaseapp.com",
+      projectId: "bixmax-6c24c",
+      storageBucket: "bixmax-6c24c.appspot.com",
+      messagingSenderId: "37740442541",
+      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+  </script>
 
-    const emailEl = document.getElementById('email');
-    const passEl = document.getElementById('password');
-    const msgEl = document.getElementById('msg');
+  <script>
+    const showLogin = document.getElementById('showLogin');
+    const showSignup = document.getElementById('showSignup');
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+    const message = document.getElementById('message');
 
-    window.signUp = async () => {
-      try {
-        await createUserWithEmailAndPassword(auth, emailEl.value, passEl.value);
-        window.location.href = "dashboard.html";
-      } catch (e) {
-        msgEl.textContent = e.message;
-      }
+    showLogin.onclick = () => {
+      showLogin.classList.add('active');
+      showSignup.classList.remove('active');
+      loginForm.classList.add('active');
+      signupForm.classList.remove('active');
+    };
+    showSignup.onclick = () => {
+      showSignup.classList.add('active');
+      showLogin.classList.remove('active');
+      signupForm.classList.add('active');
+      loginForm.classList.remove('active');
     };
 
-    window.signIn = async () => {
-      try {
-        await signInWithEmailAndPassword(auth, emailEl.value, passEl.value);
-        window.location.href = "dashboard.html";
-      } catch (e) {
-        msgEl.textContent = e.message;
-      }
+    loginForm.onsubmit = (e) => {
+      e.preventDefault();
+      const email = loginEmail.value;
+      const password = loginPassword.value;
+      auth.signInWithEmailAndPassword(email, password)
+        .then(() => window.location.href = "dashboard.html")
+        .catch(err => message.textContent = err.message);
+    };
+
+    signupForm.onsubmit = (e) => {
+      e.preventDefault();
+      const email = signupEmail.value;
+      const password = signupPassword.value;
+      auth.createUserWithEmailAndPassword(email, password)
+        .then(() => window.location.href = "dashboard.html")
+        .catch(err => message.textContent = err.message);
     };
   </script>
 </body>
