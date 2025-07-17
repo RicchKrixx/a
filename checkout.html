@@ -184,8 +184,18 @@ input, textarea, select {
   const actionBtn = document.getElementById("actionBtn");
 
   payMethod.addEventListener("change", () => {
-    actionBtn.textContent = payMethod.value === "Paid" ? "Pay Now" : "Place Order";
+  const selected = payMethod.value;
+
+  onAuthStateChanged(auth, (user) => {
+    if (!user && selected === "payment on delivery") {
+      alert("⚠️ Only signed-in users can choose 'Pay on Delivery'. Please sign in to use this option.");
+      payMethod.value = "Paid"; // 🔁 Switch back to Paid
+      actionBtn.textContent = "Pay Now";
+    } else {
+      actionBtn.textContent = selected === "Paid" ? "Pay Now" : "Place Order";
+    }
   });
+});
 
   function showLoader(show) {
     document.getElementById("loader").style.display = show ? "flex" : "none";
