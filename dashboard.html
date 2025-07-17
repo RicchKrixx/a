@@ -5,155 +5,154 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BizMAX Dashboard</title>
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: white;
-    }
+body {  
+      margin: 0;  
+      font-family: Arial, sans-serif;  
+      background: #0f172a;  
+      color: white;  
+    }  .dashboard {  
+  display: flex;  
+  flex-direction: column;  
+  align-items: center;  
+  padding: 20px;  
+  max-width: 800px;  
+  margin: 0 auto;  
+}  
 
-    .dashboard {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-      max-width: 800px;
-      margin: 0 auto;
-    }
+.profile {  
+  display: flex;  
+  flex-direction: column;  
+  align-items: center;  
+  gap: 10px;  
+  margin-bottom: 30px;  
+  position: relative;  
+}  
 
-    .profile {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 30px;
-      position: relative;
-    }
+.profile-img-container {  
+  position: relative;  
+}  
 
-    .profile-img-container {
-      position: relative;
-    }
+#profileImage {  
+  width: 80px;  
+  height: 80px;  
+  border-radius: 50%;  
+  border: 3px solid cyan;  
+  cursor: pointer;  
+}  
 
-    #profileImage {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      border: 3px solid cyan;
-      cursor: pointer;
-    }
+.verified-badge {  
+  position: absolute;  
+  bottom: 2px;  
+  right: 2px;  
+  background: blue;  
+  color: white;  
+  font-size: 12px;  
+  border-radius: 50%;  
+  padding: 2px 6px;  
+}  
 
-    .verified-badge {
-      position: absolute;
-      bottom: 2px;
-      right: 2px;
-      background: blue;
-      color: white;
-      font-size: 12px;
-      border-radius: 50%;
-      padding: 2px 6px;
-    }
+.dropdown {  
+  display: none;  
+  position: absolute;  
+  top: 90px;  
+  background: #1e293b;  
+  border: 1px solid #334155;  
+  border-radius: 8px;  
+  overflow: hidden;  
+  z-index: 999;  
+}  
 
-    .dropdown {
-      display: none;
-      position: absolute;
-      top: 90px;
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 8px;
-      overflow: hidden;
-      z-index: 999;
-    }
+.dropdown label,  
+.dropdown div {  
+  padding: 10px;  
+  display: block;  
+  cursor: pointer;  
+  color: white;  
+}  
 
-    .dropdown label,
-    .dropdown div {
-      padding: 10px;
-      display: block;
-      cursor: pointer;
-      color: white;
-    }
+.dropdown label:hover,  
+.dropdown div:hover {  
+  background-color: #334155;  
+}  
 
-    .dropdown label:hover,
-    .dropdown div:hover {
-      background-color: #334155;
-    }
+.dropdown input {  
+  display: none;  
+}  
 
-    .dropdown input {
-      display: none;
-    }
+.user-info {  
+  display: flex;  
+  flex-direction: column;  
+  align-items: center;  
+  text-align: center;  
+}  
 
-    .user-info {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
+.user-info #user-name {  
+  font-size: 18px;  
+  font-weight: bold;  
+}  
 
-    .user-info #user-name {
-      font-size: 18px;
-      font-weight: bold;
-    }
+.orders {  
+  background: rgba(255, 255, 255, 0.05);  
+  border-left: 4px solid cyan;  
+  padding: 20px;  
+  border-radius: 12px;  
+  box-shadow: 0 0 10px cyan;  
+  margin-bottom: 20px;  
+  width: 100%;  
+}  
 
-    .orders {
-      background: rgba(255, 255, 255, 0.05);
-      border-left: 4px solid cyan;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px cyan;
-      margin-bottom: 20px;
-      width: 100%;
-    }
+.orders h2 {  
+  margin-top: 0;  
+  font-size: 20px;  
+  border-bottom: 1px solid #333;  
+  padding-bottom: 5px;  
+}  
 
-    .orders h2 {
-      margin-top: 0;
-      font-size: 20px;
-      border-bottom: 1px solid #333;
-      padding-bottom: 5px;
-    }
+.order {  
+  margin-bottom: 10px;  
+  border-bottom: 1px solid #333;  
+  padding-bottom: 8px;  
+}  
 
-    .order {
-      margin-bottom: 10px;
-      border-bottom: 1px solid #333;
-      padding-bottom: 8px;
-    }
+.btns {  
+  display: flex;  
+  flex-wrap: wrap;  
+  gap: 10px;  
+  justify-content: center;  
+  width: 100%;  
+}  
 
-    .btns {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      width: 100%;
-    }
+.btns button {  
+  flex: 1 1 120px;  
+  padding: 10px 20px;  
+  border: none;  
+  border-radius: 8px;  
+  background: cyan;  
+  color: #000;  
+  font-weight: bold;  
+  cursor: pointer;  
+  box-shadow: 0 0 10px cyan;  
+  transition: background 0.3s;  
+}  
 
-    .btns button {
-      flex: 1 1 120px;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      background: cyan;
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
-      box-shadow: 0 0 10px cyan;
-      transition: background 0.3s;
-    }
+.btns button:hover {  
+  background: white;  
+}  
 
-    .btns button:hover {
-      background: white;
-    }
+@media (max-width: 500px) {  
+  .orders {  
+    padding: 15px;  
+  }  
 
-    @media (max-width: 500px) {
-      .orders {
-        padding: 15px;
-      }
+  .user-info #user-name {  
+    font-size: 16px;  
+  }  
 
-      .user-info #user-name {
-        font-size: 16px;
-      }
-
-      .btns button {
-        flex: 1 1 100%;
-      }
-    }
+  .btns button {  
+    flex: 1 1 100%;  
+  }  
+}
+    /* (your CSS remains unchanged — omitted here for brevity) */
   </style>
 </head>
 <body>
@@ -187,109 +186,116 @@
     </div>
   </div>
 
-  <!-- Firebase -->
+  <!-- ✅ Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
   <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-    authDomain: "bixmax-6c24c.firebaseapp.com",
-    projectId: "bixmax-6c24c",
-    storageBucket: "bixmax-6c24c.appspot.com",
-    messagingSenderId: "37740442541",
-    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-
-  let currentEmail = "";
-  firebase.auth().onAuthStateChanged(user => {
-    if (user) {
-      const name = user.displayName || user.email.split('@')[0];
-      document.getElementById("user-name").textContent = name;
-      document.getElementById("user-email").textContent = user.email;
-      currentEmail = user.email;
-      loadOrders(user.uid);
-      loadProfileImage(currentEmail);
-    } else {
-      window.location.href = "auth.html";
-    }
-  });
-
-  function logout() {
-    firebase.auth().signOut().then(() => {
-      window.location.href = "auth.html";
-    });
-  }
-
-  function loadOrders(userId) {
-    const orderList = document.getElementById("order-list");
-    db.collection("users").doc(userId).collection("orders").get()
-      .then(snapshot => {
-        if (snapshot.empty) {
-          orderList.innerHTML = "<p>No orders found</p>";
-          return;
-        }
-
-        let html = "";
-        snapshot.forEach(doc => {
-          const order = doc.data();
-          html += `
-            <div class="order">
-              <strong>ID:</strong> ${order.id || doc.id}<br>
-              <strong>Item:</strong> ${order.items}<br>
-              <strong>Total:</strong> GH₵${order.total}<br>
-              <small>${order.date || ''}</small>
-            </div>
-          `;
-        });
-        orderList.innerHTML = html;
-      })
-      .catch((err) => {
-        console.error("Error loading orders:", err);
-        orderList.innerHTML = "<p>Failed to load orders</p>";
-      });
-  }
-    // Profile image logic
-    const profileImage = document.getElementById("profileImage");
-    const dropdownMenu = document.getElementById("dropdownMenu");
-    const uploadInput = document.getElementById("uploadImage");
-    const deleteImage = document.getElementById("deleteImage");
-
-    function getImageKey(email) {
-      return "profileImage_" + email;
-    }
-
-    function loadProfileImage(email) {
-      const savedImage = localStorage.getItem(getImageKey(email));
-      if (savedImage) profileImage.src = savedImage;
-    }
-
-    profileImage.addEventListener("click", (e) => {
-      e.stopPropagation();
-      dropdownMenu.style.display = dropdownMenu.style.display === "block" ? "none" : "block";
-    });
-
-    document.addEventListener("click", () => {
-      dropdownMenu.style.display = "none";
-    });
-
-    uploadInput.addEventListener("change", (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        profileImage.src = reader.result;
-        localStorage.setItem(getImageKey(currentEmail), reader.result);
-        dropdownMenu.style.display = "none";
+    window.onload = function () {
+      const firebaseConfig = {
+        apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+        authDomain: "bixmax-6c24c.firebaseapp.com",
+        projectId: "bixmax-6c24c",
+        storageBucket: "bixmax-6c24c.appspot.com",
+        messagingSenderId: "37740442541",
+        appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
       };
-      reader.readAsDataURL(file);
-    });
 
-    deleteImage.addEventListener("click", () => {
-      localStorage.removeItem(getImageKey(currentEmail));
-      profileImage.src = "https://i.postimg.cc/tgBdHrrz/default-pfp.png";
-      dropdownMenu.style.display = "none";
-    });
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+      let currentEmail = "";
+
+      firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+          const name = user.displayName || user.email.split('@')[0];
+          document.getElementById("user-name").textContent = name;
+          document.getElementById("user-email").textContent = user.email;
+          currentEmail = user.email;
+          loadOrders(user.uid);
+          loadProfileImage(currentEmail);
+        } else {
+          window.location.href = "auth.html";
+        }
+      });
+
+      function logout() {
+        firebase.auth().signOut().then(() => {
+          window.location.href = "auth.html";
+        });
+      }
+
+      function loadOrders(userId) {
+        const orderList = document.getElementById("order-list");
+        db.collection("users").doc(userId).collection("orders").get()
+          .then(snapshot => {
+            if (snapshot.empty) {
+              orderList.innerHTML = "<p>No orders found</p>";
+              return;
+            }
+
+            let html = "";
+            snapshot.forEach(doc => {
+              const order = doc.data();
+              html += `
+                <div class="order">
+                  <strong>ID:</strong> ${order.id || doc.id}<br>
+                  <strong>Item:</strong> ${order.items}<br>
+                  <strong>Total:</strong> GH₵${order.total}<br>
+                  <small>${order.date || ''}</small>
+                </div>
+              `;
+            });
+            orderList.innerHTML = html;
+          })
+          .catch((err) => {
+            console.error("Error loading orders:", err);
+            orderList.innerHTML = "<p>Failed to load orders</p>";
+          });
+      }
+
+      // ✅ Profile image logic
+      const profileImage = document.getElementById("profileImage");
+      const dropdownMenu = document.getElementById("dropdownMenu");
+      const uploadInput = document.getElementById("uploadImage");
+      const deleteImage = document.getElementById("deleteImage");
+
+      function getImageKey(email) {
+        return "profileImage_" + email;
+      }
+
+      function loadProfileImage(email) {
+        const savedImage = localStorage.getItem(getImageKey(email));
+        if (savedImage) profileImage.src = savedImage;
+      }
+
+      profileImage.addEventListener("click", (e) => {
+        e.stopPropagation();
+        dropdownMenu.style.display = dropdownMenu.style.display === "block" ? "none" : "block";
+      });
+
+      document.addEventListener("click", () => {
+        dropdownMenu.style.display = "none";
+      });
+
+      uploadInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          profileImage.src = reader.result;
+          localStorage.setItem(getImageKey(currentEmail), reader.result);
+          dropdownMenu.style.display = "none";
+        };
+        reader.readAsDataURL(file);
+      });
+
+      deleteImage.addEventListener("click", () => {
+        localStorage.removeItem(getImageKey(currentEmail));
+        profileImage.src = "https://i.postimg.cc/tgBdHrrz/default-pfp.png";
+        dropdownMenu.style.display = "none";
+      });
+    };
   </script>
 </body>
 </html>
