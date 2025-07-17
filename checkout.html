@@ -3,6 +3,133 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout - BizMAX</title>
+  <style>
+    /* 🔒 Keeping your original styles untouched */
+    body {
+      background: #f4f4f4;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    .checkout-box {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    #loader {
+      display: none;
+      text-align: center;
+    }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="checkout-box">
+    <h2>Checkout</h2>
+    <form id="checkoutForm">
+      <input type="text" placeholder="Full Name" id="fullname" required><br><br>
+      <input type="tel" placeholder="Phone Number" id="phone" required><br><br>
+      <input type="text" placeholder="Address" id="address" required><br><br>
+      <select id="payMethod" required>
+        <option value="cod">Pay on Delivery</option>
+        <option value="online">Pay Online</option>
+      </select><br><br>
+      <button type="submit" id="actionBtn">Place Order</button>
+    </form>
+    <div id="loader">Processing...</div>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+  <script>
+    // ✅ Your Firebase Config
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // ✅ Handle form submission
+    document.getElementById("checkoutForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const loader = document.getElementById("loader");
+      loader.style.display = "block";
+
+      const fullname = document.getElementById("fullname").value;
+      const phone = document.getElementById("phone").value;
+      const address = document.getElementById("address").value;
+      const payMethod = document.getElementById("payMethod").value;
+      const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
+
+      const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+      const orderId = "BMX" + Date.now();
+
+      const user = firebase.auth().currentUser;
+      if (!user) {
+        alert("You must be signed in to place an order.");
+        loader.style.display = "none";
+        return;
+      }
+
+      try {
+        await db.collection("users")
+          .doc(user.uid)
+          .collection("orders")
+          .doc(orderId)
+          .set({
+            orderId,
+            fullname,
+            phone,
+            address,
+            payMethod,
+            items: cartItems,
+            total,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          });
+
+        // ✅ Save to localStorage for thank-you and receipt
+        const orders = JSON.parse(localStorage.getItem("orders") || "{}");
+        orders[orderId] = {
+          fullname, phone, address, payMethod, items: cartItems, total
+        };
+        localStorage.setItem("orders", JSON.stringify(orders));
+
+        // ✅ Clear cart and redirect
+        localStorage.removeItem("cart");
+        window.location.href = `thank-you.html?orderId=${orderId}`;
+      } catch (err) {
+        alert("Error placing order: " + err.message);
+        console.error(err);
+        loader.style.display = "none";
+      }
+    });
+
+    // ✅ Update button based on payment method
+    document.getElementById("payMethod").addEventListener("change", () => {
+      const actionBtn = document.getElementById("actionBtn");
+      actionBtn.textContent = payMethod.value === "online" ? "Pay Now" : "Place Order";
+    });
+  </script>
+</body>
+</html>
+<!--
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Checkout</title>
   <style id="style1">
     html, body { height: 100%; overflow-x: hidden; font-family: Arial, sans-serif;
@@ -373,3 +500,4 @@ input, textarea, select {
 </script>
 </body>
 </html>
+-->
