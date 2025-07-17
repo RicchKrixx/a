@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login | BizMAX</title>
+  <style>
+    body { font-family: Arial; background: #f0f0f0; padding: 30px; text-align: center; }
+    input, button { padding: 10px; margin: 8px; width: 80%; max-width: 300px; }
+    #authBox { background: white; padding: 20px; border-radius: 8px; display: inline-block; }
+  </style>
+</head>
+<body>
+  <div id="authBox">
+    <h2>Sign In / Sign Up</h2>
+    <input type="email" id="email" placeholder="Email" /><br />
+    <input type="password" id="password" placeholder="Password" /><br />
+    <button onclick="signUp()">Sign Up</button>
+    <button onclick="signIn()">Sign In</button>
+    <p id="msg"></p>
+  </div>
+
+  <script type="module">
+    import { auth } from './firebase.js';
+    import { createUserWithEmailAndPassword, signInWithEmailAndPassword } 
+      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    const emailEl = document.getElementById('email');
+    const passEl = document.getElementById('password');
+    const msgEl = document.getElementById('msg');
+
+    window.signUp = async () => {
+      try {
+        await createUserWithEmailAndPassword(auth, emailEl.value, passEl.value);
+        window.location.href = "dashboard.html";
+      } catch (e) {
+        msgEl.textContent = e.message;
+      }
+    };
+
+    window.signIn = async () => {
+      try {
+        await signInWithEmailAndPassword(auth, emailEl.value, passEl.value);
+        window.location.href = "dashboard.html";
+      } catch (e) {
+        msgEl.textContent = e.message;
+      }
+    };
+  </script>
+</body>
+</html>
