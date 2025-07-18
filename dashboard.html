@@ -77,14 +77,7 @@
       background-color: #334155;
     }
 
-    .dropdown input {
-      display: none;
-    }
-
     .user-info {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
       text-align: center;
     }
 
@@ -154,6 +147,11 @@
         flex: 1 1 100%;
       }
     }
+
+    #auth, #authUser {
+      margin: 10px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -176,7 +174,16 @@
       </div>
     </div>
 
-    <div class="orders" id="orders">
+    <!-- AUTH CONTROLS -->
+    <div id="auth">
+      <button id="signInBtn">Sign In with Google</button>
+    </div>
+    <div id="authUser" style="display:none;">
+      Logged in as: <span id="email"></span><br />
+      <button id="signOutBtn">Sign Out</button>
+    </div>
+
+    <div class="orders" id="orders" style="display:none;">
       <h2>Order History</h2>
       <div id="order-list">Loading orders...</div>
     </div>
@@ -187,92 +194,100 @@
     </div>
   </div>
 
-  <!-- Firebase -->
-<!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
-<script>
-  // Firebase config (replace with yours)
-   const firebaseConfig = {
-    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-    authDomain: "bixmax-6c24c.firebaseapp.com",
-    projectId: "bixmax-6c24c",
-    storageBucket: "bixmax-6c24c.appspot.com",
-    messagingSenderId: "37740442541",
-    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-  };
+  <script>
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+      authDomain: "bixmax-6c24c.firebaseapp.com",
+      projectId: "bixmax-6c24c",
+      storageBucket: "bixmax-6c24c.appspot.com",
+      messagingSenderId: "37740442541",
+      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+    };
 
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-  // Elements
-  const signInBtn = document.getElementById("signInBtn");
-  const signOutBtn = document.getElementById("signOutBtn");
-  const emailDisplay = document.getElementById("email");
-  const authSection = document.getElementById("auth");
-  const ordersSection = document.getElementById("orders");
+    const signInBtn = document.getElementById("signInBtn");
+    const signOutBtn = document.getElementById("signOutBtn");
+    const emailDisplay = document.getElementById("email");
+    const authSection = document.getElementById("auth");
+    const authUser = document.getElementById("authUser");
+    const ordersSection = document.getElementById("orders");
+    const userName = document.getElementById("user-name");
+    const userEmail = document.getElementById("user-email");
 
-  // Auth state
-  auth.onAuthStateChanged(user => {
-    if (user) {
-      authSection.style.display = "none";
-      ordersSection.style.display = "block";
-      emailDisplay.textContent = user.email;
-      loadOrders(user.email);
-    } else {
-      authSection.style.display = "block";
-      ordersSection.style.display = "none";
-    }
-  });
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        authSection.style.display = "none";
+        authUser.style.display = "block";
+        ordersSection.style.display = "block";
 
-  // Sign in with popup
-  signInBtn.addEventListener("click", () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider).catch(error => {
-      alert("Sign-in failed: " + error.message);
+        emailDisplay.textContent = user.email;
+        userEmail.textContent = user.email;
+        userName.textContent = user.displayName || "BizMAX User";
+
+        loadOrders(user.email);
+      } else {
+        authSection.style.display = "block";
+        authUser.style.display = "none";
+        ordersSection.style.display = "none";
+        userName.textContent = "Loading...";
+        userEmail.textContent = "";
+      }
     });
-  });
 
-  // Sign out
-  signOutBtn.addEventListener("click", () => {
-    auth.signOut();
-  });
-
-  // Load orders from Firestore
-  function loadOrders(email) {
-    const orderList = document.getElementById("order-list");
-    db.collection("orders")
-      .where("email", "==", email.toLowerCase())
-      .get()
-      .then(snapshot => {
-        if (snapshot.empty) {
-          orderList.innerHTML = "<p>No orders found.</p>";
-          return;
-        }
-
-        orderList.innerHTML = "";
-        snapshot.forEach(doc => {
-          const order = doc.data();
-          const date = order.date?.toDate?.().toLocaleString() || "";
-          orderList.innerHTML += `
-            <div class="order">
-              <strong>Order ID:</strong> ${doc.id}<br>
-              <strong>Item:</strong> ${order.items || "—"}<br>
-              <strong>Total:</strong> GH₵${order.total || "—"}<br>
-              <small>${date}</small>
-            </div>
-          `;
-        });
-      })
-      .catch(error => {
-        console.error("Error loading orders:", error);
-        orderList.innerHTML = "<p>Failed to load orders.</p>";
+    signInBtn.addEventListener("click", () => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider).catch(error => {
+        alert("Sign-in failed: " + error.message);
       });
-  }
-</script>
+    });
+
+    signOutBtn.addEventListener("click", () => {
+      auth.signOut();
+    });
+
+    function logout() {
+      auth.signOut();
+    }
+
+    function loadOrders(email) {
+      const orderList = document.getElementById("order-list");
+      db.collection("orders")
+        .where("email", "==", email.toLowerCase())
+        .get()
+        .then(snapshot => {
+          if (snapshot.empty) {
+            orderList.innerHTML = "<p>No orders found.</p>";
+            return;
+          }
+
+          orderList.innerHTML = "";
+          snapshot.forEach(doc => {
+            const order = doc.data();
+            const date = order.date?.toDate?.().toLocaleString() || "";
+            orderList.innerHTML += `
+              <div class="order">
+                <strong>Order ID:</strong> ${doc.id}<br>
+                <strong>Item:</strong> ${order.items || "—"}<br>
+                <strong>Total:</strong> GH₵${order.total || "—"}<br>
+                <small>${date}</small>
+              </div>
+            `;
+          });
+        })
+        .catch(error => {
+          console.error("Error loading orders:", error);
+          orderList.innerHTML = "<p>Failed to load orders.</p>";
+        });
+    }
+  </script>
 </body>
 </html>
