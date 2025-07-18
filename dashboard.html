@@ -223,8 +223,9 @@ body {
       function logout() {
         firebase.auth().signOut().then(() => {
           window.location.href = "auth.html";
-        });
-      }
+        }
+});
+      
 
       function loadOrders(userId) {
         const orderList = document.getElementById("order-list");
@@ -293,7 +294,7 @@ body {
 
       deleteImage.addEventListener("click", () => {
         localStorage.removeItem(getImageKey(currentEmail));
-        profileImage.src = "https://i.postimg.cc/tgBdHrrz/default-pfp.png";
+        profileImage.src = "https://www.svgrepo.com/show/384674/account-avatar-profile-user-11.svg";
         dropdownMenu.style.display = "none";
       });
     };
