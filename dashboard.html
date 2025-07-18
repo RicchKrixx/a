@@ -188,12 +188,14 @@
   </div>
 
   <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
 <script>
-  const firebaseConfig = {
+  // Firebase config (replace with yours)
+   const firebaseConfig = {
     apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
     authDomain: "bixmax-6c24c.firebaseapp.com",
     projectId: "bixmax-6c24c",
@@ -202,101 +204,75 @@
     appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
   };
 
+  // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
   const db = firebase.firestore();
 
-  let currentEmail = "";
+  // Elements
+  const signInBtn = document.getElementById("signInBtn");
+  const signOutBtn = document.getElementById("signOutBtn");
+  const emailDisplay = document.getElementById("email");
+  const authSection = document.getElementById("auth");
+  const ordersSection = document.getElementById("orders");
 
-  firebase.auth().onAuthStateChanged(user => {
+  // Auth state
+  auth.onAuthStateChanged(user => {
     if (user) {
-      const name = user.displayName || (user.email ? user.email.split('@')[0] : "User");
-      document.getElementById("user-name").textContent = name;
-      document.getElementById("user-email").textContent = user.email;
-      currentEmail = user.email;
-      loadOrders(currentEmail);
-      loadProfileImage(currentEmail);
+      authSection.style.display = "none";
+      ordersSection.style.display = "block";
+      emailDisplay.textContent = user.email;
+      loadOrders(user.email);
     } else {
-      window.location.href = "auth.html";
+      authSection.style.display = "block";
+      ordersSection.style.display = "none";
     }
   });
 
-  function logout() {
-    firebase.auth().signOut().then(() => {
-      window.location.href = "auth.html";
+  // Sign in with popup
+  signInBtn.addEventListener("click", () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).catch(error => {
+      alert("Sign-in failed: " + error.message);
     });
-  }
+  });
 
+  // Sign out
+  signOutBtn.addEventListener("click", () => {
+    auth.signOut();
+  });
+
+  // Load orders from Firestore
   function loadOrders(email) {
     const orderList = document.getElementById("order-list");
     db.collection("orders")
       .where("email", "==", email.toLowerCase())
-      .orderBy("date", "desc")
       .get()
       .then(snapshot => {
         if (snapshot.empty) {
-          orderList.innerHTML = "<p>No orders found</p>";
+          orderList.innerHTML = "<p>No orders found.</p>";
           return;
         }
+
         orderList.innerHTML = "";
         snapshot.forEach(doc => {
           const order = doc.data();
+          const date = order.date?.toDate?.().toLocaleString() || "";
           orderList.innerHTML += `
             <div class="order">
-              <strong>ID:</strong> ${doc.id}<br>
-              <strong>Item:</strong> ${order.items || '—'}<br>
-              <strong>Total:</strong> GH₵${order.total || '—'}<br>
-              <small>${order.date || ''}</small>
+              <strong>Order ID:</strong> ${doc.id}<br>
+              <strong>Item:</strong> ${order.items || "—"}<br>
+              <strong>Total:</strong> GH₵${order.total || "—"}<br>
+              <small>${date}</small>
             </div>
           `;
         });
       })
       .catch(error => {
         console.error("Error loading orders:", error);
-        orderList.innerHTML = "<p>Failed to load orders</p>";
+        orderList.innerHTML = "<p>Failed to load orders.</p>";
       });
   }
-
-  // Profile image logic
-  const profileImage = document.getElementById("profileImage");
-  const dropdownMenu = document.getElementById("dropdownMenu");
-  const uploadInput = document.getElementById("uploadImage");
-  const deleteImage = document.getElementById("deleteImage");
-
-  function getImageKey(email) {
-    return "profileImage_" + email;
-  }
-
-  function loadProfileImage(email) {
-    const savedImage = localStorage.getItem(getImageKey(email));
-    if (savedImage) profileImage.src = savedImage;
-  }
-
-  profileImage.addEventListener("click", (e) => {
-    e.stopPropagation();
-    dropdownMenu.style.display = dropdownMenu.style.display === "block" ? "none" : "block";
-  });
-
-  document.addEventListener("click", () => {
-    dropdownMenu.style.display = "none";
-  });
-
-  uploadInput.addEventListener("change", (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      profileImage.src = reader.result;
-      localStorage.setItem(getImageKey(currentEmail), reader.result);
-      dropdownMenu.style.display = "none";
-    };
-    reader.readAsDataURL(file);
-  });
-
-  deleteImage.addEventListener("click", () => {
-    localStorage.removeItem(getImageKey(currentEmail));
-    profileImage.src = "https://i.postimg.cc/tgBdHrrz/default-pfp.png";
-    dropdownMenu.style.display = "none";
-  });
 </script>
 </body>
 </html>
