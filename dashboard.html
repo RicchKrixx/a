@@ -3,152 +3,170 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BizMAX Dashboard</title>
+  <title>Customer Dashboard - BizMAX</title>
   <style>
-    /* (your CSS remains unchanged — omitted here for brevity) */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 10px;
+      background: #f0f8ff;
+    }
+
+    .dashboard {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 20px;
+    }
+
+    .profile {
+      text-align: center;
+    }
+
+    .profile img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid cyan;
+    }
+
+    .verified {
+      color: green;
+      font-size: 14px;
+    }
+
+    .btn {
+      padding: 10px;
+      border: none;
+      background: cyan;
+      border-radius: 8px;
+      margin: 10px 5px;
+      cursor: pointer;
+    }
+
+    .orders {
+      margin-top: 20px;
+    }
+
+    .order {
+      background: #f9f9f9;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      padding: 10px;
+    }
+
+    select, input[type="file"] {
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
-  <div class="dashboard">
-    <div class="profile">
-      <div class="profile-img-container">
-        <img id="profileImage" src="https://i.postimg.cc/tgBdHrrz/default-pfp.png" alt="Profile" />
-        <div class="verified-badge">✔</div>
-        <div class="dropdown" id="dropdownMenu">
-          <label>
-            Upload New
-            <input type="file" id="uploadImage" accept="image/*" />
-          </label>
-          <div id="deleteImage">Delete Image</div>
-        </div>
-      </div>
-      <div class="user-info">
-        <div id="user-name">Loading...</div>
-        <small id="user-email"></small>
-      </div>
-    </div>
 
-    <div class="orders" id="orders">
-      <h2>Order History</h2>
-      <div id="order-list">Loading orders...</div>
-    </div>
+<div class="dashboard">
+  <div class="profile">
+    <img id="profilePic" src="default-profile.png" alt="Profile" />
+    <br />
+    <span id="userEmail"></span>
+    <div class="verified">✅ Verified Customer</div>
 
-    <div class="btns">
-      <button onclick="window.location.href='BixMax home.html'">🏠 Go Home</button>
-      <button onclick="logout()">🚪 Logout</button>
-    </div>
+    <input type="file" id="uploadPic" accept="image/*" />
   </div>
 
-  <!-- ✅ Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <div class="orders">
+    <h3>Your Orders</h3>
+    <div id="orderList">Loading...</div>
+  </div>
 
-  <script>
-    window.onload = function () {
-      const firebaseConfig = {
-        apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-        authDomain: "bixmax-6c24c.firebaseapp.com",
-        projectId: "bixmax-6c24c",
-        storageBucket: "bixmax-6c24c.appspot.com",
-        messagingSenderId: "37740442541",
-        appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-      };
+  <div style="text-align: center;">
+    <button class="btn" onclick="window.location.href='/'">Go Home</button>
+    <button class="btn" onclick="logout()">Logout</button>
+  </div>
+</div>
 
-      firebase.initializeApp(firebaseConfig);
-      const db = firebase.firestore();
-      let currentEmail = "";
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-      firebase.auth().onAuthStateChanged(user => {
-        if (user) {
-          const name = user.displayName || user.email.split('@')[0];
-          document.getElementById("user-name").textContent = name;
-          document.getElementById("user-email").textContent = user.email;
-          currentEmail = user.email;
-          loadOrders(user.uid);
-          loadProfileImage(currentEmail);
-        } else {
-          window.location.href = "auth.html";
-        }
-      });
+  // Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+  authDomain: "bixmax-6c24c.firebaseapp.com",
+  projectId: "bixmax-6c24c",
+  storageBucket: "bixmax-6c24c.appspot.com",
+  messagingSenderId: "37740442541",
+  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+};
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth();
+  const db = getFirestore(app);
 
-      function logout() {
-        firebase.auth().signOut().then(() => {
-          window.location.href = "auth.html";
-        });
-      }
+  const profilePic = document.getElementById("profilePic");
+  const uploadPic = document.getElementById("uploadPic");
+  const userEmail = document.getElementById("userEmail");
+  const orderList = document.getElementById("orderList");
 
-      function loadOrders(userId) {
-        const orderList = document.getElementById("order-list");
-        db.collection("users").doc(userId).collection("orders").get()
-          .then(snapshot => {
-            if (snapshot.empty) {
-              orderList.innerHTML = "<p>No orders found</p>";
-              return;
-            }
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      alert("You must be signed in to view your dashboard.");
+      window.location.href = "";
+      return;
+    }
 
-            let html = "";
-            snapshot.forEach(doc => {
-              const order = doc.data();
-              html += `
-                <div class="order">
-                  <strong>ID:</strong> ${order.id || doc.id}<br>
-                  <strong>Item:</strong> ${order.items}<br>
-                  <strong>Total:</strong> GH₵${order.total}<br>
-                  <small>${order.date || ''}</small>
-                </div>
-              `;
-            });
-            orderList.innerHTML = html;
-          })
-          .catch((err) => {
-            console.error("Error loading orders:", err);
-            orderList.innerHTML = "<p>Failed to load orders</p>";
-          });
-      }
+    const email = user.email;
+    userEmail.textContent = email;
 
-      // ✅ Profile image logic
-      const profileImage = document.getElementById("profileImage");
-      const dropdownMenu = document.getElementById("dropdownMenu");
-      const uploadInput = document.getElementById("uploadImage");
-      const deleteImage = document.getElementById("deleteImage");
+    // Show saved profile pic
+    const savedPic = localStorage.getItem("profilePic_" + email);
+    if (savedPic) {
+      profilePic.src = savedPic;
+    }
 
-      function getImageKey(email) {
-        return "profileImage_" + email;
-      }
-
-      function loadProfileImage(email) {
-        const savedImage = localStorage.getItem(getImageKey(email));
-        if (savedImage) profileImage.src = savedImage;
-      }
-
-      profileImage.addEventListener("click", (e) => {
-        e.stopPropagation();
-        dropdownMenu.style.display = dropdownMenu.style.display === "block" ? "none" : "block";
-      });
-
-      document.addEventListener("click", () => {
-        dropdownMenu.style.display = "none";
-      });
-
-      uploadInput.addEventListener("change", (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+    // Upload new pic
+    uploadPic.addEventListener("change", () => {
+      const file = uploadPic.files[0];
+      if (file) {
         const reader = new FileReader();
         reader.onload = () => {
-          profileImage.src = reader.result;
-          localStorage.setItem(getImageKey(currentEmail), reader.result);
-          dropdownMenu.style.display = "none";
+          localStorage.setItem("profilePic_" + email, reader.result);
+          profilePic.src = reader.result;
         };
         reader.readAsDataURL(file);
-      });
+      }
+    });
 
-      deleteImage.addEventListener("click", () => {
-        localStorage.removeItem(getImageKey(currentEmail));
-        profileImage.src = "https://i.postimg.cc/tgBdHrrz/default-pfp.png";
-        dropdownMenu.style.display = "none";
+    // Fetch orders for this user
+    const ordersRef = collection(db, "orders");
+    const q = query(ordersRef, where("email", "==", email));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      orderList.innerHTML = "<p>No orders found.</p>";
+    } else {
+      orderList.innerHTML = "";
+      querySnapshot.forEach(doc => {
+        const order = doc.data();
+        const div = document.createElement("div");
+        div.className = "order";
+        div.innerHTML = `
+          <strong>Order ID:</strong> ${doc.id}<br>
+          <strong>Total:</strong> ${order.total}<br>
+          <strong>Date:</strong> ${order.date || "N/A"}
+        `;
+        orderList.appendChild(div);
       });
-    };
-  </script>
+    }
+  });
+
+  function logout() {
+    signOut(auth).then(() => {
+      window.location.href = "auth.html";
+    });
+  }
+</script>
+
 </body>
 </html>
