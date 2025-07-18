@@ -223,10 +223,10 @@ body {
       function logout() {
         firebase.auth().signOut().then(() => {
           window.location.href = "auth.html";
-        }
+        
 });
       
-
+}
       function loadOrders(userId) {
         const orderList = document.getElementById("order-list");
         db.collection("users").doc(userId).collection("orders").get()
