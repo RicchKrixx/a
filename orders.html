@@ -156,6 +156,32 @@ searchInput.addEventListener("input", () => {
     order.style.display = matches ? "block" : "none";
   });
 });
+// 🔔 Notify      
+        document.getElementById("notifySound").play();      
+  
+        // 📢 Popup Alert      
+        const alertBox = document.createElement("div");      
+        alertBox.textContent = "🆕 New Order: " + order.id;      
+        alertBox.style = `      
+          position: fixed; top: 20px; right: 20px;      
+          background: #00b894; color: white;      
+          padding: 14px 20px;      
+          border-radius: 12px;      
+          box-shadow: 0 0 10px rgba(0,0,0,0.2);      
+          z-index: 9999;      
+          font-size: 1rem;      
+        `;      
+        document.body.appendChild(alertBox);      
+        setTimeout(() => alertBox.remove(), 4000);      
+  
+        // 🚀 Auto-scroll to top      
+        window.scrollTo({ top: 0, behavior: 'smooth' });      
+      }      
+    });      
+  })      
+  .catch(err => console.error("Fetch error:", err));
+
+}
 </script> 
 </body>
 </html> 
