@@ -3,42 +3,85 @@
   <title>BizMAX | All Orders</title>    
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>    
   <style>    
-    body {    
-      margin: 0;    
-      font-family: Arial, sans-serif;    
-      background: #0f172a;    
-      color: white;    
-      padding: 20px;    
-    }  h1 {    
-  text-align: center;    
-  color: cyan;    
-  margin-bottom: 20px;    
-}    .order {
-background: #1e293b;
-border: 1px solid #334155;
+     :root {    
+      font-size: 16px;    
+    }  * {    
+  box-sizing: border-box;    
+  margin: 0;    
+  padding: 0;    
+}    body {
+font-family: 'Segoe UI', sans-serif;
+background: #f0f8ff;
+padding: 20px;
+color: #222;
+}
+
+h1 {
+text-align: center;
+margin-bottom: 20px;
+color: #0a4d7a;
+text-shadow: 0 0 2px #cce6ff;
+}
+
+#searchInput {
+display: block;
+margin: 0 auto 30px auto;
+padding: 14px 20px;
+font-size: 1rem;
 border-radius: 12px;
-padding: 16px;
-margin-bottom: 16px;
-box-shadow: 0 0 8px #0891b2;
+width: 90%;
+max-width: 400px;
+border: 1px solid #ccc;
+box-shadow: 0 0 5px #b3e0ff;
+background: #fff;
+}
+
+.order {
+background: #ffffff;
+border-radius: 14px;
+padding: 18px 20px;
+margin: 15px auto;
+max-width: 720px;
+box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+transition: all 0.3s ease;
+border-left: 6px solid #0a4d7a;
+}
+
+.order:hover {
+transform: translateY(-2px);
+box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+}
+
+.order h2 {
+font-size: 1.2rem;
+color: #0a4d7a;
+margin-bottom: 10px;
 }
 
 .order p {
-margin: 6px 0;
+margin: 5px 0;
+font-size: 0.95rem;
+color: #444;
+}
+
+.order ul {
+margin-top: 10px;
+padding-left: 18px;
+}
+
+.order ul li {
+font-size: 0.95rem;
+color: #555;
+list-style-type: disc;
+}
+
+@media (max-width: 500px) {
+:root {
 font-size: 15px;
 }
-
-.order strong {
-color: #38bdf8;
+.order {
+padding: 16px 14px;
 }
-
-.delete-btn {
-background: crimson;
-color: white;
-border: none;
-padding: 8px 14px;
-border-radius: 8px;
-margin-top: 10px;
-cursor: pointer;
 }
 
   </style>    
