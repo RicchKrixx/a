@@ -224,30 +224,16 @@ border-radius: 10px;
 
 <div class="container">  
   <!-- Fashion Sections -->  
-    <div class="category">  
-      <div class="cat-header">  
-        <h2>Shirts</h2>  
-        <a href="shirts.html">View All</a>  
-      </div>  
-      <div class="product">
-    <h2>Shirts</h2>
-    <div class="products" id="shirtsContainer"></div>
-  </div>
-
-        <div class="product">  
-          <img src="pp.jpeg" alt="Shirt">  
-          <h3>V-Neck</h3>  
-          <p>GH¢25</p>  
-          <button class="add-btn" onclick="addToCart('V-Neck', 'pp.jpeg', 25)">Add to Cart</button>  
-        </div>  
-        <div class="product">  
-          <img src="pp.jpeg" alt="Shirt">  
-          <h3>Hoodie Tee</h3>  
-          <p>GH¢35</p>  
-          <button class="add-btn" onclick="addToCart('Hoodie Tee', 'pp.jpeg', 35)">Add to Cart</button>  
-        </div>  
-      </div>  
-    </div>  
+<div class="category">  
+  <div class="cat-header">  
+    <h2>Shirts</h2>  
+    <a href="shirts.html">View All</a>
+  </div>  
+  <div class="products" id="shirtsContainer">
+    <!-- Firebase will load .product elements here -->
+  </div>  
+</div>
+  
 <div class="category">  
       <div class="cat-header">  
         <h2>Dresses</h2>  
