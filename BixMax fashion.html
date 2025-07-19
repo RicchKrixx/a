@@ -229,13 +229,11 @@ border-radius: 10px;
         <h2>Shirts</h2>  
         <a href="shirts.html">View All</a>  
       </div>  
-      <div class="products">  
-        <div class="product">  
-          <img src="pp.jpeg" alt="Shirt">  
-          <h3>Classic Shirt</h3>  
-          <p>GH¢30</p>  
-          <button class="add-btn" onclick="addToCart('Classic Shirt', 'pp.jpeg', 30)">Add to Cart</button>  
-        </div>  
+      <div class="product">
+    <h2>Shirts</h2>
+    <div class="products" id="shirtsContainer"></div>
+  </div>
+
         <div class="product">  
           <img src="pp.jpeg" alt="Shirt">  
           <h3>V-Neck</h3>  
@@ -465,5 +463,54 @@ border-radius: 10px;
     }  
   
     updateCartCount();  
-  </script>  </body>  
+  </script> 
+ <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+  <script>
+    // Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+  authDomain: "bixmax-6c24c.firebaseapp.com",
+  projectId: "bixmax-6c24c",
+  storageBucket: "bixmax-6c24c.appspot.com",
+  messagingSenderId: "37740442541",
+  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+};
+
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    function fetchShirts() {
+      db.collection("fashion")
+        .where("category", "==", "Shirts")
+        .get()
+        .then((snapshot) => {
+          const container = document.getElementById("shirtsContainer");
+          snapshot.forEach((doc) => {
+            const product = doc.data();
+            const productEl = document.createElement("div");
+            productEl.className = "product";
+            productEl.innerHTML = `
+              <img src="${product.image}" alt="${product.name}" />
+              <h3>${product.name}</h3>
+              <p>GH¢${product.price}</p>
+              <button class="add-btn" onclick="addToCart('${product.name}', '${product.image}', ${product.price})">Add to Cart</button>
+            `;
+            container.appendChild(productEl);
+          });
+        })
+        .catch((error) => {
+          console.error("Error fetching shirts:", error);
+        });
+    }
+
+    fetchShirts();
+
+    function addToCart(name, image, price) {
+      // Your existing cart logic (optional example)
+      alert(name + " added to cart!");
+    }
+  </script> 
+</body>  
 </html>
