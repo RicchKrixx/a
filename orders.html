@@ -146,6 +146,15 @@ async function loadOrders() {
         <p><strong>Payment:</strong> ${order.method}</p>
         <p><strong>Total:</strong> GH¢${parseFloat(order.total).toFixed(2)}</p>
         <p><strong>Items:</strong> ${order.items}</p>
+<p><strong>Items:</strong></p>
+<ul>
+  ${order.items.map(item => `
+    <li>
+      ${item.name} × ${item.qty} – GH¢${item.price}
+      ${item.variation ? `<br><small>Variation: ${Object.entries(item.variation).map(([k, v]) => `${k}: ${v}`).join(", ")}</small>` : ""}
+    </li>
+  `).join("")}
+</ul>
         <p><strong>Date:</strong> ${new Date(order.timestamp).toLocaleString()}</p>
         <p><strong>Status:</strong> <span class="status">${status}</span></p>
         <button class="completeBtn" style="${buttonStyle}" ${buttonDisabled}>Mark as Complete</button>
