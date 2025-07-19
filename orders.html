@@ -1,3 +1,6 @@
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -98,28 +101,51 @@
 <h1>📦 BixMAX Orders 📥</h1>
 <input type="text" id="searchInput" placeholder="Search Order ID..." />
 <div id="ordersContainer">Loading orders...</div>
-
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import {
-    getFirestore,
-    collectionGroup,
-    onSnapshot,
-    query,
-    orderBy
-  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-    authDomain: "bixmax-6c24c.firebaseapp.com",
-    projectId: "bixmax-6c24c",
-    storageBucket: "bixmax-6c24c.appspot.com",
-    messagingSenderId: "37740442541",
-    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+ <script type="module">  
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";  
+    import { getFirestore, collectionGroup, getDocs, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";  
+  
+    const firebaseConfig = {  
+      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",  
+      authDomain: "bixmax-6c24c.firebaseapp.com",  
+      projectId: "bixmax-6c24c",  
+      storageBucket: "bixmax-6c24c.appspot.com",  
+      messagingSenderId: "37740442541",  
+      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"  
+    };  
+  
+    const app = initializeApp(firebaseConfig);  
+    const db = getFirestore(app);  
+  
+    const ordersContainer = document.getElementById("ordersContainer");  
+  
+    async function loadOrders() {  
+      ordersContainer.innerHTML = "Fetching orders...";  
+      const snapshot = await getDocs(collectionGroup(db, "orders"));  
+      if (snapshot.empty) {  
+        ordersContainer.innerHTML = "<p>No orders found.</p>";  
+        return;  
+      }  
+  
+      let html = "";  
+      snapshot.forEach(docSnap => {  
+        const order = docSnap.data();  
+        const docRef = docSnap.ref;  
+        const orderId = order.id;  
+  
+        html += `  
+          <div class="order">  
+            <p><strong>Order ID:</strong> ${orderId}</p>  
+            <p><strong>Name:</strong> ${order.name}</p>  
+            <p><strong>Email:</strong> ${order.email}</p>  
+            <p><strong>Phone:</strong> ${order.phone}</p>  
+            <p><strong>Address:</strong> ${order.address}</p>  
+            <p><strong>Payment:</strong> ${order.method}</p>  
+            <p><strong>Total:</strong> GH¢${parseFloat(order.total).toFixed(2)}</p>  
+            <p><strong>Items:</strong> ${order.items}</p>  
+            <p><strong>Date:</strong> ${new Date(order.timestamp).toLocaleString()}</p>  
+          
+    loadOrders();  
 
   const container = document.getElementById("ordersContainer");
   const searchInput = document.getElementById("searchInput");
@@ -128,34 +154,7 @@
   let shownOrderIds = new Set();
   container.textContent = "";
 
-  function addOrderToTop(orderId, order) {
-    const div = document.createElement("div");
-    div.className = "order";
-    div.innerHTML = `
-      <h2>Order ID: ${orderId}</h2>
-      <p><strong>Name:</strong> ${order.name}</p>
-      <p><strong>Email:</strong> ${order.email}</p>
-      <p><strong>Phone:</strong> ${order.phone}</p>
-      <p><strong>Address:</strong> ${order.address}</p>
-      <p><strong>Payment:</strong> ${order.method}</p>
-      <p><strong>Total:</strong> GH¢ ${parseFloat(order.total).toFixed(2)}</p>
-      <p><strong>Items:</strong></p>
-      <ul>${order.items.split(",").map(i => `<li>${i.trim()}</li>`).join("")}</ul>
-      <p><strong>Date:</strong> ${new Date(order.timestamp).toLocaleString()}</p>
-    `;
-    container.prepend(div);
-  }
-
-  const q = query(collectionGroup(db, "orders"), orderBy("timestamp", "desc"));
-
-  onSnapshot(q, snapshot => {
-    snapshot.docChanges().forEach(change => {
-      const order = change.doc.data();
-      const orderId = order.id;
-      if (!shownOrderIds.has(orderId)) {
-        shownOrderIds.add(orderId);
-        addOrderToTop(orderId, order);
-
+  
         // 🔔 Sound
         notifySound.play();
 
