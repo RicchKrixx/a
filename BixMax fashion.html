@@ -467,8 +467,8 @@ border-radius: 10px;
 
   function fetchShirts() {
     db.collection("fashion")
-      .doc("shirts") // Access the "shirts" document
-      .collection("items") // Inside "shirts", access the "items" collection
+      .doc("Shirts") // Access the "Shirts" document
+      .collection("items") // Inside "Shirts", access the "items" collection
       .get()
       .then((snapshot) => {
         const container = document.getElementById("shirtsContainer");
