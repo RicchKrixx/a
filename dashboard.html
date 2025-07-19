@@ -147,11 +147,6 @@
         flex: 1 1 100%;
       }
     }
-
-    #auth, #authUser {
-      margin: 10px;
-      text-align: center;
-    }
   </style>
 </head>
 <body>
@@ -172,15 +167,6 @@
         <div id="user-name">Loading...</div>
         <small id="user-email"></small>
       </div>
-    </div>
-
-    <!-- AUTH CONTROLS -->
-    <div id="auth">
-      <button id="signInBtn">Sign In with Google</button>
-    </div>
-    <div id="authUser" style="display:none;">
-      Logged in as: <span id="email"></span><br />
-      <button id="signOutBtn">Sign Out</button>
     </div>
 
     <div class="orders" id="orders" style="display:none;">
@@ -212,14 +198,11 @@
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  const authSection = document.getElementById("auth");
-  const authUser = document.getElementById("authUser");
   const ordersSection = document.getElementById("orders");
   const userName = document.getElementById("user-name");
   const userEmail = document.getElementById("user-email");
   const dropdownMenu = document.getElementById("dropdownMenu");
   const profileImage = document.getElementById("profileImage");
-  const logoutBtn = document.querySelector("button[onclick='logout()']");
 
   // Toggle dropdown
   profileImage.addEventListener("click", () => {
@@ -239,8 +222,6 @@
 
   auth.onAuthStateChanged((user) => {
     if (user) {
-      authSection.style.display = "none";
-      authUser.style.display = "none";
       ordersSection.style.display = "block";
 
       // Save user to localStorage
@@ -249,24 +230,30 @@
         email: user.email,
         photo: user.photoURL || "https://i.postimg.cc/tgBdHrrz/default-pfp.png"
       };
+
+      const storedUser = JSON.parse(localStorage.getItem("user")) || {};
+      if (!storedUser.photo || storedUser.email !== user.email) {
+        localUser.photo = user.photoURL;
+      } else {
+        localUser.photo = storedUser.photo;
+      }
+
       localStorage.setItem("user", JSON.stringify(localUser));
 
-      // Load user info
+      // Load info
       userEmail.textContent = localUser.email;
       userName.textContent = localUser.name;
-      profileImage.src = localStorage.getItem("customProfileImage") || localUser.photo;
+      profileImage.src = localUser.photo;
 
       loadOrders(localUser.email);
     } else {
-      // Not logged in: go to auth page
       window.location.href = "auth.html";
     }
   });
 
-  // Logout and redirect
+  // Logout
   function logout() {
     localStorage.removeItem("user");
-    localStorage.removeItem("customProfileImage");
     auth.signOut().then(() => {
       window.location.href = "auth.html";
     });
@@ -280,9 +267,13 @@
 
     const reader = new FileReader();
     reader.onload = function (event) {
-      const imageData = event.target.result;
-      profileImage.src = imageData;
-      localStorage.setItem("customProfileImage", imageData);
+      const newPhoto = event.target.result;
+      profileImage.src = newPhoto;
+
+      // Update localStorage user photo
+      const updatedUser = JSON.parse(localStorage.getItem("user")) || {};
+      updatedUser.photo = newPhoto;
+      localStorage.setItem("user", JSON.stringify(updatedUser));
     };
     reader.readAsDataURL(file);
   });
@@ -290,9 +281,10 @@
   // Handle image delete
   const deleteImage = document.getElementById("deleteImage");
   deleteImage.addEventListener("click", () => {
-    localStorage.removeItem("customProfileImage");
-    const user = JSON.parse(localStorage.getItem("user"));
-    profileImage.src = user?.photo || "https://i.postimg.cc/tgBdHrrz/default-pfp.png";
+    const user = JSON.parse(localStorage.getItem("user")) || {};
+    user.photo = "https://i.postimg.cc/tgBdHrrz/default-pfp.png";
+    profileImage.src = user.photo;
+    localStorage.setItem("user", JSON.stringify(user));
   });
 
   // Load orders from Firestore
