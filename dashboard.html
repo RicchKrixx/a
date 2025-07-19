@@ -198,24 +198,20 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-
-  <script>
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-      authDomain: "bixmax-6c24c.firebaseapp.com",
-      projectId: "bixmax-6c24c",
-      storageBucket: "bixmax-6c24c.appspot.com",
-      messagingSenderId: "37740442541",
-      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-    };
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+    authDomain: "bixmax-6c24c.firebaseapp.com",
+    projectId: "bixmax-6c24c",
+    storageBucket: "bixmax-6c24c.appspot.com",
+    messagingSenderId: "37740442541",
+    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+  };
 
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  const signInBtn = document.getElementById("signInBtn");
-  const signOutBtn = document.getElementById("signOutBtn");
   const authSection = document.getElementById("auth");
   const authUser = document.getElementById("authUser");
   const ordersSection = document.getElementById("orders");
@@ -223,14 +219,15 @@
   const userEmail = document.getElementById("user-email");
   const dropdownMenu = document.getElementById("dropdownMenu");
   const profileImage = document.getElementById("profileImage");
+  const logoutBtn = document.querySelector("button[onclick='logout()']");
 
-  // Toggle profile dropdown
+  // Toggle dropdown
   profileImage.addEventListener("click", () => {
     dropdownMenu.style.display =
       dropdownMenu.style.display === "block" ? "none" : "block";
   });
 
-  // Hide dropdown if clicked outside
+  // Close dropdown if click outside
   document.addEventListener("click", function (e) {
     if (
       !e.target.closest(".profile-img-container") &&
@@ -243,37 +240,62 @@
   auth.onAuthStateChanged((user) => {
     if (user) {
       authSection.style.display = "none";
-      authUser.style.display = "none"; // hidden as you requested
+      authUser.style.display = "none";
       ordersSection.style.display = "block";
 
-      userEmail.textContent = user.email;
-      userName.textContent = user.displayName || "BixMAX User";
+      // Save user to localStorage
+      const localUser = {
+        name: user.displayName || "BixMAX User",
+        email: user.email,
+        photo: user.photoURL || "https://i.postimg.cc/tgBdHrrz/default-pfp.png"
+      };
+      localStorage.setItem("user", JSON.stringify(localUser));
 
-      loadOrders(user.email);
+      // Load user info
+      userEmail.textContent = localUser.email;
+      userName.textContent = localUser.name;
+      profileImage.src = localStorage.getItem("customProfileImage") || localUser.photo;
+
+      loadOrders(localUser.email);
     } else {
-      authSection.style.display = "block";
-      authUser.style.display = "none";
-      ordersSection.style.display = "none";
-      userName.textContent = "Loading...";
-      userEmail.textContent = "";
+      // Not logged in: go to auth page
+      window.location.href = "auth.html";
     }
   });
 
-  signInBtn.addEventListener("click", () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider).catch((error) => {
-      alert("Sign-in failed: " + error.message);
-    });
-  });
-
-  signOutBtn.addEventListener("click", () => {
-    auth.signOut();
-  });
-
+  // Logout and redirect
   function logout() {
-    auth.signOut();
+    localStorage.removeItem("user");
+    localStorage.removeItem("customProfileImage");
+    auth.signOut().then(() => {
+      window.location.href = "auth.html";
+    });
   }
 
+  // Handle profile image upload
+  const uploadInput = document.getElementById("uploadImage");
+  uploadInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      const imageData = event.target.result;
+      profileImage.src = imageData;
+      localStorage.setItem("customProfileImage", imageData);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Handle image delete
+  const deleteImage = document.getElementById("deleteImage");
+  deleteImage.addEventListener("click", () => {
+    localStorage.removeItem("customProfileImage");
+    const user = JSON.parse(localStorage.getItem("user"));
+    profileImage.src = user?.photo || "https://i.postimg.cc/tgBdHrrz/default-pfp.png";
+  });
+
+  // Load orders from Firestore
   function loadOrders(email) {
     const orderList = document.getElementById("order-list");
     orderList.innerHTML = "<p>Loading orders...</p>";
@@ -283,8 +305,7 @@
       .get()
       .then((snapshot) => {
         if (snapshot.empty) {
-          orderList.innerHTML =
-            "<p>No orders found for this email.</p>";
+          orderList.innerHTML = "<p>No orders found for this email.</p>";
           return;
         }
 
