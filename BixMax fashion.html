@@ -470,50 +470,45 @@ border-radius: 10px;
     const db = firebase.firestore();
 
     // Fetch all shirts from Firestore
-    function fetchShirts() {
-      const container = document.getElementById("shirtsContainer");
-      container.innerHTML = "<p>Loading...</p>";
+      function fetchCategory(categoryName, containerId) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = "<p>Loading...</p>";
 
-      console.log("Fetching shirts from Firestore...");
+    db.collection("fashion")
+      .doc(categoryName)
+      .collection("items")
+      .get()
+      .then((snapshot) => {
+        container.innerHTML = "";
 
-      db.collection("fashion")
-        .doc("Shirts")
-        .collection("items")
-        .get()
-        .then((snapshot) => {
-          container.innerHTML = "";
+        if (snapshot.empty) {
+          container.innerHTML = `<p>No ${categoryName} available.</p>`;
+          return;
+        }
 
-          if (snapshot.empty) {
-            container.innerHTML = "<p>No shirts available.</p>";
-            return;
-          }
+        snapshot.forEach((doc) => {
+          const data = doc.data();
 
-          snapshot.forEach((doc) => {
-            const data = doc.data();
-            console.log("Loaded:", data);
-
-            const productEl = document.createElement("div");
-            productEl.className = "product";
-            productEl.innerHTML = `
-              <img src="${data.image}" alt="${data.name}" />
-              <h3>${data.name}</h3>
-              <p>GH¢${data.price}</p>
-              <button class="add-btn" onclick="addToCart('${data.name}', '${data.image}', ${data.price})">Add to Cart</button>
-            `;
-            container.appendChild(productEl);
-          });
-        })
-        .catch((error) => {
-          console.error("Firestore error:", error);
-          container.innerHTML = "<p>Error loading shirts.</p>";
+          const productEl = document.createElement("div");
+          productEl.className = "product";
+          productEl.innerHTML = `
+            <img src="${data.image}" alt="${data.name}" />
+            <h3>${data.name}</h3>
+            <p>GH¢${data.price}</p>
+            <button class="add-btn" onclick="addToCart('${data.name}', '${data.image}', ${data.price})">Add to Cart</button>
+          `;
+          container.appendChild(productEl);
         });
-    }
+      })
+      .catch((error) => {
+        console.error(`Error loading ${categoryName}:`, error);
+        container.innerHTML = `<p>Error loading ${categoryName}.</p>`;
+      });
+  }
 
 
-    // Load shirts on page load
-    fetchShirts();
-  </script>
+  // Example usage: if this is the Shirts page
+  fetchCategory("Shirts", "shirtsContainer");
+</script>
 </body>
-</html>
-</body>  
 </html>
