@@ -271,7 +271,7 @@ actionBtn.addEventListener("click", async (e) => {
     address,
     method: paymentMethod,
     total: grandTotal,
-    items: cartItems
+    items: itemsString
   };
 
   onAuthStateChanged(auth, (user) => {
