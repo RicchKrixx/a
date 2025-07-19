@@ -1,5 +1,198 @@
 <!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>BixMAX | All Orders</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      font-size: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f8ff;
+      padding: 20px;
+      color: #222;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #0a4d7a;
+      text-shadow: 0 0 2px #cce6ff;
+    }
+
+    #searchInput {
+      display: block;
+      margin: 0 auto 30px auto;
+      padding: 14px 20px;
+      font-size: 1rem;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      border: 1px solid #ccc;
+      box-shadow: 0 0 5px #b3e0ff;
+      background: #fff;
+    }
+
+    .order {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin: 15px auto;
+      max-width: 720px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      transition: all 0.3s ease;
+      border-left: 6px solid #0a4d7a;
+    }
+
+    .order:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    }
+
+    .order h2 {
+      font-size: 1.2rem;
+      color: #0a4d7a;
+      margin-bottom: 10px;
+    }
+
+    .order p {
+      margin: 5px 0;
+      font-size: 0.95rem;
+      color: #444;
+    }
+
+    .order ul {
+      margin-top: 10px;
+      padding-left: 18px;
+    }
+
+    .order ul li {
+      font-size: 0.95rem;
+      color: #555;
+      list-style-type: disc;
+    }
+
+    @media (max-width: 500px) {
+      :root {
+        font-size: 15px;
+      }
+      .order {
+        padding: 16px 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<audio id="notifySound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
+
+<h1>📦 BixMAX Orders 📥</h1>
+<input type="text" id="searchInput" placeholder="Search Order ID..." />
+<div id="ordersContainer">Loading orders...</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore,
+    collectionGroup,
+    onSnapshot,
+    query,
+    orderBy
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+    authDomain: "bixmax-6c24c.firebaseapp.com",
+    projectId: "bixmax-6c24c",
+    storageBucket: "bixmax-6c24c.appspot.com",
+    messagingSenderId: "37740442541",
+    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const container = document.getElementById("ordersContainer");
+  const searchInput = document.getElementById("searchInput");
+  const notifySound = document.getElementById("notifySound");
+
+  let shownOrderIds = new Set();
+  container.textContent = "";
+
+  function addOrderToTop(orderId, order) {
+    const div = document.createElement("div");
+    div.className = "order";
+    div.innerHTML = `
+      <h2>Order ID: ${orderId}</h2>
+      <p><strong>Name:</strong> ${order.name}</p>
+      <p><strong>Email:</strong> ${order.email}</p>
+      <p><strong>Phone:</strong> ${order.phone}</p>
+      <p><strong>Address:</strong> ${order.address}</p>
+      <p><strong>Payment:</strong> ${order.method}</p>
+      <p><strong>Total:</strong> GH¢ ${parseFloat(order.total).toFixed(2)}</p>
+      <p><strong>Items:</strong></p>
+      <ul>${order.items.split(",").map(i => `<li>${i.trim()}</li>`).join("")}</ul>
+      <p><strong>Date:</strong> ${new Date(order.timestamp).toLocaleString()}</p>
+    `;
+    container.prepend(div);
+  }
+
+  const q = query(collectionGroup(db, "orders"), orderBy("timestamp", "desc"));
+
+  onSnapshot(q, snapshot => {
+    snapshot.docChanges().forEach(change => {
+      const order = change.doc.data();
+      const orderId = order.id;
+      if (!shownOrderIds.has(orderId)) {
+        shownOrderIds.add(orderId);
+        addOrderToTop(orderId, order);
+
+        // 🔔 Sound
+        notifySound.play();
+
+        // 📢 Popup
+        const alertBox = document.createElement("div");
+        alertBox.textContent = "🆕 New Order: " + orderId;
+        alertBox.style = `
+          position: fixed; top: 20px; right: 20px;
+          background: #00b894; color: white;
+          padding: 14px 20px;
+          border-radius: 12px;
+          box-shadow: 0 0 10px rgba(0,0,0,0.2);
+          z-index: 9999;
+          font-size: 1rem;
+        `;
+        document.body.appendChild(alertBox);
+        setTimeout(() => alertBox.remove(), 4000);
+
+        // ⬆ Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+  });
+
+  // 🔍 Search
+  searchInput.addEventListener("input", () => {
+    const term = searchInput.value.toLowerCase();
+    const orders = document.querySelectorAll(".order");
+    orders.forEach(order => {
+      const idText = order.querySelector("h2").textContent.toLowerCase();
+      order.style.display = idText.includes(term) ? "block" : "none";
+    });
+  });
+</script>
+</body>
+</html> lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>BizMAX | All Orders</title>
