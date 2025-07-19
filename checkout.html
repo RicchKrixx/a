@@ -233,21 +233,25 @@ input, textarea, select {
     return `${i.name}${variationText} × ${i.qty}`;
   }).join(", ");
 
-  async function sendOrderToFirebase(userId = email) {
-    try {
-      const orderRef = doc(db, "users", userId, "orders", orderId);
-      await setDoc(orderRef, {
-        id: orderId,
-        name: name,
-        email: email,
-        phone: phone,
-        address: address,
-        method: paymentMethod,
-        total: grandTotal,
-        items: itemsString,
-        timestamp: new Date().toISOString()
-      });
-
+  async function sendOrderToFirebase(userEmail) {
+  try {
+    const orderRef = doc(db, "users", userEmail, "orders", orderId);
+    await setDoc(orderRef, {
+      id: orderId,
+      name: name,
+      email: userEmail,
+      phone: phone,
+      address: address,
+      method: paymentMethod,
+      total: grandTotal,
+      items: itemsString,
+      timestamp: new Date().toISOString()
+    });
+    console.log("Order saved for:", userEmail);
+  } catch (error) {
+    console.error("Error saving order:", error);
+  }
+}
       localStorage.setItem("latestOrderId", orderId);
       showLoader(false);
       alert("Order placed successfully!");
@@ -291,7 +295,7 @@ input, textarea, select {
       }).openIframe();
     } else {
       // 🛵 Pay on Delivery (user is guaranteed to be signed in here)
-      sendOrderToFirebase(user.uid);
+      sendOrderToFirebase(email);
     }
   });
 });
