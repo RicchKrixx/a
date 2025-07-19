@@ -1,114 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BizMAX Orders</title>
-<style>
-  :root{--blue:#1976d2;--bg:#f5f7ff}
-  *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}
-  body{background:var(--bg);padding:20px;display:flex;flex-direction:column;align-items:center;min-height:100vh}
-  h1{margin-bottom:18px}
-  .panel{width:100%;max-width:1000px;background:#fff;border-radius:16px;box-shadow:0 4px 18px rgba(0,0,0,.1);padding:20px}
-  .toolbar{display:flex;gap:12px;flex-wrap:wrap;justify-content:space-between;margin-bottom:14px}
-  .toolbar input{flex:1 1 220px;padding:10px;border:1px solid #ccc;border-radius:8px}
-  .toolbar button{padding:10px 16px;background:var(--blue);color:#fff;border:none;border-radius:8px;cursor:pointer}
-  .toolbar button:hover{background:#1459a4}
-  table{width:100%;border-collapse:collapse}
-  thead{background:var(--blue);color:#fff;position:sticky;top:0}
-  th,td{padding:12px;border-bottom:1px solid #e6e8f0;font-size:14px;text-align:left}
-  tbody tr:nth-child(odd){background:#fafbff}
-  tbody tr:hover{background:#eef2ff}
-  .badge{padding:4px 8px;border-radius:6px;font-size:12px;color:#fff}
-  .online{background:#ff9800}.delivery{background:#28a745}
-</style>
+  <meta charset="UTF-8" />
+  <title>Admin Panel - BizMAX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #fff;
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    form {
+      background: #1e293b;
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 6px 0;
+      border-radius: 8px;
+      border: none;
+    }
+
+    button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: #38bdf8;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .product-card {
+      background: #1e293b;
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+    }
+
+    .product-card h4 {
+      margin: 4px 0;
+    }
+
+    .actions {
+      margin-top: 10px;
+    }
+
+    .actions button {
+      margin-right: 10px;
+    }
+  </style>
 </head>
 <body>
 
-<h1>BizMAX – Orders</h1>
+  <h2>BizMAX Admin - Manage Products</h2>
 
-<div class="panel">
-  <div class="toolbar">
-    <input id="searchBox" placeholder="Search orders…">
-    <button id="exportBtn">Export CSV</button>
-    <span id="countInfo" style="align-self:center;font-weight:bold"></span>
-  </div>
+  <form id="productForm">
+    <input type="text" id="title" placeholder="Product Title" required />
+    <input type="text" id="price" placeholder="Price" required />
+    <input type="text" id="category" placeholder="Category (e.g., fashion, grocery)" required />
+    <input type="text" id="image" placeholder="Image URL" required />
+    <textarea id="desc" placeholder="Short description" required></textarea>
+    <input type="hidden" id="productId" />
+    <button type="submit">Save Product</button>
+  </form>
 
-  <div style="max-height:70vh;overflow:auto">
-    <table id="ordersTable">
-      <thead>
-        <tr>
-          <th data-key="name">Name ▲</th>
-          <th data-key="email">Email</th>
-          <th data-key="phone">Phone</th>
-          <th data-key="address">Address</th>
-          <th data-key="payment">Payment</th>
-          <th data-key="total">Total</th>
-          <th data-key="time">Time</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-</div>
+  <div id="productList"></div>
 
-<script>
-let orders=[], sortKey='time', sortDir='desc';
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getFirestore, collection, addDoc, getDocs,
+      doc, updateDoc, deleteDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-/* Load JSON */
-fetch('orders.json').then(r=>r.json()).then(data=>{
-  orders=data; render(orders);
-});
+    // TODO: Replace with your Firebase config
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
 
-/* Render table */
-function render(list){
-  const tbody=document.querySelector('#ordersTable tbody');
-  tbody.innerHTML='';
-  if(!list.length){tbody.innerHTML='<tr><td colspan="7">No orders.</td></tr>';return}
-  list.forEach(o=>{
-    tbody.insertAdjacentHTML('beforeend',
-      <tr>
-        <td>${o.name}</td><td>${o.email}</td><td>${o.phone}</td>
-        <td>${o.address}</td>
-        <td><span class="badge ${o.payment==='online'?'online':'delivery'}">${o.payment}</span></td>
-        <td>$${(+o.total).toFixed(2)}</td><td>${o.time}</td>
-      </tr>);});
-  document.getElementById('countInfo').textContent=${list.length} order(s);
-}
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const productRef = collection(db, "products");
 
-/* Sorting */
-document.querySelectorAll('th[data-key]').forEach(th=>{
-  th.addEventListener('click',()=>{
-    sortKey=th.dataset.key;
-    sortDir=sortDir==='asc'?'desc':'asc';
-    render(sortList(orders));
-    document.querySelectorAll('th[data-key]').forEach(h=>h.textContent=h.textContent.replace(/ ▲| ▼/,''));
-    th.textContent += sortDir==='asc'?' ▲':' ▼';
-  });
-});
-function sortList(arr){
-  return [...arr].sort((a,b)=>{
-    if(sortKey==='total'){return sortDir==='asc'?a.total-b.total:b.total-a.total;}
-    const av=(a[sortKey]'').toLowerCase(),bv=(b[sortKey]'').toLowerCase();
-    if(av<bv)return sortDir==='asc'?-1:1;if(av>bv)return sortDir==='asc'?1:-1;return 0;
-  });
-}
+    const form = document.getElementById("productForm");
+    const productList = document.getElementById("productList");
 
-/* Search filter */
-document.getElementById('searchBox').addEventListener('input',e=>{
-  const q=e.target.value.toLowerCase();
-  const f=orders.filter(o=>JSON.stringify(o).toLowerCase().includes(q));
-  render(sortList(f));
-});
+    async function loadProducts() {
+      productList.innerHTML = "<p>Loading...</p>";
+      const querySnapshot = await getDocs(productRef);
+      productList.innerHTML = "";
+      querySnapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        const div = document.createElement("div");
+        div.className = "product-card";
+        div.innerHTML = `
+          <h4>${data.title}</h4>
+          <p>Price: GH₵${data.price}</p>
+          <p>Category: ${data.category}</p>
+          <div class="actions">
+            <button onclick="editProduct('${docSnap.id}', \`${data.title}\`, \`${data.price}\`, \`${data.category}\`, \`${data.image}\`, \`${data.desc}\`)">Edit</button>
+            <button onclick="deleteProduct('${docSnap.id}')">Delete</button>
+          </div>
+        `;
+        productList.appendChild(div);
+      });
+    }
 
-/* Export CSV */
-document.getElementById('exportBtn').addEventListener('click',()=>{
-  if(!orders.length){alert('No data');return;}
-  const head=['Name','Email','Phone','Address','Payment','Total','Time'];
-  const rows=[head.join(',')];
-  orders.forEach(o=>rows.push([o.name,o.email,o.phone,o.address,o.payment,o.total,o.time].map(v=>"${v}").join(',')));
-  const csv=new Blob([rows.join('\n')],{type:'text/csv'});
-  const url=URL.createObjectURL(csv);const a=document.createElement('a');a.href=url;a.download='orders.csv';a.click();URL.revokeObjectURL(url);
-});
-</script>
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const title = form.title.value.trim();
+      const price = form.price.value.trim();
+      const category = form.category.value.trim();
+      const image = form.image.value.trim();
+      const desc = form.desc.value.trim();
+      const id = form.productId.value;
+
+      const productData = { title, price, category, image, desc };
+
+      if (id) {
+        // Update existing product
+        const docRef = doc(db, "products", id);
+        await updateDoc(docRef, productData);
+        alert("Product updated!");
+      } else {
+        // Add new product
+        await addDoc(productRef, productData);
+        alert("Product added!");
+      }
+
+      form.reset();
+      await loadProducts();
+    });
+
+    window.editProduct = function (id, title, price, category, image, desc) {
+      form.productId.value = id;
+      form.title.value = title;
+      form.price.value = price;
+      form.category.value = category;
+      form.image.value = image;
+      form.desc.value = desc;
+      window.scrollTo(0, 0);
+    };
+
+    window.deleteProduct = async function (id) {
+      if (confirm("Are you sure you want to delete this product?")) {
+        await deleteDoc(doc(db, "products", id));
+        alert("Deleted!");
+        await loadProducts();
+      }
+    };
+
+    loadProducts();
+  </script>
 </body>
 </html>
