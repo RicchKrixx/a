@@ -281,8 +281,9 @@ input, textarea, select {
         ref: orderId,
         callback: function (response) {
           paymentMethod = "Paid";
-          sendOrderToFirebase(user ? user.uid : email); // guest fallback
+          sendOrderToFirebase(email); // guest fallback
         },
+
         onClose: function () {
           showLoader(false);
           alert("Payment cancelled.");
