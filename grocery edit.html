@@ -131,14 +131,14 @@ const firebaseConfig = {
       const price = parseFloat(box.children[2].value);
       const image = box.children[3].value;
 
-      await updateDoc(doc(db, "fashion", cat, "items", id), {
+      await updateDoc(doc(db, "grocery", cat, "items", id), {
         name, price, image
       });
       alert("Updated successfully");
     };
 
     window.deleteItem = async (cat, id, btn) => {
-      await deleteDoc(doc(db, "fashion", cat, "items", id));
+      await deleteDoc(doc(db, "grocery", cat, "items", id));
       btn.parentElement.remove();
     };
 
