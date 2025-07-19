@@ -2,99 +2,195 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BizMAX | Orders</title>
+  <title>All Orders - BixMAX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f2f9ff;
+    :root {
+      font-size: 16px;
+    }
+    * {
+      box-sizing: border-box;
       margin: 0;
-      padding: 1rem;
-      color: #333;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f8ff;
+      padding: 20px;
+      color: #222;
     }
     h1 {
       text-align: center;
-      color: #007acc;
+      margin-bottom: 20px;
+      color: #0a4d7a;
+      text-shadow: 0 0 2px #cce6ff;
+    }
+    #searchInput {
+      display: block;
+      margin: 0 auto 30px auto;
+      padding: 14px 20px;
+      font-size: 1rem;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      border: 1px solid #ccc;
+      box-shadow: 0 0 5px #b3e0ff;
+      background: #fff;
     }
     .order {
-      background: #fff;
-      border-radius: 10px;
-      padding: 1rem;
-      margin: 1rem 0;
-      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin: 15px auto;
+      max-width: 720px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      transition: all 0.3s ease;
+      border-left: 6px solid #0a4d7a;
     }
-    .order-id {
-      font-weight: bold;
-      color: #007acc;
+    .order:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
     }
-    .order-info {
-      margin-top: 0.5rem;
-      line-height: 1.5;
+    .order h2 {
+      font-size: 1.2rem;
+      color: #0a4d7a;
+      margin-bottom: 10px;
     }
-    .order-status {
-      margin-top: 0.5rem;
-      font-size: 0.9rem;
-      color: green;
+    .order p {
+      margin: 5px 0;
+      font-size: 0.95rem;
+      color: #444;
+    }
+    .order ul {
+      margin-top: 10px;
+      padding-left: 18px;
+    }
+    .order ul li {
+      font-size: 0.95rem;
+      color: #555;
+      list-style-type: disc;
+    }
+    @media (max-width: 500px) {
+      :root {
+        font-size: 15px;
+      }
+      .order {
+        padding: 16px 14px;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>📦 BizMAX Orders</h1>
-  <div id="ordersContainer">Loading orders...</div>
 
-  <script type="module">
-    // Firebase setup
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+<h1>📦 BixMAX Orders 📥</h1>
+<input type="text" id="searchInput" placeholder="Search Order ID..." />
 
-    // Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-  authDomain: "bixmax-6c24c.firebaseapp.com",
-  projectId: "bixmax-6c24c",
-  storageBucket: "bixmax-6c24c.appspot.com",
-  messagingSenderId: "37740442541",
-  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-};
+<div id="ordersContainer">Loading orders...</div>
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+<audio id="notifySound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
 
-    const ordersContainer = document.getElementById("ordersContainer");
-
-    async function loadOrders() {
-      try {
-        const querySnapshot = await getDocs(collection(db, "orders"));
-        if (querySnapshot.empty) {
-          ordersContainer.innerHTML = "<p>No orders found.</p>";
-          return;
-        }
-
-        ordersContainer.innerHTML = "";
-        querySnapshot.forEach(doc => {
-          const order = doc.data();
-          ordersContainer.innerHTML += `
-            <div class="order">
-              <div class="order-id">Order ID: ${doc.id}</div>
-              <div class="order-info">
-                <strong>Name:</strong> ${order.name}<br>
-                <strong>Email:</strong> ${order.email}<br>
-                <strong>Phone:</strong> ${order.phone}<br>
-                <strong>Items:</strong> ${order.items || "N/A"}<br>
-                <strong>Total:</strong> ₵${order.total || 0}<br>
-                <strong>Payment:</strong> ${order.payment || "Unknown"}
-              </div>
-              <div class="order-status">🟢 ${order.status || "Pending"}</div>
-            </div>
-          `;
-        });
-      } catch (error) {
-        ordersContainer.innerHTML = "<p>Error fetching orders.</p>";
-        console.error("Error:", error);
+<!-- Wake Lock -->
+<script>
+let wakeLock = null;
+async function requestWakeLock() {
+  try {
+    wakeLock = await navigator.wakeLock.request('screen');
+    document.addEventListener("visibilitychange", () => {
+      if (wakeLock !== null && document.visibilityState === "visible") {
+        requestWakeLock();
       }
-    }
+    });
+  } catch (err) {
+    console.error("Wake Lock error:", err);
+  }
+}
+if ("wakeLock" in navigator) requestWakeLock();
+</script>
 
-    loadOrders();
-  </script>
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+    authDomain: "bixmax-6c24c.firebaseapp.com",
+    projectId: "bixmax-6c24c",
+    storageBucket: "bixmax-6c24c.appspot.com",
+    messagingSenderId: "37740442541",
+    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  const container = document.getElementById("ordersContainer");
+  const searchInput = document.getElementById("searchInput");
+  const notifySound = document.getElementById("notifySound");
+
+  let shownOrderIds = new Set();
+  container.textContent = "";
+
+  function addOrderToTop(orderId, order) {
+    const div = document.createElement("div");
+    div.className = "order";
+    div.innerHTML = `
+      <h2>Order ID: ${orderId}</h2>
+      <p><strong>Name:</strong> ${order.name || ''}</p>
+      <p><strong>Email:</strong> ${order.email || ''}</p>
+      <p><strong>Phone:</strong> ${order.phone || ''}</p>
+      <p><strong>Address:</strong> ${order.address || ''}</p>
+      <p><strong>Method:</strong> ${order.method || ''}</p>
+      <p><strong>Total:</strong> GH¢ ${order.total || '0.00'}</p>
+      <p><strong>Items:</strong></p>
+      <ul>${(order.items || '').split(",").map(i => `<li>${i.trim()}</li>`).join("")}</ul>
+    `;
+    container.prepend(div);
+  }
+
+  function showAlert(orderId) {
+    const alertBox = document.createElement("div");
+    alertBox.textContent = "🆕 New Order: " + orderId;
+    alertBox.style = `
+      position: fixed; top: 20px; right: 20px;
+      background: #00b894; color: white;
+      padding: 14px 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      z-index: 9999;
+      font-size: 1rem;
+    `;
+    document.body.appendChild(alertBox);
+    setTimeout(() => alertBox.remove(), 4000);
+  }
+
+  function fetchNewOrders() {
+    db.collection("orders").orderBy("timestamp", "desc").limit(50).get()
+      .then(snapshot => {
+        snapshot.forEach(doc => {
+          const orderId = doc.id;
+          const order = doc.data();
+          if (!shownOrderIds.has(orderId)) {
+            shownOrderIds.add(orderId);
+            addOrderToTop(orderId, order);
+            notifySound.play();
+            showAlert(orderId);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        });
+      })
+      .catch(err => console.error("❌ Error fetching orders:", err));
+  }
+
+  searchInput.addEventListener("input", () => {
+    const term = searchInput.value.toLowerCase();
+    const orders = document.querySelectorAll(".order");
+    orders.forEach(order => {
+      const idText = order.querySelector("h2").textContent.toLowerCase();
+      order.style.display = idText.includes(term) ? "block" : "none";
+    });
+  });
+
+  fetchNewOrders();
+  setInterval(fetchNewOrders, 1000);
+</script>
 </body>
 </html>
