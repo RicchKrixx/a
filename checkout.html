@@ -351,54 +351,5 @@ input, textarea, select {
       }
     }
 </script>
-
-<script>
-  document.getElementById("checkoutForm").addEventListener("submit", function(e) {
-    e.preventDefault(); // Stop page reload
-
-    // 🛒 Get cart from localStorage
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-    if (cart.length === 0) {
-      alert("Cart is empty.");
-      return;
-    }
-
-    // 🧾 Get form data
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const orderId = "BX-" + Math.floor(100000 + Math.random() * 900000);
-    const shipping = 10.00; // Set your fixed or calculated value
-
-    // 🧮 Build order_items array
-    const orderItems = cart.map(item => ({
-      title: item.name,
-      qty: item.quantity,
-      price: (item.price * item.quantity).toFixed(2)
-    }));
-
-    const total = orderItems.reduce((sum, item) => sum + parseFloat(item.price), 0) + shipping;
-
-    // 📦 Prepare EmailJS data
-    const templateParams = {
-      customer_name: name,
-      email: email,
-      order_id: orderId,
-      shipping_cost: shipping.toFixed(2),
-      total: total.toFixed(2),
-      order_items: orderItems
-    };
-    // 📤 Send via EmailJS
-    emailjs.send("service_4oajgfk", "template_6smikj", templateParams)
-      .then(() => {
-        alert("✅ Order placed! Confirmation email sent.");
-        // Optionally redirect:
-        // window.location.href = "thank-you.html?orderId=" + orderId;
-      }, (error) => {
-        console.error("❌ EmailJS error:", error);
-        alert("Something went wrong. Please try again.");
-      });
-  });
-</script>
 </body>
 </html>
