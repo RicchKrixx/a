@@ -6,110 +6,119 @@
   <title>BizMAX | Shirts</title>
   <style>
     body {
-      background: #0f172a;
-      font-family: Arial, sans-serif;
       margin: 0;
-      padding: 10px;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
       color: white;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: cyan;
-    }
-    .product-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 16px;
-    }
-    .product-card {
-      background: #1e293b;
-      border-radius: 10px;
       padding: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+    h2 {
       text-align: center;
+      margin-bottom: 10px;
     }
-    .product-card img {
+    .products {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+    }
+    .product {
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 10px;
+      width: 160px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+    .product img {
       width: 100%;
-      height: 150px;
+      height: 160px;
       object-fit: cover;
-      border-radius: 6px;
-    }
-    .product-name {
-      margin-top: 10px;
-      font-weight: bold;
-      font-size: 16px;
-      color: lightblue;
-    }
-    .product-price {
-      color: lime;
-      margin-top: 6px;
+      border-radius: 10px;
     }
     .add-btn {
-      margin-top: 8px;
-      background: cyan;
-      color: black;
-      padding: 6px 12px;
+      margin-top: 6px;
+      padding: 6px 10px;
+      background: #06b6d4;
       border: none;
-      border-radius: 5px;
+      color: white;
+      border-radius: 6px;
       cursor: pointer;
     }
   </style>
 </head>
 <body>
+  <h2>Shirts</h2>
+  <div class="products" id="shirtsContainer">
+    <!-- Firebase will load shirt items here -->
+  </div>
 
-  <h1>Shirts - BizMAX</h1>
-  <div class="product-grid" id="shirtList">Loading shirts...</div>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
-  <!-- Firebase Core -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js" type="module"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js" type="module"></script>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
+  <script>
+    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
       authDomain: "bixmax-6c24c.firebaseapp.com",
       projectId: "bixmax-6c24c",
       storageBucket: "bixmax-6c24c.appspot.com",
-      messagingSenderId: "428902601104",
-      appId: "1:428902601104:web:54c6b90aa134be91b90a29"
+      messagingSenderId: "37740442541",
+      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-    const shirtList = document.getElementById("shirtList");
-    shirtList.innerHTML = "Loading...";
+    // Fetch all shirts from Firestore
+    function fetchShirts() {
+      const container = document.getElementById("shirtsContainer");
+      container.innerHTML = "<p>Loading...</p>";
 
-    async function loadShirts() {
-      const q = query(collection(db, "products"), where("category", "==", "Shirts"));
-      const querySnapshot = await getDocs(q);
-      shirtList.innerHTML = "";
+      console.log("Fetching shirts from Firestore...");
 
-      if (querySnapshot.empty) {
-        shirtList.innerHTML = "<p>No shirts found.</p>";
-        return;
-      }
+      db.collection("fashion")
+        .doc("Shirts")
+        .collection("items")
+        .get()
+        .then((snapshot) => {
+          container.innerHTML = "";
 
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        const card = document.createElement("div");
-        card.className = "product-card";
-        card.innerHTML = `
-          <img src="${data.image || 'https://via.placeholder.com/150'}" alt="${data.name}">
-          <div class="product-name">${data.name}</div>
-          <div class="product-price">₵${data.price}</div>
-          <button class="add-btn">Add to Cart</button>
-        `;
-        shirtList.appendChild(card);
-      });
+          if (snapshot.empty) {
+            container.innerHTML = "<p>No shirts available.</p>";
+            return;
+          }
+
+          snapshot.forEach((doc) => {
+            const data = doc.data();
+            console.log("Loaded:", data);
+
+            const productEl = document.createElement("div");
+            productEl.className = "product";
+            productEl.innerHTML = `
+              <img src="${data.image}" alt="${data.name}" />
+              <h3>${data.name}</h3>
+              <p>GH¢${data.price}</p>
+              <button class="add-btn" onclick="addToCart('${data.name}', '${data.image}', ${data.price})">Add to Cart</button>
+            `;
+            container.appendChild(productEl);
+          });
+        })
+        .catch((error) => {
+          console.error("Firestore error:", error);
+          container.innerHTML = "<p>Error loading shirts.</p>";
+        });
     }
 
-    loadShirts();
-  </script>
+    // Dummy addToCart function (replace with your cart logic)
+    function addToCart(name, image, price) {
+      alert(`${name} added to cart!`);
+    }
 
+    // Load shirts on page load
+    fetchShirts();
+  </script>
 </body>
 </html>
