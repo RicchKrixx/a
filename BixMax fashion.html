@@ -1,99 +1,126 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Fashion - BizMAX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      margin: 0;
-      padding: 0;
-    }
-    h2 {
       background: #0f172a;
       color: white;
       padding: 10px;
     }
-    .products {
+
+    h2 {
+      color: cyan;
+      margin-top: 30px;
+    }
+
+    .product-container {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      padding: 10px;
     }
+
     .product {
-      background: white;
-      padding: 10px;
+      background: #1e293b;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      width: calc(50% - 20px);
+      padding: 10px;
+      width: 45%;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
+
     .product img {
       width: 100%;
-      height: 150px;
-      object-fit: cover;
-      border-radius: 6px;
+      border-radius: 8px;
     }
-    .product h3 {
+
+    .product h4 {
       margin: 5px 0;
+      font-size: 16px;
     }
+
     .product p {
-      margin: 0;
-      font-size: 14px;
+      color: lightgreen;
+    }
+
+    .product button {
+      background: cyan;
+      color: #000;
+      border: none;
+      padding: 5px 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .product button:hover {
+      background: lightblue;
     }
   </style>
 </head>
 <body>
   <h2>Shirts</h2>
-  <div class="products" id="Shirts"></div>  <h2>Chains</h2>
-  <div class="products" id="Chains"></div>  <h2>Dresses</h2>
-  <div class="products" id="Dresses"></div>  <h2>Sneakers</h2>
-  <div class="products" id="Sneakers"></div>  <h2>Glasses</h2>
-  <div class="products" id="Glasses"></div>  <script type="module">
+  <div class="product-container" id="shirts"></div>
+
+  <h2>Dresses</h2>
+  <div class="product-container" id="dresses"></div>
+
+  <h2>Chains</h2>
+  <div class="product-container" id="chains"></div>
+
+  <h2>Sneakers</h2>
+  <div class="product-container" id="sneakers"></div>
+
+  <h2>Glasses</h2>
+  <div class="product-container" id="glasses"></div>
+
+  <script>
+    function addToCart(name, image, price) {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      cart.push({ name, image, price });
+      localStorage.setItem('cart', JSON.stringify(cart));
+      alert(name + " added to cart!");
+    }
+  </script>
+
+  <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-      const firebaseConfig = {
-    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-    authDomain: "bixmax-6c24c.firebaseapp.com",
-    projectId: "bixmax-6c24c",
-    storageBucket: "bixmax-6c24c.appspot.com",
-    messagingSenderId: "37740442541",
-    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-  };
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    async function loadFashion() {
-      const fashionRef = collection(db, "fashion");
-      const snapshot = await getDocs(fashionRef);
-      const categories = {};
-
+    async function loadProducts() {
+      const snapshot = await getDocs(collection(db, "fashion"));
       snapshot.forEach(doc => {
-        const item = doc.data();
-        const cat = item.category || "Uncategorized";
-        if (!categories[cat]) categories[cat] = [];
-        categories[cat].push({ id: doc.id, ...item });
-      });
-
-      for (let cat in categories) {
-        const container = document.getElementById(cat);
-        if (!container) continue;
-
-        categories[cat].forEach(item => {
+        const data = doc.data();
+        const container = document.getElementById(data.category?.toLowerCase());
+        if (container) {
           const div = document.createElement("div");
           div.className = "product";
           div.innerHTML = `
-            <img src="${item.image}" alt="${item.name}" />
-            <h3>${item.name}</h3>
-            <p>${item.price}</p>
+            <img src="${data.image}" alt="${data.name}" />
+            <h4>${data.name}</h4>
+            <p>Ghc ${data.price}</p>
+            <button onclick="addToCart('${data.name}', '${data.image}', ${data.price})">Add to Cart</button>
           `;
           container.appendChild(div);
-        });
-      }
+        }
+      });
     }
 
-    loadFashion();
-  </script></body>
+    loadProducts();
+  </script>
+</body>
 </html>
