@@ -450,61 +450,74 @@ border-radius: 10px;
   
     updateCartCount();  
   </script> 
- <!-- Firebase SDKs -->
-<!-- Firebase Core & Firestore SDK -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  // Firebase config
-  const firebaseConfig = {
-    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-    authDomain: "bixmax-6c24c.firebaseapp.com",
-    projectId: "bixmax-6c24c",
-    storageBucket: "bixmax-6c24c.appspot.com",
-    messagingSenderId: "37740442541",
-    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-  };
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+  <script>
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+      authDomain: "bixmax-6c24c.firebaseapp.com",
+      projectId: "bixmax-6c24c",
+      storageBucket: "bixmax-6c24c.appspot.com",
+      messagingSenderId: "37740442541",
+      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+    };
 
-  // Fetch all shirts from Firestore
-  function fetchShirts() {
-    const container = document.getElementById("shirtsContainer");
-    container.innerHTML = "<p>Loading...</p>";
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-    db.collection("fashion")
-      .doc("Shirts") // Make sure "Shirts" document exists and is correctly named
-      .collection("items")
-      .get()
-      .then((snapshot) => {
-        container.innerHTML = ""; // Clear previous loading text
-        if (snapshot.empty) {
-          container.innerHTML = "<p>No shirts available.</p>";
-          return;
-        }
+    // Fetch all shirts from Firestore
+    function fetchShirts() {
+      const container = document.getElementById("shirtsContainer");
+      container.innerHTML = "<p>Loading...</p>";
 
-        snapshot.forEach((doc) => {
-          const data = doc.data();
-          const productEl = document.createElement("div");
-          productEl.className = "product";
-          productEl.innerHTML = `
-            <img src="${data.image}" alt="${data.name}" />
-            <h3>${data.name}</h3>
-            <p>GH¢${data.price}</p>
-            <button class="add-btn" onclick="addToCart('${data.name}', '${data.image}', ${data.price})">Add to Cart</button>
-          `;
-          container.appendChild(productEl);
+      console.log("Fetching shirts from Firestore...");
+
+      db.collection("fashion")
+        .doc("Shirts")
+        .collection("items")
+        .get()
+        .then((snapshot) => {
+          container.innerHTML = "";
+
+          if (snapshot.empty) {
+            container.innerHTML = "<p>No shirts available.</p>";
+            return;
+          }
+
+          snapshot.forEach((doc) => {
+            const data = doc.data();
+            console.log("Loaded:", data);
+
+            const productEl = document.createElement("div");
+            productEl.className = "product";
+            productEl.innerHTML = `
+              <img src="${data.image}" alt="${data.name}" />
+              <h3>${data.name}</h3>
+              <p>GH¢${data.price}</p>
+              <button class="add-btn" onclick="addToCart('${data.name}', '${data.image}', ${data.price})">Add to Cart</button>
+            `;
+            container.appendChild(productEl);
+          });
+        })
+        .catch((error) => {
+          console.error("Firestore error:", error);
+          container.innerHTML = "<p>Error loading shirts.</p>";
         });
-      })
-      .catch((error) => {
-        container.innerHTML = "<p>Error loading shirts.</p>";
-        console.error("Firestore error:", error);
-      });
-  }
+    }
 
-  // Load shirts on page load
-  fetchShirts();
-</script>
+    // Dummy addToCart function (replace with your cart logic)
+    function addToCart(name, image, price) {
+      alert(`${name} added to cart!`);
+    }
+
+    // Load shirts on page load
+    fetchShirts();
+  </script>
+</body>
+</html>
 </body>  
 </html>
