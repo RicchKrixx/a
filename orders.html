@@ -176,6 +176,26 @@ async function loadOrders() {
 }
 
 loadOrders();
+// 🔍 Enhanced Search Logic
+searchInput.addEventListener("input", () => {
+  const term = searchInput.value.trim().toLowerCase();
+  const orders = document.querySelectorAll(".order");
+
+  orders.forEach(order => {
+    const idText     = order.querySelector("h2")?.textContent?.toLowerCase() || "";
+    const nameText   = order.querySelector("p:nth-of-type(1)")?.textContent?.toLowerCase() || "";
+    const emailText  = order.querySelector("p:nth-of-type(2)")?.textContent?.toLowerCase() || "";
+    const phoneText  = order.querySelector("p:nth-of-type(3)")?.textContent?.toLowerCase() || "";
+
+    const matches = 
+      idText.includes(term) ||
+      nameText.includes(term) ||
+      emailText.includes(term) ||
+      phoneText.includes(term);
+
+    order.style.display = matches ? "block" : "none";
+  });
+});
 
 </script>
 
@@ -242,27 +262,6 @@ loadOrders();
 </script>
 -->
 <script>
-// 🔍 Enhanced Search Logic
-searchInput.addEventListener("input", () => {
-  const term = searchInput.value.trim().toLowerCase();
-  const orders = document.querySelectorAll(".order");
-
-  orders.forEach(order => {
-    const idText     = order.querySelector("h2")?.textContent?.toLowerCase() || "";
-    const nameText   = order.querySelector("p:nth-of-type(1)")?.textContent?.toLowerCase() || "";
-    const emailText  = order.querySelector("p:nth-of-type(2)")?.textContent?.toLowerCase() || "";
-    const phoneText  = order.querySelector("p:nth-of-type(3)")?.textContent?.toLowerCase() || "";
-
-    const matches = 
-      idText.includes(term) ||
-      nameText.includes(term) ||
-      emailText.includes(term) ||
-      phoneText.includes(term);
-
-    order.style.display = matches ? "block" : "none";
-  });
-});
-
 
 // 🔔 Notify      
         document.getElementById("notifySound").play();      
