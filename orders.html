@@ -113,6 +113,16 @@ async function loadOrders() {
     ordersContainer.innerHTML = "<p>No orders found.</p>";    
     return;    
   }    
+// Collect and sort documents by timestamp DESC
+  const ordersArray = [];
+  snapshot.forEach(docSnap => {
+    const data = docSnap.data();
+    const timestamp = new Date(data.timestamp);
+    ordersArray.push({ data, timestamp });
+  });
+
+  // Sort by newest timestamp first
+  ordersArray.sort((a, b) => b.timestamp - a.timestamp);
 
   let html = "";    
   snapshot.forEach(docSnap => {    
