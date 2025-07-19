@@ -2,95 +2,77 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Edit Fashion Items</title>
+  <title>Edit Fashion - BizMAX</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
-      font-family: Arial, sans-serif;
       background: #0f172a;
       color: white;
-      padding: 20px;
+      font-family: Arial, sans-serif;
+      padding: 16px;
     }
-    .input-group {
-      margin-bottom: 10px;
+    .category {
+      margin-bottom: 32px;
     }
-    label {
-      display: block;
-      margin-bottom: 4px;
-    }
-    input {
-      width: 100%;
-      padding: 8px;
-      border-radius: 6px;
-      border: none;
-    }
-    button {
-      background: cyan;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 8px;
-      color: black;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 10px;
+    .cat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
     .products {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 16px;
+      margin-top: 12px;
     }
     .product {
       background: #1e293b;
-      border-radius: 10px;
       padding: 10px;
-      width: 160px;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .product input {
+      width: 100%;
+      margin-bottom: 6px;
+      padding: 4px;
+      border-radius: 4px;
+      border: none;
     }
     .product img {
       width: 100%;
       border-radius: 6px;
     }
+    .product button {
+      background: #14b8a6;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      margin-top: 4px;
+      cursor: pointer;
+    }
+    .add-new-btn {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      margin: 12px 0;
+      border-radius: 6px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
-  <h2>🛠️ Edit Fashion Items</h2>
+  <h1>Edit Fashion Products</h1>
 
-  <div class="input-group">
-    <label>Name</label>
-    <input type="text" id="name" />
-  </div>
+  <div id="fashionEdit"></div>
 
-  <div class="input-group">
-    <label>Price</label>
-    <input type="number" id="price" />
-  </div>
-
-  <div class="input-group">
-    <label>Image URL</label>
-    <input type="text" id="image" />
-  </div>
-
-  <div class="input-group">
-    <label>Category (e.g., Shirts, Dresses)</label>
-    <input type="text" id="category" />
-  </div>
-
-  <button onclick="submitFashion()">✅ Add / Update Product</button>
-
-  <h3 style="margin-top: 30px;">📦 Current Fashion Items</h3>
-  <div class="products" id="fashionList"></div>
-
+  <!-- Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import {
-      getFirestore,
-      collection,
-      getDocs,
-      query,
-      where,
-      addDoc,
-      updateDoc,
-      doc
+      getFirestore, collection, doc, getDocs, updateDoc,
+      setDoc, deleteDoc
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     // Firebase configuration
@@ -105,60 +87,70 @@ const firebaseConfig = {
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const fashionRef = collection(db, "fashion");
 
-    async function submitFashion() {
-      const name = document.getElementById("name").value.trim();
-      const price = parseFloat(document.getElementById("price").value);
-      const image = document.getElementById("image").value.trim();
-      const category = document.getElementById("category").value.trim();
+    const categories = ["shirts", "dresses", "sneakers", "chains", "glasses"];
+    const container = document.getElementById("fashionEdit");
 
-      if (!name || !price || !image || !category) {
-        alert("Fill in all fields.");
-        return;
-      }
-
-      const q = query(fashionRef, where("name", "==", name));
-      const snapshot = await getDocs(q);
-
-      if (!snapshot.empty) {
-        const docId = snapshot.docs[0].id;
-        const docRef = doc(db, "fashion", docId);
-        await updateDoc(docRef, { name, price, image, category });
-        alert("✅ Product updated.");
-      } else {
-        await addDoc(fashionRef, { name, price, image, category });
-        alert("✅ Product added.");
-      }
-
-      document.getElementById("name").value = "";
-      document.getElementById("price").value = "";
-      document.getElementById("image").value = "";
-      document.getElementById("category").value = "";
-
-      fetchFashionItems();
+    for (let cat of categories) {
+      const catDiv = document.createElement("div");
+      catDiv.className = "category";
+      catDiv.innerHTML = `
+        <div class="cat-header">
+          <h2>${cat.charAt(0).toUpperCase() + cat.slice(1)}</h2>
+          <button class="add-new-btn" onclick="addNewItem('${cat}')">+ Add</button>
+        </div>
+        <div class="products" id="${cat}Container">Loading...</div>
+      `;
+      container.appendChild(catDiv);
+      loadCategory(cat);
     }
 
-    async function fetchFashionItems() {
-      const fashionList = document.getElementById("fashionList");
-      fashionList.innerHTML = "";
-      const snapshot = await getDocs(fashionRef);
-
-      snapshot.forEach(doc => {
-        const item = doc.data();
-        const div = document.createElement("div");
-        div.className = "product";
-        div.innerHTML = `
-          <img src="${item.image}" alt="${item.name}" />
-          <p><strong>${item.name}</strong></p>
-          <p>₵${item.price}</p>
-          <p style="font-size: 13px;">${item.category}</p>
+    async function loadCategory(cat) {
+      const productsContainer = document.getElementById(`${cat}Container`);
+      const snapshot = await getDocs(collection(db, "fashion", cat, "items"));
+      productsContainer.innerHTML = "";
+      snapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        const itemDiv = document.createElement("div");
+        itemDiv.className = "product";
+        itemDiv.innerHTML = `
+          <img src="${data.image}" alt="${data.name}">
+          <input type="text" value="${data.name}" placeholder="Name" />
+          <input type="number" value="${data.price}" placeholder="Price" />
+          <input type="text" value="${data.image}" placeholder="Image URL" />
+          <button onclick="updateItem('${cat}', '${docSnap.id}', this)">Update</button>
+          <button onclick="deleteItem('${cat}', '${docSnap.id}', this)">Delete</button>
         `;
-        fashionList.appendChild(div);
+        productsContainer.appendChild(itemDiv);
       });
     }
 
-    fetchFashionItems();
+    window.updateItem = async (cat, id, btn) => {
+      const box = btn.parentElement;
+      const name = box.children[1].value;
+      const price = parseFloat(box.children[2].value);
+      const image = box.children[3].value;
+
+      await updateDoc(doc(db, "fashion", cat, "items", id), {
+        name, price, image
+      });
+      alert("Updated successfully");
+    };
+
+    window.deleteItem = async (cat, id, btn) => {
+      await deleteDoc(doc(db, "fashion", cat, "items", id));
+      btn.parentElement.remove();
+    };
+
+    window.addNewItem = async (cat) => {
+      const name = prompt("Enter product name:");
+      const price = parseFloat(prompt("Enter price:"));
+      const image = prompt("Enter image URL:");
+      if (!name || !price || !image) return alert("All fields required");
+      const newId = Date.now().toString();
+      await setDoc(doc(db, "fashion", cat, "items", newId), { name, price, image });
+      loadCategory(cat);
+    };
   </script>
 </body>
 </html>
