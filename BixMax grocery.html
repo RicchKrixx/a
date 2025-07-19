@@ -1,471 +1,455 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BixMAX | Grocery</title>
-  <style>
-    * { margin: 0; 
-padding: 0; 
-box-sizing: 
-border-box; 
+<!DOCTYPE html>  <html lang="en">  
+<head>  
+  <meta charset="UTF-8" />  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>  
+  <title>BixMAX | Grocery</title>  
+  <style>  
+    * { margin: 0;   
+padding: 0;   
+box-sizing:   
+border-box;   
+}  
+      body {  
+      font-family: Arial, sans-serif;  
+      background: lightblue;  
+      margin: 0;  
+      padding: 0;  
+}  header {
+
+width:100%;  
+    padding:24px;  
+    border-radius:16px;  
+backdrop-filter: blur(25px);  
+    color: white;  
+    display: flex;  
+    flex-direction: column;  
+    align-items:center;  
+    font-weight: bold;  
+    background-size: cover;  
+    margin-bottom: 10px;
+
 }
-      body {
-      font-family: Arial, sans-serif;
-      background: lightblue;
-      margin: 0;
-      padding: 0;
+.cart-icon {
+position: fixed;
+font-size: 35px;
+text-decoration: none;
+color: white;
+margin-top: 5px;
+right: 17px;
 }
 
-header {
+#cartCount {  
+  position: absolute;  
+  top: -8px;  
+  right: -12px;  
+  background: red;  
+  color: white;  
+  font-size: 14px;  
+  font-weight: bold;  
+  border-radius: 50%;  
+  padding: 2px 6px;  
+}  
 
-        width:100%;
-        padding:24px;
-        border-radius:16px;
-    backdrop-filter: blur(25px);
-        color: white;
-        display: flex;
-        flex-direction: column;
-        align-items:center;
-        font-weight: bold;
-        background-size: cover;
-        margin-bottom: 10px;
+section {  
+  padding: 0;  
+}  
+
+.category {  
+  margin-bottom: 40px;  
 }
-    .cart-icon {
-      position: fixed;
-      font-size: 35px;
-      text-decoration: none;
-      color: white;
-      margin-top: 5px;
-      right: 17px; 
-    }
 
-    #cartCount {
-      position: absolute;
-      top: -8px;
-      right: -12px;
-      background: red;
-      color: white;
-      font-size: 14px;
-      font-weight: bold;
-      border-radius: 50%;
-      padding: 2px 6px;
-    }
-
-    section {
-      padding: 0;
-    }
-
-    .category {
-      margin-bottom: 40px;
-    }
 .category a {
-    margin-right: 10px;
+margin-right: 10px;
 }
 
-    .cat-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
+.cat-header {  
+  display: flex;  
+  justify-content: space-between;  
+  align-items: center;  
+  margin-bottom: 10px;  
+}  
 
-    .cat-header h2 {
-      margin: 0;
-    }
+.cat-header h2 {  
+  margin: 0;  
+}  
 
-    .cat-header a {
-      font-size: 14px;
-      text-decoration: none;
-      font-weight: bold;
-    }
+.cat-header a {  
+  font-size: 14px;  
+  text-decoration: none;  
+  font-weight: bold;  
+}
+
 h3 {
 color: black;
 }
-    .products {
-      display: flex;
-      gap: 16px;
-      overflow-x: auto;
-      padding-bottom: 6px;
-    }
+.products {
+display: flex;
+gap: 16px;
+overflow-x: auto;
+padding-bottom: 6px;
+}
 
-    .product {
-      padding: 5px;
-      border-radius: 35px;
-      min-width: 150px;
-      text-align: center;
-      flex-shrink: 0;
-      text-align: center;
-      background: darkcyan;
-      color: white;
-      margin: 10px auto;
-      font-weight: bold;
-      box-shadow: 0 0 10px cyan;
-    }
+.product {  
+  padding: 5px;  
+  border-radius: 35px;  
+  min-width: 150px;  
+  text-align: center;  
+  flex-shrink: 0;  
+  text-align: center;  
+  background: darkcyan;  
+  color: white;  
+  margin: 10px auto;  
+  font-weight: bold;  
+  box-shadow: 0 0 10px cyan;  
+}  
 
-    .product img {
-      padding: 0;
-      min-width: 160px;
-      height: 160px;
-      object-fit: cover;
-      border-radius: 30px;
-    }
+.product img {  
+  padding: 0;  
+  min-width: 160px;  
+  height: 160px;  
+  object-fit: cover;  
+  border-radius: 30px;  
+}  
 
-    .product h3 {
-      font-size: 16px;
-      margin: 6px 0;
-    }
+.product h3 {  
+  font-size: 16px;  
+  margin: 6px 0;  
+}  
 
-    .product p {
-      font-size: 15px;
-      font-weight: bold;
-    }
+.product p {  
+  font-size: 15px;  
+  font-weight: bold;  
+}  
 
-    .add-btn {
-      background: cyan;
-      color: white;
-      padding: 8px 12px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      margin-top: 8px;
-      font-weight: bold;
-    }
+.add-btn {  
+  background: cyan;  
+  color: white;  
+  padding: 8px 12px;  
+  border: none;  
+  border-radius: 10px;  
+  cursor: pointer;  
+  margin-top: 8px;  
+  font-weight: bold;  
+}  
 
-    .add-btn:hover {
-      background: #008b8b;
-    }
+.add-btn:hover {  
+  background: #008b8b;  
+}
+
 /* Always glowing */
 .glow {
-  animation: brightGlow 1.5s infinite ease-in-out;
-  color: cyan;
-  text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
+animation: brightGlow 1.5s infinite ease-in-out;
+color: cyan;
+text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
 }
 
 @keyframes brightGlow {
-  0%, 100% {
-    text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
-  }
-  50% {
-    text-shadow: 0 0 15px #0ff, 0 0 25px #0ff, 0 0 35px #0ff;
-  }
+0%, 100% {
+text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
+}
+50% {
+text-shadow: 0 0 15px #0ff, 0 0 25px #0ff, 0 0 35px #0ff;
+}
 }
 
-    @media (max-width: 500px) {
-      .products {
-        gap: 12px;
-      }
-      .product {
-        min-width: 150px;
-      }
-    }
+@media (max-width: 500px) {  
+  .products {  
+    gap: 12px;  
+  }  
+  .product {  
+    min-width: 150px;  
+  }  
+}
+
 footer {
-    color: white;
-    padding: 15px;
-    margin-top: 15px;
-        width: 100%;
-        border-radius:16px;
-      background: darkcyan;
-      color: white;
-      margin: 10px auto;
-      font-weight: bold;
-      box-shadow: 0 0 10px cyan;
-        color: white;
-        display: flex;
-        flex-direction: column;
-        align-content: center;
+color: white;
+padding: 15px;
+margin-top: 15px;
+width: 100%;
+border-radius:16px;
+background: darkcyan;
+color: white;
+margin: 10px auto;
+font-weight: bold;
+box-shadow: 0 0 10px cyan;
+color: white;
+display: flex;
+flex-direction: column;
+align-content: center;
 }
 /* Shake animation */
 @keyframes shake {
-  0% { transform: translateX(0); }
-  20% { transform: translateX(-4px); }
-  40% { transform: translateX(4px); }
-  60% { transform: translateX(-4px); }
-  80% { transform: translateX(4px); }
-  100% { transform: translateX(0); }
+0% { transform: translateX(0); }
+20% { transform: translateX(-4px); }
+40% { transform: translateX(4px); }
+60% { transform: translateX(-4px); }
+80% { transform: translateX(4px); }
+100% { transform: translateX(0); }
 }
 
 .shake {
-  animation: shake 0.4s ease;
+animation: shake 0.4s ease;
 }
 .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.6);
-      justify-content: center;
-      align-items: center;
-      z-index: 999;
-    }
+display: none;
+position: fixed;
+top: 0; left: 0; right: 0; bottom: 0;
+background: rgba(0,0,0,0.6);
+justify-content: center;
+align-items: center;
+z-index: 999;
+}
 .modal-content {
-      background: white;
-      padding: 20px;
-      border-radius: 16px;
-      max-width: 300px;
-      text-align: center;
-    }
-    .modal-content select, .modal-content button {
-      margin: 10px 0;
-      padding: 10px;
-      width: 100%;
-      border-radius: 10px;
-    }
-  </style>
-</head>
-<body>
-    <header>
-            <h1>BixMAX</h1>
-        <h3>All-in-One Online Shop</h3>
+background: white;
+padding: 20px;
+border-radius: 16px;
+max-width: 300px;
+text-align: center;
+}
+.modal-content select, .modal-content button {
+margin: 10px 0;
+padding: 10px;
+width: 100%;
+border-radius: 10px;
+}
+</style>
 
-<a href="cart.html" class="cart-icon glow" id="cartIcon">🛒<span id="cartCount">0</span></a>
+</head>  
+<body>  
+    <header>  
+            <h1>BixMAX</h1>  
+        <h3>All-in-One Online Shop</h3>  <a href="cart.html" class="cart-icon glow" id="cartIcon">🛒<span id="cartCount">0</span></a>
 
-    </header>
-<div class="container">
-  <!-- Fashion Sections -->
-    <div class="category">
-      <div class="cat-header">
-        <h2>Vegetables</h2>
-        <a href="vegetables.html">View All</a>
-      </div>
-      <div class="products">
-        <div class="product">
-          <img src="pp.jpeg" alt="spinach">
-          <h3>Spinach</h3>
-          <p>GH¢30</p>
-          <button class="add-btn" onclick="addToCart('Spinach', 'pp.jpeg', 30)">Add to Cart</button>
-        </div>
-        <div class="product">
-          <img src="pp.jpeg" alt="pepper">
-          <h3>Pepper</h3>
-          <p>GH¢25</p>
-          <button class="add-btn" onclick="addToCart('Pepper', 'pp.jpeg', 25)">Add to Cart</button>
-        </div>
-        <div class="product">
-          <img src="pp.jpeg" alt="Okro">
-          <h3>Okro</h3>
-          <p>GH¢35</p>
-          <button class="add-btn" onclick="addToCart('Okro', 'pp.jpeg', 35)">Add to Cart</button>
-        </div>
-      </div>
-    </div>
-<div class="category">
-      <div class="cat-header">
-        <h2>Fruits</h2>
-        <a href="fruits.html">View All</a></div>
-      <div class="products">
-        <div class="product">
-          <img src="pp.jpeg" alt="pineapple">
-          <h3>Pineapple</h3>
-          <p>GH¢40</p>
-          <button class="add-btn" onclick="addToCart('Pineapple', 'pp.jpeg', 40)">Add to Cart</button>
-        </div>
-        <div class="product">
-          <img src="pp.jpeg" alt="watermelon">
-          <h3>Watermelon</h3>
-          <p>GH¢60</p>
-          <button class="add-btn" onclick="addToCart('Watermelon', 'pp.jpeg', 60)">Add to Cart</button>
-        </div>
-        <div class="product">
-          <img src="pp.jpeg" alt="apple">
-          <h3>Apple</h3>
-          <p>GH¢30</p>
-          <button class="add-btn" onclick="addToCart('Apple', 'pp.jpeg', 30)">Add to Cart</button>
-        </div>
-      </div>
-    </div>
+</header>
 
-    <div class="category">
-      <div class="cat-header">
-        <h2>Beverages</h2>
-        <a href="beverages.html">View All</a>
-      </div>
-      <div class="products">
-        <div class="product">
-          <img src="pp.jpeg" alt="champagne">
-          <h3>Champagne</h3>
-          <p>GH¢80</p>
-          <button class="add-btn" onclick="addToCart('Champagne', 'pp.jpeg', 80)">Add to Cart</button>
-        </div>
-        <div class="product">
-          <img src="pp.jpeg" alt="malt">
-          <h3>Malta Guinness</h3>
-          <p>GH¢50</p>
-          <button class="add-btn" onclick="addToCart('Malta Guinness', 'pp.jpeg', 50)">Add to Cart</button>
-        </div>
-        <div class="product">
-          <img src="pp.jpeg" alt="water">
-          <h3>Bottle Water</h3>
-          <p>GH¢10</p>
-          <button class="add-btn" onclick="addToCart('Bottle Water', 'pp.jpeg', 10)">Add to Cart</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="category">
-      <div class="cat-header">
-        <h2>Bakery</h2>
-        <a href="bakery.html">View All</a>
-      </div>
-      <div class="products">
-        <div class="product">
-          <img src="pp.jpeg" alt="bread">
-          <h3>Bread</h3>
-          <p>GH¢100</p>
-          <button class="add-btn" onclick="addToCart('Bread', 'pp.jpeg', 100)">Add to Cart</button>
-        </div>
-        <div class="product">
-          <img src="pp.jpeg" alt="cake">
-          <h3>Cake</h3>
-          <p>GH¢90</p>
-          <button class="add-btn" onclick="addToCart('Cake', 'pp.jpeg', 90)">Add to Cart</button>
-        </div>
-        <div class="product">
-          <img src="pp.jpeg" alt="biscuit">
-          <h3>Biscuit</h3>
-          <p>GH¢75</p>
-          <button class="add-btn" onclick="addToCart('Biscuit', 'pp.jpeg', 75)">Add to Cart</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="category">
-      <div class="cat-header">
-        <h2>Canned and package foods</h2>
-        <a href="glasses.html">View All</a>
-      </div>
-      <div class="products">
-        <div class="product">
-          <img src="pp.jpeg" alt="sardine">
-          <h3>Sardine</h3>
-          <p>GH¢50</p>
-          <button class="add-btn" onclick="addToCart('Sardine', 'pp.jpeg', 50)">Add to Cart</button>
-        </div>
-        <div class="product">
-          <img src="pp.jpeg" alt="soup">
-          <h3>Canned Soup</h3>
-          <p>GH¢25</p>
-          <button class="add-btn" onclick="addToCart('Canned soup', 'pp.jpeg', 25)">Add to Cart</button>
-        </div>
-        <div class="product">
-          <img src="pp.jpeg" alt="stew">
-          <h3>Canned Stew</h3>
-          <p>GH¢35</p>
-          <button class="add-btn" onclick="addToCart('Canned stew', 'pp.jpeg', 35)">Add to Cart</button>
-        </div>
-      </div>
-    </div>
+<div class="container">  
+  <!-- Fashion Sections -->  
+<div class="category">  
+  <div class="cat-header">  
+    <h2>Vegetables</h2>  
+    <a href="vegetables.html">View All</a>
+  </div>  
+  <div class="products" id="vegetablesContainer">
+    <!-- Firebase will load .product elements here -->
+  </div>  
 </div>
-  <footer>&copy; BixMAX 2025. All rights reserved.</footer>
-  <!-- Script -->
-<!-- 🔘 Variation Popup HTML (injects dynamically by script) -->
+
+  <!-- Fashion Sections -->  
+<div class="category">  
+  <div class="cat-header">  
+    <h2>Fruits</h2>  
+    <a href="fruits.html">View All</a>
+  </div>  
+  <div class="products" id="fruitsContainer">
+    <!-- Firebase will load .product elements here -->
+  </div>  
+</div>
+
+
+  <div class="category">  
+  <div class="cat-header">  
+    <h2>Beverages</h2>  
+    <a href="beverages.html">View All</a>
+  </div>  
+  <div class="products" id="beveragesContainer">
+    <!-- Firebase will load .product elements here -->
+  </div>  
+</div>
+
+<div class="category">  
+  <div class="cat-header">  
+    <h2>Bakery</h2>  
+    <a href="bakery.html">View All</a>
+  </div>  
+  <div class="products" id="bakeryContainer">
+    <!-- Firebase will load .product elements here -->
+  </div>  
+</div>
+
+<div class="category">  
+  <div class="cat-header">  
+    <h2>Packaged Foods</h2>  
+    <a href="packaged foods.html">View All</a>
+  </div>  
+  <div class="products" id="packagedContainer">
+    <!-- Firebase will load .product elements here -->
+  </div>  
+</div>
+
+</div>  
+  <footer>&copy; BixMAX 2025. All rights reserved.</footer>  
+  <!-- Script -->  
+<!-- 🔘 Variation Popup HTML (injects dynamically by script) -->    <script>  
+    const variationItems = {  
+      "Nike Air": { color: ["Red", "White"], size: ["42", "43", "44"] },  
+      "Summer Dress": { color: ["Blue", "Yellow"], size: ["S", "M", "L"] },  
+      "Ray-Ban": { color: ["Black", "Gold"] }  
+    };  
+
+    const cartCountEl = document.getElementById("cartCount");  
+
+    function updateCartCount() {  
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];  
+      const count = cart.reduce((sum, item) => sum + item.qty, 0);  
+      cartCountEl.textContent = count;  
+    }  
+
+    function addToCart(name, img, price) {  
+      if (variationItems[name]) {  
+        showVariationPopup(name, img, price, variationItems[name]);  
+      } else {  
+        saveToCart({ name, image: img, price, qty: 1 });  
+      }  
+    }  
+
+    function saveToCart(item) {  
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");  
+      const existing = cart.find(i =>  
+        i.name === item.name &&  
+        (!i.color || i.color === item.color) &&  
+        (!i.size || i.size === item.size)  
+      );  
+      if (existing) {  
+        existing.qty += 1;  
+      } else {  
+        cart.push(item);  
+      }  
+      localStorage.setItem("cart", JSON.stringify(cart));  
+      updateCartCount();  
+      animateCartIcon();  
+    }  
+
+    function animateCartIcon() {  
+      const cartIcon = document.querySelector(".cart-icon");  
+      cartIcon.classList.remove("shake");  
+      void cartIcon.offsetWidth;  
+      cartIcon.classList.add("shake");  
+      cartIcon.addEventListener("animationend", () => {  
+        cartIcon.classList.remove("shake");  
+      }, { once: true });  
+    }  
+
+    function showVariationPopup(name, img, price, variations) {  
+      const overlay = document.createElement("div");  
+      overlay.style.cssText = `  
+        position:fixed;top:0;left:0;width:100%;height:100%;  
+        background:rgba(0,0,0,0.6);display:flex;justify-content:center;align-items:center;z-index:9999;  
+      `;  
+
+      const popup = document.createElement("div");  
+      popup.style.cssText = `  
+        background:white;padding:20px;border-radius:14px;width:90%;max-width:340px;text-align:center;  
+        box-shadow:0 0 20px cyan;  
+      `;  
+
+      let optionsHTML = "";  
+      if (variations.color) {  
+        optionsHTML += `  
+          <label style="font-weight:bold;">Color:  
+            <select id="popupColor">  
+              ${variations.color.map(c => `<option value="${c}">${c}</option>`).join("")}  
+            </select>  
+          </label><br><br>  
+        `;  
+      }  
+      if (variations.size) {  
+        optionsHTML += `  
+          <label style="font-weight:bold;">Size:  
+            <select id="popupSize">  
+              ${variations.size.map(s => `<option value="${s}">${s}</option>`).join("")}  
+            </select>  
+          </label><br><br>  
+        `;  
+      }  
+
+      popup.innerHTML = `  
+        <h3>Select Options</h3>  
+        <p style="margin-bottom:10px;font-weight:bold;">${name}</p>  
+        ${optionsHTML}  
+        <button onclick="confirmVariation('${name}','${img}',${price})" style="padding:10px 20px;background:#1976d2;color:white;border:none;border-radius:8px;">Confirm</button>  
+        <br><br>  
+        <button onclick="this.closest('div').parentNode.remove()" style="background:none;color:red;border:none;">Cancel</button>  
+      `;  
+
+      overlay.appendChild(popup);  
+      document.body.appendChild(overlay);  
+    }  
+
+    function confirmVariation(name, img, price) {  
+      const color = document.getElementById("popupColor")?.value;  
+      const size = document.getElementById("popupSize")?.value;  
+      const item = { name, image: img, price, qty: 1 };  
+      if (color) item.color = color;  
+      if (size) item.size = size;  
+      saveToCart(item);  
+      document.querySelector("body > div:last-child").remove();  
+    }  
+
+    updateCartCount();  
+  </script> 
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
   <script>
-    const variationItems = {
-      "Nike Air": { color: ["Red", "White"], size: ["42", "43", "44"] },
-      "Summer Dress": { color: ["Blue", "Yellow"], size: ["S", "M", "L"] },
-      "Ray-Ban": { color: ["Black", "Gold"] }
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+      authDomain: "bixmax-6c24c.firebaseapp.com",
+      projectId: "bixmax-6c24c",
+      storageBucket: "bixmax-6c24c.appspot.com",
+      messagingSenderId: "37740442541",
+      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
     };
 
-    const cartCountEl = document.getElementById("cartCount");
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-    function updateCartCount() {
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      const count = cart.reduce((sum, item) => sum + item.qty, 0);
-      cartCountEl.textContent = count;
-    }
+    // Fetch all shirts from Firestore
+      function fetchCategory(categoryName, containerId) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = "<p>Loading...</p>";
 
-    function addToCart(name, img, price) {
-      if (variationItems[name]) {
-        showVariationPopup(name, img, price, variationItems[name]);
-      } else {
-        saveToCart({ name, image: img, price, qty: 1 });
-      }
-    }
+    db.collection("fashion")
+      .doc(categoryName)
+      .collection("items")
+      .get()
+      .then((snapshot) => {
+        container.innerHTML = "";
 
-    function saveToCart(item) {
-      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-      const existing = cart.find(i =>
-        i.name === item.name &&
-        (!i.color || i.color === item.color) &&
-        (!i.size || i.size === item.size)
-      );
-      if (existing) {
-        existing.qty += 1;
-      } else {
-        cart.push(item);
-      }
-      localStorage.setItem("cart", JSON.stringify(cart));
-      updateCartCount();
-      animateCartIcon();
-    }
+        if (snapshot.empty) {
+          container.innerHTML = `<p>No ${categoryName} available.</p>`;
+          return;
+        }
 
-    function animateCartIcon() {
-      const cartIcon = document.querySelector(".cart-icon");
-      cartIcon.classList.remove("shake");
-      void cartIcon.offsetWidth;
-      cartIcon.classList.add("shake");
-      cartIcon.addEventListener("animationend", () => {
-        cartIcon.classList.remove("shake");
-      }, { once: true });
-    }
+        snapshot.forEach((doc) => {
+          const data = doc.data();
 
-    function showVariationPopup(name, img, price, variations) {
-      const overlay = document.createElement("div");
-      overlay.style.cssText = `
-        position:fixed;top:0;left:0;width:100%;height:100%;
-        background:rgba(0,0,0,0.6);display:flex;justify-content:center;align-items:center;z-index:9999;
-      `;
+          const productEl = document.createElement("div");
+          productEl.className = "product";
+          productEl.innerHTML = `
+            <img src="${data.image}" alt="${data.name}" />
+            <h3>${data.name}</h3>
+            <p>GH¢${data.price}</p>
+            <button class="add-btn" onclick="addToCart('${data.name}', '${data.image}', ${data.price})">Add to Cart</button>
+          `;
+          container.appendChild(productEl);
+        });
+      })
+      .catch((error) => {
+        console.error(`Error loading ${categoryName}:`, error);
+        container.innerHTML = `<p>Error loading ${categoryName}.</p>`;
+      });
+  }
 
-      const popup = document.createElement("div");
-      popup.style.cssText = `
-        background:white;padding:20px;border-radius:14px;width:90%;max-width:340px;text-align:center;
-        box-shadow:0 0 20px cyan;
-      `;
 
-      let optionsHTML = "";
-      if (variations.color) {
-        optionsHTML += `
-          <label style="font-weight:bold;">Color:
-            <select id="popupColor">
-              ${variations.color.map(c => `<option value="${c}">${c}</option>`).join("")}
-            </select>
-          </label><br><br>
-        `;
-      }
-      if (variations.size) {
-        optionsHTML += `
-          <label style="font-weight:bold;">Size:
-            <select id="popupSize">
-              ${variations.size.map(s => `<option value="${s}">${s}</option>`).join("")}
-            </select>
-          </label><br><br>
-        `;
-      }
-
-      popup.innerHTML = `
-        <h3>Select Options</h3>
-        <p style="margin-bottom:10px;font-weight:bold;">${name}</p>
-        ${optionsHTML}
-        <button onclick="confirmVariation('${name}','${img}',${price})" style="padding:10px 20px;background:#1976d2;color:white;border:none;border-radius:8px;">Confirm</button>
-        <br><br>
-        <button onclick="this.closest('div').parentNode.remove()" style="background:none;color:red;border:none;">Cancel</button>
-      `;
-
-      overlay.appendChild(popup);
-      document.body.appendChild(overlay);
-    }
-
-    function confirmVariation(name, img, price) {
-      const color = document.getElementById("popupColor")?.value;
-      const size = document.getElementById("popupSize")?.value;
-      const item = { name, image: img, price, qty: 1 };
-      if (color) item.color = color;
-      if (size) item.size = size;
-      saveToCart(item);
-      document.querySelector("body > div:last-child").remove();
-    }
-
-    updateCartCount();
-  </script>
+  // Example usage: if this is the Shirts page
+  fetchCategory("Vegetables", "vegetablesContainer");
+  fetchCategory("Fruits", "fruitsContainer");
+  fetchCategory("Sneakers", "beveragesContainer");
+  fetchCategory("Bakery", "bakeryContainer");
+  fetchCategory("Packaged Foods", "packagedContainer");
+</script>
 </body>
 </html>
