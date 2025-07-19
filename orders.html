@@ -1,142 +1,111 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>All Orders - BizMAX</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    body {
-      margin: 0;
-      font-family: system-ui, sans-serif;
-      background: #0f172a;
-      color: #fff;
-      padding-bottom: 100px;
-    }
+<!DOCTYPE html>  <html lang="en">    <head>    
+  <meta charset="UTF-8" />    
+  <title>BizMAX | All Orders</title>    
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>    
+  <style>    
+    body {    
+      margin: 0;    
+      font-family: Arial, sans-serif;    
+      background: #0f172a;    
+      color: white;    
+      padding: 20px;    
+    }  h1 {    
+  text-align: center;    
+  color: cyan;    
+  margin-bottom: 20px;    
+}    .order {
+background: #1e293b;
+border: 1px solid #334155;
+border-radius: 12px;
+padding: 16px;
+margin-bottom: 16px;
+box-shadow: 0 0 8px #0891b2;
+}
 
-    header {
-      background: #0ea5e9;
-      padding: 20px;
-      text-align: center;
-      font-size: 1.5rem;
-      font-weight: bold;
-    }
+.order p {
+margin: 6px 0;
+font-size: 15px;
+}
 
-    #orders {
-      padding: 1rem;
-      display: grid;
-      gap: 1.5rem;
-    }
+.order strong {
+color: #38bdf8;
+}
 
-    .order {
-      background: #1e293b;
-      padding: 1rem;
-      border-radius: 12px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-    }
+.delete-btn {
+background: crimson;
+color: white;
+border: none;
+padding: 8px 14px;
+border-radius: 8px;
+margin-top: 10px;
+cursor: pointer;
+}
 
-    .order h3 {
-      margin: 0 0 8px;
-      font-size: 1.1rem;
-      color: #38bdf8;
-    }
-
-    .order p {
-      margin: 4px 0;
-      font-size: 0.95rem;
-    }
-
-    .badge {
-      background: #22c55e;
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-size: 0.75rem;
-      margin-left: 6px;
-    }
-  </style>
-</head>
-<body>
-  <header>🛒 All Orders - BizMAX</header>
-  <main id="orders"></main>
-
-  <audio id="notifySound" src="https://assets.mixkit.co/sfx/download/mixkit-positive-interface-beep-221.wav" preload="auto"></audio>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collectionGroup, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-    const firebaseConfig = {    
+  </style>    
+</head>    
+<body>    
+  <h1>🧾 All BizMAX Orders</h1>    
+  <div id="ordersContainer">Loading orders...</div>    <script type="module">    
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";    
+    import { getFirestore, collectionGroup, getDocs, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";    const firebaseConfig = {    
   apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",    
   authDomain: "bixmax-6c24c.firebaseapp.com",    
   projectId: "bixmax-6c24c",    
   storageBucket: "bixmax-6c24c.appspot.com",    
   messagingSenderId: "37740442541",    
   appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"    
-};   
+};    
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);    
+const db = getFirestore(app);    
 
-    const ordersContainer = document.getElementById("orders");
-    const notifySound = document.getElementById("notifySound");
-    const shownOrderIds = new Set();
+const ordersContainer = document.getElementById("ordersContainer");    
 
-    function addOrderToTop(id, data) {
-      const el = document.createElement("div");
-      el.className = "order";
-      el.innerHTML = `
-        <h3>Order ID: ${id} <span class="badge">${data.method}</span></h3>
-        <p><strong>Name:</strong> ${data.name}</p>
-        <p><strong>Email:</strong> ${data.email}</p>
-        <p><strong>Phone:</strong> ${data.phone}</p>
-        <p><strong>Address:</strong> ${data.address}</p>
-        <p><strong>Total:</strong> GH₵ ${data.total}</p>
-        <p><strong>Items:</strong> ${data.items}</p>
-        <p><strong>Time:</strong> ${new Date(data.timestamp).toLocaleString()}</p>
-      `;
-      ordersContainer.prepend(el);
-    }
+async function loadOrders() {    
+  ordersContainer.innerHTML = "Fetching orders...";    
+  const snapshot = await getDocs(collectionGroup(db, "orders"));    
+  if (snapshot.empty) {    
+    ordersContainer.innerHTML = "<p>No orders found.</p>";    
+    return;    
+  }    
 
-    async function fetchAllOrders() {
-      try {
-        const q = query(collectionGroup(db, "orders"), orderBy("timestamp", "desc"));
-        const snapshot = await getDocs(q);
+  let html = "";    
+  snapshot.forEach(docSnap => {    
+    const order = docSnap.data();    
+    const docRef = docSnap.ref;    
+    const orderId = order.id;    
 
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          const orderId = data.id;
+    html += `    
+      <div class="order">    
+        <p><strong>Order ID:</strong> ${orderId}</p>    
+        <p><strong>Name:</strong> ${order.name}</p>    
+        <p><strong>Email:</strong> ${order.email}</p>    
+        <p><strong>Phone:</strong> ${order.phone}</p>    
+        <p><strong>Address:</strong> ${order.address}</p>    
+        <p><strong>Payment:</strong> ${order.method}</p>    
+        <p><strong>Total:</strong> GH¢${parseFloat(order.total).toFixed(2)}</p>    
+        <p><strong>Items:</strong> ${order.items}</p>    
+        <p><strong>Date:</strong> ${new Date(order.timestamp).toLocaleString()}</p>    
+        <button class="delete-btn" onclick="deleteOrder('${docRef.path.replaceAll('/', '|')}')">Delete</button>    
+      </div>    
+    `;    
+  });    
 
-          if (!shownOrderIds.has(orderId)) {
-            shownOrderIds.add(orderId);
-            addOrderToTop(orderId, data);
+  ordersContainer.innerHTML = html;    
+}    
 
-            // Notify
-            notifySound.play();
+window.deleteOrder = async function(pathStr) {    
+  const path = pathStr.replaceAll('|', '/');    
+  const ref = doc(db, path);    
+  if (confirm("Delete this order?")) {    
+    await deleteDoc(ref);    
+    alert("✅ Deleted!");    
+    loadOrders();    
+  }    
+}    
 
-            // Popup
-            const pop = document.createElement("div");
-            pop.textContent = "🆕 New Order: " + orderId;
-            pop.style = `
-              position: fixed;
-              top: 20px; right: 20px;
-              background: #22c55e;
-              color: white;
-              padding: 12px 18px;
-              border-radius: 8px;
-              box-shadow: 0 0 8px rgba(0,0,0,0.3);
-              z-index: 9999;
-            `;
-            document.body.appendChild(pop);
-            setTimeout(() => pop.remove(), 4000);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }
-        });
-      } catch (err) {
-        console.error("❌ Error loading orders:", err);
-      }
-    }
+loadOrders();
 
-    fetchAllOrders();
-    setInterval(fetchAllOrders, 10000); // Refresh every 10s
-  </script>
-</body>
-</html>
+</script>  </body>
+
+</html> 
