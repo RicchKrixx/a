@@ -2,43 +2,98 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Edit Fashion Products - BizMAX</title>
+  <title>Edit Fashion Items</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    body { background: #0f172a; color: white; font-family: Arial, sans-serif; padding: 1rem; }
-    .item { background: #1e293b; padding: 1rem; margin-bottom: 1rem; border-radius: 10px; }
-    input, select, button { margin: 5px 0; width: 100%; padding: 0.5rem; border-radius: 5px; border: none; }
-    button { background: cyan; color: black; cursor: pointer; }
-    img { max-width: 100px; border-radius: 10px; margin-bottom: 5px; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      padding: 20px;
+    }
+    .input-group {
+      margin-bottom: 10px;
+    }
+    label {
+      display: block;
+      margin-bottom: 4px;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      border: none;
+    }
+    button {
+      background: cyan;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .products {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .product {
+      background: #1e293b;
+      border-radius: 10px;
+      padding: 10px;
+      width: 160px;
+    }
+    .product img {
+      width: 100%;
+      border-radius: 6px;
+    }
   </style>
 </head>
 <body>
-  <h2>Edit Fashion Products</h2>
+  <h2>🛠️ Edit Fashion Items</h2>
 
-  <div style="margin-bottom:2rem;background:#1e40af;padding:1rem;border-radius:10px;">
-    <h3>Add New Product</h3>
-    <input id="newName" placeholder="Product Name" />
-    <input id="newPrice" placeholder="Price" type="number" />
-    <input id="newImage" placeholder="Image URL" />
-    <select id="newCategory">
-      <option value="shirts">Shirts</option>
-      <option value="dresses">Dresses</option>
-      <option value="chains">Chains</option>
-      <option value="sneakers">Sneakers</option>
-      <option value="glasses">Glasses</option>
-    </select>
-    <button onclick="addProduct()">Add Product</button>
+  <div class="input-group">
+    <label>Name</label>
+    <input type="text" id="name" />
   </div>
 
-  <div id="products"></div>
+  <div class="input-group">
+    <label>Price</label>
+    <input type="number" id="price" />
+  </div>
+
+  <div class="input-group">
+    <label>Image URL</label>
+    <input type="text" id="image" />
+  </div>
+
+  <div class="input-group">
+    <label>Category (e.g., Shirts, Dresses)</label>
+    <input type="text" id="category" />
+  </div>
+
+  <button onclick="submitFashion()">✅ Add / Update Product</button>
+
+  <h3 style="margin-top: 30px;">📦 Current Fashion Items</h3>
+  <div class="products" id="fashionList"></div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import {
-      getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, addDoc
+      getFirestore,
+      collection,
+      getDocs,
+      query,
+      where,
+      addDoc,
+      updateDoc,
+      doc
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  // Firebase configuration
+    // Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
   authDomain: "bixmax-6c24c.firebaseapp.com",
@@ -52,72 +107,58 @@ const firebaseConfig = {
     const db = getFirestore(app);
     const fashionRef = collection(db, "fashion");
 
-    async function loadProducts() {
-      const snapshot = await getDocs(fashionRef);
-      const container = document.getElementById("products");
-      container.innerHTML = "";
+    async function submitFashion() {
+      const name = document.getElementById("name").value.trim();
+      const price = parseFloat(document.getElementById("price").value);
+      const image = document.getElementById("image").value.trim();
+      const category = document.getElementById("category").value.trim();
 
-      snapshot.forEach(docSnap => {
-        const data = docSnap.data();
-        const id = docSnap.id;
+      if (!name || !price || !image || !category) {
+        alert("Fill in all fields.");
+        return;
+      }
+
+      const q = query(fashionRef, where("name", "==", name));
+      const snapshot = await getDocs(q);
+
+      if (!snapshot.empty) {
+        const docId = snapshot.docs[0].id;
+        const docRef = doc(db, "fashion", docId);
+        await updateDoc(docRef, { name, price, image, category });
+        alert("✅ Product updated.");
+      } else {
+        await addDoc(fashionRef, { name, price, image, category });
+        alert("✅ Product added.");
+      }
+
+      document.getElementById("name").value = "";
+      document.getElementById("price").value = "";
+      document.getElementById("image").value = "";
+      document.getElementById("category").value = "";
+
+      fetchFashionItems();
+    }
+
+    async function fetchFashionItems() {
+      const fashionList = document.getElementById("fashionList");
+      fashionList.innerHTML = "";
+      const snapshot = await getDocs(fashionRef);
+
+      snapshot.forEach(doc => {
+        const item = doc.data();
         const div = document.createElement("div");
-        div.className = "item";
+        div.className = "product";
         div.innerHTML = `
-          <img src="${data.image}" />
-          <input value="${data.name}" id="name-${id}" />
-          <input value="${data.price}" type="number" id="price-${id}" />
-          <input value="${data.image}" id="image-${id}" />
-          <select id="cat-${id}">
-            <option value="shirts" ${data.category === "shirts" ? "selected" : ""}>Shirts</option>
-            <option value="dresses" ${data.category === "dresses" ? "selected" : ""}>Dresses</option>
-            <option value="chains" ${data.category === "chains" ? "selected" : ""}>Chains</option>
-            <option value="sneakers" ${data.category === "sneakers" ? "selected" : ""}>Sneakers</option>
-            <option value="glasses" ${data.category === "glasses" ? "selected" : ""}>Glasses</option>
-          </select>
-          <button onclick="updateProduct('${id}')">Update</button>
-          <button onclick="deleteProduct('${id}')">Delete</button>
+          <img src="${item.image}" alt="${item.name}" />
+          <p><strong>${item.name}</strong></p>
+          <p>₵${item.price}</p>
+          <p style="font-size: 13px;">${item.category}</p>
         `;
-        container.appendChild(div);
+        fashionList.appendChild(div);
       });
     }
 
-    window.updateProduct = async (id) => {
-      const docRef = doc(db, "fashion", id);
-      const name = document.getElementById(`name-${id}`).value;
-      const price = document.getElementById(`price-${id}`).value;
-      const image = document.getElementById(`image-${id}`).value;
-      const category = document.getElementById(`cat-${id}`).value;
-
-      await updateDoc(docRef, { name, price: Number(price), image, category });
-      alert("Updated!");
-      loadProducts();
-    };
-
-    window.deleteProduct = async (id) => {
-      const docRef = doc(db, "fashion", id);
-      await deleteDoc(docRef);
-      alert("Deleted!");
-      loadProducts();
-    };
-
-    window.addProduct = async () => {
-      const name = document.getElementById("newName").value;
-      const price = document.getElementById("newPrice").value;
-      const image = document.getElementById("newImage").value;
-      const category = document.getElementById("newCategory").value;
-
-      if (name && price && image) {
-        await addDoc(fashionRef, {
-          name, price: Number(price), image, category
-        });
-        alert("Product added!");
-        loadProducts();
-      } else {
-        alert("Fill all fields");
-      }
-    };
-
-    loadProducts();
+    fetchFashionItems();
   </script>
 </body>
 </html>
