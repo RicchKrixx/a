@@ -249,81 +249,30 @@ border-radius: 10px;
   <div class="category">  
   <div class="cat-header">  
     <h2>Chains</h2>  
-    <a href="chains.html">View All</a>  
+    <a href="chains.html">View All</a>
   </div>  
-  <div class="products">  
-    <div class="product">  
-      <img src="pp.jpeg" alt="Chain">  
-      <h3>Gold Chain</h3>  
-      <p>GH¢80</p>  
-      <button class="add-btn" onclick="addToCart('Gold Chain', 'pp.jpeg', 80)">Add to Cart</button>  
-    </div>  
-    <div class="product">  
-      <img src="pp.jpeg" alt="Chain">  
-      <h3>Silver Chain</h3>  
-      <p>GH¢50</p>  
-      <button class="add-btn" onclick="addToCart('Silver Chain', 'pp.jpeg', 50)">Add to Cart</button>  
-    </div>  
-    <div class="product">  
-      <img src="pp.jpeg" alt="Chain">  
-      <h3>Men’s Chain</h3>  
-      <p>GH¢70</p>  
-      <button class="add-btn" onclick="addToCart('Men’s Chain', 'pp.jpeg', 70)">Add to Cart</button>  
-    </div>  
+  <div class="products" id="chainsContainer">
+    <!-- Firebase will load .product elements here -->
   </div>  
-</div>  
+</div>
 
 <div class="category">  
   <div class="cat-header">  
     <h2>Sneakers</h2>  
-    <a href="sneakers.html">View All</a>  
+    <a href="sneakers.html">View All</a>
   </div>  
-  <div class="products">  
-    <div class="product">  
-      <img src="pp.jpeg" alt="Sneakers">  
-      <h3>Nike Air</h3>  
-      <p>GH¢100</p>  
-      <button class="add-btn" onclick="addToCart('Nike Air', 'pp.jpeg', 100)">Add to Cart</button>  
-    </div>  
-    <div class="product">  
-      <img src="pp.jpeg" alt="Sneakers">  
-      <h3>Adidas</h3>  
-      <p>GH¢90</p>  
-      <button class="add-btn" onclick="addToCart('Adidas', 'pp.jpeg', 90)">Add to Cart</button>  
-    </div>  
-    <div class="product">  
-      <img src="pp.jpeg" alt="Sneakers">  
-      <h3>Vans Classic</h3>  
-      <p>GH¢75</p>  
-      <button class="add-btn" onclick="addToCart('Vans Classic', 'pp.jpeg', 75)">Add to Cart</button>  
-    </div>  
+  <div class="products" id="sneakersContainer">
+    <!-- Firebase will load .product elements here -->
   </div>  
-</div>  
+</div>
 
 <div class="category">  
   <div class="cat-header">  
     <h2>Glasses</h2>  
-    <a href="glasses.html">View All</a>  
+    <a href="glasses.html">View All</a>
   </div>  
-  <div class="products">  
-    <div class="product">  
-      <img src="pp.jpeg" alt="Glasses">  
-      <h3>Ray-Ban</h3>  
-      <p>GH¢50</p>  
-      <button class="add-btn" onclick="addToCart('Ray-Ban', 'pp.jpeg', 50)">Add to Cart</button>  
-    </div>  
-    <div class="product">  
-      <img src="pp.jpeg" alt="Glasses">  
-      <h3>Clear Vision</h3>  
-      <p>GH¢25</p>  
-      <button class="add-btn" onclick="addToCart('Clear Vision', 'pp.jpeg', 25)">Add to Cart</button>  
-    </div>  
-    <div class="product">  
-      <img src="pp.jpeg" alt="Glasses">  
-      <h3>Blue Light</h3>  
-      <p>GH¢35</p>  
-      <button class="add-btn" onclick="addToCart('Blue Light', 'pp.jpeg', 35)">Add to Cart</button>  
-    </div>  
+  <div class="products" id="glassesContainer">
+    <!-- Firebase will load .product elements here -->
   </div>  
 </div>
 
@@ -497,6 +446,10 @@ border-radius: 10px;
 
   // Example usage: if this is the Shirts page
   fetchCategory("Shirts", "shirtsContainer");
+  fetchCategory("Dresses", "dressesContainer");
+  fetchCategory("Sneakers", "sneakersContainer");
+  fetchCategory("Chains", "chainsContainer");
+  fetchCategory("Glasses", "glassesContainer");
 </script>
 </body>
 </html>
