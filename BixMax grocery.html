@@ -278,15 +278,8 @@ border-radius: 10px;
 
 </div>  
   <footer>&copy; BixMAX 2025. All rights reserved.</footer>  
-  <!-- Script -->  
-<!-- 🔘 Variation Popup HTML (injects dynamically by script) -->    <script>  
-    const variationItems = {  
-      "Nike Air": { color: ["Red", "White"], size: ["42", "43", "44"] },  
-      "Summer Dress": { color: ["Blue", "Yellow"], size: ["S", "M", "L"] },  
-      "Ray-Ban": { color: ["Black", "Gold"] }  
-    };  
-
-    const cartCountEl = document.getElementById("cartCount");  
+  <script>        
+   const cartCountEl = document.getElementById("cartCount");  
 
     function updateCartCount() {  
       const cart = JSON.parse(localStorage.getItem("cart")) || [];  
@@ -411,7 +404,7 @@ border-radius: 10px;
     const container = document.getElementById(containerId);
     container.innerHTML = "<p>Loading...</p>";
 
-    db.collection("fashion")
+    db.collection("grocery")
       .doc(categoryName)
       .collection("items")
       .get()
