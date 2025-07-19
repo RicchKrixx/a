@@ -85,7 +85,7 @@
     shirtList.innerHTML = "Loading...";
 
     async function loadShirts() {
-      const q = query(collection(db, "products"), where("category", "==", "shirts"));
+      const q = query(collection(db, "products"), where("category", "==", "Shirts"));
       const querySnapshot = await getDocs(q);
       shirtList.innerHTML = "";
 
