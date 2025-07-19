@@ -469,7 +469,7 @@ const firebaseConfig = {
 
     function fetchShirts() {
       db.collection("fashion")
-        .where("category", "==", "Shirts")
+        .where("category", "==", "shirts")
         .get()
         .then((snapshot) => {
           const container = document.getElementById("shirtsContainer");
