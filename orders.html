@@ -90,6 +90,96 @@ padding: 16px 14px;
   <h1>📦BixMAX Orders📥</h1>  
 <input type="text" id="searchInput" placeholder="Search Order ID..." />  
   <div id="ordersContainer">Loading orders...</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collectionGroup, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+  authDomain: "bixmax-6c24c.firebaseapp.com",
+  projectId: "bixmax-6c24c",
+  storageBucket: "bixmax-6c24c.appspot.com",
+  messagingSenderId: "37740442541",
+  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const ordersContainer = document.getElementById("ordersContainer");
+const searchInput = document.getElementById("searchInput");
+
+async function loadOrders() {
+  ordersContainer.innerHTML = "Fetching orders...";
+  const snapshot = await getDocs(collectionGroup(db, "orders"));
+
+  if (snapshot.empty) {
+    ordersContainer.innerHTML = "<p>No orders found.</p>";
+    return;
+  }
+
+  let html = "";
+
+  // Convert to array and sort by timestamp descending
+  const docsArray = [];
+  snapshot.forEach(docSnap => docsArray.push(docSnap));
+  docsArray.sort((a, b) => b.data().timestamp - a.data().timestamp); // newest first
+
+  docsArray.forEach(docSnap => {
+    const order = docSnap.data();
+    const docRef = docSnap.ref;
+    const orderId = order.id;
+
+    const status = order.status || "Pending";
+    const isCompleted = status === "Completed";
+    const buttonDisabled = isCompleted ? "disabled" : "";
+    const buttonStyle = isCompleted ? "background:gray;cursor:not-allowed;" : "background:green;cursor:pointer;";
+
+    html += `
+      <div class="order" data-id="${docRef.path}">
+        <p><strong>Order ID:</strong> ${orderId}</p>
+        <p><strong>Name:</strong> ${order.name}</p>
+        <p><strong>Email:</strong> ${order.email}</p>
+        <p><strong>Phone:</strong> ${order.phone}</p>
+        <p><strong>Address:</strong> ${order.address}</p>
+        <p><strong>Payment:</strong> ${order.method}</p>
+        <p><strong>Total:</strong> GH¢${parseFloat(order.total).toFixed(2)}</p>
+        <p><strong>Items:</strong> ${order.items}</p>
+        <p><strong>Date:</strong> ${new Date(order.timestamp).toLocaleString()}</p>
+        <p><strong>Status:</strong> <span class="status">${status}</span></p>
+        <button class="completeBtn" style="${buttonStyle}" ${buttonDisabled}>Mark as Complete</button>
+        <hr/>
+      </div>
+    `;
+  });
+
+  ordersContainer.innerHTML = html;
+
+  // Attach complete buttons
+  document.querySelectorAll(".completeBtn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const orderDiv = btn.closest(".order");
+      const docPath = orderDiv.dataset.id;
+      const statusSpan = orderDiv.querySelector(".status");
+
+      const ref = doc(db, docPath);
+      await updateDoc(ref, { status: "Completed" });
+
+      btn.textContent = "Completed";
+      btn.disabled = true;
+      btn.style.background = "gray";
+      btn.style.cursor = "not-allowed";
+      statusSpan.textContent = "Completed";
+    });
+  });
+}
+
+loadOrders();
+
+</script>
+
+<!--
     <script type="module">    
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";    
     import { getFirestore, collectionGroup, getDocs, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";    const firebaseConfig = {    
@@ -149,6 +239,9 @@ async function loadOrders() {
   ordersContainer.innerHTML = html;    
 }    
 loadOrders();
+</script>
+-->
+<script>
 // 🔍 Enhanced Search Logic
 searchInput.addEventListener("input", () => {
   const term = searchInput.value.trim().toLowerCase();
@@ -169,8 +262,8 @@ searchInput.addEventListener("input", () => {
     order.style.display = matches ? "block" : "none";
   });
 });
-</script>
-<script>
+
+
 // 🔔 Notify      
         document.getElementById("notifySound").play();      
   
