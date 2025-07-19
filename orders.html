@@ -87,7 +87,8 @@ padding: 16px 14px;
   </style>    
 </head>    
 <body>    
-  <h1>🧾 All BizMAX Orders</h1>    
+  <h1>📦BixMAX Orders📥</h1>  
+<input type="text" id="searchInput" placeholder="Search Order ID..." />  
   <div id="ordersContainer">Loading orders...</div>
     <script type="module">    
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";    
@@ -129,18 +130,32 @@ async function loadOrders() {
         <p><strong>Payment:</strong> ${order.method}</p>    
         <p><strong>Total:</strong> GH¢${parseFloat(order.total).toFixed(2)}</p>    
         <p><strong>Items:</strong> ${order.items}</p>    
-        <p><strong>Date:</strong> ${new Date(order.timestamp).toLocaleString()}</p>    
- 
-      </div>    
+        <p><strong>Date:</strong> ${new Date(order.timestamp).toLocaleString()}</p></div>    
     `;    
   });    
-
   ordersContainer.innerHTML = html;    
 }    
-
-
 loadOrders();
+// 🔍 Enhanced Search Logic
+searchInput.addEventListener("input", () => {
+  const term = searchInput.value.trim().toLowerCase();
+  const orders = document.querySelectorAll(".order");
 
+  orders.forEach(order => {
+    const idText     = order.querySelector("h2")?.textContent?.toLowerCase() || "";
+    const nameText   = order.querySelector("p:nth-of-type(1)")?.textContent?.toLowerCase() || "";
+    const emailText  = order.querySelector("p:nth-of-type(2)")?.textContent?.toLowerCase() || "";
+    const phoneText  = order.querySelector("p:nth-of-type(3)")?.textContent?.toLowerCase() || "";
+
+    const matches = 
+      idText.includes(term) ||
+      nameText.includes(term) ||
+      emailText.includes(term) ||
+      phoneText.includes(term);
+
+    order.style.display = matches ? "block" : "none";
+  });
+});
 </script> 
 </body>
 </html> 
