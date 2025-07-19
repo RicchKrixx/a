@@ -3,323 +3,93 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BizMAX Dashboard</title>
+  <title>Dashboard</title>
   <style>
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
       background: #0f172a;
       color: white;
-    }
-
-    .dashboard {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      font-family: sans-serif;
       padding: 20px;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    .profile {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 30px;
-      position: relative;
-    }
-
-    .profile-img-container {
-      position: relative;
-    }
-
-    #profileImage {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      border: 3px solid cyan;
-      cursor: pointer;
-    }
-
-    .verified-badge {
-      position: absolute;
-      bottom: 2px;
-      right: 2px;
-      background: blue;
-      color: white;
-      font-size: 12px;
-      border-radius: 50%;
-      padding: 2px 6px;
-    }
-
-    .dropdown {
-      display: none;
-      position: absolute;
-      top: 90px;
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 8px;
-      overflow: hidden;
-      z-index: 999;
-    }
-
-    .dropdown label,
-    .dropdown div {
-      padding: 10px;
-      display: block;
-      cursor: pointer;
-      color: white;
-    }
-
-    .dropdown label:hover,
-    .dropdown div:hover {
-      background-color: #334155;
-    }
-
-    .user-info {
       text-align: center;
     }
-
-    .user-info #user-name {
-      font-size: 18px;
-      font-weight: bold;
+    .profile-pic {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid white;
+      margin-bottom: 16px;
     }
-
-    .orders {
-      background: rgba(255, 255, 255, 0.05);
-      border-left: 4px solid cyan;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px cyan;
-      margin-bottom: 20px;
-      width: 100%;
-    }
-
-    .orders h2 {
-      margin-top: 0;
-      font-size: 20px;
-      border-bottom: 1px solid #333;
-      padding-bottom: 5px;
-    }
-
-    .order {
-      margin-bottom: 10px;
-      border-bottom: 1px solid #333;
-      padding-bottom: 8px;
-    }
-
-    .btns {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      width: 100%;
-    }
-
-    .btns button {
-      flex: 1 1 120px;
-      padding: 10px 20px;
+    .btn {
+      margin: 8px;
+      padding: 8px 16px;
       border: none;
-      border-radius: 8px;
+      border-radius: 6px;
       background: cyan;
-      color: #000;
+      color: black;
       font-weight: bold;
       cursor: pointer;
-      box-shadow: 0 0 10px cyan;
-      transition: background 0.3s;
     }
-
-    .btns button:hover {
-      background: white;
-    }
-
-    @media (max-width: 500px) {
-      .orders {
-        padding: 15px;
-      }
-
-      .user-info #user-name {
-        font-size: 16px;
-      }
-
-      .btns button {
-        flex: 1 1 100%;
-      }
+    #uploadInput {
+      display: none;
     }
   </style>
 </head>
 <body>
-  <div class="dashboard">
-    <div class="profile">
-      <div class="profile-img-container">
-        <img id="profileImage" src="https://i.postimg.cc/tgBdHrrz/default-pfp.png" alt="Profile" />
-        <div class="verified-badge">✔</div>
-        <div class="dropdown" id="dropdownMenu">
-          <label>
-            Upload New
-            <input type="file" id="uploadImage" accept="image/*" />
-          </label>
-          <div id="deleteImage">Delete Image</div>
-        </div>
-      </div>
-      <div class="user-info">
-        <div id="user-name">Loading...</div>
-        <small id="user-email"></small>
-      </div>
-    </div>
 
-    <div class="orders" id="orders" style="display:none;">
-      <h2>Order History</h2>
-      <div id="order-list">Loading orders...</div>
-    </div>
+  <h1>Welcome to Dashboard</h1>
 
-    <div class="btns">
-      <button onclick="window.location.href='BixMax home.html'">🏠 Go Home</button>
-      <button onclick="logout()">🚪 Logout</button>
-    </div>
-  </div>
+  <img id="profilePic" class="profile-pic" src="default.png" alt="Profile Picture" />
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-    authDomain: "bixmax-6c24c.firebaseapp.com",
-    projectId: "bixmax-6c24c",
-    storageBucket: "bixmax-6c24c.appspot.com",
-    messagingSenderId: "37740442541",
-    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-  };
+  <br>
+  <input type="file" accept="image/*" id="uploadInput" />
+  <button class="btn" onclick="document.getElementById('uploadInput').click()">Upload New</button>
+  <button class="btn" onclick="removeProfilePic()">Remove</button>
+  <button class="btn" onclick="logout()">Logout</button>
 
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-
-  const ordersSection = document.getElementById("orders");
-  const userName = document.getElementById("user-name");
-  const userEmail = document.getElementById("user-email");
-  const dropdownMenu = document.getElementById("dropdownMenu");
-  const profileImage = document.getElementById("profileImage");
-
-  // Toggle dropdown
-  profileImage.addEventListener("click", () => {
-    dropdownMenu.style.display =
-      dropdownMenu.style.display === "block" ? "none" : "block";
-  });
-
-  // Close dropdown if click outside
-  document.addEventListener("click", function (e) {
-    if (
-      !e.target.closest(".profile-img-container") &&
-      dropdownMenu.style.display === "block"
-    ) {
-      dropdownMenu.style.display = "none";
-    }
-  });
-
-  auth.onAuthStateChanged((user) => {
-    if (user) {
-      ordersSection.style.display = "block";
-
-      // Save user to localStorage
-      const localUser = {
-        name: user.displayName || "BixMAX User",
-        email: user.email,
-        photo: user.photoURL || "https://i.postimg.cc/tgBdHrrz/default-pfp.png"
-      };
-
-      const storedUser = JSON.parse(localStorage.getItem("user")) || {};
-      if (!storedUser.photo || storedUser.email !== user.email) {
-        localUser.photo = user.photoURL;
-      } else {
-        localUser.photo = storedUser.photo;
-      }
-
-      localStorage.setItem("user", JSON.stringify(localUser));
-
-      // Load info
-      userEmail.textContent = localUser.email;
-      userName.textContent = localUser.name;
-      profileImage.src = localUser.photo;
-
-      loadOrders(localUser.email);
-    } else {
-      window.location.href = "auth.html";
-    }
-  });
-
-  // Logout
-  function logout() {
-    localStorage.removeItem("user");
-    auth.signOut().then(() => {
-      window.location.href = "auth.html";
-    });
-  }
-
-  // Handle profile image upload
-  const uploadInput = document.getElementById("uploadImage");
-  uploadInput.addEventListener("change", (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = function (event) {
-      const newPhoto = event.target.result;
-      profileImage.src = newPhoto;
-
-      // Update localStorage user photo
-      const updatedUser = JSON.parse(localStorage.getItem("user")) || {};
-      updatedUser.photo = newPhoto;
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-    };
-    reader.readAsDataURL(file);
-  });
-
-  // Handle image delete
-  const deleteImage = document.getElementById("deleteImage");
-  deleteImage.addEventListener("click", () => {
+  <script>
+    // Load profile picture from localStorage
     const user = JSON.parse(localStorage.getItem("user")) || {};
-    user.photo = "https://i.postimg.cc/tgBdHrrz/default-pfp.png";
-    profileImage.src = user.photo;
-    localStorage.setItem("user", JSON.stringify(user));
-  });
+    const profilePic = document.getElementById("profilePic");
 
-  // Load orders from Firestore
-  function loadOrders(email) {
-    const orderList = document.getElementById("order-list");
-    orderList.innerHTML = "<p>Loading orders...</p>";
+    if (user.photo) {
+      profilePic.src = user.photo;
+    }
 
-    db.collection("orders")
-      .where("email", "==", email)
-      .get()
-      .then((snapshot) => {
-        if (snapshot.empty) {
-          orderList.innerHTML = "<p>No orders found for this email.</p>";
-          return;
-        }
+    // Upload new picture
+    document.getElementById("uploadInput").addEventListener("change", function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
 
-        orderList.innerHTML = "";
-        snapshot.forEach((doc) => {
-          const order = doc.data();
-          const date = order.date?.toDate?.().toLocaleString() || "";
-          orderList.innerHTML += `
-            <div class="order">
-              <strong>Order ID:</strong> ${doc.id}<br>
-              <strong>Item:</strong> ${order.items || "—"}<br>
-              <strong>Total:</strong> GH₵${order.total || "—"}<br>
-              <small>${date}</small>
-            </div>
-          `;
-        });
-      })
-      .catch((error) => {
-        console.error("Error loading orders:", error);
-        orderList.innerHTML = "<p>Failed to load orders.</p>";
-      });
-  }
-</script>
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const base64 = event.target.result;
+
+        // Update user photo in localStorage
+        user.photo = base64;
+        localStorage.setItem("user", JSON.stringify(user));
+
+        // Update on page
+        profilePic.src = base64;
+        alert("Profile picture updated!");
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Remove profile picture
+    function removeProfilePic() {
+      delete user.photo;
+      localStorage.setItem("user", JSON.stringify(user));
+      profilePic.src = "default.png";
+      alert("Profile picture removed.");
+    }
+
+    // Logout function
+    function logout() {
+      localStorage.removeItem("user");
+      window.location.href = "auth.html";
+    }
+  </script>
+
 </body>
 </html>
