@@ -210,84 +210,103 @@
       appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
-    const signInBtn = document.getElementById("signInBtn");
-    const signOutBtn = document.getElementById("signOutBtn");
-    const emailDisplay = document.getElementById("email");
-    const authSection = document.getElementById("auth");
-    const authUser = document.getElementById("authUser");
-    const ordersSection = document.getElementById("orders");
-    const userName = document.getElementById("user-name");
-    const userEmail = document.getElementById("user-email");
+  const signInBtn = document.getElementById("signInBtn");
+  const signOutBtn = document.getElementById("signOutBtn");
+  const authSection = document.getElementById("auth");
+  const authUser = document.getElementById("authUser");
+  const ordersSection = document.getElementById("orders");
+  const userName = document.getElementById("user-name");
+  const userEmail = document.getElementById("user-email");
+  const dropdownMenu = document.getElementById("dropdownMenu");
+  const profileImage = document.getElementById("profileImage");
 
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        authSection.style.display = "none";
-        authUser.style.display = "block";
-        ordersSection.style.display = "block";
+  // Toggle profile dropdown
+  profileImage.addEventListener("click", () => {
+    dropdownMenu.style.display =
+      dropdownMenu.style.display === "block" ? "none" : "block";
+  });
 
-        emailDisplay.textContent = user.email;
-        userEmail.textContent = user.email;
-        userName.textContent = user.displayName || "BizMAX User";
-
-        loadOrders(user.email);
-      } else {
-        authSection.style.display = "block";
-        authUser.style.display = "none";
-        ordersSection.style.display = "none";
-        userName.textContent = "Loading...";
-        userEmail.textContent = "";
-      }
-    });
-
-    signInBtn.addEventListener("click", () => {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider).catch(error => {
-        alert("Sign-in failed: " + error.message);
-      });
-    });
-
-    signOutBtn.addEventListener("click", () => {
-      auth.signOut();
-    });
-
-    function logout() {
-      auth.signOut();
+  // Hide dropdown if clicked outside
+  document.addEventListener("click", function (e) {
+    if (
+      !e.target.closest(".profile-img-container") &&
+      dropdownMenu.style.display === "block"
+    ) {
+      dropdownMenu.style.display = "none";
     }
+  });
 
-    function loadOrders(email) {
-      const orderList = document.getElementById("order-list");
-      db.collection("orders")
-        .where("email", "==", email.toLowerCase())
-        .get()
-        .then(snapshot => {
-          if (snapshot.empty) {
-            orderList.innerHTML = "<p>No orders found.</p>";
-            return;
-          }
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      authSection.style.display = "none";
+      authUser.style.display = "none"; // hidden as you requested
+      ordersSection.style.display = "block";
 
-          orderList.innerHTML = "";
-          snapshot.forEach(doc => {
-            const order = doc.data();
-            const date = order.date?.toDate?.().toLocaleString() || "";
-            orderList.innerHTML += `
-              <div class="order">
-                <strong>Order ID:</strong> ${doc.id}<br>
-                <strong>Item:</strong> ${order.items || "—"}<br>
-                <strong>Total:</strong> GH₵${order.total || "—"}<br>
-                <small>${date}</small>
-              </div>
-            `;
-          });
-        })
-        .catch(error => {
-          console.error("Error loading orders:", error);
-          orderList.innerHTML = "<p>Failed to load orders.</p>";
+      userEmail.textContent = user.email;
+      userName.textContent = user.displayName || "BixMAX User";
+
+      loadOrders(user.email);
+    } else {
+      authSection.style.display = "block";
+      authUser.style.display = "none";
+      ordersSection.style.display = "none";
+      userName.textContent = "Loading...";
+      userEmail.textContent = "";
+    }
+  });
+
+  signInBtn.addEventListener("click", () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).catch((error) => {
+      alert("Sign-in failed: " + error.message);
+    });
+  });
+
+  signOutBtn.addEventListener("click", () => {
+    auth.signOut();
+  });
+
+  function logout() {
+    auth.signOut();
+  }
+
+  function loadOrders(email) {
+    const orderList = document.getElementById("order-list");
+    orderList.innerHTML = "<p>Loading orders...</p>";
+
+    db.collection("orders")
+      .where("email", "==", email)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.empty) {
+          orderList.innerHTML =
+            "<p>No orders found for this email.</p>";
+          return;
+        }
+
+        orderList.innerHTML = "";
+        snapshot.forEach((doc) => {
+          const order = doc.data();
+          const date = order.date?.toDate?.().toLocaleString() || "";
+          orderList.innerHTML += `
+            <div class="order">
+              <strong>Order ID:</strong> ${doc.id}<br>
+              <strong>Item:</strong> ${order.items || "—"}<br>
+              <strong>Total:</strong> GH₵${order.total || "—"}<br>
+              <small>${date}</small>
+            </div>
+          `;
         });
-    }
-  </script>
+      })
+      .catch((error) => {
+        console.error("Error loading orders:", error);
+        orderList.innerHTML = "<p>Failed to load orders.</p>";
+      });
+  }
+</script>
 </body>
 </html>
