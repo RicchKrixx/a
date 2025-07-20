@@ -3,56 +3,122 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Track Order | BizMAX</title>
+  <title>BizMAX | Track Order</title>
   <style>
-    body{margin:0;padding:20px;background:lightblue;font-family:Arial,Helvetica,sans-serif}
-    .wrapper{
-      max-width:550px;margin:auto;background:rgba(255,255,255,0.1);
-      backdrop-filter:blur(15px);border-radius:22px;padding:32px;
-      box-shadow:0 0 20px rgba(0,0,0,0.25);color:#000;text-align:center
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #f0f8ff;
+      padding: 20px;
     }
-    input{
-      width:100%;padding:12px;border-radius:12px;border:none;
-      font-size:16px;margin-bottom:15px
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 14px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
     }
-    button{
-      padding:12px 28px;border:none;border-radius:22px;font-size:16px;
-      background:#1976d2;color:#fff;font-weight:bold;cursor:pointer
+    h2 {
+      text-align: center;
+      color: #00bcd4;
     }
-    button:hover{background:#1259a4}
-    #result{margin-top:25px;text-align:left}
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #00bcd4;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      background: #e0f7fa;
+      border-left: 5px solid #00bcd4;
+      border-radius: 10px;
+    }
+    .not-found {
+      margin-top: 20px;
+      text-align: center;
+      color: red;
+    }
   </style>
 </head>
 <body>
-  <div class="wrapper">
-    <h2>🔍 Track Your Order</h2>
-    <input id="trackInput" placeholder="Enter Order ID e.g. ORDABC123">
-    <button onclick="trackOrder()">Track</button>
 
-    <div id="result"></div>
-  </div>
+<div class="container">
+  <h2>Track Your Order</h2>
+  <input type="text" id="orderIdInput" placeholder="Enter Order ID">
+  <button onclick="trackOrder()">Track</button>
+
+  <div id="result" class="result" style="display:none;"></div>
+  <div id="notFound" class="not-found" style="display:none;">Order not found!</div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
 
 <script>
-function trackOrder(){
-  const id = document.getElementById('trackInput').value.trim();
-  const orders = JSON.parse(localStorage.getItem('orders')||'{}');
-  const res = document.getElementById('result');
-  if(!id){
-    res.innerHTML='<p>Please enter an Order ID.</p>'; return;
-  }
-  const order = orders[id];
-  if(!order){
-    res.innerHTML='<p>Order not found.</p>'; return;
-  }
+  // Your Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+    authDomain: "bixmax-6c24c.firebaseapp.com",
+    projectId: "bixmax-6c24c",
+    storageBucket: "bixmax-6c24c.appspot.com",
+    messagingSenderId: "400125973948",
+    appId: "1:400125973948:web:fcbebc87bce5b84911bdb6"
+  };
 
-  // simple status (static "Processing" for demo)
-  res.innerHTML = 
-    <p><b>Status:</b> Processing</p>
-    <p><b>Name:</b> ${order.name}</p>
-    <p><b>Total:</b> $${order.amount}</p>
-    <p><a href="receipt.html?orderId=${id}">View Receipt</a></p>
-  ;
-}
+  // Initialize Firebase
+  const app = firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  async function trackOrder() {
+    const orderId = document.getElementById("orderIdInput").value.trim();
+    const resultBox = document.getElementById("result");
+    const notFoundBox = document.getElementById("notFound");
+
+    resultBox.style.display = "none";
+    notFoundBox.style.display = "none";
+
+    try {
+      const docRef = db.collection("orders").doc(orderId);
+      const doc = await docRef.get();
+
+      if (doc.exists) {
+        const data = doc.data();
+        const itemsList = data.items.map(item => `
+          <li>${item.name} × ${item.quantity} ${item.color || ''} ${item.size || ''}</li>
+        `).join("");
+
+        resultBox.innerHTML = `
+          <strong>Order ID:</strong> ${orderId}<br><br>
+          <strong>Name:</strong> ${data.name}<br>
+          <strong>Phone:</strong> ${data.phone}<br>
+          <strong>Address:</strong> ${data.address}<br>
+          <strong>Total:</strong> ₵${data.total}<br>
+          <strong>Status:</strong> ${data.status || "Processing"}<br><br>
+          <strong>Items:</strong><ul>${itemsList}</ul>
+        `;
+        resultBox.style.display = "block";
+      } else {
+        notFoundBox.style.display = "block";
+      }
+    } catch (error) {
+      console.error("Error getting order:", error);
+      notFoundBox.textContent = "Error checking order. Try again.";
+      notFoundBox.style.display = "block";
+    }
+  }
 </script>
+
 </body>
 </html>
