@@ -206,12 +206,12 @@
         const items = JSON.parse(cached);
         renderPackaged(items);
       } catch (e) {
-        console.error("Error parsing cached shirts:", e);
+        console.error("Error parsing cached Canned & packaged:", e);
       }
     }
 
     // Firestore real-time listener (only updates on data change)
-    onSnapshot(collection(db, "category", "Packaged Foods", "items"), snapshot => {
+    onSnapshot(collection(db, "category", "Packaged Food", "items"), snapshot => {
       const items = [];
       snapshot.forEach(doc => {
         items.push({ ...doc.data(), id: doc.id });
