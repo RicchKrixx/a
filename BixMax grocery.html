@@ -212,6 +212,33 @@ padding: 10px;
 width: 100%;
 border-radius: 10px;
 }
+
+/* Skeleton Loader */
+  .skeleton {
+    background: #e2e8f0;
+    position: relative;
+    overflow: hidden;
+    width: 160px;
+    height: 220px;
+    border-radius: 12px;
+  }
+
+  .skeleton::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.5), transparent);
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    100% {
+      left: 100%;
+    }
+  }
 </style>
 
 </head>  
@@ -406,8 +433,13 @@ border-radius: 10px;
 
     // Fetch all shirts from Firestore
       function fetchCategory(categoryName, containerId) {
-    const container = document.getElementById(containerId);
-    container.innerHTML = "<p>Loading...</p>";
+    // Show white loading skeletons
+    container.innerHTML = "";
+    for (let i = 0; i < 4; i++) {
+      const skeleton = document.createElement("div");
+      skeleton.className = "skeleton";
+      container.appendChild(skeleton);
+    }
 
     db.collection("grocery")
       .doc(categoryName)
