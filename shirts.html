@@ -1,4 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shirts - BizMAX</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #fff;
+      margin: 0;
+      padding: 1rem;
+    }
 
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+      color: cyan;
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+    }
+
+    .product {
+      background: #1e293b;
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .product img {
+      max-width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .product h3 {
+      font-size: 1rem;
+      margin: 0.5rem 0;
+      text-align: center;
+    }
+
+    .product p {
+      color: lightgreen;
+      margin: 0.25rem 0;
+    }
+
+    .product button {
+      margin-top: auto;
+      padding: 0.5rem 1rem;
+      background: cyan;
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .product button:hover {
+      background: #00ffffcc;
+    }
+  </style>
+</head>
+<body>
+  <h1>All Shirts</h1>
+  <div class="products" id="shirtsContainer"></div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+  <script>
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+      authDomain: "bixmax-6c24c.firebaseapp.com",
+      projectId: "bixmax-6c24c",
+      storageBucket: "bixmax-6c24c.appspot.com",
+      messagingSenderId: "315843229419",
+      appId: "1:315843229419:web:1d211678d3c6f478892994"
+    };
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const shirtsContainer = document.getElementById("shirtsContainer");
+
+    // Fetch shirts from Firestore
+    db.collection("products").where("category", "==", "shirts").onSnapshot(snapshot => {
+      shirtsContainer.innerHTML = ""; // Clear before adding
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const productEl = document.createElement("div");
+        productEl.className = "product";
+        productEl.innerHTML = `
+          <img src="${data.image || 'https://via.placeholder.com/150'}" alt="${data.name}">
+          <h3>${data.name}</h3>
+          <p>₵${data.price}</p>
+          <button onclick="addToCart('${doc.id}', '${data.name}', ${data.price}, '${data.image || ''}')">Add to Cart</button>
+        `;
+        shirtsContainer.appendChild(productEl);
+      });
+    });
+
+    // Add to cart using localStorage
+    function addToCart(id, name, price, image) {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const existing = cart.find(item => item.id === id);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ id, name, price, image, qty: 1 });
+      }
+      localStorage.setItem("cart", JSON.stringify(cart));
+      alert(`${name} added to cart`);
+    }
+  </script>
+</body>
+
+<!--
  
 <!DOCTYPE html><html lang="en">
 <head>
@@ -353,4 +478,5 @@
   }
 </script>
  </body>
+-->
 </html>
