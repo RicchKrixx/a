@@ -387,7 +387,7 @@ border-radius: 10px;
     updateCartCount();  
   </script> 
   <!-- Firebase SDKs -->
-   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
 <script>
@@ -405,7 +405,24 @@ border-radius: 10px;
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
 
-  // Fetch and save each category
+  // Show cached data first
+  function loadCachedCategory(categoryName, containerId) {
+    const cached = localStorage.getItem(`category_${categoryName}`);
+    if (cached) {
+      const items = JSON.parse(cached);
+      const container = document.getElementById(containerId);
+      container.innerHTML = items.map(data => `
+        <div class="product">
+          <img src="${data.image}" alt="${data.name}" />
+          <h3>${data.name}</h3>
+          <p>GH¢${data.price}</p>
+          <button class="add-btn" onclick="addToCart('${data.name}', '${data.image}', ${data.price})">Add to Cart</button>
+        </div>
+      `).join('');
+    }
+  }
+
+  // Fetch live data from Firestore and update UI + localStorage
   function fetchCategory(categoryName, containerId) {
     const container = document.getElementById(containerId);
 
@@ -414,18 +431,17 @@ border-radius: 10px;
       .collection("items")
       .get()
       .then((snapshot) => {
-        container.innerHTML = ""; // clear container
         const items = [];
+        container.innerHTML = "";
 
         if (snapshot.empty) {
           container.innerHTML = `<p>No ${categoryName} available.</p>`;
-          localStorage.setItem(`grocery_${categoryName}`, JSON.stringify([]));
           return;
         }
 
         snapshot.forEach((doc) => {
           const data = doc.data();
-          items.push(data); // collect for localStorage
+          items.push(data);
 
           const productEl = document.createElement("div");
           productEl.className = "product";
@@ -439,7 +455,7 @@ border-radius: 10px;
         });
 
         // Save to localStorage
-        localStorage.setItem(`grocery_${categoryName}`, JSON.stringify(items));
+        localStorage.setItem(`category_${categoryName}`, JSON.stringify(items));
       })
       .catch((error) => {
         console.error(`Error loading ${categoryName}:`, error);
@@ -456,38 +472,17 @@ border-radius: 10px;
     { name: "Packaged Foods", id: "packagedContainer" },
   ];
 
-  // Function to refresh all
+  // Load cached first
+  categories.forEach(cat => loadCachedCategory(cat.name, cat.id));
+
+  // Then fetch live data
   function refreshAllCategories() {
     categories.forEach(cat => fetchCategory(cat.name, cat.id));
   }
 
-  // Initial fetch
-  refreshAllCategories();
+  refreshAllCategories(); // Fetch once now
+  setInterval(refreshAllCategories, 1000); // Fetch every second
 
-  // Refetch every second
-  setInterval(refreshAllCategories, 1000);
-</script>
-<script>
-  // Block all refresh methods
-  window.addEventListener("beforeunload", function (e) {
-    // This prevents tab closing, reloads, and browser refresh
-    e.preventDefault();
-    e.returnValue = '';
-    return '';
-  });
-
-  document.addEventListener("keydown", function (e) {
-    // Block F5
-    if (e.key === "F5") {
-      e.preventDefault();
-      alert("Page refresh is disabled!");
-    }
-    // Block Ctrl+R or Cmd+R
-    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "r") {
-      e.preventDefault();
-      alert("Page refresh is disabled!");
-    }
-  });
 </script>
 </body>
 </html>
