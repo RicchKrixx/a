@@ -211,7 +211,7 @@
     }
 
     // Firestore real-time listener (only updates on data change)
-    onSnapshot(collection(db, "category", "Packaged Food", "items"), snapshot => {
+    onSnapshot(collection(db, "category", "Packaged", "items"), snapshot => {
       const items = [];
       snapshot.forEach(doc => {
         items.push({ ...doc.data(), id: doc.id });
