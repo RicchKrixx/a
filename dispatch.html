@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BizMAX | Dispatch Panel</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f8ff;
+      margin: 0;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+      color: #2196f3;
+    }
+    .order-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+    .order-card strong {
+      color: #333;
+    }
+    .status-select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+    .update-btn {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      background: #2196f3;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Dispatch Control Panel</h2>
+<div id="ordersContainer"></div>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, onSnapshot, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+    authDomain: "bixmax-6c24c.firebaseapp.com",
+    projectId: "bixmax-6c24c",
+    storageBucket: "bixmax-6c24c.appspot.com",
+    messagingSenderId: "400125973948",
+    appId: "1:400125973948:web:fcbebc87bce5b84911bdb6"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const ordersContainer = document.getElementById("ordersContainer");
+
+  // Realtime listener
+  onSnapshot(collection(db, "orders"), (snapshot) => {
+    ordersContainer.innerHTML = ""; // Clear
+    snapshot.forEach(docSnap => {
+      const data = docSnap.data();
+      const id = docSnap.id;
+
+      const card = document.createElement("div");
+      card.className = "order-card";
+
+      const itemsList = data.items.map(item =>
+        `<li>${item.name} × ${item.quantity} ${item.color || ''} ${item.size || ''}</li>`
+      ).join("");
+
+      card.innerHTML = `
+        <strong>Order ID:</strong> ${id}<br>
+        <strong>Name:</strong> ${data.name}<br>
+        <strong>Phone:</strong> ${data.phone}<br>
+        <strong>Address:</strong> ${data.address}<br>
+        <strong>Total:</strong> ₵${data.total}<br>
+        <strong>Status:</strong> ${data.status || "Processing"}<br>
+        <strong>Items:</strong><ul>${itemsList}</ul>
+        <select class="status-select" id="status-${id}">
+          <option value="Processing" ${data.status === "Processing" ? "selected" : ""}>Processing</option>
+          <option value="Preparing" ${data.status === "Preparing" ? "selected" : ""}>Preparing</option>
+          <option value="On The Way" ${data.status === "On The Way" ? "selected" : ""}>On The Way</option>
+          <option value="Delivered" ${data.status === "Delivered" ? "selected" : ""}>Delivered</option>
+        </select>
+        <button class="update-btn" onclick="updateStatus('${id}')">Update Status</button>
+      `;
+
+      ordersContainer.appendChild(card);
+    });
+  });
+
+  window.updateStatus = async function(orderId) {
+    const statusValue = document.getElementById("status-" + orderId).value;
+    const ref = doc(db, "orders", orderId);
+    try {
+      await updateDoc(ref, { status: statusValue });
+      alert(`Status updated to "${statusValue}" for ${orderId}`);
+    } catch (err) {
+      console.error("Error updating:", err);
+      alert("Failed to update status.");
+    }
+  };
+</script>
+
+</body>
+</html>
