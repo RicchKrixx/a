@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>BizMAX | Bakery</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background: lightblue;
+    }
+    header {
+      width: 100%;
+      padding: 24px;
+      border-radius: 16px;
+      backdrop-filter: blur(25px);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-weight: bold;
+      background-size: cover;
+      margin-bottom: 10px;
+    }
+    h3 {
+      color: black;
+    }
+    .cart-icon {
+      position: fixed;
+      font-size: 35px;
+      text-decoration: none;
+      color: white;
+      right: 17px;
+      top: 20px;
+    }
+    #cartCount {
+      position: absolute;
+      top: -8px;
+      right: -12px;
+      background: red;
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 50%;
+      padding: 2px 6px;
+    }
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 16px;
+      padding: 16px;
+    }
+    .product {
+      padding: 5px;
+      border-radius: 35px;
+      text-align: center;
+      background: darkcyan;
+      color: white;
+      font-weight: bold;
+      box-shadow: 0 0 10px cyan;
+    }
+    .product img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 30px;
+    }
+    .product-name {
+      font-size: 18px;
+      margin-top: 0;
+      margin-bottom: 5px;
+      color: black;
+    }
+    .product-price {
+      font-size: 15px;
+    }
+    .add-btn {
+      background: cyan;
+      color: white;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 5px;
+      font-weight: bold;
+    }
+    .add-btn:hover {
+      background: #008b8b;
+    }
+    .glow {
+      animation: brightGlow 1.5s infinite ease-in-out;
+      color: cyan;
+      text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
+    }
+    @keyframes brightGlow {
+      0%, 100% {
+        text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
+      }
+      50% {
+        text-shadow: 0 0 15px #0ff, 0 0 25px #0ff, 0 0 35px #0ff;
+      }
+    }
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      20% { transform: translateX(-4px); }
+      40% { transform: translateX(4px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+      100% { transform: translateX(0); }
+    }
+    .shake {
+      animation: shake 0.4s ease;
+    }
+    footer {
+      color: white;
+      padding: 15px;
+      margin-top: 15px;
+      width: 100%;
+      border-radius: 16px;
+      background: darkcyan;
+      margin: 10px auto;
+      font-weight: bold;
+      box-shadow: 0 0 10px cyan;
+      display: flex;
+      align-content: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>BixMAX</h1>
+    <h3>All-in-One Online Shop</h3>
+    <a href="cart.html" class="cart-icon glow" id="cartIcon">🛒<span id="cartCount">0</span></a>
+  </header>
+
+  <div class="products" id="bakeryContainer">Loading...</div>
+
+  <footer>&copy; BixMAX 2025. All rights reserved.</footer>  
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      onSnapshot
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+      authDomain: "bixmax-6c24c.firebaseapp.com",
+      projectId: "bixmax-6c24c",
+      storageBucket: "bixmax-6c24c.appspot.com",
+      messagingSenderId: "37740442541",
+      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const container = document.getElementById("bakeryContainer");
+
+    function renderBakery(items) {
+      container.innerHTML = "";
+      items.forEach(data => {
+        const div = document.createElement("div");
+        div.className = "product";
+        div.innerHTML = `
+          <img src="${data.image}" alt="${data.name}" />
+          <div class="product-name">${data.name}</div>
+          <div class="product-price">GH₵${data.price.toFixed(2)}</div>
+          <button class="add-btn"
+            data-id="${data.id}"
+            data-name="${data.name}"
+            data-price="${data.price}"
+            data-image="${data.image}"
+            data-category="Bakery">
+            Add to Cart
+          </button>
+        `;
+        container.appendChild(div);
+      });
+
+      document.querySelectorAll('.add-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const product = {
+            id: btn.dataset.id,
+            name: btn.dataset.name,
+            price: parseFloat(btn.dataset.price),
+            image: btn.dataset.image,
+            category: btn.dataset.category
+          };
+          addToCart(product);
+        });
+      });
+    }
+
+    // Load from cache first
+    const cached = localStorage.getItem("Bakery");
+    if (cached) {
+      try {
+        const items = JSON.parse(cached);
+        renderBakery(items);
+      } catch (e) {
+        console.error("Error parsing cached bakery:", e);
+      }
+    }
+
+    // Firestore real-time listener (only updates on data change)
+    onSnapshot(collection(db, "category", "Bakery", "items"), snapshot => {
+      const items = [];
+      snapshot.forEach(doc => {
+        items.push({ ...doc.data(), id: doc.id });
+      });
+      localStorage.setItem("Bakery", JSON.stringify(items));
+      renderBakery(items);
+    });
+
+    function addToCart(product) {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const index = cart.findIndex(item => item.id === product.id);
+      if (index >= 0) {
+        cart[index].qty += 1;
+      } else {
+        cart.push({ ...product, qty: 1 });
+      }
+      localStorage.setItem("cart", JSON.stringify(cart));
+      updateCartCount();
+      animateCart();
+    }
+
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const count = cart.reduce((sum, item) => sum + item.qty, 0);
+      document.getElementById("cartCount").textContent = count;
+    }
+
+    function animateCart() {
+      const cartIcon = document.querySelector(".cart-icon");
+      cartIcon.classList.add("shake");
+      setTimeout(() => cartIcon.classList.remove("shake"), 500);
+    }
+
+    updateCartCount();
+  </script>
+</body>
+</html>
