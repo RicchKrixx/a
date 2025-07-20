@@ -5,7 +5,6 @@
   <title>BizMAX | Shirts</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    /* CSS same as yours, unchanged except minor tidy-ups if needed */
     * {
       margin: 0;
       padding: 0;
@@ -14,7 +13,6 @@
     body {
       font-family: Arial, sans-serif;
       background: lightblue;
-      padding: 0;
     }
     header {
       width: 100%;
@@ -30,8 +28,8 @@
       margin-bottom: 10px;
     }
     h3 {
-     color: black;
-     }
+      color: black;
+    }
     .cart-icon {
       position: fixed;
       font-size: 35px;
@@ -118,19 +116,20 @@
     .shake {
       animation: shake 0.4s ease;
     }
-footer {
-color: white;
-padding: 15px;
-margin-top: 15px;
-width: 100%;
-border-radius:16px;
-background: darkcyan;
-margin: 10px auto;
-font-weight: bold;
-box-shadow: 0 0 10px cyan;
-display: flex;
-align-content: center;
-}
+    footer {
+      color: white;
+      padding: 15px;
+      margin-top: 15px;
+      width: 100%;
+      border-radius: 16px;
+      background: darkcyan;
+      margin: 10px auto;
+      font-weight: bold;
+      box-shadow: 0 0 10px cyan;
+      display: flex;
+      align-content: center;
+      justify-content: center;
+    }
   </style>
 </head>
 <body>
@@ -141,7 +140,9 @@ align-content: center;
   </header>
 
   <div class="products" id="shirtContainer">Loading...</div>
+
   <footer>&copy; BixMAX 2025. All rights reserved.</footer>  
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import {
@@ -187,7 +188,6 @@ align-content: center;
         container.appendChild(div);
       });
 
-      // Attach listeners AFTER rendering
       document.querySelectorAll('.add-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           const product = {
@@ -214,7 +214,6 @@ align-content: center;
       updateCartCount();
       animateCart();
     }
-
 
     function updateCartCount() {
       const cart = JSON.parse(localStorage.getItem("cart")) || [];
