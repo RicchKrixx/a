@@ -88,7 +88,7 @@ const firebaseConfig = {
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const categories = ["Shirt", "Dress", "Sneaker", "Chain", "Glass"];
+    const categories = ["Shirt", "Dress", "Sneaker", "Chain", "Glass", "Vegetable", "Fruit", "Beverage", "Bakery","Packaged Foods", "Beauty", "Bedroom", "Kitchen", "Bathroom", "Living Room", "Cleaning", "Mobile Accessories", "Home Appliances", "Home Security", "Electrical Tools", "Electrical Materials"];
     const container = document.getElementById("categoryEdit");
 
     for (let cat of categories) {
