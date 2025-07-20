@@ -278,7 +278,12 @@ border-radius: 10px;
 
 </div>  
   <footer>&copy; BixMAX 2025. All rights reserved.</footer>  
-  <script>        
+ <!-- 🔘 Variation Popup HTML (injects dynamically by script) -->    <script>  
+    const variationItems = {  
+      "Nike Air": { color: ["Red", "White"], size: ["42", "43", "44"] },  
+      "Summer Dress": { color: ["Blue", "Yellow"], size: ["S", "M", "L"] },  
+      "Ray-Ban": { color: ["Black", "Gold"] }  
+    };        
    const cartCountEl = document.getElementById("cartCount");  
 
     function updateCartCount() {  
