@@ -1,353 +1,251 @@
-
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <title>BizMAX | Shirts</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Shirts - BixMAX</title>
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
     body {
       font-family: Arial, sans-serif;
       background: lightblue;
-      margin: 0;
-      padding: 0;
     }
     header {
-      background: #1976d2;
-      color: #fff;
-      padding: 20px;
+      width: 100%;
+      padding: 24px;
+      border-radius: 16px;
+      backdrop-filter: blur(25px);
+      color: white;
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
       align-items: center;
+      font-weight: bold;
+      background-size: cover;
+      margin-bottom: 10px;
+    }
+    h3 {
+      color: black;
     }
     .cart-icon {
-      position: relative;
-      cursor: pointer;
+      position: fixed;
+      font-size: 35px;
+      text-decoration: none;
+      color: white;
+      right: 17px;
+      top: 20px;
     }
-    .cart-icon span {
+    #cartCount {
+      position: absolute;
+      top: -8px;
+      right: -12px;
       background: red;
       color: white;
       font-size: 14px;
-      padding: 2px 6px;
+      font-weight: bold;
       border-radius: 50%;
-      position: absolute;
-      top: -10px;
-      right: -10px;
+      padding: 2px 6px;
     }
-    .container {
-      padding: 5px;
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .container {
-      max-width: 800px;
-      margin: auto;
-    }
-
     .products {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 16px;
+      padding: 16px;
     }
-
     .product {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      overflow: hidden;
+      padding: 5px;
+      border-radius: 35px;
       text-align: center;
-      transition: 0.3s;
+      background: darkcyan;
+      color: white;
+      font-weight: bold;
+      box-shadow: 0 0 10px cyan;
     }
-
-    .product:hover {
-      transform: translateY(-5px);
-    }
-
     .product img {
       width: 100%;
-      height: 150px;
+      height: 160px;
       object-fit: cover;
+      border-radius: 30px;
     }
-
-
-    @media (max-width: 600px) {
-      .product-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-    .product h3 {
-      font-size: 16px;
-      margin: 6px 0;
-    }
-
-    .product p {
-      font-size: 15px;
-      font-weight: bold;
-    }
-
-    .product button {
-      background: #008b8b;
+    .product-name {
+      font-size: 18px;
+      margin-top: 0;
+      margin-bottom: 5px;
       color: black;
+    }
+    .product-price {
+      font-size: 15px;
+    }
+    .add-btn {
+      background: cyan;
+      color: white;
       padding: 8px 12px;
       border: none;
       border-radius: 10px;
       cursor: pointer;
-      margin-top: 8px;
+      margin-top: 5px;
       font-weight: bold;
     }
-
-    .product button:hover {
-      background: blue;
+    .add-btn:hover {
+      background: #008b8b;
     }
-
-    @media (max-width: 500px) {
-      .products {
-        gap: 12px;
+    .glow {
+      animation: brightGlow 1.5s infinite ease-in-out;
+      color: cyan;
+      text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
+    }
+    @keyframes brightGlow {
+      0%, 100% {
+        text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
       }
-      .product {
-        min-width: 150px;
+      50% {
+        text-shadow: 0 0 15px #0ff, 0 0 25px #0ff, 0 0 35px #0ff;
       }
+    }
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      20% { transform: translateX(-4px); }
+      40% { transform: translateX(4px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+      100% { transform: translateX(0); }
+    }
+    .shake {
+      animation: shake 0.4s ease;
+    }
+    footer {
+      color: white;
+      padding: 15px;
+      margin-top: 15px;
+      width: 100%;
+      border-radius: 16px;
+      background: darkcyan;
+      margin: 10px auto;
+      font-weight: bold;
+      box-shadow: 0 0 10px cyan;
+      display: flex;
+      align-content: center;
+      justify-content: center;
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>Shirts - BixMAX</h1>
-    <div class="cart-icon" onclick="window.location.href='cart.html'">
-      🛒 <span id="cart-count">0</span>
-    </div>
+    <h1>BixMAX</h1>
+    <h3>All-in-One Online Shop</h3>
+    <a href="cart.html" class="cart-icon glow" id="cartIcon">🛒<span id="cartCount">0</span></a>
   </header>
 
-  <div class="container">
-    <h2>All Shirt Products</h2>
-  <div class="products"><div class="product">
-  <img src="pp.jpeg" alt="Body Lotion" style="cursor:pointer"
-   onclick="addAndGoToCart(this)"
-   data-name="Body Lotion" data-price="35.00" data-img="pp.jpeg">
-  <h3>Body Lotion</h3>
-  <p>GH¢35.00</p>
-  <button onclick="addToCart(this)" data-name="Body Lotion" data-price="35.00" data-img="pp.jpeg">Add to Cart</button>
-</div>
+  <div class="products" id="beautyContainer">Loading...</div>
 
-<div class="product">
-  <img src="pp.jpeg" alt="Face Scrub" style="cursor:pointer"
-   onclick="addAndGoToCart(this)"
-   data-name="Face Scrub" data-price="30.00" data-img="pp.jpeg">
-  <h3>Face Scrub</h3>
-  <p>GH¢30.00</p>
-  <button onclick="addToCart(this)" data-name="Face Scrub" data-price="30.00" data-img="pp.jpeg">Add to Cart</button>
-</div>
+  <footer>&copy; BixMAX 2025. All rights reserved.</footer>  
 
-<div class="product">
-  <img src="pp.jpeg" alt="Pomade" style="cursor:pointer"
-   onclick="addAndGoToCart(this)"
-   data-name="Pomade (Non-Bleaching)" data-price="25.00" data-img="pp.jpeg">
-  <h3>Pomade (Non-Bleaching)</h3>
-  <p>GH¢25.00</p>
-  <button onclick="addToCart(this)" data-name="Pomade (Non-Bleaching)" data-price="25.00" data-img="pp.jpeg">Add to Cart</button>
-</div>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      onSnapshot
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-<div class="product">
-  <img src="pp.jpeg" alt="Beard Oil" style="cursor:pointer"
-   onclick="addAndGoToCart(this)"
-   data-name="Beard Oil" data-price="40.00" data-img="pp.jpeg">
-  <h3>Beard Oil</h3>
-  <p>GH¢40.00</p>
-  <button onclick="addToCart(this)" data-name="Beard Oil" data-price="40.00" data-img="pp.jpeg">Add to Cart</button>
-</div>
+    const firebaseConfig = {
+      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+      authDomain: "bixmax-6c24c.firebaseapp.com",
+      projectId: "bixmax-6c24c",
+      storageBucket: "bixmax-6c24c.appspot.com",
+      messagingSenderId: "37740442541",
+      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+    };
 
-<div class="product">
-  <img src="pp.jpeg" alt="Lip Balm" style="cursor:pointer"
-   onclick="addAndGoToCart(this)"
-   data-name="Lip Balm" data-price="15.00" data-img="pp.jpeg">
-  <h3>Lip Balm</h3>
-  <p>GH¢15.00</p>
-  <button onclick="addToCart(this)" data-name="Lip Balm" data-price="15.00" data-img="pp.jpeg">Add to Cart</button>
-</div>
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const container = document.getElementById("BeautyContainer");
 
-<div class="product">
-  <img src="pp.jpeg" alt="Perfume Spray" style="cursor:pointer"
-   onclick="addAndGoToCart(this)"
-   data-name="Perfume Spray" data-price="45.00" data-img="pp.jpeg">
-  <h3>Perfume Spray</h3>
-  <p>GH¢45.00</p>
-  <button onclick="addToCart(this)" data-name="Perfume Spray" data-price="45.00" data-img="pp.jpeg">Add to Cart</button>
-</div>
+    function renderBeauty(items) {
+      container.innerHTML = "";
+      items.forEach(data => {
+        const div = document.createElement("div");
+        div.className = "product";
+        div.innerHTML = `
+          <img src="${data.image}" alt="${data.name}" />
+          <div class="product-name">${data.name}</div>
+          <div class="product-price">GH₵${data.price.toFixed(2)}</div>
+          <button class="add-btn"
+            data-id="${data.id}"
+            data-name="${data.name}"
+            data-price="${data.price}"
+            data-image="${data.image}"
+            data-category="Shirt">
+            Add to Cart
+          </button>
+        `;
+        container.appendChild(div);
+      });
 
-<div class="product">
-  <img src="pp.jpeg" alt="Face Cream" style="cursor:pointer"
-   onclick="addAndGoToCart(this)"
-   data-name="Face Cream" data-price="28.00" data-img="pp.jpeg">
-  <h3>Face Cream</h3>
-  <p>GH¢28.00</p>
-  <button onclick="addToCart(this)" data-name="Face Cream" data-price="28.00" data-img="pp.jpeg">Add to Cart</button>
-</div>
-
-<div class="product">
-  <img src="pp.jpeg" alt="Shaving Stick" style="cursor:pointer"
-   onclick="addAndGoToCart(this)"
-   data-name="Shaving Stick" data-price="12.00" data-img="pp.jpeg">
-  <h3>Shaving Stick</h3>
-  <p>GH¢12.00</p>
-  <button onclick="addToCart(this)" data-name="Shaving Stick" data-price="12.00" data-img="pp.jpeg">Add to Cart</button>
-</div>
-
-<div class="product">
-  <img src="pp.jpeg" alt="Hair Cream" style="cursor:pointer"
-   onclick="addAndGoToCart(this)"
-   data-name="Hair Cream" data-price="20.00" data-img="pp.jpeg">
-  <h3>Hair Cream</h3>
-  <p>GH¢20.00</p>
-  <button onclick="addToCart(this)" data-name="Hair Cream" data-price="20.00" data-img="pp.jpeg">Add to Cart</button>
-</div>
-
-<div class="product">
-  <img src="pp.jpeg" alt="Body Spray" style="cursor:pointer"
-   onclick="addAndGoToCart(this)"
-   data-name="Body Spray" data-price="18.00" data-img="pp.jpeg">
-  <h3>Body Spray</h3>
-  <p>GH¢18.00</p>
-  <button onclick="addToCart(this)" data-name="Body Spray" data-price="18.00" data-img="pp.jpeg">Add to Cart</button>
-</div>
-
-<div class="product">
-  <img src="pp.jpeg" alt="Shower Gel" style="cursor:pointer"
-   onclick="addAndGoToCart(this)"
-   data-name="Shower Gel" data-price="32.00" data-img="pp.jpeg">
-  <h3>Shower Gel</h3>
-  <p>GH¢32.00</p>
-  <button onclick="addToCart(this)" data-name="Shower Gel" data-price="32.00" data-img="pp.jpeg">Add to Cart</button>
-</div>
-
-<div class="product">
-  <img src="pp.jpeg" alt="Deodorant Roll-On" style="cursor:pointer"
-   onclick="addAndGoToCart(this)"
-   data-name="Deodorant Roll-On" data-price="14.00" data-img="pp.jpeg">
-  <h3>Deodorant Roll-On</h3>
-  <p>GH¢14.00</p>
-  <button onclick="addToCart(this)" data-name="Deodorant Roll-On" data-price="14.00" data-img="pp.jpeg">Add to Cart</button>
-</div>
-
-<div class="product">
-  <img src="pp.jpeg" alt="Facial Toner" style="cursor:pointer"
-   onclick="addAndGoToCart(this)"
-   data-name="Facial Toner" data-price="33.00" data-img="pp.jpeg">
-  <h3>Facial Toner</h3>
-  <p>GH¢33.00</p>
-  <button onclick="addToCart(this)" data-name="Facial Toner" data-price="33.00" data-img="pp.jpeg">Add to Cart</button>
-</div>
-
-<div class="product">
-  <img src="pp.jpeg" alt="Sunscreen" style="cursor:pointer"
-   onclick="addAndGoToCart(this)"
-   data-name="Sunscreen SPF 50" data-price="38.00" data-img="pp.jpeg">
-  <h3>Sunscreen SPF 50</h3>
-  <p>GH¢38.00</p>
-  <button onclick="addToCart(this)" data-name="Sunscreen SPF 50" data-price="38.00" data-img="pp.jpeg">Add to Cart</button>
-</div>
-
-<div class="product">
-  <img src="pp.jpeg" alt="Makeup Remover" style="cursor:pointer"
-   onclick="addAndGoToCart(this)"
-   data-name="Makeup Remover" data-price="22.00" data-img="pp.jpeg">
-  <h3>Makeup Remover</h3>
-  <p>GH¢22.00</p>
-  <button onclick="addToCart(this)" data-name="Makeup Remover" data-price="22.00" data-img="pp.jpeg">Add to Cart</button>
-</div>
-
-<div class="product">
-  <img src="pp.jpeg" alt="Whitening Toothpaste" style="cursor:pointer"
-   onclick="addAndGoToCart(this)"
-   data-name="Whitening Toothpaste" data-price="16.00" data-img="pp.jpeg">
-  <h3>Whitening Toothpaste</h3>
-  <p>GH¢16.00</p>
-  <button onclick="addToCart(this)" data-name="Whitening Toothpaste" data-price="16.00" data-img="pp.jpeg">Add to Cart</button>
-</div>
-
-<div class="product">
-  <img src="pp.jpeg" alt="Hair Wax" style="cursor:pointer"
-   onclick="addAndGoToCart(this)"
-   data-name="Hair Wax" data-price="27.00" data-img="pp.jpeg">
-  <h3>Hair Wax</h3>
-  <p>GH¢27.00</p>
-  <button onclick="addToCart(this)" data-name="Hair Wax" data-price="27.00" data-img="pp.jpeg">Add to Cart</button>
-</div>
-
-<div class="product">
-  <img src="pp.jpeg" alt="Cuticle Oil" style="cursor:pointer"
-   onclick="addAndGoToCart(this)"
-   data-name="Cuticle Oil" data-price="12.00" data-img="pp.jpeg">
-  <h3>Cuticle Oil</h3>
-  <p>GH¢12.00</p>
-  <button onclick="addToCart(this)" data-name="Cuticle Oil" data-price="12.00" data-img="pp.jpeg">Add to Cart</button>
-</div>
-
-<div class="product">
-  <img src="pp.jpeg" alt="Nail Polish Remover" style="cursor:pointer"
-   onclick="addAndGoToCart(this)"
-   data-name="Nail Polish Remover" data-price="10.00" data-img="pp.jpeg">
-  <h3>Nail Polish Remover</h3>
-  <p>GH¢10.00</p>
-  <button onclick="addToCart(this)" data-name="Nail Polish Remover" data-price="10.00" data-img="pp.jpeg">Add to Cart</button>
-</div>
-
-<div class="product">
-  <img src="pp.jpeg" alt="Foot Cream" style="cursor:pointer"
-   onclick="addAndGoToCart(this)"
-   data-name="Foot Cream" data-price="23.00" data-img="pp.jpeg">
-  <h3>Foot Cream</h3>
-  <p>GH¢23.00</p>
-  <button onclick="addToCart(this)" data-name="Foot Cream" data-price="23.00" data-img="pp.jpeg">Add to Cart</button>
-</div>
-</div>
-  </div> 
- <script>
-  function addToCart(button) {
-    const name = button.dataset.name;
-    const price = parseFloat(button.dataset.price);
-    const img = button.dataset.img;
-
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    const existing = cart.find(item => item.name === name);
-
-    if (existing) {
-      existing.qty++;
-    } else {
-      cart.push({ name, price, img, qty: 1 });
+      document.querySelectorAll('.add-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const product = {
+            id: btn.dataset.id,
+            name: btn.dataset.name,
+            price: parseFloat(btn.dataset.price),
+            image: btn.dataset.image,
+            category: btn.dataset.category
+          };
+          addToCart(product);
+        });
+      });
     }
 
-    localStorage.setItem('cart', JSON.stringify(cart));
-    updateCartCount();
-  }
-
-  function updateCartCount() {
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
-    document.getElementById('cart-count').textContent = totalQty;
-  }
-
-  updateCartCount();
-</script>
- <script>
-  function addAndGoToCart(img) {
-    const name = img.dataset.name;
-    const price = parseFloat(img.dataset.price);
-    const imgSrc = img.dataset.img;
-
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    const existing = cart.find(item => item.name === name);
-
-    if (existing) {
-      existing.qty++;
-    } else {
-      cart.push({ name, price, img: imgSrc, qty: 1 });
+    // Load from cache first
+    const cached = localStorage.getItem("Beauty");
+    if (cached) {
+      try {
+        const items = JSON.parse(cached);
+        renderBeauty(items);
+      } catch (e) {
+        console.error("Error parsing cached shirts:", e);
+      }
     }
 
-    localStorage.setItem('cart', JSON.stringify(cart));
+    // Firestore real-time listener (only updates on data change)
+    onSnapshot(collection(db, "category", "Beauty", "items"), snapshot => {
+      const items = [];
+      snapshot.forEach(doc => {
+        items.push({ ...doc.data(), id: doc.id });
+      });
+      localStorage.setItem("Beauty", JSON.stringify(items));
+      renderShirts(items);
+    });
+
+    function addToCart(product) {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const index = cart.findIndex(item => item.id === product.id);
+      if (index >= 0) {
+        cart[index].qty += 1;
+      } else {
+        cart.push({ ...product, qty: 1 });
+      }
+      localStorage.setItem("cart", JSON.stringify(cart));
+      updateCartCount();
+      animateCart();
+    }
+
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const count = cart.reduce((sum, item) => sum + item.qty, 0);
+      document.getElementById("cartCount").textContent = count;
+    }
+
+    function animateCart() {
+      const cartIcon = document.querySelector(".cart-icon");
+      cartIcon.classList.add("shake");
+      setTimeout(() => cartIcon.classList.remove("shake"), 500);
+    }
+
     updateCartCount();
-    window.location.href = 'cart.html';
-  }
-</script>
- </body>
+  </script>
+</body>
 </html>
