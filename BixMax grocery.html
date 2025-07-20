@@ -407,48 +407,59 @@ border-radius: 10px;
 
     // Fetch all shirts from Firestore
       function fetchCategory(categoryName, containerId) {
-    const container = document.
-getElementById(containerId);
-    
-    db.collection("grocery")
-      .doc(categoryName)
-      .collection("items")
-      .get()
-      .then((snapshot) => {
-        container.innerHTML = "";
+  const container = document.getElementById(containerId);
 
-        if (snapshot.empty) {
-          container.innerHTML = `<p>No ${categoryName} available.</p>`;
-          return;
-        }
+  db.collection("grocery")
+    .doc(categoryName)
+    .collection("items")
+    .get()
+    .then((snapshot) => {
+      container.innerHTML = ""; // clear existing items
 
-        snapshot.forEach((doc) => {
-          const data = doc.data();
+      if (snapshot.empty) {
+        container.innerHTML = `<p>No ${categoryName} available.</p>`;
+        return;
+      }
 
-          const productEl = document.createElement("div");
-          productEl.className = "product";
-          productEl.innerHTML = `
-            <img src="${data.image}" alt="${data.name}" />
-            <h3>${data.name}</h3>
-            <p>GH¢${data.price}</p>
-            <button class="add-btn" onclick="addToCart('${data.name}', '${data.image}', ${data.price})">Add to Cart</button>
-          `;
-          container.appendChild(productEl);
-        });
-      })
-      .catch((error) => {
-        console.error(`Error loading ${categoryName}:`, error);
-        container.innerHTML = `<p>Error loading ${categoryName}.</p>`;
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+
+        const productEl = document.createElement("div");
+        productEl.className = "product";
+        productEl.innerHTML = `
+          <img src="${data.image}" alt="${data.name}" />
+          <h3>${data.name}</h3>
+          <p>GH¢${data.price}</p>
+          <button class="add-btn" onclick="addToCart('${data.name}', '${data.image}', ${data.price})">Add to Cart</button>
+        `;
+        container.appendChild(productEl);
       });
-  }
+    })
+    .catch((error) => {
+      console.error(`Error loading ${categoryName}:`, error);
+      container.innerHTML = `<p>Error loading ${categoryName}.</p>`;
+    });
+}
 
+// List of categories and their container IDs
+const categories = [
+  { name: "Vegetables", id: "vegetablesContainer" },
+  { name: "Fruits", id: "fruitsContainer" },
+  { name: "Beverages", id: "beveragesContainer" },
+  { name: "Bakery", id: "bakeryContainer" },
+  { name: "Packaged Foods", id: "packagedContainer" },
+];
 
-  // Example usage: if this is the Shirts page
-  fetchCategory("Vegetables", "vegetablesContainer");
-  fetchCategory("Fruits", "fruitsContainer");
-  fetchCategory("Beverages", "beveragesContainer");
-  fetchCategory("Bakery", "bakeryContainer");
-  fetchCategory("Packaged Foods", "packagedContainer");
+// Function to refresh all categories
+function refreshAllCategories() {
+  categories.forEach(cat => fetchCategory(cat.name, cat.id));
+}
+
+// Fetch once immediately
+refreshAllCategories();
+
+// Then refetch every 5 seconds
+setInterval(refreshAllCategories, 1000);
 </script>
 </body>
 </html>
