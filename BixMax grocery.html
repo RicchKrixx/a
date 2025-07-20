@@ -463,22 +463,25 @@ setInterval(refreshAllCategories, 1000);
 
 </script>
 <script>
-  // Block refresh using F5 or Ctrl+R / Cmd+R
+  // Block all refresh methods
+  window.addEventListener("beforeunload", function (e) {
+    // This prevents tab closing, reloads, and browser refresh
+    e.preventDefault();
+    e.returnValue = '';
+    return '';
+  });
+
   document.addEventListener("keydown", function (e) {
-    if (
-      e.key === "F5" ||                         // F5
-      (e.ctrlKey && e.key === "r") ||           // Ctrl+R (Windows/Linux)
-      (e.metaKey && e.key === "r")              // Cmd+R (Mac)
-    ) {
+    // Block F5
+    if (e.key === "F5") {
       e.preventDefault();
       alert("Page refresh is disabled!");
     }
-  });
-
-  // Prevent refresh on drag-drop reload
-  window.addEventListener("beforeunload", function (e) {
-    e.preventDefault();
-    e.returnValue = ""; // Required for Chrome
+    // Block Ctrl+R or Cmd+R
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "r") {
+      e.preventDefault();
+      alert("Page refresh is disabled!");
+    }
   });
 </script>
 </body>
