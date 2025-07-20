@@ -2,7 +2,7 @@
 <head>  
   <meta charset="UTF-8" />  
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>  
-  <title>BixMAX | Fashion</title>  
+  <title>BixMAX | Shirt</title>  
   <style>  
     * { margin: 0;   
 padding: 0;   
@@ -367,7 +367,7 @@ border-radius: 10px;
           <img src="${data.image}" alt="${data.name}" />
           <h3>${data.name}</h3>
           <p>₵${data.price}</p>
-          <button onclick="addToCart('${doc.id}', '${data.name}', ${data.price}, '${data.image}')">Add to Cart</button>
+          <button class="add-btn" onclick="addToCart('${doc.id}', '${data.name}', ${data.price}, '${data.image}')">Add to Cart</button>
         `;
         container.appendChild(div);
       });
