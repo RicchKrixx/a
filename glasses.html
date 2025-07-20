@@ -2,137 +2,248 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BizMAX | Glasses</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    body {
+    * {
       margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
       font-family: Arial, sans-serif;
       background: lightblue;
     }
     header {
-      background: #1976d2;
+      width: 100%;
+      padding: 24px;
+      border-radius: 16px;
+      backdrop-filter: blur(25px);
       color: white;
-      padding: 16px 24px;
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
       align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
+      font-weight: bold;
+      background-size: cover;
+      margin-bottom: 10px;
+    }
+    h3 {
+      color: black;
     }
     .cart-icon {
-      position: relative;
-      font-size: 20px;
-      cursor: pointer;
+      position: fixed;
+      font-size: 35px;
+      text-decoration: none;
+      color: white;
+      right: 17px;
+      top: 20px;
     }
-    .cart-icon span {
+    #cartCount {
       position: absolute;
       top: -8px;
-      right: -10px;
+      right: -12px;
       background: red;
       color: white;
-      font-size: 13px;
-      width: 18px;
-      height: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
       border-radius: 50%;
+      padding: 2px 6px;
     }
-    h1 {
-      text-align: center;
-      margin: 20px 0;
-    }
-    .grid {
+    .products {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
       gap: 16px;
-      padding: 20px;
+      padding: 16px;
     }
-    .item {
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      padding: 12px;
+    .product {
+      padding: 5px;
+      border-radius: 35px;
       text-align: center;
+      background: darkcyan;
+      color: white;
+      font-weight: bold;
+      box-shadow: 0 0 10px cyan;
     }
-    .item img {
-      max-width: 100%;
-      border-radius: 10px;
-      height: 150px;
+    .product img {
+      width: 100%;
+      height: 160px;
       object-fit: cover;
+      border-radius: 30px;
     }
-    .item h3 {
-      margin: 10px 0 4px;
+    .product-name {
+      font-size: 18px;
+      margin-top: 0;
+      margin-bottom: 5px;
+      color: black;
     }
-    .item p {
-      margin-bottom: 8px;
+    .product-price {
+      font-size: 15px;
+    }
+    .add-btn {
+      background: cyan;
+      color: white;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 5px;
       font-weight: bold;
     }
-    .item button {
-      padding: 8px 16px;
-      background: #1976d2;
+    .add-btn:hover {
+      background: #008b8b;
+    }
+    .glow {
+      animation: brightGlow 1.5s infinite ease-in-out;
+      color: cyan;
+      text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
+    }
+    @keyframes brightGlow {
+      0%, 100% {
+        text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
+      }
+      50% {
+        text-shadow: 0 0 15px #0ff, 0 0 25px #0ff, 0 0 35px #0ff;
+      }
+    }
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      20% { transform: translateX(-4px); }
+      40% { transform: translateX(4px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+      100% { transform: translateX(0); }
+    }
+    .shake {
+      animation: shake 0.4s ease;
+    }
+    footer {
       color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
+      padding: 15px;
+      margin-top: 15px;
+      width: 100%;
+      border-radius: 16px;
+      background: darkcyan;
+      margin: 10px auto;
+      font-weight: bold;
+      box-shadow: 0 0 10px cyan;
+      display: flex;
+      align-content: center;
+      justify-content: center;
     }
   </style>
 </head>
 <body>
-
   <header>
-    <h2>👓 Glasses</h2>
-    <div class="cart-icon" onclick="window.location.href='cart.html'">
-      🛒 <span id="cart-count">0</span>
-    </div>
+    <h1>BixMAX</h1>
+    <h3>All-in-One Online Shop</h3>
+    <a href="cart.html" class="cart-icon glow" id="cartIcon">🛒<span id="cartCount">0</span></a>
   </header>
 
-  <h1>Women’s Glasses</h1>
-  <div class="grid" id="productGrid"></div>
+  <div class="products" id="glassContainer">Loading...</div>
 
-  <script>
-    const products = [
-      { name: "Pink Frame", price: 25, image: "pp.jpeg" },
-      { name: "Classic Black", price: 30, image: "pp.jpeg" },
-      { name: "Round Gold", price: 35, image: "pp.jpeg" },
-      { name: "Oversized Square", price: 28, image: "pp.jpeg" },
-      { name: "Transparent Blue", price: 22, image: "pp.jpeg" }
-    ];
+  <footer>&copy; BixMAX 2025. All rights reserved.</footer>  
 
-    const grid = document.getElementById("productGrid");
-    const cartCount = document.getElementById("cart-count");
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      onSnapshot
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    function updateCartCount() {
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      cartCount.textContent = cart.reduce((sum, item) => sum + item.qty, 0);
+    const firebaseConfig = {
+      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+      authDomain: "bixmax-6c24c.firebaseapp.com",
+      projectId: "bixmax-6c24c",
+      storageBucket: "bixmax-6c24c.appspot.com",
+      messagingSenderId: "37740442541",
+      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const container = document.getElementById("glassContainer");
+
+    function renderGlass(items) {
+      container.innerHTML = "";
+      items.forEach(data => {
+        const div = document.createElement("div");
+        div.className = "product";
+        div.innerHTML = `
+          <img src="${data.image}" alt="${data.name}" />
+          <div class="product-name">${data.name}</div>
+          <div class="product-price">GH₵${data.price.toFixed(2)}</div>
+          <button class="add-btn"
+            data-id="${data.id}"
+            data-name="${data.name}"
+            data-price="${data.price}"
+            data-image="${data.image}"
+            data-category="Glass">
+            Add to Cart
+          </button>
+        `;
+        container.appendChild(div);
+      });
+
+      document.querySelectorAll('.add-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const product = {
+            id: btn.dataset.id,
+            name: btn.dataset.name,
+            price: parseFloat(btn.dataset.price),
+            image: btn.dataset.image,
+            category: btn.dataset.category
+          };
+          addToCart(product);
+        });
+      });
     }
 
+    // Load from cache first
+    const cached = localStorage.getItem("Glass");
+    if (cached) {
+      try {
+        const items = JSON.parse(cached);
+        renderGlass(items);
+      } catch (e) {
+        console.error("Error parsing cached glasses:", e);
+      }
+    }
+
+    // Firestore real-time listener (only updates on data change)
+    onSnapshot(collection(db, "category", "Glass", "items"), snapshot => {
+      const items = [];
+      snapshot.forEach(doc => {
+        items.push({ ...doc.data(), id: doc.id });
+      });
+      localStorage.setItem("Glass", JSON.stringify(items));
+      renderGlass(items);
+    });
+
     function addToCart(product) {
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      const index = cart.findIndex(i => i.name === product.name);
-      if (index > -1) {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const index = cart.findIndex(item => item.id === product.id);
+      if (index >= 0) {
         cart[index].qty += 1;
       } else {
         cart.push({ ...product, qty: 1 });
       }
       localStorage.setItem("cart", JSON.stringify(cart));
       updateCartCount();
-      alert(${product.name} added to cart ✅);
+      animateCart();
     }
 
-    products.forEach(product => {
-      const div = document.createElement("div");
-      div.className = "item";
-      div.innerHTML = 
-        <img src="${product.image}" alt="${product.name}" />
-        <h3>${product.name}</h3>
-        <p>$${product.price}</p>
-        <button onclick='addToCart(${JSON.stringify(product)})'>Add to Cart</button>
-      ;
-      grid.appendChild(div);
-    });
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const count = cart.reduce((sum, item) => sum + item.qty, 0);
+      document.getElementById("cartCount").textContent = count;
+    }
+
+    function animateCart() {
+      const cartIcon = document.querySelector(".cart-icon");
+      cartIcon.classList.add("shake");
+      setTimeout(() => cartIcon.classList.remove("shake"), 500);
+    }
 
     updateCartCount();
   </script>
