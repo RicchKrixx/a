@@ -214,6 +214,27 @@ align-content: center;
       updateCartCount();
       animateCart();
     }
+  // Load from localStorage
+  const cached = localStorage.getItem("Shirt");
+  if (cached) {
+    try {
+      const items = JSON.parse(cached);
+      renderShirtItems(items);
+    } catch (e) {
+      console.warn("Cache error for Shirt:", e);
+    }
+  }
+
+  // Realtime Firestore listener for shirts
+  db.collection("category")
+    .doc("Shirt")
+    .collection("items")
+    .onSnapshot((snapshot) => {
+      const items = [];
+      snapshot.forEach(doc => items.push(doc.data()));
+
+      // Save to localStorage
+      localStorage.setItem("shirt", JSON.stringify(items));
 
     function updateCartCount() {
       const cart = JSON.parse(localStorage.getItem("cart")) || [];
