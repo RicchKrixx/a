@@ -63,11 +63,10 @@
 </div>
 
 <!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-<script>
-  // Your Firebase config
   const firebaseConfig = {
     apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
     authDomain: "bixmax-6c24c.firebaseapp.com",
@@ -77,11 +76,10 @@
     appId: "1:400125973948:web:fcbebc87bce5b84911bdb6"
   };
 
-  // Initialize Firebase
-  const app = firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-  async function trackOrder() {
+  window.trackOrder = async function () {
     const orderId = document.getElementById("orderIdInput").value.trim();
     const resultBox = document.getElementById("result");
     const notFoundBox = document.getElementById("notFound");
@@ -90,11 +88,11 @@
     notFoundBox.style.display = "none";
 
     try {
-      const docRef = db.collection("orders").doc(orderId);
-      const doc = await docRef.get();
+      const docRef = doc(db, "orders", orderId);
+      const docSnap = await getDoc(docRef);
 
-      if (doc.exists) {
-        const data = doc.data();
+      if (docSnap.exists()) {
+        const data = docSnap.data();
         const itemsList = data.items.map(item => `
           <li>${item.name} × ${item.quantity} ${item.color || ''} ${item.size || ''}</li>
         `).join("");
@@ -110,14 +108,15 @@
         `;
         resultBox.style.display = "block";
       } else {
+        notFoundBox.textContent = "Order not found!";
         notFoundBox.style.display = "block";
       }
     } catch (error) {
-      console.error("Error getting order:", error);
+      console.error("Firebase error:", error);
       notFoundBox.textContent = "Error checking order. Try again.";
       notFoundBox.style.display = "block";
     }
-  }
+  };
 </script>
 
 </body>
