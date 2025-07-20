@@ -92,7 +92,7 @@
     const shirtContainer = document.getElementById("shirtContainer");
 
     // Fetch shirts from Firestore
-    db.collection("products").where("category", "==", "shirt").onSnapshot(snapshot => {
+    db.collection("products").where("category", "==", "Shirt").onSnapshot(snapshot => {
       shirtContainer.innerHTML = ""; // Clear before adding
       snapshot.forEach(doc => {
         const data = doc.data();
