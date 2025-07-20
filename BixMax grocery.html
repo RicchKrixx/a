@@ -460,6 +460,10 @@ refreshAllCategories();
 
 // Then refetch every 5 seconds
 setInterval(refreshAllCategories, 1000);
+window.addEventListener("beforeunload", function (e) {
+  e.preventDefault();
+  e.returnValue = ""; // Needed for Chrome
+});
 </script>
 </body>
 </html>
