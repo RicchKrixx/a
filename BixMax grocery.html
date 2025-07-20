@@ -387,80 +387,85 @@ border-radius: 10px;
     updateCartCount();  
   </script> 
   <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
-  <script>
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-      authDomain: "bixmax-6c24c.firebaseapp.com",
-      projectId: "bixmax-6c24c",
-      storageBucket: "bixmax-6c24c.appspot.com",
-      messagingSenderId: "37740442541",
-      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-    };
+<script>
+  // Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+    authDomain: "bixmax-6c24c.firebaseapp.com",
+    projectId: "bixmax-6c24c",
+    storageBucket: "bixmax-6c24c.appspot.com",
+    messagingSenderId: "37740442541",
+    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+  };
 
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
 
-    // Fetch all shirts from Firestore
-      function fetchCategory(categoryName, containerId) {
-  const container = document.getElementById(containerId);
+  // Fetch and save each category
+  function fetchCategory(categoryName, containerId) {
+    const container = document.getElementById(containerId);
 
-  db.collection("grocery")
-    .doc(categoryName)
-    .collection("items")
-    .get()
-    .then((snapshot) => {
-      container.innerHTML = ""; // clear existing items
+    db.collection("grocery")
+      .doc(categoryName)
+      .collection("items")
+      .get()
+      .then((snapshot) => {
+        container.innerHTML = ""; // clear container
+        const items = [];
 
-      if (snapshot.empty) {
-        container.innerHTML = `<p>No ${categoryName} available.</p>`;
-        return;
-      }
+        if (snapshot.empty) {
+          container.innerHTML = `<p>No ${categoryName} available.</p>`;
+          localStorage.setItem(`grocery_${categoryName}`, JSON.stringify([]));
+          return;
+        }
 
-      snapshot.forEach((doc) => {
-        const data = doc.data();
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          items.push(data); // collect for localStorage
 
-        const productEl = document.createElement("div");
-        productEl.className = "product";
-        productEl.innerHTML = `
-          <img src="${data.image}" alt="${data.name}" />
-          <h3>${data.name}</h3>
-          <p>GH¢${data.price}</p>
-          <button class="add-btn" onclick="addToCart('${data.name}', '${data.image}', ${data.price})">Add to Cart</button>
-        `;
-        container.appendChild(productEl);
+          const productEl = document.createElement("div");
+          productEl.className = "product";
+          productEl.innerHTML = `
+            <img src="${data.image}" alt="${data.name}" />
+            <h3>${data.name}</h3>
+            <p>GH¢${data.price}</p>
+            <button class="add-btn" onclick="addToCart('${data.name}', '${data.image}', ${data.price})">Add to Cart</button>
+          `;
+          container.appendChild(productEl);
+        });
+
+        // Save to localStorage
+        localStorage.setItem(`grocery_${categoryName}`, JSON.stringify(items));
+      })
+      .catch((error) => {
+        console.error(`Error loading ${categoryName}:`, error);
+        container.innerHTML = `<p>Error loading ${categoryName}.</p>`;
       });
-    })
-    .catch((error) => {
-      console.error(`Error loading ${categoryName}:`, error);
-      container.innerHTML = `<p>Error loading ${categoryName}.</p>`;
-    });
-}
+  }
 
-// List of categories and their container IDs
-const categories = [
-  { name: "Vegetables", id: "vegetablesContainer" },
-  { name: "Fruits", id: "fruitsContainer" },
-  { name: "Beverages", id: "beveragesContainer" },
-  { name: "Bakery", id: "bakeryContainer" },
-  { name: "Packaged Foods", id: "packagedContainer" },
-];
+  // List of categories and their container IDs
+  const categories = [
+    { name: "Vegetables", id: "vegetablesContainer" },
+    { name: "Fruits", id: "fruitsContainer" },
+    { name: "Beverages", id: "beveragesContainer" },
+    { name: "Bakery", id: "bakeryContainer" },
+    { name: "Packaged Foods", id: "packagedContainer" },
+  ];
 
-// Function to refresh all categories
-function refreshAllCategories() {
-  categories.forEach(cat => fetchCategory(cat.name, cat.id));
-}
+  // Function to refresh all
+  function refreshAllCategories() {
+    categories.forEach(cat => fetchCategory(cat.name, cat.id));
+  }
 
-// Fetch once immediately
-refreshAllCategories();
+  // Initial fetch
+  refreshAllCategories();
 
-// Then refetch every 5 seconds
-setInterval(refreshAllCategories, 1000);
-
+  // Refetch every second
+  setInterval(refreshAllCategories, 1000);
 </script>
 <script>
   // Block all refresh methods
