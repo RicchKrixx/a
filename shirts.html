@@ -70,8 +70,8 @@
   </style>
 </head>
 <body>
-  <h1>All Shirts</h1>
-  <div class="products" id="shirtsContainer"></div>
+  <h1>Shirt</h1>
+  <div class="products" id="shirtContainer"></div>
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
@@ -89,11 +89,11 @@
     const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    const shirtsContainer = document.getElementById("shirtsContainer");
+    const shirtContainer = document.getElementById("shirtContainer");
 
     // Fetch shirts from Firestore
-    db.collection("products").where("category", "==", "shirts").onSnapshot(snapshot => {
-      shirtsContainer.innerHTML = ""; // Clear before adding
+    db.collection("products").where("category", "==", "shirt").onSnapshot(snapshot => {
+      shirtContainer.innerHTML = ""; // Clear before adding
       snapshot.forEach(doc => {
         const data = doc.data();
         const productEl = document.createElement("div");
@@ -104,7 +104,7 @@
           <p>₵${data.price}</p>
           <button onclick="addToCart('${doc.id}', '${data.name}', ${data.price}, '${data.image || ''}')">Add to Cart</button>
         `;
-        shirtsContainer.appendChild(productEl);
+        shirtContainer.appendChild(productEl);
       });
     });
 
