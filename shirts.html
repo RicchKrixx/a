@@ -356,61 +356,48 @@ border-radius: 10px;
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
 
-  // Render shirt items
-  function renderShirt(items) {
-    const container = document.getElementById("shirtContainer");
-    container.innerHTML = "";
+      function fetchShirt() {
+      const container = document.getElementById("shirtContainer");
+      container.innerHTML = "<p>Loading...</p>";
 
-    if (items.length === 0) {
-      container.innerHTML = `<p>No shirts available.</p>`;
-      return;
+      console.log("Fetching shirts from Firestore...");
+
+      db.collection("category")
+        .doc("Shirt")
+        .collection("items")
+        .get()
+        .then((snapshot) => {
+          container.innerHTML = "";
+
+          if (snapshot.empty) {
+            container.innerHTML = "<p>No shirts available.</p>";
+            return;
+          }
+
+          snapshot.forEach((doc) => {
+            const data = doc.data();
+            console.log("Loaded:", data);
+
+            const productEl = document.createElement("div");
+            productEl.className = "product";
+            productEl.innerHTML = `
+              <img src="${data.image}" alt="${data.name}" />
+              <h3>${data.name}</h3>
+              <p>GH¢${data.price}</p>
+              <button class="add-btn" onclick="addToCart('${data.name}', '${data.image}', ${data.price})">Add to Cart</button>
+            `;
+            container.appendChild(productEl);
+          });
+        })
+        .catch((error) => {
+          console.error("Firestore error:", error);
+          container.innerHTML = "<p>Error loading shirts.</p>";
+        });
     }
 
-    items.forEach(data => {
-      const productEl = document.createElement("div");
-      productEl.className = "product";
-      productEl.innerHTML = `
-        <img src="${data.image}" alt="${data.name}" />
-        <h3>${data.name}</h3>
-        <p>GH¢${data.price}</p>
-        <button class="add-btn">Add to Cart</button>
-      `;
-      container.appendChild(productEl);
-    });
-  }
-
-  // Fetch and listen to Shirts collection
-  function listenToShirt() {
-    const cached = localStorage.getItem("Shirt");
-    if (cached) {
-      try {
-        const items = JSON.parse(cached);
-        renderShirt(items);
-      } catch (e) {
-        console.warn("Cache error:", e);
-      }
+    // Dummy addToCart function (replace with your cart logic)
+    function addToCart(name, image, price) {
+      
     }
-
-    db.collection("category")
-      .doc("Shirt")
-      .collection("items")
-      .onSnapshot((snapshot) => {
-        const items = [];
-        snapshot.forEach(doc => items.push(doc.data()));
-
-        // Save to localStorage
-        localStorage.setItem("Shirt", JSON.stringify(items));
-
-        // Render to DOM
-        renderShirt(items);
-      }, (error) => {
-        console.error("Error loading shirts:", error);
-        document.getElementById("shirtContainer").innerHTML = `<p>Error loading shirts.</p>`;
-      });
-  }
-
-  // Start listening
-  listenToShirt();
-</script>
 </body>
 </html>
