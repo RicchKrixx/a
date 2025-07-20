@@ -225,171 +225,120 @@ border-radius: 10px;
 
 <div class="container">  
   <!-- Fashion Sections -->  
-<div class="category">  
-  <div class="cat-header">  
-    <h2>Vegetables</h2>  
-    <a href="vegetables.html">View All</a>
-  </div>  
-  <div class="products" id="vegetablesContainer">
+  <div class="products" id="shirtContainer">
     <!-- Firebase will load .product elements here -->
   </div>  
-</div>
-
-  <!-- Fashion Sections -->  
-<div class="category">  
-  <div class="cat-header">  
-    <h2>Fruits</h2>  
-    <a href="fruits.html">View All</a>
-  </div>  
-  <div class="products" id="fruitsContainer">
-    <!-- Firebase will load .product elements here -->
-  </div>  
-</div>
-
-
-  <div class="category">  
-  <div class="cat-header">  
-    <h2>Beverages</h2>  
-    <a href="beverages.html">View All</a>
-  </div>  
-  <div class="products" id="beveragesContainer">
-    <!-- Firebase will load .product elements here -->
-  </div>  
-</div>
-
-<div class="category">  
-  <div class="cat-header">  
-    <h2>Bakery</h2>  
-    <a href="bakery.html">View All</a>
-  </div>  
-  <div class="products" id="bakeryContainer">
-    <!-- Firebase will load .product elements here -->
-  </div>  
-</div>
-
-<div class="category">  
-  <div class="cat-header">  
-    <h2>Packaged Foods</h2>  
-    <a href="packaged foods.html">View All</a>
-  </div>  
-  <div class="products" id="packagedContainer">
-    <!-- Firebase will load .product elements here -->
-  </div>  
-</div>
 
 </div>  
   <footer>&copy; BixMAX 2025. All rights reserved.</footer>  
- <!-- 🔘 Variation Popup HTML (injects dynamically by script) -->    <script>  
-    const variationItems = {  
-      "Nike Air": { color: ["Red", "White"], size: ["42", "43", "44"] },  
-      "Summer Dress": { color: ["Blue", "Yellow"], size: ["S", "M", "L"] },  
-      "Ray-Ban": { color: ["Black", "Gold"] }  
-    };        
-   const cartCountEl = document.getElementById("cartCount");  
+<script>
+  const variationItems = {
+    "Nike Air": { color: ["Red", "White"], size: ["42", "43", "44"] },
+    "Summer Dress": { color: ["Blue", "Yellow"], size: ["S", "M", "L"] },
+    "Ray-Ban": { color: ["Black", "Gold"] }
+  };
 
-    function updateCartCount() {  
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];  
-      const count = cart.reduce((sum, item) => sum + item.qty, 0);  
-      cartCountEl.textContent = count;  
-    }  
+  const cartCountEl = document.getElementById("cartCount");
 
-    function addToCart(name, img, price) {  
-      if (variationItems[name]) {  
-        showVariationPopup(name, img, price, variationItems[name]);  
-      } else {  
-        saveToCart({ name, image: img, price, qty: 1 });  
-      }  
-    }  
+  function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const count = cart.reduce((sum, item) => sum + item.qty, 0);
+    cartCountEl.textContent = count;
+  }
 
-    function saveToCart(item) {  
-      const cart = JSON.parse(localStorage.getItem("cart") || "[]");  
-      const existing = cart.find(i =>  
-        i.name === item.name &&  
-        (!i.color || i.color === item.color) &&  
-        (!i.size || i.size === item.size)  
-      );  
-      if (existing) {  
-        existing.qty += 1;  
-      } else {  
-        cart.push(item);  
-      }  
-      localStorage.setItem("cart", JSON.stringify(cart));  
-      updateCartCount();  
-      animateCartIcon();  
-    }  
+  function addToCart(name, img, price) {
+    if (variationItems[name]) {
+      showVariationPopup(name, img, price, variationItems[name]);
+    } else {
+      saveToCart({ name, image: img, price, qty: 1 });
+    }
+  }
 
-    function animateCartIcon() {  
-      const cartIcon = document.querySelector(".cart-icon");  
-      cartIcon.classList.remove("shake");  
-      void cartIcon.offsetWidth;  
-      cartIcon.classList.add("shake");  
-      cartIcon.addEventListener("animationend", () => {  
-        cartIcon.classList.remove("shake");  
-      }, { once: true });  
-    }  
+  function saveToCart(item) {
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const existing = cart.find(i =>
+      i.name === item.name &&
+      (!i.color || i.color === item.color) &&
+      (!i.size || i.size === item.size)
+    );
+    if (existing) {
+      existing.qty += 1;
+    } else {
+      cart.push(item);
+    }
+    localStorage.setItem("cart", JSON.stringify(cart));
+    updateCartCount();
+    animateCartIcon();
+  }
 
-    function showVariationPopup(name, img, price, variations) {  
-      const overlay = document.createElement("div");  
-      overlay.style.cssText = `  
-        position:fixed;top:0;left:0;width:100%;height:100%;  
-        background:rgba(0,0,0,0.6);display:flex;justify-content:center;align-items:center;z-index:9999;  
-      `;  
+  function animateCartIcon() {
+    const cartIcon = document.querySelector(".cart-icon");
+    cartIcon.classList.remove("shake");
+    void cartIcon.offsetWidth;
+    cartIcon.classList.add("shake");
+    cartIcon.addEventListener("animationend", () => {
+      cartIcon.classList.remove("shake");
+    }, { once: true });
+  }
 
-      const popup = document.createElement("div");  
-      popup.style.cssText = `  
-        background:white;padding:20px;border-radius:14px;width:90%;max-width:340px;text-align:center;  
-        box-shadow:0 0 20px cyan;  
-      `;  
+  function showVariationPopup(name, img, price, variations) {
+    const overlay = document.createElement("div");
+    overlay.style.cssText = `
+      position:fixed;top:0;left:0;width:100%;height:100%;
+      background:rgba(0,0,0,0.6);display:flex;justify-content:center;align-items:center;z-index:9999;
+    `;
 
-      let optionsHTML = "";  
-      if (variations.color) {  
-        optionsHTML += `  
-          <label style="font-weight:bold;">Color:  
-            <select id="popupColor">  
-              ${variations.color.map(c => `<option value="${c}">${c}</option>`).join("")}  
-            </select>  
-          </label><br><br>  
-        `;  
-      }  
-      if (variations.size) {  
-        optionsHTML += `  
-          <label style="font-weight:bold;">Size:  
-            <select id="popupSize">  
-              ${variations.size.map(s => `<option value="${s}">${s}</option>`).join("")}  
-            </select>  
-          </label><br><br>  
-        `;  
-      }  
+    const popup = document.createElement("div");
+    popup.style.cssText = `
+      background:white;padding:20px;border-radius:14px;width:90%;max-width:340px;text-align:center;
+      box-shadow:0 0 20px cyan;
+    `;
 
-      popup.innerHTML = `  
-        <h3>Select Options</h3>  
-        <p style="margin-bottom:10px;font-weight:bold;">${name}</p>  
-        ${optionsHTML}  
-        <button onclick="confirmVariation('${name}','${img}',${price})" style="padding:10px 20px;background:#1976d2;color:white;border:none;border-radius:8px;">Confirm</button>  
-        <br><br>  
-        <button onclick="this.closest('div').parentNode.remove()" style="background:none;color:red;border:none;">Cancel</button>  
-      `;  
+    let optionsHTML = "";
+    if (variations.color) {
+      optionsHTML += `
+        <label style="font-weight:bold;">Color:
+          <select id="popupColor">
+            ${variations.color.map(c => `<option value="${c}">${c}</option>`).join("")}
+          </select>
+        </label><br><br>
+      `;
+    }
+    if (variations.size) {
+      optionsHTML += `
+        <label style="font-weight:bold;">Size:
+          <select id="popupSize">
+            ${variations.size.map(s => `<option value="${s}">${s}</option>`).join("")}
+          </select>
+        </label><br><br>
+      `;
+    }
 
-      overlay.appendChild(popup);  
-      document.body.appendChild(overlay);  
-    }  
+    popup.innerHTML = `
+      <h3>Select Options</h3>
+      <p style="margin-bottom:10px;font-weight:bold;">${name}</p>
+      ${optionsHTML}
+      <button onclick="confirmVariation('${name}','${img}',${price})" style="padding:10px 20px;background:#1976d2;color:white;border:none;border-radius:8px;">Confirm</button>
+      <br><br>
+      <button onclick="this.closest('div').parentNode.remove()" style="background:none;color:red;border:none;">Cancel</button>
+    `;
 
-    function confirmVariation(name, img, price) {  
-      const color = document.getElementById("popupColor")?.value;  
-      const size = document.getElementById("popupSize")?.value;  
-      const item = { name, image: img, price, qty: 1 };  
-      if (color) item.color = color;  
-      if (size) item.size = size;  
-      saveToCart(item);  
-      document.querySelector("body > div:last-child").remove();  
-    }  
+    overlay.appendChild(popup);
+    document.body.appendChild(overlay);
+  }
 
-    updateCartCount();  
-  </script> 
-  <!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  function confirmVariation(name, img, price) {
+    const color = document.getElementById("popupColor")?.value;
+    const size = document.getElementById("popupSize")?.value;
+    const item = { name, image: img, price, qty: 1 };
+    if (color) item.color = color;
+    if (size) item.size = size;
+    saveToCart(item);
+    document.querySelector("body > div:last-child").remove();
+  }
 
+  updateCartCount();
+</script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
@@ -408,13 +357,13 @@ border-radius: 10px;
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
 
-  // Render category items
-  function renderCategoryItems(categoryName, containerId, items) {
-    const container = document.getElementById(containerId);
+  // Render shirt items
+  function renderShirtItems(items) {
+    const container = document.getElementById("shirtContainer");
     container.innerHTML = "";
 
     if (items.length === 0) {
-      container.innerHTML = `<p>No ${categoryName} available.</p>`;
+      container.innerHTML = `<p>No shirts available.</p>`;
       return;
     }
 
@@ -425,55 +374,40 @@ border-radius: 10px;
         <img src="${data.image}" alt="${data.name}" />
         <h3>${data.name}</h3>
         <p>GH¢${data.price}</p>
-        <button class="add-btn" onclick="addToCart('${data.name}', '${data.image}', ${data.price})">Add to Cart</button>
+        <button class="add-btn" data-name="${data.name}" data-image="${data.image}" data-price="${data.price}">Add to Cart</button>
       `;
       container.appendChild(productEl);
     });
   }
 
-  // Fetch and listen for changes
-  function listenToCategory(categoryName, containerId) {
-    // Load cached items first
-    const cached = localStorage.getItem(`grocery-${categoryName}`);
-    if (cached) {
-      try {
-        const items = JSON.parse(cached);
-        renderCategoryItems(categoryName, containerId, items);
-      } catch (e) {
-        console.warn(`Cache error for ${categoryName}:`, e);
-      }
+  // Load from localStorage
+  const cached = localStorage.getItem("Shirt");
+  if (cached) {
+    try {
+      const items = JSON.parse(cached);
+      renderShirtItems(items);
+    } catch (e) {
+      console.warn("Cache error for Shirt:", e);
     }
-
-    // Realtime Firestore listener
-    db.collection("grocery")
-      .doc(categoryName)
-      .collection("items")
-      .onSnapshot((snapshot) => {
-        const items = [];
-        snapshot.forEach(doc => items.push(doc.data()));
-
-        // Save to localStorage
-        localStorage.setItem(`grocery-${categoryName}`, JSON.stringify(items));
-
-        // Render new data
-        renderCategoryItems(categoryName, containerId, items);
-      }, (error) => {
-        console.error(`Error fetching ${categoryName}:`, error);
-        document.getElementById(containerId).innerHTML = `<p>Error loading ${categoryName}</p>`;
-      });
   }
 
-  // List of categories and their container IDs
-  const categories = [
-    { name: "Vegetables", id: "vegetablesContainer" },
-    { name: "Fruits", id: "fruitsContainer" },
-    { name: "Beverages", id: "beveragesContainer" },
-    { name: "Bakery", id: "bakeryContainer" },
-    { name: "Packaged Foods", id: "packagedContainer" },
-  ];
+  // Realtime Firestore listener for shirts
+  db.collection("category")
+    .doc("Shirt")
+    .collection("items")
+    .onSnapshot((snapshot) => {
+      const items = [];
+      snapshot.forEach(doc => items.push(doc.data()));
 
-  // Listen to all categories
-  categories.forEach(cat => listenToCategory(cat.name, cat.id));
+      // Save to localStorage
+      localStorage.setItem("shirt", JSON.stringify(items));
+
+      // Render new data
+      renderShirtItems(items);
+    }, (error) => {
+      console.error("Error fetching shirt:", error);
+      document.getElementById("shirtContainer").innerHTML = `<p>Error loading shirts</p>`;
+    });
 </script>
 </body>
 </html>
