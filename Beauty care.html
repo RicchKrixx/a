@@ -162,7 +162,7 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const container = document.getElementById("BeautyContainer");
+    const container = document.getElementById("beautyContainer");
 
     function renderBeauty(items) {
       container.innerHTML = "";
@@ -206,7 +206,7 @@
         const items = JSON.parse(cached);
         renderBeauty(items);
       } catch (e) {
-        console.error("Error parsing cached shirts:", e);
+        console.error("Error parsing cached beauty and personal care:", e);
       }
     }
 
@@ -217,7 +217,7 @@
         items.push({ ...doc.data(), id: doc.id });
       });
       localStorage.setItem("Beauty", JSON.stringify(items));
-      renderShirts(items);
+      renderBeauty(items);
     });
 
     function addToCart(product) {
