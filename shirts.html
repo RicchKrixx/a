@@ -148,7 +148,7 @@
     import {
       getFirestore,
       collection,
-      getDocs
+      onSnapshot
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -164,12 +164,9 @@
     const db = getFirestore(app);
     const container = document.getElementById("shirtContainer");
 
-    async function loadShirts() {
-      const snapshot = await getDocs(collection(db, "category", "Shirt", "items"));
+    function renderShirts(items) {
       container.innerHTML = "";
-
-      snapshot.forEach(doc => {
-        const data = doc.data();
+      items.forEach(data => {
         const div = document.createElement("div");
         div.className = "product";
         div.innerHTML = `
@@ -177,7 +174,7 @@
           <div class="product-name">${data.name}</div>
           <div class="product-price">GH₵${data.price.toFixed(2)}</div>
           <button class="add-btn"
-            data-id="${doc.id}"
+            data-id="${data.id}"
             data-name="${data.name}"
             data-price="${data.price}"
             data-image="${data.image}"
@@ -201,6 +198,27 @@
         });
       });
     }
+
+    // Load from cache first
+    const cached = localStorage.getItem("shirts");
+    if (cached) {
+      try {
+        const items = JSON.parse(cached);
+        renderShirts(items);
+      } catch (e) {
+        console.error("Error parsing cached shirts:", e);
+      }
+    }
+
+    // Firestore real-time listener (only updates on data change)
+    onSnapshot(collection(db, "category", "Shirt", "items"), snapshot => {
+      const items = [];
+      snapshot.forEach(doc => {
+        items.push({ ...doc.data(), id: doc.id });
+      });
+      localStorage.setItem("shirts", JSON.stringify(items));
+      renderShirts(items);
+    });
 
     function addToCart(product) {
       let cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -227,7 +245,6 @@
       setTimeout(() => cartIcon.classList.remove("shake"), 500);
     }
 
-    loadShirts();
     updateCartCount();
   </script>
 </body>
