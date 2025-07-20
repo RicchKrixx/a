@@ -390,6 +390,9 @@ border-radius: 10px;
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
 <script>
   // Firebase config
   const firebaseConfig = {
@@ -405,61 +408,58 @@ border-radius: 10px;
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
 
-  // Show cached data first
-  function loadCachedCategory(categoryName, containerId) {
-    const cached = localStorage.getItem(`category_${categoryName}`);
-    if (cached) {
-      const items = JSON.parse(cached);
-      const container = document.getElementById(containerId);
-      container.innerHTML = items.map(data => `
-        <div class="product">
-          <img src="${data.image}" alt="${data.name}" />
-          <h3>${data.name}</h3>
-          <p>GH¢${data.price}</p>
-          <button class="add-btn" onclick="addToCart('${data.name}', '${data.image}', ${data.price})">Add to Cart</button>
-        </div>
-      `).join('');
+  // Render category items
+  function renderCategoryItems(categoryName, containerId, items) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = "";
+
+    if (items.length === 0) {
+      container.innerHTML = `<p>No ${categoryName} available.</p>`;
+      return;
     }
+
+    items.forEach(data => {
+      const productEl = document.createElement("div");
+      productEl.className = "product";
+      productEl.innerHTML = `
+        <img src="${data.image}" alt="${data.name}" />
+        <h3>${data.name}</h3>
+        <p>GH¢${data.price}</p>
+        <button class="add-btn" onclick="addToCart('${data.name}', '${data.image}', ${data.price})">Add to Cart</button>
+      `;
+      container.appendChild(productEl);
+    });
   }
 
-  // Fetch live data from Firestore and update UI + localStorage
-  function fetchCategory(categoryName, containerId) {
-    const container = document.getElementById(containerId);
+  // Fetch and listen for changes
+  function listenToCategory(categoryName, containerId) {
+    // Load cached items first
+    const cached = localStorage.getItem(`grocery-${categoryName}`);
+    if (cached) {
+      try {
+        const items = JSON.parse(cached);
+        renderCategoryItems(categoryName, containerId, items);
+      } catch (e) {
+        console.warn(`Cache error for ${categoryName}:`, e);
+      }
+    }
 
+    // Realtime Firestore listener
     db.collection("grocery")
       .doc(categoryName)
       .collection("items")
-      .get()
-      .then((snapshot) => {
+      .onSnapshot((snapshot) => {
         const items = [];
-        container.innerHTML = "";
-
-        if (snapshot.empty) {
-          container.innerHTML = `<p>No ${categoryName} available.</p>`;
-          return;
-        }
-
-        snapshot.forEach((doc) => {
-          const data = doc.data();
-          items.push(data);
-
-          const productEl = document.createElement("div");
-          productEl.className = "product";
-          productEl.innerHTML = `
-            <img src="${data.image}" alt="${data.name}" />
-            <h3>${data.name}</h3>
-            <p>GH¢${data.price}</p>
-            <button class="add-btn" onclick="addToCart('${data.name}', '${data.image}', ${data.price})">Add to Cart</button>
-          `;
-          container.appendChild(productEl);
-        });
+        snapshot.forEach(doc => items.push(doc.data()));
 
         // Save to localStorage
-        localStorage.setItem(`category_${categoryName}`, JSON.stringify(items));
-      })
-      .catch((error) => {
-        console.error(`Error loading ${categoryName}:`, error);
-        container.innerHTML = `<p>Error loading ${categoryName}.</p>`;
+        localStorage.setItem(`grocery-${categoryName}`, JSON.stringify(items));
+
+        // Render new data
+        renderCategoryItems(categoryName, containerId, items);
+      }, (error) => {
+        console.error(`Error fetching ${categoryName}:`, error);
+        document.getElementById(containerId).innerHTML = `<p>Error loading ${categoryName}</p>`;
       });
   }
 
@@ -472,17 +472,8 @@ border-radius: 10px;
     { name: "Packaged Foods", id: "packagedContainer" },
   ];
 
-  // Load cached first
-  categories.forEach(cat => loadCachedCategory(cat.name, cat.id));
-
-  // Then fetch live data
-  function refreshAllCategories() {
-    categories.forEach(cat => fetchCategory(cat.name, cat.id));
-  }
-
-  refreshAllCategories(); // Fetch once now
-  setInterval(refreshAllCategories, 1000); // Fetch every second
-
+  // Listen to all categories
+  categories.forEach(cat => listenToCategory(cat.name, cat.id));
 </script>
 </body>
 </html>
