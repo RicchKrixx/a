@@ -379,8 +379,7 @@ border-radius: 10px;
       if (existing) existing.qty += 1;
       else cart.push({ id, name, price, image, qty: 1 });
       localStorage.setItem("cart", JSON.stringify(cart));
-      alert(`${name} added to cart`);
-    };
+      
 
     fetchProducts();
   </script>
