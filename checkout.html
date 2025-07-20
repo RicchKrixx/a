@@ -128,6 +128,11 @@ input, textarea, select {
 <div class="card">
     <h1>CHECKOUT</h1>
     <span>Amount to pay:<p id="grandTotal">GH¢0.00</p></span>
+<div class="delivery-section" style="padding: 10px; border: 1px solid #444; background: #0f172a; color: white; border-radius: 8px; margin-top: 15px;">
+  <h3 style="margin-bottom: 5px;">Delivery Fee</h3>
+  <p><strong>Estimated Distance:</strong> <span id="deliveryDistance">Detecting...</span></p>
+  <p><strong>Delivery Charge:</strong> <span id="deliveryFee">Calculating...</span></p>
+</div>
 <form id="checkoutForm">
     <div id="custInfo">
       <label>Full Name</label>
@@ -355,6 +360,61 @@ actionBtn.addEventListener("click", async (e) => {
         style1.disabled = false;
       }
     }
+</script>
+<script>
+  // Your BizMAX store location (example: Accra)
+  const storeLat = 5.614818;
+  const storeLon = -0.205874;
+
+  function toRad(value) {
+    return value * Math.PI / 180;
+  }
+
+  function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Earth's radius in km
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) ** 2;
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
+  function calculateDeliveryFee(distanceKm) {
+    const baseFee = 5;      // Flat fee for ≤ 5km
+    const extraRate = 1.5;  // Per km after 5km
+    return distanceKm <= 5 ? baseFee : baseFee + (distanceKm - 5) * extraRate;
+  }
+
+  function displayDeliveryFee() {
+    const feeLabel = document.getElementById("deliveryFee");
+    const distanceLabel = document.getElementById("deliveryDistance");
+
+    if (!navigator.geolocation) {
+      feeLabel.textContent = "Location not supported";
+      distanceLabel.textContent = "";
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(position => {
+      const userLat = position.coords.latitude;
+      const userLon = position.coords.longitude;
+
+      const distance = calculateDistance(storeLat, storeLon, userLat, userLon);
+      const fee = calculateDeliveryFee(distance);
+
+      feeLabel.textContent = `₵${fee.toFixed(2)}`;
+      distanceLabel.textContent = `${distance.toFixed(2)} km`;
+    }, error => {
+      feeLabel.textContent = "Location access denied";
+      distanceLabel.textContent = "";
+    });
+  }
+
+  // Run on page load
+  window.addEventListener("DOMContentLoaded", displayDeliveryFee);
 </script>
 </body>
 </html>
