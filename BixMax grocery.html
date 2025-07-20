@@ -460,10 +460,26 @@ refreshAllCategories();
 
 // Then refetch every 5 seconds
 setInterval(refreshAllCategories, 1000);
-window.addEventListener("beforeunload", function (e) {
-  e.preventDefault();
-  e.returnValue = ""; // Needed for Chrome
-});
+
+</script>
+<script>
+  // Block refresh using F5 or Ctrl+R / Cmd+R
+  document.addEventListener("keydown", function (e) {
+    if (
+      e.key === "F5" ||                         // F5
+      (e.ctrlKey && e.key === "r") ||           // Ctrl+R (Windows/Linux)
+      (e.metaKey && e.key === "r")              // Cmd+R (Mac)
+    ) {
+      e.preventDefault();
+      alert("Page refresh is disabled!");
+    }
+  });
+
+  // Prevent refresh on drag-drop reload
+  window.addEventListener("beforeunload", function (e) {
+    e.preventDefault();
+    e.returnValue = ""; // Required for Chrome
+  });
 </script>
 </body>
 </html>
