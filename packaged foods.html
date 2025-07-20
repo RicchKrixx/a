@@ -164,7 +164,7 @@
     const db = getFirestore(app);
     const container = document.getElementById("packagedContainer");
 
-    function renderShirts(items) {
+    function renderPackaged(items) {
       container.innerHTML = "";
       items.forEach(data => {
         const div = document.createElement("div");
@@ -211,7 +211,7 @@
     }
 
     // Firestore real-time listener (only updates on data change)
-    onSnapshot(collection(db, "category", "Packaged", "items"), snapshot => {
+    onSnapshot(collection(db, "category", "Packaged Food", "items"), snapshot => {
       const items = [];
       snapshot.forEach(doc => {
         items.push({ ...doc.data(), id: doc.id });
