@@ -128,8 +128,8 @@
       } else if (timestamp && typeof timestamp === 'object' && timestamp.seconds) {
         return timestamp.seconds * 1000 + (timestamp.nanoseconds / 1000000);
       }
-      console.warn("Missing or invalid timestamp, using current time as fallback");
-      return Date.now(); // Fallback to current time for missing/invalid timestamps
+      console.warn("Missing or invalid timestamp for order, using epoch start as fallback");
+      return 0; // Fallback to epoch start (1970) for missing/invalid timestamps
     }
 
     function displayOrders(changes, isInitialLoad = false) {
@@ -142,7 +142,7 @@
       // Update cache with changes
       changes.forEach(change => {
         const orderData = change.doc.data();
-        console.log(`Change type: ${change.type}, Order ID: ${orderData.id || change.doc.id}, Timestamp: ${orderData.timestamp}`);
+        console.log(`Change type: ${change.type}, Order ID: ${orderData.id || change.doc.id}, Timestamp: ${orderData.timestamp}, Path: ${change.doc.ref.path}`);
         if (change.type === "added" || change.type === "modified") {
           ordersCache.set(change.doc.ref.path, { docSnap: change.doc, isNew: change.type === "added" && !isInitialLoad });
         } else if (change.type === "removed") {
