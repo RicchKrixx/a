@@ -73,11 +73,29 @@
         padding: 16px 14px;
       }
     }
+.notify-card {
+  background: #fefefe;
+  border-left: 4px solid green;
+  padding: 10px 15px;
+  margin: 10px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+.notify-card button {
+  margin-top: 6px;
+  background: #007bff;
+  color: white;
+  padding: 5px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
   </style>
 </head>
 <body>
   <h1>📦 BixMAX Orders 📥</h1>
   <input type="text" id="searchInput" placeholder="Search Order ID..." />
+<div id="notificationsContainer"></div>
   <div id="ordersContainer">Loading orders...</div>
   <audio id="notifySound" src="https://www.soundjay.com/buttons/beep-01a.mp3"></audio>
 
@@ -214,7 +232,45 @@ const unsubscribe = onSnapshot(ordersQuery, (snapshot) => {
 }, (err) => {
   console.error("Snapshot error:", err);
   ordersContainer.innerHTML = "<p>Error loading orders. Please try again.</p>";
+
+const deliveredNotifications = JSON.parse(localStorage.getItem('deliveredNotifications') || '{}');
+
+if (orderData.status === 'Delivered' && !deliveredNotifications[orderId]) {
+  showDeliveryNotification(orderId);
+  deliveredNotifications[orderId] = true;
+  localStorage.setItem('deliveredNotifications', JSON.stringify(deliveredNotifications));
+}
 });
+function showDeliveryNotification(orderId) {
+  const container = document.getElementById("notificationsContainer"); // create this div in HTML
+  const card = document.createElement("div");
+  card.className = "notify-card";
+  card.innerHTML = `
+    <p><strong>Order ${orderId}</strong> has been <span style="color:green">delivered</span>.</p>
+    <button onclick="markAsComplete('${orderId}', this)">Mark as Complete</button>
+  `;
+  container.appendChild(card);
+}
+async function markAsComplete(orderId, btn) {
+  try {
+    const orderRef = doc(db, "orders", orderId);
+    await updateDoc(orderRef, { status: "Completed" });
+
+    // Remove notification from DOM
+    btn.parentElement.remove();
+
+    // Remove from localStorage
+    const deliveredNotifications = JSON.parse(localStorage.getItem('deliveredNotifications') || '{}');
+    delete deliveredNotifications[orderId];
+    localStorage.setItem('deliveredNotifications', JSON.stringify(deliveredNotifications));
+  } catch (error) {
+    alert("Error updating order: " + error);
+  }
+}
+
+
+
+
 
 
     // Search functionality
