@@ -82,8 +82,18 @@
   <audio id="notifySound" src="https://www.soundjay.com/buttons/beep-01a.mp3"></audio>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collectionGroup, getDocs, updateDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { 
+  initializeApp 
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import { 
+  getFirestore, 
+  collection,     // ✅ use this instead of collectionGroup
+  getDocs, 
+  updateDoc, 
+  doc, 
+  onSnapshot 
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     // Firebase config
     const firebaseConfig = {
@@ -190,7 +200,7 @@
     }
 
     // Real-time listener for orders
-    const unsubscribe = onSnapshot(collectionGroup(db, "orders"), (snapshot) => {
+    const unsubscribe = onSnapshot(collection(db, "orders"), (snapshot) => {
       try {
         displayOrders(snapshot);
       } catch (err) {
