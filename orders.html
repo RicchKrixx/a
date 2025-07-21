@@ -85,12 +85,12 @@
 <body>
   <h1>📦 BizMAX Orders 📥</h1>
   <input type="text" id="searchInput" placeholder="Search Order ID..." />
-  <div id="ordersContainer">Fetching orders...</div>
+  <div id="ordersContainer">Loading orders...</div>
   <audio id="notifySound" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collectionGroup, getDocs, updateDoc, doc, onSnapshot, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, updateDoc, doc, onSnapshot, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     // Firebase config
     const firebaseConfig = {
@@ -132,7 +132,7 @@
         return metadata.createTime.toMillis();
       }
       console.warn(`Missing or invalid timestamp for order ${data.id || 'unknown'}, using current time for sorting`);
-      return Date.now();
+      return Date.now(); // Fallback to ensure new orders sort to top
     }
 
     // Format timestamp for display
@@ -229,7 +229,7 @@
             btn.style.cursor = "not-allowed";
             statusSpan.textContent = "Completed";
           } catch (err) {
-            console.error("Error updating status:", err);
+            console.error("Error updating status:", err.message);
           }
         });
       });
@@ -294,7 +294,7 @@
     async function pollOrders() {
       try {
         console.log("Polling orders...");
-        const snapshot = await getDocs(collectionGroup(db, "orders"));
+        const snapshot = await getDocs(collection(db, "orders"));
         displayOrders(snapshot.docChanges(), ordersCache.size === 0);
       } catch (err) {
         console.error("Polling error:", err.message);
@@ -303,7 +303,7 @@
     }
 
     // Real-time listener
-    const unsubscribe = onSnapshot(collectionGroup(db, "orders"), (snapshot) => {
+    const unsubscribe = onSnapshot(collection(db, "orders"), (snapshot) => {
       try {
         console.log("onSnapshot triggered with", snapshot.docChanges().length, "changes");
         snapshot.docChanges().forEach(change => {
@@ -313,7 +313,6 @@
       } catch (err) {
         console.error("Error in onSnapshot:", err.message);
         ordersContainer.innerHTML = "<p>Error loading orders. Please try again.</p>";
-        // Start polling if not already started
         if (!pollingInterval) {
           pollingInterval = setInterval(pollOrders, 1000);
         }
@@ -321,7 +320,6 @@
     }, (err) => {
       console.error("Snapshot listener error:", err.message);
       ordersContainer.innerHTML = "<p>Error loading orders. Please try again.</p>";
-      // Start polling if not already started
       if (!pollingInterval) {
         pollingInterval = setInterval(pollOrders, 1000);
       }
