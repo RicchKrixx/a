@@ -47,6 +47,13 @@
       transition: all 0.3s ease;
       border-left: 6px solid #0a4d7a;
     }
+    .order.new {
+      background: #e6fffa;
+      animation: fadeOut 3s forwards;
+    }
+    @keyframes fadeOut {
+      to { background: #ffffff; }
+    }
     .order:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 16px rgba(0,0,0,0.1);
@@ -78,12 +85,12 @@
 <body>
   <h1>📦 BizMAX Orders 📥</h1>
   <input type="text" id="searchInput" placeholder="Search Order ID..." />
-  <div id="ordersContainer">Loading orders...</div>
+  <div id="ordersContainer">Fetching orders...</div>
   <audio id="notifySound" src="https://www.soundjay.com/buttons/beep-01a.mp3"></audio>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collectionGroup, getDocs, updateDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collectionGroup, getDocs, updateDoc, doc, onSnapshot, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     // Firebase config
     const firebaseConfig = {
@@ -99,47 +106,82 @@
     const db = getFirestore(app);
     const ordersContainer = document.getElementById("ordersContainer");
     const searchInput = document.getElementById("searchInput");
-    let lastOrderCount = 0;
+    let ordersCache = new Map();
+    let lastSearchTerm = "";
+    let pollingInterval = null;
 
-    function displayOrders(snapshot) {
-      if (snapshot.empty) {
+    // Debounce function for search
+    function debounce(func, wait) {
+      let timeout;
+      return function (...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+      };
+    }
+
+    // Convert timestamp to milliseconds
+    function getTimestampValue(timestamp) {
+      if (timestamp instanceof Timestamp) {
+        return timestamp.toMillis();
+      } else if (typeof timestamp === 'number') {
+        return timestamp;
+      } else if (timestamp && typeof timestamp === 'object' && timestamp.seconds) {
+        return timestamp.seconds * 1000 + (timestamp.nanoseconds / 1000000);
+      }
+      console.warn("Missing or invalid timestamp, using current time as fallback");
+      return Date.now(); // Fallback to current time for missing/invalid timestamps
+    }
+
+    function displayOrders(changes, isInitialLoad = false) {
+      console.log("Snapshot received:", changes.length, "changes, initial load:", isInitialLoad);
+      if (changes.length === 0 && ordersCache.size === 0) {
         ordersContainer.innerHTML = "<p>No orders found.</p>";
         return;
       }
 
-      const docsArray = [];
-      snapshot.forEach(docSnap => docsArray.push(docSnap));
-      docsArray.sort((a, b) => b.data().timestamp - a.data().timestamp); // Newest first
+      // Update cache with changes
+      changes.forEach(change => {
+        const orderData = change.doc.data();
+        console.log(`Change type: ${change.type}, Order ID: ${orderData.id || change.doc.id}, Timestamp: ${orderData.timestamp}`);
+        if (change.type === "added" || change.type === "modified") {
+          ordersCache.set(change.doc.ref.path, { docSnap: change.doc, isNew: change.type === "added" && !isInitialLoad });
+        } else if (change.type === "removed") {
+          ordersCache.delete(change.doc.ref.path);
+        }
+      });
 
-      // Check for new orders
-      const currentOrderCount = docsArray.length;
-      if (currentOrderCount > lastOrderCount && lastOrderCount > 0) {
-        const newOrder = docsArray[0].data();
-        showNotification(newOrder.id);
-      }
-      lastOrderCount = currentOrderCount;
+      // Sort by timestamp (newest first)
+      const docsArray = Array.from(ordersCache.values())
+        .map(entry => entry.docSnap)
+        .sort((a, b) => {
+          const timeA = getTimestampValue(a.data().timestamp);
+          const timeB = getTimestampValue(b.data().timestamp);
+          console.log(`Sorting: Order ${a.data().id || a.id} (${timeA}) vs Order ${b.data().id || b.id} (${timeB})`);
+          return timeB - timeA; // Newest first
+        });
 
       let html = "";
       docsArray.forEach(docSnap => {
         const order = docSnap.data();
         const docRef = docSnap.ref;
-        const orderId = order.id;
+        const orderId = order.id || docRef.id;
         const status = order.status || "Pending";
         const isCompleted = status === "Completed";
         const buttonDisabled = isCompleted ? "disabled" : "";
         const buttonStyle = isCompleted ? "background:gray;cursor:not-allowed;" : "background:green;cursor:pointer;";
+        const isNewClass = ordersCache.get(docRef.path)?.isNew ? "new" : "";
 
         html += `
-          <div class="order" data-id="${docRef.path}">
+          <div class="order ${isNewClass}" data-id="${docRef.path}">
             <p><strong>Order ID:</strong> ${orderId}</p>
-            <p><strong>Name:</strong> ${order.name}</p>
-            <p><strong>Email:</strong> ${order.email}</p>
-            <p><strong>Phone:</strong> ${order.phone}</p>
-            <p><strong>Address:</strong> ${order.address}</p>
-            <p><strong>Payment:</strong> ${order.method}</p>
-            <p><strong>Total:</strong> GH¢${parseFloat(order.total).toFixed(2)}</p>
-            <p><strong>Items:</strong> ${order.items}</p>
-            <p><strong>Date:</strong> ${new Date(order.timestamp).toLocaleString()}</p>
+            <p><strong>Name:</strong> ${order.name || "N/A"}</p>
+            <p><strong>Email:</strong> ${order.email || "N/A"}</p>
+            <p><strong>Phone:</strong> ${order.phone || "N/A"}</p>
+            <p><strong>Address:</strong> ${order.address || "N/A"}</p>
+            <p><strong>Payment:</strong> ${order.method || "N/A"}</p>
+            <p><strong>Total:</strong> GH¢${parseFloat(order.total || 0).toFixed(2)}</p>
+            <p><strong>Items:</strong> ${order.items || "N/A"}</p>
+            <p><strong>Date:</strong> ${order.timestamp ? new Date(getTimestampValue(order.timestamp)).toLocaleString() : "N/A"}</p>
             <p><strong>Status:</strong> <span class="status">${status}</span></p>
             <button class="completeBtn" style="${buttonStyle}" ${buttonDisabled}>Mark as Complete</button>
             <hr/>
@@ -156,19 +198,38 @@
           const docPath = orderDiv.dataset.id;
           const statusSpan = orderDiv.querySelector(".status");
 
-          const ref = doc(db, docPath);
-          await updateDoc(ref, { status: "Completed" });
-
-          btn.textContent = "Completed";
-          btn.disabled = true;
-          btn.style.background = "gray";
-          btn.style.cursor = "not-allowed";
-          statusSpan.textContent = "Completed";
+          try {
+            const ref = doc(db, docPath);
+            await updateDoc(ref, { status: "Completed" });
+            btn.textContent = "Completed";
+            btn.disabled = true;
+            btn.style.background = "gray";
+            btn.style.cursor = "not-allowed";
+            statusSpan.textContent = "Completed";
+          } catch (err) {
+            console.error("Error updating status:", err);
+          }
         });
       });
+
+      // Apply search filter if active
+      if (lastSearchTerm) {
+        applySearchFilter(lastSearchTerm);
+      }
+
+      // Notify for new orders
+      if (!isInitialLoad) {
+        changes.forEach(change => {
+          if (change.type === "added") {
+            showNotification(change.doc.data().id || change.doc.id);
+            ordersCache.get(change.doc.ref.path).isNew = false;
+          }
+        });
+      }
     }
 
     function showNotification(orderId) {
+      console.log("Showing notification for new order:", orderId);
       const notifySound = document.getElementById("notifySound");
       notifySound.play().catch(err => console.error("Audio play error:", err));
 
@@ -189,24 +250,8 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // Real-time listener for orders
-    const unsubscribe = onSnapshot(collectionGroup(db, "orders"), (snapshot) => {
-      try {
-        displayOrders(snapshot);
-      } catch (err) {
-        console.error("Error displaying orders:", err);
-        ordersContainer.innerHTML = "<p>Error loading orders. Please try again.</p>";
-      }
-    }, (err) => {
-      console.error("Snapshot error:", err);
-      ordersContainer.innerHTML = "<p>Error loading orders. Please try again.</p>";
-    });
-
-    // Search functionality
-    searchInput.addEventListener("input", () => {
-      const term = searchInput.value.trim().toLowerCase();
+    function applySearchFilter(term) {
       const orders = document.querySelectorAll(".order");
-
       orders.forEach(order => {
         const idText = order.querySelector("p:nth-of-type(1)")?.textContent?.toLowerCase() || "";
         const nameText = order.querySelector("p:nth-of-type(2)")?.textContent?.toLowerCase() || "";
@@ -221,6 +266,60 @@
 
         order.style.display = matches ? "block" : "none";
       });
+    }
+
+    // Fallback polling mechanism
+    async function pollOrders() {
+      try {
+        console.log("Polling orders...");
+        const snapshot = await getDocs(collectionGroup(db, "orders"));
+        displayOrders(snapshot.docChanges(), ordersCache.size === 0);
+      } catch (err) {
+        console.error("Polling error:", err);
+        ordersContainer.innerHTML = "<p>Error loading orders during polling. Please try again.</p>";
+      }
+    }
+
+    // Real-time listener
+    const unsubscribe = onSnapshot(collectionGroup(db, "orders"), (snapshot) => {
+      try {
+        console.log("onSnapshot triggered with", snapshot.docChanges().length, "changes");
+        snapshot.docChanges().forEach(change => {
+          console.log(`Change type: ${change.type}, Doc ID: ${change.doc.id}, Data:`, change.doc.data());
+        });
+        displayOrders(snapshot.docChanges(), ordersCache.size === 0);
+      } catch (err) {
+        console.error("Error in onSnapshot:", err);
+        ordersContainer.innerHTML = "<p>Error loading orders. Please try again.</p>";
+        // Start polling if not already started
+        if (!pollingInterval) {
+          pollingInterval = setInterval(pollOrders, 1000);
+        }
+      }
+    }, (err) => {
+      console.error("Snapshot listener error:", err);
+      ordersContainer.innerHTML = "<p>Error loading orders. Please try again.</p>";
+      // Start polling if not already started
+      if (!pollingInterval) {
+        pollingInterval = setInterval(pollOrders, 1000);
+      }
+    });
+
+    // Debounced search
+    const debouncedSearch = debounce((term) => {
+      lastSearchTerm = term;
+      applySearchFilter(term);
+    }, 300);
+
+    searchInput.addEventListener("input", () => {
+      const term = searchInput.value.trim().toLowerCase();
+      debouncedSearch(term);
+    });
+
+    // Cleanup on page unload
+    window.addEventListener("unload", () => {
+      unsubscribe();
+      if (pollingInterval) clearInterval(pollingInterval);
     });
   </script>
 </body>
