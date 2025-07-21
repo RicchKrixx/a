@@ -216,14 +216,22 @@ function buildItemsString(cartItems) {
   }).join(", ");
 }
 
-async function sendOrderToFirebase(userEmail, orderId, data) {
+async function sendOrderToFirebase(orderId, data, cartItems) {
   try {
-    const orderRef = doc(db, "users", userEmail, "orders", orderId);
+    // Create reference to Orders/orderId
+    const orderRef = doc(db, "Orders", orderId);
+
+    // Save the main order details
     await setDoc(orderRef, {
       id: orderId,
       ...data,
-      timestamp: new Date().toISOString()
+      timestamp: serverTimestamp()
     });
+
+    // Save items under Orders/orderId/items/
+    for (let item of cartItems) {
+      await addDoc(collection(orderRef, "items"), item);
+    }
     localStorage.setItem("latestOrderId", orderId);
     console.log("✅ Order saved for:", userEmail);
     window.location.href = "thankyou.html?orderId=" + orderId;
