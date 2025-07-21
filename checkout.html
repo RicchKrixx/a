@@ -305,26 +305,23 @@ actionBtn.addEventListener("click", async (e) => {
     }
 
     if (paymentMethod === "Paid") {
-      PaystackPop.setup({
-        key: 'pk_test_08efc944ab264d7158431d2a87a3b99da1c4cf1b',
-        email: email,
-        amount: grandTotal * 100,
-        currency: "GHS",
-        ref: orderId,
-        callback: function (response) {
-          orderData.method = "Paid";
-          sendOrderToFirebase(email, orderId, orderData);
-        },
-        onClose: function () {
-          showLoader(false);
-          alert("❌ Payment cancelled.");
-        }
-      }).openIframe();
-    } else {
-      // 🛵 "Pay on Delivery"
-      orderData.cartItems = cartItems;
-sendOrderToFirebase(orderId, orderData);
+  PaystackPop.setup({
+    key: 'pk_test_08efc944ab264d7158431d2a87a3b99da1c4cf1b',
+    email: email,
+    amount: grandTotal * 100,
+    currency: "GHS",
+    ref: orderId,
+    callback: function (response) {
+      orderData.method = "Paid";
+      orderData.cartItems = cartItems;  // ✅ Add this
+      sendOrderToFirebase(orderId, orderData);
+    },
+    onClose: function () {
+      showLoader(false);
+      alert("❌ Payment cancelled.");
     }
+  }).openIframe();
+}
   });
 });
 </script>
