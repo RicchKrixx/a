@@ -68,7 +68,7 @@ const firebaseConfig = {
           <p><strong>Name:</strong> ${data.name || "N/A"}</p>
           <p><strong>Address:</strong> ${data.address || "N/A"}</p>
           <p><strong>Phone:</strong> ${data.phone || "N/A"}</p>
-          <p><strong>Status:</strong> ${status}</p>
+          <p><strong>Status:</strong> ${currentStatus}</p>
           <button class="status-btn" ${!nextStatus || nextStatus === "Completed" ? "disabled" : ""}
             onclick="updateOrderStatus('${orderId}', '${nextStatus}')">
             ${nextStatus ? `Mark as ${nextStatus}` : "No more updates"}
