@@ -112,5 +112,35 @@ const firebaseConfig = {
     }
 
     loadDashboard();
+const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const ridersContainer = document.getElementById('ridersContainer');
+
+  function renderRider(rider) {
+    const { name, photoURL, status } = rider;
+    const statusColor = {
+      available: "green",
+      busy: "gold",
+      offline: "gray"
+    }[status] || "gray";
+
+    return `
+      <div class="rider-card">
+        <img src="${photoURL}" alt="${name}" />
+        <div class="info">
+          <h3>${name}</h3>
+          <p style="color:${statusColor}">${status.toUpperCase()}</p>
+        </div>
+      </div>
+    `;
+  }
+
+  onSnapshot(collection(db, "Riders"), (snapshot) => {
+    ridersContainer.innerHTML = "";
+    snapshot.forEach(doc => {
+      ridersContainer.innerHTML += renderRider(doc.data());
+    });
+  });
   </script></body>
 </html>
