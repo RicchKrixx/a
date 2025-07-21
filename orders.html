@@ -88,11 +88,13 @@
 
 import { 
   getFirestore, 
-  collection,     // ✅ use this instead of collectionGroup
+  collection,     
   getDocs, 
   updateDoc, 
   doc, 
-  onSnapshot 
+  onSnapshot,
+  query,         // ✅ added
+  orderBy        // ✅ added
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     // Firebase config
@@ -200,17 +202,20 @@ import {
     }
 
     // Real-time listener for orders
-    const unsubscribe = onSnapshot(collection(db, "orders"), (snapshot) => {
-      try {
-        displayOrders(snapshot);
-      } catch (err) {
-        console.error("Error displaying orders:", err);
-        ordersContainer.innerHTML = "<p>Error loading orders. Please try again.</p>";
-      }
-    }, (err) => {
-      console.error("Snapshot error:", err);
-      ordersContainer.innerHTML = "<p>Error loading orders. Please try again.</p>";
-    });
+    const ordersQuery = query(collection(db, "orders"), orderBy("timestamp", "desc"));
+
+const unsubscribe = onSnapshot(ordersQuery, (snapshot) => {
+  try {
+    displayOrders(snapshot);
+  } catch (err) {
+    console.error("Error displaying orders:", err);
+    ordersContainer.innerHTML = "<p>Error loading orders. Please try again.</p>";
+  }
+}, (err) => {
+  console.error("Snapshot error:", err);
+  ordersContainer.innerHTML = "<p>Error loading orders. Please try again.</p>";
+});
+
 
     // Search functionality
     searchInput.addEventListener("input", () => {
