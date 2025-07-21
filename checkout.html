@@ -217,22 +217,23 @@
     }).join(", ");
   }
 
-  async function sendOrderToFirebase(userEmail, orderId, data) {
-    try {
-      const orderRef = doc(db, "users", userEmail, "orders", orderId);
-      await setDoc(orderRef, {
-        id: orderId,
-        ...data,
-        timestamp: new Date().toISOString()
-      });
-      localStorage.setItem("latestOrderId", orderId);
-      window.location.href = "thankyou.html?orderId=" + orderId;
-    } catch (error) {
-      console.error("❌ Error saving order:", error);
-      alert("Order failed. Please try again.");
-      showLoader(false);
-    }
+async function sendOrderToFirebase(orderId, data) {
+  try {
+    const orderRef = doc(db, "orders", orderId);  // new structure: orders > orderId
+    await setDoc(orderRef, {
+      id: orderId,
+      ...data,
+      timestamp: new Date().toISOString()
+    });
+    localStorage.setItem("latestOrderId", orderId);
+    console.log("✅ Order saved:", orderId);
+    window.location.href = "thankyou.html?orderId=" + orderId;
+  } catch (error) {
+    console.error("❌ Error saving order:", error);
+    alert("Order failed. Please try again.");
+    showLoader(false);
   }
+}
 
   payMethod.addEventListener("change", () => {
     const selected = payMethod.value;
@@ -293,7 +294,7 @@
           }
         }).openIframe();
       } else {
-        sendOrderToFirebase(email, orderId, orderData);
+        sendOrderToFirebase(orderId, orderData);
       }
     });
   });
@@ -364,9 +365,9 @@
   }
 
   function calculateDeliveryFee(distanceKm) {
-    const baseFee = 5;
-    const extraRate = 1.5;
-    return distanceKm <= 5 ? baseFee : baseFee + (distanceKm - 5) * extraRate;
+    const baseFee = 10;
+    const extraRate = 2;
+    return distanceKm <= 10 ? baseFee : baseFee + (distanceKm - 10) * extraRate;
   }
 
   function displayDeliveryFee() {
@@ -383,7 +384,7 @@
       const userLon = position.coords.longitude;
       const distance = calculateDistance(storeLat, storeLon, userLat, userLon);
       const fee = calculateDeliveryFee(distance);
-      feeLabel.textContent = `₵${fee.toFixed(2)}`;
+      feeLabel.textContent = `GH₵${fee.toFixed(2)}`;
     }, error => {
       feeLabel.textContent = "Location access denied";
     });
