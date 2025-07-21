@@ -1,112 +1,95 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dispatch Dashboard | BizMAX</title>
   <style>
-    * { box-sizing: border-box; }
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f1f4f9;
-      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
       padding: 20px;
       color: #333;
     }
-    h2 {
-      margin-top: 40px;
-      color: #00509e;
-    }
-    .card {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-    .rider-form input {
-      display: block;
-      margin-bottom: 12px;
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-    .rider-form button {
-      padding: 10px 20px;
-      background: #00509e;
+    button {
+      padding: 10px 16px;
+      background: #008cff;
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 5px;
       cursor: pointer;
     }
-    .riders-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px;
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center; align-items: center;
+    }
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%; max-width: 400px;
+    }
+    input {
+      display: block;
+      margin: 10px 0;
+      padding: 8px;
+      width: 100%;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    #photoPreview {
+      width: 100px;
+      margin-top: 10px;
+      display: none;
+    }
+    .riders-list {
+      margin-top: 30px;
     }
     .rider-card {
       background: #fff;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 1px 6px rgba(0,0,0,0.08);
-      text-align: center;
-    }
-    .rider-card img {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      object-fit: cover;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 10px;
       margin-bottom: 10px;
-    }
-    .status-dot {
-      height: 10px;
-      width: 10px;
-      border-radius: 50%;
-      display: inline-block;
-    }
-    .online { background: green; }
-    .busy { background: red; }
-    .offline { background: gray; }
-    .summary-box {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-    .summary-item {
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      flex: 1;
-      min-width: 200px;
-      text-align: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
   </style>
 </head>
-<body>  <h1>📦 Dispatch Dashboard</h1>  <!-- Rider Registration -->  <div class="card">
-    <h2>Register New Rider</h2>
-    <form id="riderForm" class="rider-form">
-      <input type="text" id="name" placeholder="Full Name" required />
-      <input type="email" id="email" placeholder="Email" required />
-      <input type="tel" id="phone" placeholder="Phone Number" required />
-      <input type="url" id="photo" placeholder="Profile Picture URL" required />
-      <input type="url" id="idCard" placeholder="Ghana Card Image URL" required />
-      <button type="submit">Register Rider</button>
-    </form>
-  </div>  <!-- All Riders -->  <div class="card">
-    <h2>All Registered Riders</h2>
-    <div id="ridersList" class="riders-grid"></div>
-  </div>  <!-- Summary Panel -->  <div class="card">
-    <h2>📊 Daily Summary (Auto Updates @5PM)</h2>
-    <div class="summary-box">
-      <div class="summary-item" id="totalOrders">Total Orders: 0</div>
-      <div class="summary-item" id="totalFees">Total Fees: GHS 0</div>
-    </div>
-  </div>  <!-- Firebase SDK -->  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, setDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+<body>
 
-    // Firebase configuration
+<h2>Dispatch Dashboard</h2>
+<button id="openModalBtn">Register Rider</button>
+
+<!-- Modal -->
+<div class="modal" id="riderModal">
+  <div class="modal-content">
+    <h3>Register New Rider</h3>
+    <input type="text" id="riderName" placeholder="Rider Name" />
+    <input type="email" id="riderEmail" placeholder="Email" />
+    <input type="tel" id="riderPhone" placeholder="Phone" />
+    <input type="text" id="riderPhoto" placeholder="Photo (e.g. pp.jpeg or URL)" />
+    <img id="photoPreview" />
+
+    <button id="registerBtn">Create Rider</button>
+    <button onclick="closeModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- Rider List -->
+<div class="riders-list" id="riderList">
+  <h3>Registered Riders</h3>
+  <!-- Riders will load here -->
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  // Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
   authDomain: "bixmax-6c24c.firebaseapp.com",
@@ -115,51 +98,84 @@ const firebaseConfig = {
   messagingSenderId: "37740442541",
   appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
 };
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-    const riderForm = document.getElementById('riderForm');
-    const ridersList = document.getElementById('ridersList');
+  const openModalBtn = document.getElementById('openModalBtn');
+  const riderModal = document.getElementById('riderModal');
+  const riderPhotoInput = document.getElementById('riderPhoto');
+  const photoPreview = document.getElementById('photoPreview');
 
-    riderForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const id = 'RIDER-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-      const data = {
-        id,
-        name: riderForm.name.value,
-        email: riderForm.email.value,
-        phone: riderForm.phone.value,
-        photo: riderForm.photo.value,
-        idCard: riderForm.idCard.value,
-        createdAt: serverTimestamp(),
-        status: 'offline'
-      };
-      await setDoc(doc(db, "riders", id), data);
-      alert("Rider registered!");
-      riderForm.reset();
-      loadRiders();
-    });
+  openModalBtn.addEventListener('click', () => {
+    riderModal.style.display = 'flex';
+  });
 
-    async function loadRiders() {
-      ridersList.innerHTML = "Loading...";
-      const querySnapshot = await getDocs(collection(db, "riders"));
-      ridersList.innerHTML = "";
-      querySnapshot.forEach((docSnap) => {
-        const r = docSnap.data();
-        ridersList.innerHTML += `
-          <div class="rider-card">
-            <img src="${r.photo}" alt="${r.name}" />
-            <h4>${r.name}</h4>
-            <p>${r.email}</p>
-            <p>${r.phone}</p>
-            <small>ID: ${r.id}</small><br>
-            <span class="status-dot ${r.status}"></span> ${r.status}
-          </div>
-        `;
-      });
+  window.closeModal = () => {
+    riderModal.style.display = 'none';
+  };
+
+  riderPhotoInput.addEventListener('input', () => {
+    const path = riderPhotoInput.value.trim();
+    photoPreview.src = path;
+    photoPreview.style.display = 'block';
+    photoPreview.onerror = () => photoPreview.style.display = 'none';
+    photoPreview.onload = () => photoPreview.style.display = 'block';
+  });
+
+  document.getElementById('registerBtn').addEventListener('click', async () => {
+    const name = document.getElementById('riderName').value.trim();
+    const email = document.getElementById('riderEmail').value.trim();
+    const phone = document.getElementById('riderPhone').value.trim();
+    const photo = document.getElementById('riderPhoto').value.trim();
+
+    if (!name || !email || !phone) {
+      alert("Please fill all fields.");
+      return;
     }
 
-    loadRiders();
+    const riderId = 'RIDER-' + Math.floor(100000 + Math.random() * 900000);
 
-  </script></body>
+    const riderData = {
+      name,
+      email,
+      phone,
+      photo,
+      riderId,
+      status: 'available',
+      totalOrders: 0,
+      earnings: 0
+    };
+
+    try {
+      await addDoc(collection(db, 'riders'), riderData);
+      alert("Rider registered with ID: " + riderId);
+      closeModal();
+      loadRiders();
+    } catch (err) {
+      console.error("Error adding rider:", err);
+    }
+  });
+
+  async function loadRiders() {
+    const riderList = document.getElementById("riderList");
+    riderList.innerHTML = "<h3>Registered Riders</h3>";
+
+    const snapshot = await getDocs(collection(db, "riders"));
+    snapshot.forEach(doc => {
+      const r = doc.data();
+      riderList.innerHTML += `
+        <div class="rider-card">
+          <strong>${r.name}</strong><br>
+          ID: ${r.riderId}<br>
+          Email: ${r.email}<br>
+          Phone: ${r.phone}<br>
+          <img src="${r.photo}" style="width:70px;margin-top:5px;" onerror="this.style.display='none'" />
+        </div>
+      `;
+    });
+  }
+
+  loadRiders();
+</script>
+</body>
 </html>
