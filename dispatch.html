@@ -1,146 +1,167 @@
 <!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BizMAX | Dispatch Dashboard</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BizMAX Dispatch Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', sans-serif; background: #f5f9ff; padding: 20px; color: #333; }
-    h1 { text-align: center; margin-bottom: 20px; }
-    .riders, .orders, .fees { display: grid; gap: 20px; margin-bottom: 30px; }
-    .card {
-      background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 15px;
-      transition: transform 0.3s ease;
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f4f6f9;
+      padding: 20px;
+      color: #333;
     }
-    .card:hover { transform: scale(1.02); }
-    .status { padding: 3px 8px; border-radius: 12px; font-size: 12px; }
-    .available { background: #d4fcd4; color: green; }
-    .busy { background: #fff4c4; color: orange; }
-    .offline { background: #ffd4d4; color: red; }
-    .section-title { font-weight: bold; margin-bottom: 8px; font-size: 1.2rem; }
+    h1 { text-align: center; margin-bottom: 20px; color: #222; }.section { margin-bottom: 30px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+.section h2 { margin-bottom: 15px; font-size: 20px; color: #555; }
+
+.rider-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px;
+  margin-bottom: 10px;
+  background: #eef5fb;
+  border-radius: 10px;
+  transition: 0.3s;
+}
+.rider-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.rider-info img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+.status-available { background: green; }
+.status-busy { background: orange; }
+.status-offline { background: gray; }
+
+form { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+form input, form button {
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+form button {
+  background: #007bff;
+  color: white;
+  cursor: pointer;
+  grid-column: span 2;
+}
+.summary-box {
+  display: flex;
+  justify-content: space-between;
+  background: #dff0d8;
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
   </style>
 </head>
 <body>
-  <h1>🚚 BizMAX Dispatch Dashboard</h1>  <div class="riders" id="ridersSection">
-    <div class="section-title">Riders</div>
-    <!-- Riders loaded here -->
-  </div>  <div class="orders" id="ordersSection">
-    <div class="section-title">Orders</div>
-    <!-- Orders loaded here -->
-  </div>  <div class="fees" id="feesSection">
-    <div class="section-title">Delivery Fee Summary</div>
-    <!-- Fee summary loaded here -->
+  <h1>Dispatch Dashboard</h1>  <div class="section">
+    <h2>Register New Rider (Admin Only)</h2>
+    <form id="riderForm">
+      <input type="text" placeholder="Full Name" id="riderName" required>
+      <input type="email" placeholder="Email" id="riderEmail" required>
+      <input type="tel" placeholder="Phone Number" id="riderPhone" required>
+      <input type="url" placeholder="Profile Image URL" id="riderPic" required>
+      <button type="submit">Register Rider</button>
+    </form>
+  </div>  <div class="section">
+    <h2>Registered Riders</h2>
+    <div id="ridersList"></div>
+  </div>  <div class="section">
+    <h2>Rider Status Monitor</h2>
+    <div id="riderMonitor"></div>
+  </div>  <div class="section">
+    <h2>Delivery Summary (Updated 5PM Daily)</h2>
+    <div id="deliverySummary"></div>
+  </div>  <div class="section">
+    <h2>Total Order Sales</h2>
+    <div class="summary-box" id="salesTotal">
+      <span>Total Sales: GHC 0.00</span>
+      <span>Date: --/--/----</span>
+    </div>
   </div>  <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, getDocs, doc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-  authDomain: "bixmax-6c24c.firebaseapp.com",
-  projectId: "bixmax-6c24c",
-  storageBucket: "bixmax-6c24c.appspot.com",
-  messagingSenderId: "37740442541",
-  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-};
+    const firebaseConfig = {
+      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+      authDomain: "bixmax-6c24c.firebaseapp.com",
+      projectId: "bixmax-6c24c",
+      storageBucket: "bixmax-6c24c.appspot.com",
+      messagingSenderId: "350252676947",
+      appId: "1:350252676947:web:af29fd3032aaeb1f28bce9"
+    };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const ridersSection = document.getElementById("ridersSection");
-    const ordersSection = document.getElementById("ordersSection");
-    const feesSection = document.getElementById("feesSection");
+    const riderForm = document.getElementById('riderForm');
+    const ridersList = document.getElementById('ridersList');
+    const riderMonitor = document.getElementById('riderMonitor');
+    const salesTotal = document.getElementById('salesTotal');
 
-    async function loadDashboard() {
-      const ridersSnap = await getDocs(collection(db, "riders"));
-      const ordersSnap = await getDocs(collection(db, "orders"));
+    riderForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('riderName').value;
+      const email = document.getElementById('riderEmail').value;
+      const phone = document.getElementById('riderPhone').value;
+      const pic = document.getElementById('riderPic').value;
+      const uniqueID = 'RID-' + Math.floor(100000 + Math.random() * 900000);
 
-      const riderOrders = {};
-      const riderEarnings = {};
-
-      // Prepare rider cards
-      ridersSnap.forEach(doc => {
-        const rider = doc.data();
-        const statusClass = rider.status === 'available' ? 'available' : (rider.status === 'busy' ? 'busy' : 'offline');
-
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-          <img src="${rider.photo || 'https://via.placeholder.com/80'}" width="80" height="80" style="border-radius: 50%;" />
-          <h3>${rider.name}</h3>
-          <div class="status ${statusClass}">${rider.status}</div>
-        `;
-        ridersSection.appendChild(card);
-
-        riderOrders[doc.id] = 0;
-        riderEarnings[doc.id] = 0;
+      await addDoc(collection(db, "riders"), {
+        name, email, phone, pic, status: 'offline', riderId: uniqueID, createdAt: serverTimestamp()
       });
 
-      // Prepare orders overview and calculate earnings
-      ordersSnap.forEach(doc => {
-        const order = doc.data();
-        const assigned = order.assignedTo;
-        const fee = parseFloat(order.deliveryFee || 0);
+      alert(`Rider ${name} registered with ID: ${uniqueID}`);
+      riderForm.reset();
+      loadRiders();
+    });
 
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-          <div><strong>Order:</strong> ${doc.id}</div>
-          <div><strong>Rider:</strong> ${assigned || 'Unassigned'}</div>
-          <div><strong>Status:</strong> ${order.status}</div>
-          <div><strong>Delivery Fee:</strong> ₵${fee.toFixed(2)}</div>
+    async function loadRiders() {
+      ridersList.innerHTML = '';
+      const snapshot = await getDocs(collection(db, "riders"));
+      snapshot.forEach(doc => {
+        const r = doc.data();
+        const dotClass = r.status === 'available' ? 'status-available' : r.status === 'busy' ? 'status-busy' : 'status-offline';
+
+        ridersList.innerHTML += `
+          <div class="rider-card">
+            <div class="rider-info">
+              <img src="${r.pic}" alt="pic">
+              <div>
+                <strong>${r.name}</strong><br>
+                <span>${r.phone}</span><br>
+                <span>${r.email}</span><br>
+                <span>ID: ${r.riderId}</span>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center;">
+              <div class="status-dot ${dotClass}"></div>
+              <span style="text-transform: capitalize">${r.status}</span>
+            </div>
+          </div>
         `;
-        ordersSection.appendChild(card);
-
-        if (assigned && order.status === "Delivered") {
-          riderOrders[assigned] = (riderOrders[assigned] || 0) + 1;
-          riderEarnings[assigned] = (riderEarnings[assigned] || 0) + fee;
-        }
       });
-
-      // Delivery fees
-      for (let riderId in riderEarnings) {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-          <div><strong>Rider ID:</strong> ${riderId}</div>
-          <div><strong>Deliveries:</strong> ${riderOrders[riderId]}</div>
-          <div><strong>Total Earned:</strong> ₵${riderEarnings[riderId].toFixed(2)}</div>
-        `;
-        feesSection.appendChild(card);
-      }
     }
 
-    loadDashboard();
-const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  const ridersContainer = document.getElementById('ridersContainer');
-
-  function renderRider(rider) {
-    const { name, photoURL, status } = rider;
-    const statusColor = {
-      available: "green",
-      busy: "gold",
-      offline: "gray"
-    }[status] || "gray";
-
-    return `
-      <div class="rider-card">
-        <img src="${photoURL}" alt="${name}" />
-        <div class="info">
-          <h3>${name}</h3>
-          <p style="color:${statusColor}">${status.toUpperCase()}</p>
-        </div>
-      </div>
-    `;
-  }
-
-  onSnapshot(collection(db, "Riders"), (snapshot) => {
-    ridersContainer.innerHTML = "";
-    snapshot.forEach(doc => {
-      ridersContainer.innerHTML += renderRider(doc.data());
-    });
-  });
+    // Load initially
+    loadRiders();
   </script></body>
 </html>
