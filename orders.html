@@ -86,7 +86,7 @@
   <h1>📦 BizMAX Orders 📥</h1>
   <input type="text" id="searchInput" placeholder="Search Order ID..." />
   <div id="ordersContainer">Fetching orders...</div>
-  <audio id="notifySound" src="https://www.soundjay.com/buttons/beep-01a.mp3"></audio>
+  <audio id="notifySound" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -120,20 +120,24 @@
     }
 
     // Convert timestamp to milliseconds for sorting
-    function getTimestampValue(timestamp) {
+    function getTimestampValue(data, metadata) {
+      const timestamp = data.timestamp || data.createdAt || data.orderDate;
       if (timestamp instanceof Timestamp) {
         return timestamp.toMillis();
       } else if (typeof timestamp === 'number' && !isNaN(timestamp)) {
         return timestamp;
       } else if (timestamp && typeof timestamp === 'object' && timestamp.seconds) {
         return timestamp.seconds * 1000 + (timestamp.nanoseconds / 1000000);
+      } else if (metadata && metadata.createTime) {
+        return metadata.createTime.toMillis();
       }
-      console.warn("Missing or invalid timestamp for order, using current time as fallback for sorting");
-      return Date.now(); // Fallback to current time for new orders
+      console.warn(`Missing or invalid timestamp for order ${data.id || 'unknown'}, using current time for sorting`);
+      return Date.now();
     }
 
     // Format timestamp for display
-    function formatTimestamp(timestamp) {
+    function formatTimestamp(data, metadata) {
+      const timestamp = data.timestamp || data.createdAt || data.orderDate;
       if (timestamp instanceof Timestamp) {
         return timestamp.toDate().toLocaleString();
       } else if (typeof timestamp === 'number' && !isNaN(timestamp)) {
@@ -141,8 +145,10 @@
       } else if (timestamp && typeof timestamp === 'object' && timestamp.seconds) {
         const millis = timestamp.seconds * 1000 + (timestamp.nanoseconds / 1000000);
         return new Date(millis).toLocaleString();
+      } else if (metadata && metadata.createTime) {
+        return metadata.createTime.toDate().toLocaleString();
       }
-      console.warn("Invalid timestamp for display, showing 'N/A'");
+      console.warn(`Invalid timestamp for display in order ${data.id || 'unknown'}, showing 'N/A'`);
       return "N/A";
     }
 
@@ -156,7 +162,8 @@
       // Update cache with changes
       changes.forEach(change => {
         const orderData = change.doc.data();
-        console.log(`Change type: ${change.type}, Order ID: ${orderData.id || change.doc.id}, Timestamp: ${orderData.timestamp}, Formatted: ${formatTimestamp(orderData.timestamp)}, Path: ${change.doc.ref.path}`);
+        const metadata = change.doc.metadata;
+        console.log(`Change type: ${change.type}, Order ID: ${orderData.id || change.doc.id}, Timestamp: ${orderData.timestamp || orderData.createdAt || orderData.orderDate || 'none'}, Formatted: ${formatTimestamp(orderData, metadata)}, Path: ${change.doc.ref.path}, Metadata CreateTime: ${metadata ? metadata.createTime : 'none'}`);
         if (change.type === "added" || change.type === "modified") {
           ordersCache.set(change.doc.ref.path, { docSnap: change.doc, isNew: change.type === "added" && !isInitialLoad });
         } else if (change.type === "removed") {
@@ -168,15 +175,16 @@
       const docsArray = Array.from(ordersCache.values())
         .map(entry => entry.docSnap)
         .sort((a, b) => {
-          const timeA = getTimestampValue(a.data().timestamp);
-          const timeB = getTimestampValue(b.data().timestamp);
-          console.log(`Sorting: Order ${a.data().id || a.id} (${timeA}, ${formatTimestamp(a.data().timestamp)}) vs Order ${b.data().id || b.id} (${timeB}, ${formatTimestamp(b.data().timestamp)})`);
+          const timeA = getTimestampValue(a.data(), a.metadata);
+          const timeB = getTimestampValue(b.data(), b.metadata);
+          console.log(`Sorting: Order ${a.data().id || a.id} (${timeA}, ${formatTimestamp(a.data(), a.metadata)}) vs Order ${b.data().id || b.id} (${timeB}, ${formatTimestamp(b.data(), b.metadata)})`);
           return timeB - timeA; // Newest first
         });
 
       let html = "";
       docsArray.forEach(docSnap => {
         const order = docSnap.data();
+        const metadata = docSnap.metadata;
         const docRef = docSnap.ref;
         const orderId = order.id || docRef.id;
         const status = order.status || "Pending";
@@ -195,7 +203,7 @@
             <p><strong>Payment:</strong> ${order.method || "N/A"}</p>
             <p><strong>Total:</strong> GH¢${parseFloat(order.total || 0).toFixed(2)}</p>
             <p><strong>Items:</strong> ${order.items || "N/A"}</p>
-            <p><strong>Date:</strong> ${formatTimestamp(order.timestamp)}</p>
+            <p><strong>Date:</strong> ${formatTimestamp(order, metadata)}</p>
             <p><strong>Status:</strong> <span class="status">${status}</span></p>
             <button class="completeBtn" style="${buttonStyle}" ${buttonDisabled}>Mark as Complete</button>
             <hr/>
@@ -245,7 +253,7 @@
     function showNotification(orderId) {
       console.log("Showing notification for new order:", orderId);
       const notifySound = document.getElementById("notifySound");
-      notifySound.play().catch(err => console.error("Audio play error:", err));
+      notifySound.play().catch(err => console.error("Audio play error:", err.message));
 
       const alertBox = document.createElement("div");
       alertBox.textContent = `🆕 New Order: ${orderId}`;
@@ -289,7 +297,7 @@
         const snapshot = await getDocs(collectionGroup(db, "orders"));
         displayOrders(snapshot.docChanges(), ordersCache.size === 0);
       } catch (err) {
-        console.error("Polling error:", err);
+        console.error("Polling error:", err.message);
         ordersContainer.innerHTML = "<p>Error loading orders during polling. Please try again.</p>";
       }
     }
@@ -299,11 +307,11 @@
       try {
         console.log("onSnapshot triggered with", snapshot.docChanges().length, "changes");
         snapshot.docChanges().forEach(change => {
-          console.log(`Change type: ${change.type}, Doc ID: ${change.doc.id}, Data:`, change.doc.data());
+          console.log(`Change type: ${change.type}, Doc ID: ${change.doc.id}, Data:`, change.doc.data(), `Metadata CreateTime: ${change.doc.metadata.createTime ? change.doc.metadata.createTime.toDate().toLocaleString() : 'none'}`);
         });
         displayOrders(snapshot.docChanges(), ordersCache.size === 0);
       } catch (err) {
-        console.error("Error in onSnapshot:", err);
+        console.error("Error in onSnapshot:", err.message);
         ordersContainer.innerHTML = "<p>Error loading orders. Please try again.</p>";
         // Start polling if not already started
         if (!pollingInterval) {
@@ -311,7 +319,7 @@
         }
       }
     }, (err) => {
-      console.error("Snapshot listener error:", err);
+      console.error("Snapshot listener error:", err.message);
       ordersContainer.innerHTML = "<p>Error loading orders. Please try again.</p>";
       // Start polling if not already started
       if (!pollingInterval) {
