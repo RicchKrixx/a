@@ -1,36 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Rider | BizMAX</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <title>Rider Dashboard | BizMAX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <style>
-    body { font-family: Arial; background: #f0f0f0; padding: 20px; }
+    body { font-family: 'Poppins', sans-serif; background: #f7fafc; padding: 20px; }
+    h2 { text-align: center; margin-bottom: 20px; color: #1e3a8a; }
+    #ordersContainer { display: grid; gap: 16px; }
     .order-card {
-      background: white; margin: 10px 0; padding: 15px;
-      border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      background: #fff; border-radius: 10px; padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      transform: translateY(20px); opacity: 0;
+      transition: transform 0.4s ease, opacity 0.4s ease;
     }
-    .order-card h3 { margin: 0 0 8px; }
-    .order-card p { margin: 4px 0; }
-    .status-btn {
-      margin-top: 10px; padding: 8px 14px; background: #007bff; color: white;
-      border: none; border-radius: 5px; cursor: pointer;
+    .order-card.show { transform: translateY(0); opacity: 1; }
+    .order-status { display: inline-block; padding: 4px 8px; border-radius: 6px;
+                    font-size: 0.9em; margin-bottom: 8px; }
+    .status-Confirmed { background: #3b82f6; color: white; }
+    .status-Preparing { background: #facc15; color: #1f2937; }
+    .status-On\ the\ way { background: #10b981; color: white; }
+    button.status-btn {
+      display: inline-block; margin-top: 10px; padding: 8px 12px;
+      background: #6366f1; color: white; border: none; border-radius: 6px;
+      cursor: pointer; transition: transform 0.2s;
     }
-    .status-btn[disabled] { background: gray; cursor: not-allowed; }
+    button.status-btn:active { transform: scale(0.95); }
+    button.status-btn[disabled] { background: #d1d5db; cursor: not-allowed; }
   </style>
 </head>
 <body>
-  <h2>Rider Panel</h2>
+  <h2>🛵 Rider Panel</h2>
   <div id="ordersContainer"></div>
 
-  <!-- Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import {
-      getFirestore, collection, onSnapshot, doc, updateDoc
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    
     // Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
@@ -40,52 +46,41 @@ const firebaseConfig = {
   messagingSenderId: "37740442541",
   appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
 };
-
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-
     const ordersContainer = document.getElementById("ordersContainer");
+    const flow = ["Confirmed","Preparing","On the way","Delivered","Completed"];
 
-    const statusFlow = ["Confirmed", "Preparing", "On the way", "Delivered", "Completed"];
-
-    onSnapshot(collection(db, "orders"), (snapshot) => {
+    onSnapshot(collection(db,"orders"), snapshot => {
       ordersContainer.innerHTML = "";
-
       snapshot.forEach(docSnap => {
-        const data = docSnap.data();
-        const orderId = docSnap.id;
-        const currentStatus = data.status;
-
-        if (currentStatus === "Completed") return; // Don't show completed
-
-        const nextStatusIndex = statusFlow.indexOf(currentStatus) + 1;
-        const nextStatus = statusFlow[nextStatusIndex];
+        const data = docSnap.data(), id = docSnap.id;
+        if (data.status === "Completed") return;
+        const next = flow[flow.indexOf(data.status)+1] || null;
 
         const card = document.createElement("div");
         card.className = "order-card";
         card.innerHTML = `
-          <h3>Order ${orderId}</h3>
-          <p><strong>Name:</strong> ${data.name || "N/A"}</p>
-          <p><strong>Address:</strong> ${data.address || "N/A"}</p>
-          <p><strong>Phone:</strong> ${data.phone || "N/A"}</p>
-          <p><strong>Status:</strong> ${currentStatus}</p>
-          <button class="status-btn" ${!nextStatus || nextStatus === "Completed" ? "disabled" : ""}
-            onclick="updateOrderStatus('${orderId}', '${nextStatus}')">
-            ${nextStatus ? `Mark as ${nextStatus}` : "No more updates"}
+          <div class="order-status status-${data.status}">${data.status}</div>
+          <h3>Order ${id}</h3>
+          <p><strong>Name:</strong> ${data.customerName||'—'}</p>
+          <p><strong>Address:</strong> ${data.address||'—'}</p>
+          <p><strong>Phone:</strong> ${data.phone||'—'}</p>
+          <button class="status-btn" ${!next||next==="Completed"?"disabled":""}
+            onclick="updateStatus('${id}','${next}',this)">
+            ${next ? `Mark as ${next}` : `No more updates`}
           </button>
         `;
         ordersContainer.appendChild(card);
+        // trigger animation
+        requestAnimationFrame(() => card.classList.add('show'));
       });
     });
 
-    window.updateOrderStatus = async (orderId, newStatus) => {
-      try {
-        const ref = doc(db, "orders", orderId);
-        await updateDoc(ref, { status: newStatus });
-        alert(`Order ${orderId} marked as ${newStatus}`);
-      } catch (err) {
-        console.error("Failed to update status:", err);
-      }
+    window.updateStatus = async (id, newStatus, btn) => {
+      await updateDoc(doc(db,"orders",id), {status:newStatus});
+      btn.textContent = `Marked ${newStatus}`;
+      btn.disabled = true;
     };
   </script>
 </body>
