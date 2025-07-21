@@ -123,26 +123,27 @@
     function getTimestampValue(timestamp) {
       if (timestamp instanceof Timestamp) {
         return timestamp.toMillis();
-      } else if (typeof timestamp === 'number') {
+      } else if (typeof timestamp === 'number' && !isNaN(timestamp)) {
         return timestamp;
       } else if (timestamp && typeof timestamp === 'object' && timestamp.seconds) {
         return timestamp.seconds * 1000 + (timestamp.nanoseconds / 1000000);
       }
-      console.warn("Missing or invalid timestamp for order, using epoch start as fallback");
-      return 0; // Fallback to epoch start (1970) for sorting
+      console.warn("Missing or invalid timestamp for order, using current time as fallback for sorting");
+      return Date.now(); // Fallback to current time for new orders
     }
 
     // Format timestamp for display
     function formatTimestamp(timestamp) {
       if (timestamp instanceof Timestamp) {
         return timestamp.toDate().toLocaleString();
-      } else if (typeof timestamp === 'number') {
+      } else if (typeof timestamp === 'number' && !isNaN(timestamp)) {
         return new Date(timestamp).toLocaleString();
       } else if (timestamp && typeof timestamp === 'object' && timestamp.seconds) {
         const millis = timestamp.seconds * 1000 + (timestamp.nanoseconds / 1000000);
         return new Date(millis).toLocaleString();
       }
-      return "N/A"; // Fallback for display
+      console.warn("Invalid timestamp for display, showing 'N/A'");
+      return "N/A";
     }
 
     function displayOrders(changes, isInitialLoad = false) {
