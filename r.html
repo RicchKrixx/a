@@ -1,429 +1,281 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dispatch Dashboard</title>
-  <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-storage.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f2f5;
       margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: #f8f9fa;
       padding: 20px;
     }
-
+    h1, h2 {
+      color: #333;
+    }
     .container {
       max-width: 1200px;
-      margin: 0 auto;
+      margin: auto;
     }
-
-    h1 {
-      text-align: center;
-      color: #333;
-      margin-bottom: 20px;
-    }
-
     .card {
-      background: white;
+      background: #fff;
+      border-radius: 10px;
       padding: 20px;
       margin-bottom: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
-
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+    .card h2 {
+      margin-top: 0;
     }
-
-    input, button {
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-
     button {
+      padding: 10px 15px;
+      border: none;
       background-color: #007bff;
       color: white;
-      border: none;
+      border-radius: 5px;
       cursor: pointer;
+      font-weight: 600;
     }
-
     button:hover {
       background-color: #0056b3;
     }
-
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
     }
-
     th, td {
       padding: 10px;
       border: 1px solid #ddd;
       text-align: left;
     }
-
     th {
-      background-color: #f8f9fa;
+      background-color: #f1f1f1;
     }
-
     .status-dot {
       display: inline-block;
       width: 10px;
       height: 10px;
       border-radius: 50%;
-      margin-right: 10px;
+      margin-right: 8px;
     }
+    .status-dot.online { background-color: #28a745; }
+    .status-dot.offline { background-color: #dc3545; }
+    .status-dot.busy { background-color: #ffc107; }#modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+}
+#modal .modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+}
+#modal input {
+  margin: 8px 0;
+  width: 100%;
+  padding: 10px;
+}
 
-    .status-dot.online {
-      background-color: #28a745;
-    }
-
-    .status-dot.offline {
-      background-color: #dc3545;
-    }
-
-    img {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Dispatch Dashboard</h1>
+    <h1>Dispatch Dashboard</h1><!-- Register Modal Trigger -->
+<div class="card">
+  <h2>Rider Management</h2>
+  <button onclick="openModal()">Register New Rider</button>
+</div>
 
-    <!-- Rider Registration -->
-    <div class="card">
-      <h2>Register Rider</h2>
-      <form id="registerForm">
-        <input type="email" id="email" placeholder="Email" required>
-        <input type="text" id="name" placeholder="Name" required>
-        <input type="tel" id="phone" placeholder="Phone Number" required>
-        <input type="text" id="ghanaCard" placeholder="Ghana Card Number" required>
-        <input type="file" id="profilePic" accept="image/*">
-        <button type="submit">Register</button>
-      </form>
-    </div>
-
-    <!-- Rider List -->
-    <div class="card">
-      <h2>Registered Riders</h2>
-      <table id="riderTable">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Rider ID</th>
-            <th>Profile Pic</th>
-          </tr>
-        </thead>
-        <tbody id="riderList"></tbody>
-      </table>
-    </div>
-
-    <!-- Rider Availability -->
-    <div class="card">
-      <h2>Rider Availability</h2>
-      <div id="availabilityList"></div>
-    </div>
-
-    <!-- Order Assignment -->
-    <div class="card">
-      <h2>Assign Order</h2>
-      <button id="assignOrderBtn">Assign New Order</button>
-    </div>
-
-    <!-- Delivery Fees -->
-    <div class="card">
-      <h2>Delivery Fees</h2>
-      <table id="feesTable">
-        <thead>
-          <tr>
-            <th>Rider</th>
-            <th>Fee</th>
-            <th>Date</th>
-          </tr>
-        </thead>
-        <tbody id="feesList"></tbody>
-      </table>
-    </div>
-
-    <!-- Total Sales -->
-    <div class="card">
-      <h2>Total Sales</h2>
-      <table id="salesTable">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Total Sales</th>
-          </tr>
-        </thead>
-        <tbody id="salesList"></tbody>
-      </table>
-    </div>
+<!-- Modal Registration Form -->
+<div id="modal">
+  <div class="modal-content">
+    <h2>Register Rider</h2>
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="text" id="name" placeholder="Name" required />
+    <input type="text" id="phone" placeholder="Phone Number" required />
+    <input type="text" id="ghanaCard" placeholder="Ghana Card Number" required />
+    <input type="text" id="profilePic" placeholder="Profile Pic (filename or URL)" />
+    <button onclick="submitRegistration()">Register</button>
+    <button style="background:#dc3545" onclick="closeModal()">Cancel</button>
   </div>
+</div>
 
-  <script>
-  // Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-  authDomain: "bixmax-6c24c.firebaseapp.com",
-  projectId: "bixmax-6c24c",
-  storageBucket: "bixmax-6c24c.appspot.com",
-  messagingSenderId: "37740442541",
-  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-};
+<!-- Riders Table -->
+<div class="card">
+  <h2>Registered Riders</h2>
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Email</th><th>Phone</th><th>Ghana Card</th><th>Profile</th><th>Status</th><th>Kick</th></tr>
+    </thead>
+    <tbody id="riderList"></tbody>
+  </table>
+</div>
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const storage = firebase.storage();
+<!-- Availability -->
+<div class="card">
+  <h2>Availability</h2>
+  <div id="availabilityList"></div>
+</div>
 
-    // Helper: Generate UUID
-    function generateUUID() {
-      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-      });
-    }
+<!-- Assign Order -->
+<div class="card">
+  <h2>Assign Order</h2>
+  <button onclick="assignOrder()">Assign Order</button>
+</div>
 
-    // Local Storage Helpers
-    function getRiders() {
-      return JSON.parse(localStorage.getItem("riders") || "[]");
-    }
+<!-- Delivery Fee Summary -->
+<div class="card">
+  <h2>Delivery Fees (5 PM Daily)</h2>
+  <table>
+    <thead><tr><th>Rider</th><th>Fee</th><th>Date</th></tr></thead>
+    <tbody id="feesList"></tbody>
+  </table>
+</div>
 
-    function saveRiders(riders) {
-      localStorage.setItem("riders", JSON.stringify(riders));
-    }
+<!-- Total Sales -->
+<div class="card">
+  <h2>Total Sales</h2>
+  <table>
+    <thead><tr><th>Date</th><th>Total Sales</th></tr></thead>
+    <tbody id="salesList"></tbody>
+  </table>
+</div>
 
-    function getOrders() {
-      return JSON.parse(localStorage.getItem("orders") || "[]");
-    }
+  </div>  <script>
+    const getRiders = () => JSON.parse(localStorage.getItem("riders") || "[]");
+    const saveRiders = data => localStorage.setItem("riders", JSON.stringify(data));
+    const getFees = () => JSON.parse(localStorage.getItem("fees") || "[]");
+    const saveFees = data => localStorage.setItem("fees", JSON.stringify(data));
+    const getSales = () => JSON.parse(localStorage.getItem("sales") || "[]");
+    const saveSales = data => localStorage.setItem("sales", JSON.stringify(data));
 
-    function saveOrders(orders) {
-      localStorage.setItem("orders", JSON.stringify(orders));
-    }
+    function openModal() { document.getElementById("modal").style.display = "flex"; }
+    function closeModal() { document.getElementById("modal").style.display = "none"; }
 
-    function getFees() {
-      return JSON.parse(localStorage.getItem("delivery_fees") || "[]");
-    }
-
-    function saveFees(fees) {
-      localStorage.setItem("delivery_fees", JSON.stringify(fees));
-    }
-
-    function getSales() {
-      return JSON.parse(localStorage.getItem("sales") || "[]");
-    }
-
-    function saveSales(sales) {
-      localStorage.setItem("sales", JSON.stringify(sales));
-    }
-
-    // Register Rider
-    async function registerRider({ email, name, phone, ghanaCard, profilePic }) {
-      try {
-        // Create user in Firebase Auth
-        await auth.createUserWithEmailAndPassword(email, "defaultPassword123");
-        const riderId = generateUUID();
-
-        // Upload profile picture (if file)
-        let profilePicUrl = profilePic;
-        if (profilePic instanceof File) {
-          const picRef = storage.ref(`riders/${riderId}/profile.jpg`);
-          await picRef.put(profilePic);
-          profilePicUrl = await picRef.getDownloadURL();
-        }
-
-        // Save to local storage
-        const riders = getRiders();
-        riders.push({
-          riderId,
-          email,
-          name,
-          phone,
-          ghanaCard,
-          profilePic: profilePicUrl,
-          status: "offline",
-          orderCount: 0,
-          createdAt: new Date().toISOString()
-        });
-        saveRiders(riders);
-
-        alert("Rider registered successfully!");
-        displayRiders();
-        displayAvailability();
-      } catch (error) {
-        console.error("Error registering rider:", error);
-        alert("Error: " + error.message);
-      }
-    }
-
-    // Display Riders
-    function displayRiders() {
+    function submitRegistration() {
+      const id = "rider_" + Date.now();
+      const rider = {
+        id,
+        email: email.value,
+        name: name.value,
+        phone: phone.value,
+        ghanaCard: ghanaCard.value,
+        profilePic: profilePic.value,
+        status: "offline",
+        orderCount: 0
+      };
       const riders = getRiders();
-      const riderList = document.getElementById("riderList");
-      riderList.innerHTML = "";
-      riders.forEach(rider => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${rider.name}</td>
-          <td>${rider.email}</td>
-          <td>${rider.phone}</td>
-          <td>${rider.riderId}</td>
-          <td><img src="${rider.profilePic}" alt="Profile"></td>
-        `;
-        riderList.appendChild(tr);
-      });
-    }
-
-    // Display Availability
-    function displayAvailability() {
-      const riders = getRiders();
-      const availabilityList = document.getElementById("availabilityList");
-      availabilityList.innerHTML = "";
-      riders.forEach(rider => {
-        const status = rider.orderCount > 5 ? "busy" : "available";
-        const div = document.createElement("div");
-        div.className = "availability-item";
-        div.innerHTML = `
-          <span class="status-dot ${rider.status === 'online' ? 'online' : 'offline'}"></span>
-          ${rider.name} (${status}) - Orders: ${rider.orderCount}
-        `;
-        availabilityList.appendChild(div);
-      });
-    }
-
-    // Assign Order
-    function assignOrder() {
-      const riders = getRiders();
-      const availableRiders = riders.filter(r => r.status === "online" && r.orderCount <= 5);
-      if (availableRiders.length === 0) {
-        alert("No available riders");
-        return;
-      }
-
-      const selectedRider = availableRiders.reduce((min, rider) =>
-        rider.orderCount < min.orderCount ? rider : min
-      );
-
-      selectedRider.orderCount += 1;
-      selectedRider.status = selectedRider.orderCount > 5 ? "busy" : "available";
+      riders.push(rider);
       saveRiders(riders);
-
-      const orders = getOrders();
-      orders.push({
-        id: Date.now(),
-        riderId: selectedRider.riderId,
-        details: "New Order",
-        amount: 10, // Mock amount
-        assignedAt: new Date().toISOString()
-      });
-      saveOrders(orders);
-
-      alert(`Order assigned to ${selectedRider.name}`);
-      displayAvailability();
-    }
-
-    // Display Delivery Fees
-    function displayFees() {
-      const fees = getFees();
-      const feesList = document.getElementById("feesList");
-      feesList.innerHTML = "";
-      fees.forEach(fee => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${fee.riderName}</td>
-          <td>${fee.amount}</td>
-          <td>${new Date(fee.date).toLocaleDateString()}</td>
-        `;
-        feesList.appendChild(tr);
-      });
-    }
-
-    // Display Total Sales
-    function displaySales() {
-      const sales = getSales();
-      const salesList = document.getElementById("salesList");
-      salesList.innerHTML = "";
-      sales.forEach(sale => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${new Date(sale.date).toLocaleDateString()}</td>
-          <td>${sale.amount}</td>
-        `;
-        salesList.appendChild(tr);
-      });
-    }
-
-    // Authentication Check
-    auth.onAuthStateChanged(user => {
-      if (!user) {
-        document.body.innerHTML = "<p>Please log in as admin.</p>";
-        return;
-      }
+      closeModal();
       displayRiders();
       displayAvailability();
-      displayFees();
-      displaySales();
-    });
+    }
 
-    // Register Form
-    document.getElementById("registerForm").addEventListener("submit", async e => {
-      e.preventDefault();
-      const formData = {
-        email: document.getElementById("email").value,
-        name: document.getElementById("name").value,
-        phone: document.getElementById("phone").value,
-        ghanaCard: document.getElementById("ghanaCard").value,
-        profilePic: document.getElementById("profilePic").files[0] || ""
-      };
-      await registerRider(formData);
-      document.getElementById("registerForm").reset();
-    });
+    function displayRiders() {
+      const tbody = document.getElementById("riderList");
+      tbody.innerHTML = "";
+      getRiders().forEach(r => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${r.name}</td>
+          <td>${r.email}</td>
+          <td>${r.phone}</td>
+          <td>${r.ghanaCard}</td>
+          <td><img src="${r.profilePic}" width="30" height="30" /></td>
+          <td>${r.status}</td>
+          <td><button style="background:#dc3545" onclick="kickRider('${r.id}')">Kick</button></td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
 
-    // Assign Order Button
-    document.getElementById("assignOrderBtn").addEventListener("click", assignOrder);
+    function displayAvailability() {
+      const list = document.getElementById("availabilityList");
+      list.innerHTML = "";
+      getRiders().forEach(r => {
+        const dot = `<span class="status-dot ${r.status}"></span>`;
+        const tag = document.createElement("div");
+        tag.innerHTML = `${dot} ${r.name} - Orders: ${r.orderCount}`;
+        list.appendChild(tag);
+      });
+    }
 
-    // Simulate Cloud Functions for Fees and Sales (since no Firestore)
-    function simulateCloudFunctions() {
+    function kickRider(id) {
+      const riders = getRiders().filter(r => r.id !== id);
+      saveRiders(riders);
+      displayRiders();
+      displayAvailability();
+    }
+
+    function assignOrder() {
+      let riders = getRiders();
+      let available = riders.filter(r => r.orderCount < 5);
+      if (available.length === 0) return alert("No available riders");
+      available.sort((a,b) => a.orderCount - b.orderCount);
+      available[0].orderCount++;
+      available[0].status = available[0].orderCount >= 5 ? "busy" : "online";
+      saveRiders(riders);
+      displayAvailability();
+    }
+
+    function updateFeesAndSales() {
       const now = new Date();
-      if (now.getHours() === 17 && now.getMinutes() === 0) { // Simulate 5 PM
+      if (now.getHours() === 17 && now.getMinutes() === 0) {
         const date = now.toISOString().split("T")[0];
-
-        // Delivery Fees
         const riders = getRiders();
-        const fees = riders.map(rider => ({
-          riderId: rider.riderId,
-          riderName: rider.name,
-          amount: rider.orderCount * 5, // $5 per order
-          date
-        }));
-        saveFees(fees);
-
-        // Total Sales
-        const orders = getOrders();
-        const total = orders.reduce((sum, order) => sum + (order.amount || 0), 0);
+        const fees = getFees();
         const sales = getSales();
+        let total = 0;
+        riders.forEach(r => {
+          const fee = r.orderCount * 5;
+          total += fee;
+          fees.push({ rider: r.name, amount: fee, date });
+          r.orderCount = 0; // reset
+        });
         sales.push({ date, amount: total });
+        saveFees(fees);
         saveSales(sales);
-
+        saveRiders(riders);
         displayFees();
         displaySales();
+        displayAvailability();
       }
     }
 
-    // Poll every minute to check for 5 PM
-    setInterval(simulateCloudFunctions, 60 * 1000);
-    simulateCloudFunctions(); // Initial call
-  </script>
-</body>
+    function displayFees() {
+      const body = document.getElementById("feesList");
+      body.innerHTML = "";
+      getFees().forEach(f => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${f.rider}</td><td>${f.amount}</td><td>${f.date}</td>`;
+        body.appendChild(tr);
+      });
+    }
+
+    function displaySales() {
+      const body = document.getElementById("salesList");
+      body.innerHTML = "";
+      getSales().forEach(s => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${s.date}</td><td>${s.amount}</td>`;
+        body.appendChild(tr);
+      });
+    }
+
+    setInterval(updateFeesAndSales, 60000); // every minute
+    displayRiders();
+    displayAvailability();
+    displayFees();
+    displaySales();
+  </script></body>
 </html>
