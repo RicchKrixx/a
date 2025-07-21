@@ -1,122 +1,116 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BizMAX | Orders</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BizMAX | Dispatch Dashboard</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f5f9ff; padding: 20px; color: #333; }
+    h1 { text-align: center; margin-bottom: 20px; }
+    .riders, .orders, .fees { display: grid; gap: 20px; margin-bottom: 30px; }
+    .card {
+      background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 15px;
+      transition: transform 0.3s ease;
     }
-    body {
-      font-family: Arial, sans-serif;
-      background: #f1f1f1;
-      padding: 1rem;
-    }
-    h1 {
-      margin-bottom: 1rem;
-      color: #333;
-      text-align: center;
-    }
-    input[type="text"] {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 16px;
-    }
-    .order {
-      background: #fff;
-      padding: 15px;
-      margin-bottom: 1rem;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-    .order p {
-      margin: 5px 0;
-    }
-    .order strong {
-      color: #0077cc;
-    }
-    .loading {
-      text-align: center;
-      font-size: 16px;
-      color: gray;
-    }
+    .card:hover { transform: scale(1.02); }
+    .status { padding: 3px 8px; border-radius: 12px; font-size: 12px; }
+    .available { background: #d4fcd4; color: green; }
+    .busy { background: #fff4c4; color: orange; }
+    .offline { background: #ffd4d4; color: red; }
+    .section-title { font-weight: bold; margin-bottom: 8px; font-size: 1.2rem; }
   </style>
 </head>
 <body>
-  <h1>Orders</h1>
-  <input type="text" id="searchInput" placeholder="Search Order ID, Name, Number..." />
-  <div id="ordersContainer">
-    <p class="loading">Loading orders...</p>
-  </div>
+  <h1>🚚 BizMAX Dispatch Dashboard</h1>  <div class="riders" id="ridersSection">
+    <div class="section-title">Riders</div>
+    <!-- Riders loaded here -->
+  </div>  <div class="orders" id="ordersSection">
+    <div class="section-title">Orders</div>
+    <!-- Orders loaded here -->
+  </div>  <div class="fees" id="feesSection">
+    <div class="section-title">Delivery Fee Summary</div>
+    <!-- Fee summary loaded here -->
+  </div>  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  <!-- Firebase Scripts -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    // Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+  authDomain: "bixmax-6c24c.firebaseapp.com",
+  projectId: "bixmax-6c24c",
+  storageBucket: "bixmax-6c24c.appspot.com",
+  messagingSenderId: "37740442541",
+  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+};
 
-  <script>
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-      authDomain: "bixmax-6c24c.firebaseapp.com",
-      projectId: "bixmax-6c24c",
-      storageBucket: "bixmax-6c24c.appspot.com",
-      messagingSenderId: "457967501757",
-      appId: "1:457967501757:web:32f038a4fda7dca624e040"
-    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-    // Init
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+    const ridersSection = document.getElementById("ridersSection");
+    const ordersSection = document.getElementById("ordersSection");
+    const feesSection = document.getElementById("feesSection");
 
-    const ordersContainer = document.getElementById("ordersContainer");
-    const searchInput = document.getElementById("searchInput");
+    async function loadDashboard() {
+      const ridersSnap = await getDocs(collection(db, "riders"));
+      const ordersSnap = await getDocs(collection(db, "orders"));
 
-    // Render orders
-    function renderOrders(orders) {
-      ordersContainer.innerHTML = '';
-      if (orders.length === 0) {
-        ordersContainer.innerHTML = '<p class="loading">No orders found.</p>';
-        return;
-      }
+      const riderOrders = {};
+      const riderEarnings = {};
 
-      orders.forEach(doc => {
-        const data = doc.data();
-        const order = document.createElement("div");
-        order.className = "order";
-        order.innerHTML = `
-          <p><strong>Order ID:</strong> ${data.orderId || doc.id}</p>
-          <p><strong>Name:</strong> ${data.name || 'N/A'}</p>
-          <p><strong>Number:</strong> ${data.number || 'N/A'}</p>
-          <p><strong>Address:</strong> ${data.address || 'N/A'}</p>
-          <p><strong>Payment:</strong> ${data.payment || 'N/A'}</p>
-          <p><strong>Total:</strong> GHS ${data.total || '0.00'}</p>
-          <p><strong>Time:</strong> ${data.timestamp?.toDate().toLocaleString() || 'Unknown'}</p>
+      // Prepare rider cards
+      ridersSnap.forEach(doc => {
+        const rider = doc.data();
+        const statusClass = rider.status === 'available' ? 'available' : (rider.status === 'busy' ? 'busy' : 'offline');
+
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <img src="${rider.photo || 'https://via.placeholder.com/80'}" width="80" height="80" style="border-radius: 50%;" />
+          <h3>${rider.name}</h3>
+          <div class="status ${statusClass}">${rider.status}</div>
         `;
-        ordersContainer.appendChild(order);
+        ridersSection.appendChild(card);
+
+        riderOrders[doc.id] = 0;
+        riderEarnings[doc.id] = 0;
       });
+
+      // Prepare orders overview and calculate earnings
+      ordersSnap.forEach(doc => {
+        const order = doc.data();
+        const assigned = order.assignedTo;
+        const fee = parseFloat(order.deliveryFee || 0);
+
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <div><strong>Order:</strong> ${doc.id}</div>
+          <div><strong>Rider:</strong> ${assigned || 'Unassigned'}</div>
+          <div><strong>Status:</strong> ${order.status}</div>
+          <div><strong>Delivery Fee:</strong> ₵${fee.toFixed(2)}</div>
+        `;
+        ordersSection.appendChild(card);
+
+        if (assigned && order.status === "Delivered") {
+          riderOrders[assigned] = (riderOrders[assigned] || 0) + 1;
+          riderEarnings[assigned] = (riderEarnings[assigned] || 0) + fee;
+        }
+      });
+
+      // Delivery fees
+      for (let riderId in riderEarnings) {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <div><strong>Rider ID:</strong> ${riderId}</div>
+          <div><strong>Deliveries:</strong> ${riderOrders[riderId]}</div>
+          <div><strong>Total Earned:</strong> ₵${riderEarnings[riderId].toFixed(2)}</div>
+        `;
+        feesSection.appendChild(card);
+      }
     }
 
-    // Listen for changes in Orders collection
-    db.collection("Orders").orderBy("timestamp", "desc").onSnapshot(snapshot => {
-      const docs = snapshot.docs;
-      renderOrders(docs);
-    });
-
-    // Search filter
-    searchInput.addEventListener("input", () => {
-      const query = searchInput.value.toLowerCase();
-      const allOrders = document.querySelectorAll(".order");
-      allOrders.forEach(order => {
-        const text = order.textContent.toLowerCase();
-        order.style.display = text.includes(query) ? "block" : "none";
-      });
-    });
-  </script>
-</body>
+    loadDashboard();
+  </script></body>
 </html>
