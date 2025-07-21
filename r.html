@@ -1,124 +1,429 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BizMAX | Shirts</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dispatch Dashboard</title>
+  <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-storage.js"></script>
   <style>
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: white;
-      padding: 10px;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 20px;
     }
-    h2 {
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
       text-align: center;
-      margin-bottom: 10px;
+      color: #333;
+      margin-bottom: 20px;
     }
-    .products {
+
+    .card {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    form {
       display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 15px;
+      flex-direction: column;
+      gap: 10px;
     }
-    .product {
-      background: #1e293b;
-      border-radius: 12px;
+
+    input, button {
       padding: 10px;
-      width: 160px;
-      text-align: center;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+      border: 1px solid #ccc;
+      border-radius: 4px;
     }
-    .product img {
-      width: 100%;
-      height: 160px;
-      object-fit: cover;
-      border-radius: 10px;
-    }
-    .add-btn {
-      margin-top: 6px;
-      padding: 6px 10px;
-      background: #06b6d4;
-      border: none;
+
+    button {
+      background-color: #007bff;
       color: white;
-      border-radius: 6px;
+      border: none;
       cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f8f9fa;
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .status-dot.online {
+      background-color: #28a745;
+    }
+
+    .status-dot.offline {
+      background-color: #dc3545;
+    }
+
+    img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
     }
   </style>
 </head>
 <body>
-  <h2>Shirts</h2>
-  <div class="products" id="shirtsContainer">
-    <!-- Firebase will load shirt items here -->
+  <div class="container">
+    <h1>Dispatch Dashboard</h1>
+
+    <!-- Rider Registration -->
+    <div class="card">
+      <h2>Register Rider</h2>
+      <form id="registerForm">
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="text" id="name" placeholder="Name" required>
+        <input type="tel" id="phone" placeholder="Phone Number" required>
+        <input type="text" id="ghanaCard" placeholder="Ghana Card Number" required>
+        <input type="file" id="profilePic" accept="image/*">
+        <button type="submit">Register</button>
+      </form>
+    </div>
+
+    <!-- Rider List -->
+    <div class="card">
+      <h2>Registered Riders</h2>
+      <table id="riderTable">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Rider ID</th>
+            <th>Profile Pic</th>
+          </tr>
+        </thead>
+        <tbody id="riderList"></tbody>
+      </table>
+    </div>
+
+    <!-- Rider Availability -->
+    <div class="card">
+      <h2>Rider Availability</h2>
+      <div id="availabilityList"></div>
+    </div>
+
+    <!-- Order Assignment -->
+    <div class="card">
+      <h2>Assign Order</h2>
+      <button id="assignOrderBtn">Assign New Order</button>
+    </div>
+
+    <!-- Delivery Fees -->
+    <div class="card">
+      <h2>Delivery Fees</h2>
+      <table id="feesTable">
+        <thead>
+          <tr>
+            <th>Rider</th>
+            <th>Fee</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="feesList"></tbody>
+      </table>
+    </div>
+
+    <!-- Total Sales -->
+    <div class="card">
+      <h2>Total Sales</h2>
+      <table id="salesTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Total Sales</th>
+          </tr>
+        </thead>
+        <tbody id="salesList"></tbody>
+      </table>
+    </div>
   </div>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
   <script>
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-      authDomain: "bixmax-6c24c.firebaseapp.com",
-      projectId: "bixmax-6c24c",
-      storageBucket: "bixmax-6c24c.appspot.com",
-      messagingSenderId: "37740442541",
-      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-    };
+  // Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+  authDomain: "bixmax-6c24c.firebaseapp.com",
+  projectId: "bixmax-6c24c",
+  storageBucket: "bixmax-6c24c.appspot.com",
+  messagingSenderId: "37740442541",
+  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+};
 
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+    const auth = firebase.auth();
+    const storage = firebase.storage();
 
-    // Fetch all shirts from Firestore
-    function fetchShirts() {
-      const container = document.getElementById("shirtsContainer");
-      container.innerHTML = "<p>Loading...</p>";
+    // Helper: Generate UUID
+    function generateUUID() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
 
-      console.log("Fetching shirts from Firestore...");
+    // Local Storage Helpers
+    function getRiders() {
+      return JSON.parse(localStorage.getItem("riders") || "[]");
+    }
 
-      db.collection("fashion")
-        .doc("Shirts")
-        .collection("items")
-        .get()
-        .then((snapshot) => {
-          container.innerHTML = "";
+    function saveRiders(riders) {
+      localStorage.setItem("riders", JSON.stringify(riders));
+    }
 
-          if (snapshot.empty) {
-            container.innerHTML = "<p>No shirts available.</p>";
-            return;
-          }
+    function getOrders() {
+      return JSON.parse(localStorage.getItem("orders") || "[]");
+    }
 
-          snapshot.forEach((doc) => {
-            const data = doc.data();
-            console.log("Loaded:", data);
+    function saveOrders(orders) {
+      localStorage.setItem("orders", JSON.stringify(orders));
+    }
 
-            const productEl = document.createElement("div");
-            productEl.className = "product";
-            productEl.innerHTML = `
-              <img src="${data.image}" alt="${data.name}" />
-              <h3>${data.name}</h3>
-              <p>GH¢${data.price}</p>
-              <button class="add-btn" onclick="addToCart('${data.name}', '${data.image}', ${data.price})">Add to Cart</button>
-            `;
-            container.appendChild(productEl);
-          });
-        })
-        .catch((error) => {
-          console.error("Firestore error:", error);
-          container.innerHTML = "<p>Error loading shirts.</p>";
+    function getFees() {
+      return JSON.parse(localStorage.getItem("delivery_fees") || "[]");
+    }
+
+    function saveFees(fees) {
+      localStorage.setItem("delivery_fees", JSON.stringify(fees));
+    }
+
+    function getSales() {
+      return JSON.parse(localStorage.getItem("sales") || "[]");
+    }
+
+    function saveSales(sales) {
+      localStorage.setItem("sales", JSON.stringify(sales));
+    }
+
+    // Register Rider
+    async function registerRider({ email, name, phone, ghanaCard, profilePic }) {
+      try {
+        // Create user in Firebase Auth
+        await auth.createUserWithEmailAndPassword(email, "defaultPassword123");
+        const riderId = generateUUID();
+
+        // Upload profile picture (if file)
+        let profilePicUrl = profilePic;
+        if (profilePic instanceof File) {
+          const picRef = storage.ref(`riders/${riderId}/profile.jpg`);
+          await picRef.put(profilePic);
+          profilePicUrl = await picRef.getDownloadURL();
+        }
+
+        // Save to local storage
+        const riders = getRiders();
+        riders.push({
+          riderId,
+          email,
+          name,
+          phone,
+          ghanaCard,
+          profilePic: profilePicUrl,
+          status: "offline",
+          orderCount: 0,
+          createdAt: new Date().toISOString()
         });
+        saveRiders(riders);
+
+        alert("Rider registered successfully!");
+        displayRiders();
+        displayAvailability();
+      } catch (error) {
+        console.error("Error registering rider:", error);
+        alert("Error: " + error.message);
+      }
     }
 
-    // Dummy addToCart function (replace with your cart logic)
-    function addToCart(name, image, price) {
-      alert(`${name} added to cart!`);
+    // Display Riders
+    function displayRiders() {
+      const riders = getRiders();
+      const riderList = document.getElementById("riderList");
+      riderList.innerHTML = "";
+      riders.forEach(rider => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${rider.name}</td>
+          <td>${rider.email}</td>
+          <td>${rider.phone}</td>
+          <td>${rider.riderId}</td>
+          <td><img src="${rider.profilePic}" alt="Profile"></td>
+        `;
+        riderList.appendChild(tr);
+      });
     }
 
-    // Load shirts on page load
-    fetchShirts();
+    // Display Availability
+    function displayAvailability() {
+      const riders = getRiders();
+      const availabilityList = document.getElementById("availabilityList");
+      availabilityList.innerHTML = "";
+      riders.forEach(rider => {
+        const status = rider.orderCount > 5 ? "busy" : "available";
+        const div = document.createElement("div");
+        div.className = "availability-item";
+        div.innerHTML = `
+          <span class="status-dot ${rider.status === 'online' ? 'online' : 'offline'}"></span>
+          ${rider.name} (${status}) - Orders: ${rider.orderCount}
+        `;
+        availabilityList.appendChild(div);
+      });
+    }
+
+    // Assign Order
+    function assignOrder() {
+      const riders = getRiders();
+      const availableRiders = riders.filter(r => r.status === "online" && r.orderCount <= 5);
+      if (availableRiders.length === 0) {
+        alert("No available riders");
+        return;
+      }
+
+      const selectedRider = availableRiders.reduce((min, rider) =>
+        rider.orderCount < min.orderCount ? rider : min
+      );
+
+      selectedRider.orderCount += 1;
+      selectedRider.status = selectedRider.orderCount > 5 ? "busy" : "available";
+      saveRiders(riders);
+
+      const orders = getOrders();
+      orders.push({
+        id: Date.now(),
+        riderId: selectedRider.riderId,
+        details: "New Order",
+        amount: 10, // Mock amount
+        assignedAt: new Date().toISOString()
+      });
+      saveOrders(orders);
+
+      alert(`Order assigned to ${selectedRider.name}`);
+      displayAvailability();
+    }
+
+    // Display Delivery Fees
+    function displayFees() {
+      const fees = getFees();
+      const feesList = document.getElementById("feesList");
+      feesList.innerHTML = "";
+      fees.forEach(fee => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${fee.riderName}</td>
+          <td>${fee.amount}</td>
+          <td>${new Date(fee.date).toLocaleDateString()}</td>
+        `;
+        feesList.appendChild(tr);
+      });
+    }
+
+    // Display Total Sales
+    function displaySales() {
+      const sales = getSales();
+      const salesList = document.getElementById("salesList");
+      salesList.innerHTML = "";
+      sales.forEach(sale => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${new Date(sale.date).toLocaleDateString()}</td>
+          <td>${sale.amount}</td>
+        `;
+        salesList.appendChild(tr);
+      });
+    }
+
+    // Authentication Check
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        document.body.innerHTML = "<p>Please log in as admin.</p>";
+        return;
+      }
+      displayRiders();
+      displayAvailability();
+      displayFees();
+      displaySales();
+    });
+
+    // Register Form
+    document.getElementById("registerForm").addEventListener("submit", async e => {
+      e.preventDefault();
+      const formData = {
+        email: document.getElementById("email").value,
+        name: document.getElementById("name").value,
+        phone: document.getElementById("phone").value,
+        ghanaCard: document.getElementById("ghanaCard").value,
+        profilePic: document.getElementById("profilePic").files[0] || ""
+      };
+      await registerRider(formData);
+      document.getElementById("registerForm").reset();
+    });
+
+    // Assign Order Button
+    document.getElementById("assignOrderBtn").addEventListener("click", assignOrder);
+
+    // Simulate Cloud Functions for Fees and Sales (since no Firestore)
+    function simulateCloudFunctions() {
+      const now = new Date();
+      if (now.getHours() === 17 && now.getMinutes() === 0) { // Simulate 5 PM
+        const date = now.toISOString().split("T")[0];
+
+        // Delivery Fees
+        const riders = getRiders();
+        const fees = riders.map(rider => ({
+          riderId: rider.riderId,
+          riderName: rider.name,
+          amount: rider.orderCount * 5, // $5 per order
+          date
+        }));
+        saveFees(fees);
+
+        // Total Sales
+        const orders = getOrders();
+        const total = orders.reduce((sum, order) => sum + (order.amount || 0), 0);
+        const sales = getSales();
+        sales.push({ date, amount: total });
+        saveSales(sales);
+
+        displayFees();
+        displaySales();
+      }
+    }
+
+    // Poll every minute to check for 5 PM
+    setInterval(simulateCloudFunctions, 60 * 1000);
+    simulateCloudFunctions(); // Initial call
   </script>
 </body>
 </html>
