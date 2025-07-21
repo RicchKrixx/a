@@ -1,121 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BizMAX | Dispatch Panel</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BizMAX | Orders</title>
   <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
     body {
       font-family: Arial, sans-serif;
-      background: #f0f8ff;
-      margin: 0;
-      padding: 20px;
+      background: #f1f1f1;
+      padding: 1rem;
     }
-    h2 {
-      text-align: center;
-      color: #2196f3;
-    }
-    .order-card {
-      background: #fff;
-      border-radius: 12px;
-      padding: 15px;
-      margin-bottom: 15px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-    }
-    .order-card strong {
+    h1 {
+      margin-bottom: 1rem;
       color: #333;
+      text-align: center;
     }
-    .status-select {
+    input[type="text"] {
       width: 100%;
-      padding: 8px;
-      margin-top: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 15px;
-    }
-    .update-btn {
-      width: 100%;
-      margin-top: 10px;
       padding: 10px;
-      background: #2196f3;
-      color: white;
-      border: none;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
       border-radius: 8px;
-      cursor: pointer;
+      font-size: 16px;
+    }
+    .order {
+      background: #fff;
+      padding: 15px;
+      margin-bottom: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .order p {
+      margin: 5px 0;
+    }
+    .order strong {
+      color: #0077cc;
+    }
+    .loading {
+      text-align: center;
+      font-size: 16px;
+      color: gray;
     }
   </style>
 </head>
 <body>
+  <h1>Orders</h1>
+  <input type="text" id="searchInput" placeholder="Search Order ID, Name, Number..." />
+  <div id="ordersContainer">
+    <p class="loading">Loading orders...</p>
+  </div>
 
-<h2>Dispatch Control Panel</h2>
-<div id="ordersContainer"></div>
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
-<!-- Firebase SDK -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getFirestore, collection, onSnapshot, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  <script>
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+      authDomain: "bixmax-6c24c.firebaseapp.com",
+      projectId: "bixmax-6c24c",
+      storageBucket: "bixmax-6c24c.appspot.com",
+      messagingSenderId: "457967501757",
+      appId: "1:457967501757:web:32f038a4fda7dca624e040"
+    };
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-    authDomain: "bixmax-6c24c.firebaseapp.com",
-    projectId: "bixmax-6c24c",
-    storageBucket: "bixmax-6c24c.appspot.com",
-    messagingSenderId: "400125973948",
-    appId: "1:400125973948:web:fcbebc87bce5b84911bdb6"
-  };
+    // Init
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+    const ordersContainer = document.getElementById("ordersContainer");
+    const searchInput = document.getElementById("searchInput");
 
-  const ordersContainer = document.getElementById("ordersContainer");
+    // Render orders
+    function renderOrders(orders) {
+      ordersContainer.innerHTML = '';
+      if (orders.length === 0) {
+        ordersContainer.innerHTML = '<p class="loading">No orders found.</p>';
+        return;
+      }
 
-  // Realtime listener
-  onSnapshot(collection(db, "orders"), (snapshot) => {
-    ordersContainer.innerHTML = ""; // Clear
-    snapshot.forEach(docSnap => {
-      const data = docSnap.data();
-      const id = docSnap.id;
-
-      const card = document.createElement("div");
-      card.className = "order-card";
-
-      const itemsList = data.items.map(item =>
-        `<li>${item.name} × ${item.quantity} ${item.color || ''} ${item.size || ''}</li>`
-      ).join("");
-
-      card.innerHTML = `
-        <strong>Order ID:</strong> ${id}<br>
-        <strong>Name:</strong> ${data.name}<br>
-        <strong>Phone:</strong> ${data.phone}<br>
-        <strong>Address:</strong> ${data.address}<br>
-        <strong>Total:</strong> ₵${data.total}<br>
-        <strong>Status:</strong> ${data.status || "Processing"}<br>
-        <strong>Items:</strong><ul>${itemsList}</ul>
-        <select class="status-select" id="status-${id}">
-          <option value="Processing" ${data.status === "Processing" ? "selected" : ""}>Processing</option>
-          <option value="Preparing" ${data.status === "Preparing" ? "selected" : ""}>Preparing</option>
-          <option value="On The Way" ${data.status === "On The Way" ? "selected" : ""}>On The Way</option>
-          <option value="Delivered" ${data.status === "Delivered" ? "selected" : ""}>Delivered</option>
-        </select>
-        <button class="update-btn" onclick="updateStatus('${id}')">Update Status</button>
-      `;
-
-      ordersContainer.appendChild(card);
-    });
-  });
-
-  window.updateStatus = async function(orderId) {
-    const statusValue = document.getElementById("status-" + orderId).value;
-    const ref = doc(db, "orders", orderId);
-    try {
-      await updateDoc(ref, { status: statusValue });
-      alert(`Status updated to "${statusValue}" for ${orderId}`);
-    } catch (err) {
-      console.error("Error updating:", err);
-      alert("Failed to update status.");
+      orders.forEach(doc => {
+        const data = doc.data();
+        const order = document.createElement("div");
+        order.className = "order";
+        order.innerHTML = `
+          <p><strong>Order ID:</strong> ${data.orderId || doc.id}</p>
+          <p><strong>Name:</strong> ${data.name || 'N/A'}</p>
+          <p><strong>Number:</strong> ${data.number || 'N/A'}</p>
+          <p><strong>Address:</strong> ${data.address || 'N/A'}</p>
+          <p><strong>Payment:</strong> ${data.payment || 'N/A'}</p>
+          <p><strong>Total:</strong> GHS ${data.total || '0.00'}</p>
+          <p><strong>Time:</strong> ${data.timestamp?.toDate().toLocaleString() || 'Unknown'}</p>
+        `;
+        ordersContainer.appendChild(order);
+      });
     }
-  };
-</script>
 
+    // Listen for changes in Orders collection
+    db.collection("Orders").orderBy("timestamp", "desc").onSnapshot(snapshot => {
+      const docs = snapshot.docs;
+      renderOrders(docs);
+    });
+
+    // Search filter
+    searchInput.addEventListener("input", () => {
+      const query = searchInput.value.toLowerCase();
+      const allOrders = document.querySelectorAll(".order");
+      allOrders.forEach(order => {
+        const text = order.textContent.toLowerCase();
+        order.style.display = text.includes(query) ? "block" : "none";
+      });
+    });
+  </script>
 </body>
 </html>
