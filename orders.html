@@ -190,7 +190,11 @@
     }
 
     // Real-time listener for orders
-    const unsubscribe = onSnapshot(collectionGroup(db, "orders"), (snapshot) => {
+    import { query, collection, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const ordersQuery = query(collection(db, "Orders"), orderBy("timestamp", "desc"));
+
+const unsubscribe = onSnapshot(ordersQuery, (snapshot) => {
       try {
         displayOrders(snapshot);
       } catch (err) {
