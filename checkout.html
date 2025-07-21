@@ -216,24 +216,32 @@ function buildItemsString(cartItems) {
   }).join(", ");
 }
 
-async function sendOrderToFirebase(orderId, data, cartItems) {
+import {
+  doc,
+  setDoc,
+  collection,
+  addDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+async function sendOrderToFirebase(orderId, orderData) {
   try {
-    // Create reference to Orders/orderId
     const orderRef = doc(db, "Orders", orderId);
 
-    // Save the main order details
+    // Save the main order
     await setDoc(orderRef, {
       id: orderId,
-      ...data,
+      ...orderData,
       timestamp: serverTimestamp()
     });
 
-    // Save items under Orders/orderId/items/
-    for (let item of cartItems) {
+    // Save individual items
+    for (let item of orderData.cartItems) {
       await addDoc(collection(orderRef, "items"), item);
     }
+
     localStorage.setItem("latestOrderId", orderId);
-    console.log("✅ Order saved for:", userEmail);
+    console.log("✅ Order saved:", orderId);
     window.location.href = "thankyou.html?orderId=" + orderId;
   } catch (error) {
     console.error("❌ Error saving order:", error);
@@ -241,7 +249,6 @@ async function sendOrderToFirebase(orderId, data, cartItems) {
     showLoader(false);
   }
 }
-
 // 💳 Update button text based on method and auth
 payMethod.addEventListener("change", () => {
   const selected = payMethod.value;
@@ -314,7 +321,8 @@ actionBtn.addEventListener("click", async (e) => {
       }).openIframe();
     } else {
       // 🛵 "Pay on Delivery"
-      sendOrderToFirebase(email, orderId, orderData);
+      orderData.cartItems = cartItems;
+sendOrderToFirebase(orderId, orderData);
     }
   });
 });
