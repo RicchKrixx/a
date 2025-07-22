@@ -471,7 +471,7 @@ box-shadow: 0 0 10px cyan;
       bubble.style.left = `${randomLeft}px`;
 
       // Random speed
-      bubble.style.animationDuration = (3 + Math.random() * 4) + 's';
+      bubble.style.animationDuration = (2 + Math.random() * 3) + 's';
 
       // Image
       const img = document.createElement('img');
@@ -483,7 +483,7 @@ box-shadow: 0 0 10px cyan;
       // Remove after animation
       setTimeout(() => {
         bubble.remove();
-      }, 2000);
+      }, 10000);
     }
 
     setInterval(createBubble, 1000);
