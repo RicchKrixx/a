@@ -227,7 +227,7 @@ async function sendOrderToFirebase(orderId, data) {
     });
     localStorage.setItem("latestOrderId", orderId);
     console.log("✅ Order saved:", orderId);
-    window.location.href = "thankyou.html?orderId=" + orderId;
+    window.location.href = "/thankyou/?orderId=" + orderId;
   } catch (error) {
     console.error("❌ Error saving order:", error);
     alert("Order failed. Please try again.");
@@ -365,9 +365,9 @@ async function sendOrderToFirebase(orderId, data) {
   }
 
   function calculateDeliveryFee(distanceKm) {
-    const baseFee = 10;
-    const extraRate = 2;
-    return distanceKm <= 10 ? baseFee : baseFee + (distanceKm - 10) * extraRate;
+    const baseFee = 6;
+    const extraRate = 1.6;
+    return distanceKm <= 6 ? baseFee : baseFee + (distanceKm - 6) * extraRate;
   }
 
   function displayDeliveryFee() {
