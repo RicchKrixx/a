@@ -262,21 +262,31 @@ box-shadow: 0 0 10px cyan;
       width: 100%;
     }
   </style>
-  <style>
-    body {
-      margin: 0;
-      background: #111;
+ 
+    .product-container {
+      position: relative;
+      width: 90%;
+      max-width: 400px;
+      height: 400px;
+      border-radius: 20px;
+      background: #1a1a1a;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
       overflow: hidden;
-      font-family: sans-serif;
+    }
+
+    .product-container h2 {
+      text-align: center;
+      margin: 10px 0;
+      color: cyan;
     }
 
     .bubble {
       position: absolute;
-      width: 80px;
-      height: 80px;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
       overflow: hidden;
-      box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
       animation: floatDown linear infinite;
     }
 
@@ -288,14 +298,14 @@ box-shadow: 0 0 10px cyan;
 
     @keyframes floatDown {
       0% {
-        transform: translateY(-100px);
+        transform: translateY(-70px);
         opacity: 0;
       }
       10% {
         opacity: 1;
       }
       100% {
-        transform: translateY(120vh);
+        transform: translateY(450px);
         opacity: 0;
       }
     }
@@ -338,6 +348,10 @@ box-shadow: 0 0 10px cyan;
   </header>
 
   <p id="flashDeal" class="flash-deal">🔥 Get 20% off on all sneakers!</p>
+
+<div class="product-container" id="productArea">
+    <h2>Popular Products</h2>
+  </div>
 
 <section class="testimonials">
 <h2>What Our Customers Say</h2>
@@ -440,35 +454,45 @@ box-shadow: 0 0 10px cyan;
 
   setInterval(rotateSpotlight, 1000);
 </script>
-<script>
-  const images = [
-    'https://via.placeholder.com/80x80?text=👟',
-    'https://via.placeholder.com/80x80?text=👜',
-    'https://via.placeholder.com/80x80?text=👗',
-    'https://via.placeholder.com/80x80?text=🕶️',
-    'https://via.placeholder.com/80x80?text=⌚',
-    'https://via.placeholder.com/80x80?text=💄',
-    'https://via.placeholder.com/80x80?text=📱',
-  ];
+ <script>
+    const productArea = document.getElementById("productArea");
 
-  function createBubble() {
-    const bubble = document.createElement('div');
-    bubble.className = 'bubble';
-    bubble.style.left = Math.random() * window.innerWidth + 'px';
-    bubble.style.animationDuration = (4 + Math.random() * 6) + 's';
+    const images = [
+      'https://via.placeholder.com/60x60?text=👟',
+      'https://via.placeholder.com/60x60?text=👗',
+      'https://via.placeholder.com/60x60?text=👜',
+      'https://via.placeholder.com/60x60?text=⌚',
+      'https://via.placeholder.com/60x60?text=📱',
+      'https://via.placeholder.com/60x60?text=🕶️',
+      'https://via.placeholder.com/60x60?text=💄',
+    ];
 
-    const img = document.createElement('img');
-    img.src = images[Math.floor(Math.random() * images.length)];
-    bubble.appendChild(img);
+    function createBubble() {
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
 
-    document.body.appendChild(bubble);
+      // Position randomly within container width
+      const containerWidth = productArea.clientWidth;
+      const randomLeft = Math.random() * (containerWidth - 60);
+      bubble.style.left = `${randomLeft}px`;
 
-    setTimeout(() => {
-      bubble.remove();
-    }, 10000);
-  }
+      // Random speed
+      bubble.style.animationDuration = (3 + Math.random() * 4) + 's';
 
-  setInterval(createBubble, 500);
-</script>
+      // Image
+      const img = document.createElement('img');
+      img.src = images[Math.floor(Math.random() * images.length)];
+      bubble.appendChild(img);
+
+      productArea.appendChild(bubble);
+
+      // Remove after animation
+      setTimeout(() => {
+        bubble.remove();
+      }, 7000);
+    }
+
+    setInterval(createBubble, 600);
+  </script>
 </body>
 </html>
