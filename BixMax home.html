@@ -184,38 +184,54 @@ gap: 10px
 }
 
 }
-#slider {
+.carousel-wrapper {
+  width: 100%;
   overflow: hidden;
-  position: relative;
-}
-
-.slider-track {
+  padding: 10px 0;
   display: flex;
-  width: calc(100vw * 6); /* number of images */
-  animation: scrollSlider 20s linear infinite;
+  justify-content: center;
+  align-items: center;
 }
 
-.slider-track img {
-  width: 100vw;
-  flex-shrink: 0;
-  opacity: 0;
-  animation: fadeInOut 20s linear infinite;
-  transition: opacity 1s ease-in-out;
+.carousel-track {
+  display: flex;
+  gap: 20px;
+  animation: autoScroll 20s linear infinite;
 }
 
-/* Make each image fade in and out in sync */
-.slider-track img:nth-child(1) { animation-delay: 0s; }
-.slider-track img:nth-child(2) { animation-delay: 3.3s; }
-.slider-track img:nth-child(3) { animation-delay: 6.6s; }
-.slider-track img:nth-child(4) { animation-delay: 9.9s; }
-.slider-track img:nth-child(5) { animation-delay: 13.2s; }
-.slider-track img:nth-child(6) { animation-delay: 16.5s; }
-
-@keyframes scrollSlider {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-200vw); } /* Adjust based on slide count */
+.carousel-item {
+  flex: 0 0 150px;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  text-align: center;
+  background: white;
+  padding: 10px;
+  border-radius: 15px;
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.3);
+  opacity: 0.6;
+  transform: scale(0.85);
 }
 
+.carousel-item img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.carousel-item p {
+  margin-top: 6px;
+  font-weight: bold;
+  color: darkcyan;
+}
+
+/* Focus the center-ish item */
+.carousel-item:nth-child(3n+2) {
+  transform: scale(1.1);
+  opacity: 1;
+}
+
+@keyframes autoScroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
 @keyframes fadeInOut {
   0%, 16.6% { opacity: 1; }
   33.3%, 100% { opacity: 0; }
@@ -359,15 +375,17 @@ box-shadow: 0 0 10px cyan;
 
   <p id="flashDeal" class="flash-deal">🔥 Get 20% off on all sneakers!</p>
  <div class="products" id="slider">
+ <div class="products">
   <h2 align="center">Popular Products</h2>
-  <div class="slider-track">
-    <img src="pp.jpeg" alt="Product 1">
-    <img src="pp.jpeg" alt="Product 2">
-    <img src="pp.jpeg" alt="Product 3">
-    <img src="pp.jpeg" alt="Product 4">
-    <!-- Duplicate first few for smooth loop -->
-    <img src="pp.jpeg" alt="Product 1">
-    <img src="pp.jpeg" alt="Product 2">
+  <div class="carousel-wrapper">
+    <div class="carousel-track">
+      <div class="carousel-item"><img src="pp.jpeg"><p>Product 1</p></div>
+      <div class="carousel-item"><img src="pp.jpeg"><p>Product 2</p></div>
+      <div class="carousel-item"><img src="pp.jpeg"><p>Product 3</p></div>
+      <div class="carousel-item"><img src="pp.jpeg"><p>Product 4</p></div>
+      <div class="carousel-item"><img src="pp.jpeg"><p>Product 5</p></div>
+      <div class="carousel-item"><img src="pp.jpeg"><p>Product 6</p></div>
+    </div>
   </div>
 </div>
 
