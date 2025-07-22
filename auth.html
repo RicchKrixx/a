@@ -107,14 +107,14 @@
         })
         .then(() => {
           alert("Signup successful!");
-          window.location.href = "dashboard.html";
+          window.location.href = "/dashboard/";
         })
         .catch(error => alert(error.message));
     } else {
       signInWithEmailAndPassword(auth, email, password)
         .then(() => {
           alert("Login successful!");
-          window.location.href = "dashboard.html";
+          window.location.href = "/BixMax home/";
         })
         .catch(error => alert(error.message));
     }
