@@ -184,42 +184,51 @@ gap: 10px
 }
 
 }
-.carousel-wrapper {
+.circle-carousel {
+  width: 300px;
+  height: 300px;
+  position: relative;
+  margin: 40px auto;
+  perspective: 1000px;
+}
+
+.circle-track {
   width: 100%;
-  overflow: hidden;
-  padding: 10px 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  height: 100%;
+  position: absolute;
+  transform-style: preserve-3d;
+  animation: spin 20s linear infinite;
 }
 
-.carousel-track {
-  display: flex;
-  gap: 20px;
-  animation: autoScroll 20s linear infinite;
-}
-
-.carousel-item {
-  flex: 0 0 150px;
-  transition: transform 0.5s ease, opacity 0.5s ease;
+.circle-item {
+  width: 80px;
+  height: 80px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -40px;
+  transform-origin: 0 150px;
   text-align: center;
-  background: white;
-  padding: 10px;
-  border-radius: 15px;
-  box-shadow: 0 0 12px rgba(0, 255, 255, 0.3);
-  opacity: 0.6;
-  transform: scale(0.85);
+  transition: transform 0.5s, opacity 0.5s;
 }
 
-.carousel-item img {
+.circle-item img {
   width: 100%;
+  height: auto;
   border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,255,255,0.4);
 }
 
-.carousel-item p {
-  margin-top: 6px;
-  font-weight: bold;
+.circle-item p {
   color: darkcyan;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+/* Spin animation */
+@keyframes spin {
+  from { transform: rotateY(0deg); }
+  to   { transform: rotateY(360deg); }
 }
 
 /* Focus the center-ish item */
@@ -377,15 +386,14 @@ box-shadow: 0 0 10px cyan;
  <div class="products" id="slider">
  <div class="products">
   <h2 align="center">Popular Products</h2>
-  <div class="carousel-wrapper">
-    <div class="carousel-track">
-      <div class="carousel-item"><img src="pp.jpeg"><p>Product 1</p></div>
-      <div class="carousel-item"><img src="pp.jpeg"><p>Product 2</p></div>
-      <div class="carousel-item"><img src="pp.jpeg"><p>Product 3</p></div>
-      <div class="carousel-item"><img src="pp.jpeg"><p>Product 4</p></div>
-      <div class="carousel-item"><img src="pp.jpeg"><p>Product 5</p></div>
-      <div class="carousel-item"><img src="pp.jpeg"><p>Product 6</p></div>
-    </div>
+ <div class="circle-carousel">
+  <div class="circle-track">
+    <div class="circle-item"><img src="pp.jpeg"><p>1</p></div>
+    <div class="circle-item"><img src="pp.jpeg"><p>2</p></div>
+    <div class="circle-item"><img src="pp.jpeg"><p>3</p></div>
+    <div class="circle-item"><img src="pp.jpeg"><p>4</p></div>
+    <div class="circle-item"><img src="pp.jpeg"><p>5</p></div>
+    <div class="circle-item"><img src="pp.jpeg"><p>6</p></div>
   </div>
 </div>
 
@@ -479,5 +487,14 @@ box-shadow: 0 0 10px cyan;
       }
     });
   </script>
+<script>
+  const items = document.querySelectorAll(".circle-item");
+  const total = items.length;
+  const angle = 360 / total;
+
+  items.forEach((item, i) => {
+    item.style.transform = `rotateY(${i * angle}deg) translateZ(150px)`;
+  });
+</script>
 </body>
 </html>
