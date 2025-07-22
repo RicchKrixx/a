@@ -437,40 +437,5 @@ box-shadow: 0 0 10px cyan;
       }
     });
   </script>
-
- <script>
-    const productArea = document.getElementById("productArea");
-
-    const images = [
-      'https://i.postimg.cc/vTPd6n8Y/download.jpg/60x60?text=👟',
-    ];
-
-    function createBubble() {
-      const bubble = document.createElement('div');
-      bubble.className = 'bubble';
-
-      // Position randomly within container width
-      const containerWidth = productArea.clientWidth;
-      const randomLeft = Math.random() * (containerWidth - 60);
-      bubble.style.left = `${randomLeft}px`;
-
-      // Random speed
-      bubble.style.animationDuration = (2 + Math.random() * 3) + 's';
-
-      // Image
-      const img = document.createElement('img');
-      img.src = images[Math.floor(Math.random() * images.length)];
-      bubble.appendChild(img);
-
-      productArea.appendChild(bubble);
-
-      // Remove after animation
-      setTimeout(() => {
-        bubble.remove();
-      }, 10000);
-    }
-
-    setInterval(createBubble, 2000);
-  </script>
 </body>
 </html>
