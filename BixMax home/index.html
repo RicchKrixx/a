@@ -262,66 +262,44 @@ box-shadow: 0 0 10px cyan;
       width: 100%;
     }
   </style>
-<style>
-.popular-products-loader {
-  text-align: center;
-  background: #f0fbff;
-  padding: 0;
-}
+  <style>
+    body {
+      margin: 0;
+      background: #111;
+      overflow: hidden;
+      font-family: sans-serif;
+    }
 
-.popular-products-loader h2 {
-  font-size: 1.5rem;
-  color: #00bcd4;
-  margin-bottom: 20px;
-}
+    .bubble {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+      animation: floatDown linear infinite;
+    }
 
-.circle-wrapper {
-  position: relative;
-  width: 250px;
-  height: 250px;
-  margin: auto;
-}
+    .bubble img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
 
-.circle {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  animation: rotate 15s linear infinite;
-}
-
-.item {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  overflow: hidden;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform:
-    rotate(calc(60deg * var(--i)))
-    translate(100px)
-    rotate(calc(-60deg * var(--i)));
-}
-
-.item img {
-  width: 100%;
-  height: 100%;
-  font-size: 50px;
-  object-fit: cover;
-  border-radius: 50%;
-  border: 3px solid #00bcd4;
-  box-shadow: 0 0 6px rgba(0, 188, 212, 0.3);
-}
-
-@keyframes rotate {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-</style>
+    @keyframes floatDown {
+      0% {
+        transform: translateY(-100px);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(120vh);
+        opacity: 0;
+      }
+    }
+  </style>
 </head>
 <body id="pageBody" class="container">
 
@@ -360,16 +338,7 @@ box-shadow: 0 0 10px cyan;
   </header>
 
   <p id="flashDeal" class="flash-deal">🔥 Get 20% off on all sneakers!</p>
-<section class="popular-products-loader">
-  <h2>🔥 Popular Products</h2>
-  <div class="circle-wrapper">
-    <div class="circle">
-      <div class="item" style="--i:0;"><img src="img/product1.jpg" /></div>
-      <div class="item" style="--i:2;"><img src="img/product2.jpg" /></div>
-      <div class="item" style="--i:4;"><img src="img/product3.jpg" /></div>
-  </div>
-</section>
-<br>
+
 <section class="testimonials">
 <h2>What Our Customers Say</h2>
 <div class="testimonial-grid">
@@ -470,6 +439,36 @@ box-shadow: 0 0 10px cyan;
   }
 
   setInterval(rotateSpotlight, 1000);
+</script>
+<script>
+  const images = [
+    'https://via.placeholder.com/80x80?text=👟',
+    'https://via.placeholder.com/80x80?text=👜',
+    'https://via.placeholder.com/80x80?text=👗',
+    'https://via.placeholder.com/80x80?text=🕶️',
+    'https://via.placeholder.com/80x80?text=⌚',
+    'https://via.placeholder.com/80x80?text=💄',
+    'https://via.placeholder.com/80x80?text=📱',
+  ];
+
+  function createBubble() {
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    bubble.style.left = Math.random() * window.innerWidth + 'px';
+    bubble.style.animationDuration = (4 + Math.random() * 6) + 's';
+
+    const img = document.createElement('img');
+    img.src = images[Math.floor(Math.random() * images.length)];
+    bubble.appendChild(img);
+
+    document.body.appendChild(bubble);
+
+    setTimeout(() => {
+      bubble.remove();
+    }, 10000);
+  }
+
+  setInterval(createBubble, 500);
 </script>
 </body>
 </html>
