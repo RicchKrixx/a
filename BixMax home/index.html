@@ -102,20 +102,6 @@ margin-bottom: 10px;
 
 }
 
-/* Products */
-.products {
-width: 100%;
-border-radius: 30px;
-color: white;
-display: flex;
-flex-direction: column;
-margin-top: 20px;
-justify-content: center;
-background: darkcyan;
-margin: 10px auto;
-box-shadow: 0 0 10px cyan;
-}
-
 /* Testimonials */
 .testimonials {
 background-color:  blur(25px);
@@ -172,50 +158,9 @@ flex-direction: column;
 gap: 10px;
 }
 
-.product-grid, .testimonial-grid {
+.testimonial-grid {
 flex-direction: column;
 align-items: center;
-}
-.item {
-min-width: 100px;
-width: 150px;
-}
-.product-grid {
-gap: 10px
-}
-.product-spotlight {
-  position: relative;
-  width: 90%;
-  max-width: 300px;
-  margin: 0 auto;
-  height: 240px;
-  overflow: hidden;
-  border-radius: 20px;
-  box-shadow: 0 0 20px rgba(0,255,255,0.4);
-}
-
-.spotlight-item {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  opacity: 0;
-  transition: opacity 1s ease-in-out;
-  padding: 10px;
-}
-
-.spotlight-item img {
-  width: 80%;
-  max-height: 150px;
-  border-radius: 12px;
-  margin-bottom: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-}
-
-.spotlight-item.active {
-  opacity: 1;
-  z-index: 2;
 }
 .menu-overlay ul li {
 margin: 20px 0;
@@ -301,7 +246,7 @@ box-shadow: 0 0 10px cyan;
     }
     .auth-button {
       position: absolute;
-      bottom: 20px;
+      bottom: 3px;
       left: 20px;
       right: 20px;
       text-align: center;
@@ -317,6 +262,75 @@ box-shadow: 0 0 10px cyan;
       width: 100%;
     }
   </style>
+<style>
+.popular-products {
+  padding: 20px;
+  background: #f2f9ff;
+  border-radius: 12px;
+  margin: 20px auto;
+  max-width: 1000px;
+}
+
+.popular-products h2 {
+  font-size: 1.8rem;
+  color: #007bff;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+}
+
+.product-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 170, 255, 0.1);
+  padding: 12px;
+  text-align: center;
+  transition: transform 0.3s;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+}
+
+.product-card img {
+  width: 100%;
+  max-height: 140px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.product-card h3 {
+  font-size: 1rem;
+  margin: 10px 0 5px;
+  color: #333;
+}
+
+.product-card .price {
+  color: #00bcd4;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.product-card button {
+  background: #00bcd4;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.product-card button:hover {
+  background: #008c9e;
+}
+</style>
 </head>
 <body id="pageBody" class="container">
 
@@ -355,24 +369,30 @@ box-shadow: 0 0 10px cyan;
   </header>
 
   <p id="flashDeal" class="flash-deal">🔥 Get 20% off on all sneakers!</p>
- <div class="products" id="slider">
- <div class="products">
-  <h2 align="center">Popular Products</h2>
-<div class="product-spotlight">
-  <div class="spotlight-item active">
-    <img src="pp.png" alt="Product 1" />
-    <p>Product 1</p>
+<section class="popular-products">
+  <h2>🔥 Popular Products</h2>
+  <div class="product-grid">
+    <div class="product-card">
+      <img src="img/product1.jpg" alt="Product 1">
+      <h3>Classic Sneakers</h3>
+      <p class="price">GH₵120</p>
+      <button>Add to Cart</button>
+    </div>
+    <div class="product-card">
+      <img src="img/product2.jpg" alt="Product 2">
+      <h3>Wireless Headphones</h3>
+      <p class="price">GH₵85</p>
+      <button>Add to Cart</button>
+    </div>
+    <div class="product-card">
+      <img src="img/product3.jpg" alt="Product 3">
+      <h3>Sport Smartwatch</h3>
+      <p class="price">GH₵210</p>
+      <button>Add to Cart</button>
+    </div>
+    <!-- Add more product cards as needed -->
   </div>
-  <div class="spotlight-item">
-    <img src="pp.jpeg" alt="Product 2" />
-    <p>Product 2</p>
-  </div>
-  <div class="spotlight-item">
-    <img src="pp.png" alt="Product 3" />
-    <p>Product 3</p>
-  </div>
-</div>
-</div>
+</section>
   <section class="testimonials">
     <h2>What Our Customers Say</h2>
     <div class="testimonial-grid">
