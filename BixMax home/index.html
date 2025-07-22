@@ -306,6 +306,13 @@ box-shadow: 0 0 10px cyan;
 .card p:hover span {
   transform: rotate(0);
 }
+
+.card p.active {
+  flex: 4;
+}
+.card p.active span {
+  transform: rotate(0);
+}
   </style>
 </head>
 <body id="pageBody" class="container">
@@ -437,5 +444,15 @@ box-shadow: 0 0 10px cyan;
       }
     });
   </script>
+<script>
+  const cards = document.querySelectorAll(".card p");
+  let current = 0;
+
+  setInterval(() => {
+    cards.forEach(p => p.classList.remove("active"));
+    cards[current].classList.add("active");
+    current = (current + 1) % cards.length;
+  }, 2000);
+</script>
 </body>
 </html>
