@@ -184,33 +184,42 @@ gap: 10px
 }
 
 }
-
-body { margin: 0; }
-div#slider { overflow: hidden; }
-
-div#slider figure img {
-  width: 100vw;
-  height: auto;
-  border-radius: 20px;
+#slider {
+  overflow: hidden;
+  position: relative;
 }
 
-div#slider figure {
+.slider-track {
   display: flex;
-  width: 500%;
-  margin: 0;
-  font-size: 0;
-  animation: cubicSlide 12s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
-  transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  width: calc(100vw * 6); /* number of images */
+  animation: scrollSlider 20s linear infinite;
 }
 
-@keyframes cubicSlide {
-  0% { transform: translateX(0%); }
-  25% { transform: translateX(-100%); }
-  50% { transform: translateX(-200%); }
-  75% { transform: translateX(-300%); }
-  100% { transform: translateX(-400%); }
+.slider-track img {
+  width: 100vw;
+  flex-shrink: 0;
+  opacity: 0;
+  animation: fadeInOut 20s linear infinite;
+  transition: opacity 1s ease-in-out;
 }
 
+/* Make each image fade in and out in sync */
+.slider-track img:nth-child(1) { animation-delay: 0s; }
+.slider-track img:nth-child(2) { animation-delay: 3.3s; }
+.slider-track img:nth-child(3) { animation-delay: 6.6s; }
+.slider-track img:nth-child(4) { animation-delay: 9.9s; }
+.slider-track img:nth-child(5) { animation-delay: 13.2s; }
+.slider-track img:nth-child(6) { animation-delay: 16.5s; }
+
+@keyframes scrollSlider {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-200vw); } /* Adjust based on slide count */
+}
+
+@keyframes fadeInOut {
+  0%, 16.6% { opacity: 1; }
+  33.3%, 100% { opacity: 0; }
+}
 .menu-overlay ul li {
 margin: 20px 0;
 opacity: 0;
@@ -349,15 +358,18 @@ box-shadow: 0 0 10px cyan;
   </header>
 
   <p id="flashDeal" class="flash-deal">🔥 Get 20% off on all sneakers!</p>
-  <div class="products" id="slider">
-    <h2 align="center">Popular Products</h2>
-    <figure>
-      <img src="pp.jpeg" alt="Smoothie">
-      <img src="pp.jpeg" alt="Smoothie">
-      <img src="pp.jpeg" alt="Smoothie">
-      <img src="pp.jpeg" alt="Smoothie">
-    </figure>
+ <div class="products" id="slider">
+  <h2 align="center">Popular Products</h2>
+  <div class="slider-track">
+    <img src="pp.jpeg" alt="Product 1">
+    <img src="pp.jpeg" alt="Product 2">
+    <img src="pp.jpeg" alt="Product 3">
+    <img src="pp.jpeg" alt="Product 4">
+    <!-- Duplicate first few for smooth loop -->
+    <img src="pp.jpeg" alt="Product 1">
+    <img src="pp.jpeg" alt="Product 2">
   </div>
+</div>
 
   <section class="testimonials">
     <h2>What Our Customers Say</h2>
