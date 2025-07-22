@@ -265,70 +265,60 @@ box-shadow: 0 0 10px cyan;
 <style>
 .popular-products {
   padding: 20px;
+  text-align: center;
   background: #f2f9ff;
-  border-radius: 12px;
-  margin: 20px auto;
-  max-width: 1000px;
 }
 
 .popular-products h2 {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   color: #007bff;
-  text-align: center;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
-.product-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 16px;
+/* Circular container */
+.circular-container {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.circular-scroll {
+  display: flex;
+  gap: 20px;
+  animation: scrollLoop 20s linear infinite;
+  align-items: center;
 }
 
 .product-card {
+  flex: 0 0 auto;
+  width: 120px;
   background: #fff;
-  border-radius: 16px;
+  padding: 10px;
+  border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 170, 255, 0.1);
-  padding: 12px;
   text-align: center;
-  transition: transform 0.3s;
-}
-
-.product-card:hover {
-  transform: translateY(-4px);
 }
 
 .product-card img {
   width: 100%;
-  max-height: 140px;
+  height: 100px;
   object-fit: cover;
-  border-radius: 12px;
-}
-
-.product-card h3 {
-  font-size: 1rem;
-  margin: 10px 0 5px;
-  color: #333;
-}
-
-.product-card .price {
-  color: #00bcd4;
-  font-weight: bold;
-  margin-bottom: 8px;
-}
-
-.product-card button {
-  background: #00bcd4;
-  color: #fff;
-  border: none;
-  padding: 8px 12px;
   border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s;
 }
 
-.product-card button:hover {
-  background: #008c9e;
+.product-card p {
+  margin-top: 6px;
+  font-weight: bold;
+  color: #00bcd4;
+}
+
+@keyframes scrollLoop {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 </style>
 </head>
@@ -369,7 +359,6 @@ box-shadow: 0 0 10px cyan;
   </header>
 
   <p id="flashDeal" class="flash-deal">🔥 Get 20% off on all sneakers!</p>
-<section class="popular-products">
 <section class="popular-products">
   <h2>🔥 Popular Products</h2>
   <div class="circular-container">
