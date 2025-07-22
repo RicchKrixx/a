@@ -263,61 +263,61 @@ box-shadow: 0 0 10px cyan;
     }
   </style>
 <style>
-.popular-products {
-  padding: 20px;
+.popular-products-loader {
   text-align: center;
-  background: #f2f9ff;
+  background: #f0fbff;
+  padding: 30px 0;
 }
 
-.popular-products h2 {
+.popular-products-loader h2 {
   font-size: 1.5rem;
-  color: #007bff;
+  color: #00bcd4;
   margin-bottom: 20px;
 }
 
-/* Circular container */
-.circular-container {
-  width: 100%;
-  overflow: hidden;
+.circle-wrapper {
   position: relative;
+  width: 250px;
+  height: 250px;
+  margin: auto;
 }
 
-.circular-scroll {
-  display: flex;
-  gap: 20px;
-  animation: scrollLoop 20s linear infinite;
-  align-items: center;
-}
-
-.product-card {
-  flex: 0 0 auto;
-  width: 120px;
-  background: #fff;
-  padding: 10px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 170, 255, 0.1);
-  text-align: center;
-}
-
-.product-card img {
+.circle {
   width: 100%;
-  height: 100px;
+  height: 100%;
+  position: relative;
+  animation: rotate 15s linear infinite;
+}
+
+.item {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform:
+    rotate(calc(60deg * var(--i)))
+    translate(100px)
+    rotate(calc(-60deg * var(--i)));
+}
+
+.item img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 50%;
+  border: 3px solid #00bcd4;
+  box-shadow: 0 0 6px rgba(0, 188, 212, 0.3);
 }
 
-.product-card p {
-  margin-top: 6px;
-  font-weight: bold;
-  color: #00bcd4;
-}
-
-@keyframes scrollLoop {
+@keyframes rotate {
   0% {
-    transform: translateX(0%);
+    transform: rotate(0deg);
   }
   100% {
-    transform: translateX(-50%);
+    transform: rotate(360deg);
   }
 }
 </style>
@@ -359,18 +359,16 @@ box-shadow: 0 0 10px cyan;
   </header>
 
   <p id="flashDeal" class="flash-deal">🔥 Get 20% off on all sneakers!</p>
-<section class="popular-products">
+<section class="popular-products-loader">
   <h2>🔥 Popular Products</h2>
-  <div class="circular-container">
-    <div class="circular-scroll">
-      <div class="product-card"><img src="img/product1.jpg"><p>Smart Watch</p></div>
-      <div class="product-card"><img src="img/product2.jpg"><p>Headphones</p></div>
-      <div class="product-card"><img src="img/product3.jpg"><p>Sneakers</p></div>
-      <div class="product-card"><img src="img/product4.jpg"><p>Glasses</p></div>
-      <div class="product-card"><img src="img/product5.jpg"><p>Backpack</p></div>
-      <!-- Repeat for smooth loop -->
-      <div class="product-card"><img src="img/product1.jpg"><p>Smart Watch</p></div>
-      <div class="product-card"><img src="img/product2.jpg"><p>Headphones</p></div>
+  <div class="circle-wrapper">
+    <div class="circle">
+      <div class="item" style="--i:0;"><img src="img/product1.jpg" /></div>
+      <div class="item" style="--i:1;"><img src="img/product2.jpg" /></div>
+      <div class="item" style="--i:2;"><img src="img/product3.jpg" /></div>
+      <div class="item" style="--i:3;"><img src="img/product4.jpg" /></div>
+      <div class="item" style="--i:4;"><img src="img/product5.jpg" /></div>
+      <div class="item" style="--i:5;"><img src="img/product6.jpg" /></div>
     </div>
   </div>
 </section>
