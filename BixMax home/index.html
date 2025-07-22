@@ -442,18 +442,7 @@ box-shadow: 0 0 10px cyan;
       }
     });
   </script>
-<script>
-  const spotlightItems = document.querySelectorAll(".spotlight-item");
-  let spotlightIndex = 0;
 
-  function rotateSpotlight() {
-    spotlightItems.forEach(item => item.classList.remove("active"));
-    spotlightIndex = (spotlightIndex + 1) % spotlightItems.length;
-    spotlightItems[spotlightIndex].classList.add("active");
-  }
-
-  setInterval(rotateSpotlight, 1000);
-</script>
  <script>
     const productArea = document.getElementById("productArea");
 
@@ -471,7 +460,7 @@ box-shadow: 0 0 10px cyan;
       bubble.style.left = `${randomLeft}px`;
 
       // Random speed
-      bubble.style.animationDuration = (8 + Math.random() * 9) + 's';
+      bubble.style.animationDuration = (2 + Math.random() * 3) + 's';
 
       // Image
       const img = document.createElement('img');
@@ -486,7 +475,7 @@ box-shadow: 0 0 10px cyan;
       }, 10000);
     }
 
-    setInterval(createBubble, 1000);
+    setInterval(createBubble, 2000);
   </script>
 </body>
 </html>
