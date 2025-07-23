@@ -10,7 +10,10 @@
 /* Reset & Base Styles */    
     /* Basic Reset */    
     * { margin: 0; padding: 0; box-sizing: border-box; }    
-    html, body { height: 100%; overflow-x: hidden; font-family: Arial, sans-serif; }  body.noscroll {    
+    html, body { height: 100%;
+font-size: 16px;
+ overflow-x: hidden; font-family: Arial, sans-serif; }  
+body.noscroll {    
   position: fixed !important;    
   overflow: hidden !important;    
   height: 100vh !important;    
@@ -18,7 +21,8 @@
 }    .container {
 padding-top: 0px; /* Allow space for top menu /
 padding-bottom: 80px; / Allow space for bottom bar */
-min-height: 100vh;
+width: 90%;
+min-width: 400px;
 background-color: lightblue;
 text-align: center;
 }
@@ -155,7 +159,7 @@ flex-direction: column;
 @media (max-width: 480px) {
 nav ul {
 flex-direction: column;
-gap: 10px;
+gap: 2px;
 }
 
 .testimonial-grid {
@@ -189,7 +193,7 @@ transform: translateX(0);
 
 .menu-overlay ul li a {
 color: white;
-font-size: 18px;
+font-size: 16px;
 text-decoration: none;
 }
 .menu-overlay .close {
@@ -261,6 +265,11 @@ box-shadow: 0 0 10px cyan;
       cursor: pointer;
       width: 100%;
     }
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+}
   </style>
 <style>
  /* From Uiverse.io by joe-watson-sbf */ 
@@ -354,7 +363,7 @@ box-shadow: 0 0 10px cyan;
   <p id="flashDeal" class="flash-deal">🔥 Get 20% off on all sneakers!</p>
 
 <div class="product-container" id="productArea">
-    <h2>Popular Products</h2>
+    <h2>🔥Popular Products</h2>
   </div>
 
 <!-- From Uiverse.io by joe-watson-sbf --> 
