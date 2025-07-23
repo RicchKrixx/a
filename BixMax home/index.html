@@ -22,7 +22,6 @@ body.noscroll {
 padding-top: 0px; /* Allow space for top menu /
 padding-bottom: 80px; / Allow space for bottom bar */
 width: 90%;
-min-width: 400px;
 background-color: lightblue;
 text-align: center;
 }
@@ -324,7 +323,8 @@ box-shadow: 0 0 10px cyan;
 }
   </style>
 </head>
-<body id="pageBody" class="container">
+<body id="pageBody">
+<div class="container">
 
   <div class="menu-toggle" onclick="toggleMenu()">☰</div>
 
@@ -470,5 +470,6 @@ box-shadow: 0 0 10px cyan;
     current = (current + 1) % cards.length;
   }, 2000);
 </script>
+</div>
 </body>
 </html>
