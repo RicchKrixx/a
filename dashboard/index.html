@@ -154,70 +154,7 @@
         flex: 1 1 100%;
       }
     }
-        /* Footer Styles */
-        footer {
-            background-color: #333;
-            color: #fff;
-            padding: 40px 20px;
-            text-align: center;
-            font-family: Arial, sans-serif;
-        }
-
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .footer-nav ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            gap: 20px;
-        }
-
-        .footer-nav a {
-            color: #fff;
-            text-decoration: none;
-            font-size: 16px;
-        }
-
-        .footer-nav a:hover {
-            color: #00aaff;
-        }
-
-        .social-links a {
-            color: #fff;
-            font-size: 24px;
-            margin: 0 10px;
-            text-decoration: none;
-        }
-
-        .social-links a:hover {
-            color: #00aaff;
-        }
-
-        .footer-bottom {
-            margin-top: 20px;
-            font-size: 14px;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .footer-container {
-                flex-direction: column;
-                gap: 20px;
-            }
-
-            .footer-nav ul {
-                flex-direction: column;
-                gap: 10px;
-            }
-        }
+        
   </style>
 </head>
 <body>
@@ -250,27 +187,6 @@
       <button onclick="logout()">🚪 Logout</button>
     </div>
   </div>
-    <footer>
-        <div class="footer-container">
-            <div class="footer-nav">
-                <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#services">Services</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </div>
-            <div class="social-links">
-                <a href="https://facebook.com" target="_blank">Facebook</a>
-                <a href="https://twitter.com" target="_blank">Twitter</a>
-                <a href="https://instagram.com" target="_blank">Instagram</a>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Your Website Name. All rights reserved.</p>
-        </div>
-    </footer>
-
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -311,7 +227,7 @@
 
       function loadOrders(userId) {
         const orderList = document.getElementById("order-list");
-        db.collection("users").doc(userId).collection("orders").get()
+        db.collection("orders").doc(userId).collection("orderId").get()
           .then(snapshot => {
             if (snapshot.empty) {
               orderList.innerHTML = "<p>No orders found</p>";
