@@ -37,8 +37,8 @@ text-align: center;
 /* Menu Toggle Icon */
 .menu-toggle {
 position: fixed;
-top: 15px;
-left: 15px;
+top: 10px;
+left: 10px;
 font-size: 30px;
 cursor: pointer;
 z-index: 2000;
@@ -88,7 +88,7 @@ border: none;
 
 .menu-overlay ul {
 list-style: none;
-margin-top: @px;
+margin-top: 5px;
 left: 5px;
 text-align: left;
 color: white;
@@ -239,7 +239,7 @@ box-shadow: 0 0 10px cyan;
       justify-content: center;
       flex-direction: column;
       margin-top: 5px;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
       left: 5px;
     }
     .menu-profile .profile-img {
@@ -276,6 +276,9 @@ box-shadow: 0 0 10px cyan;
     font-size: 14px;
   }
 }
+.username {
+font-weight: bold;
+} 
   </style>
 <style>
  /* From Uiverse.io by joe-watson-sbf */ 
@@ -339,7 +342,7 @@ box-shadow: 0 0 10px cyan;
     <div class="menu-header">
       <div class="menu-profile">
         <div id="menuProfileImg" class="profile-img" style="background-image: url('https://www.svgrepo.com/show/384674/account-avatar-profile-user-11.svg');"></div>
-        <small id="menuUserName">Guest</small>
+        <small class="username" id="menuUserName">Guest</small>
         <small id="menuUserEmail"></small>
       </div>
 
