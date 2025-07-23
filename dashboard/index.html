@@ -213,46 +213,46 @@
       let currentEmail = "";
 
       firebase.auth().onAuthStateChanged(user => {
-        if (user) {
-          const name = user.displayName || user.email.split('@')[0];
-          document.getElementById("user-name").textContent = name;
-          document.getElementById("user-email").textContent = user.email;
-          currentEmail = user.email;
-          loadOrders(user.uid);
-          loadProfileImage(currentEmail);
-        } else {
-          window.location.href = "/auth/";
-        }
-      });
+  if (user) {
+    const name = user.displayName || user.email.split('@')[0];
+    document.getElementById("user-name").textContent = name;
+    document.getElementById("user-email").textContent = user.email;
+    currentEmail = user.email;
 
-      function loadOrders(userId) {
-        const orderList = document.getElementById("order-list");
-        db.collection("orders").doc(userId).collection("orderId").get()
-          .then(snapshot => {
-            if (snapshot.empty) {
-              orderList.innerHTML = "<p>No orders found</p>";
-              return;
-            }
+    loadOrders(user.email); // instead of user.uid
+    loadProfileImage(user.email);
+  } else {
+    window.location.href = "/auth/";
+  }
+});
 
-            let html = "";
-            snapshot.forEach(doc => {
-              const order = doc.data();
-              html += `
-                <div class="order">
-                  <strong>ID:</strong> ${order.id || doc.id}<br>
-                  <strong>Item:</strong> ${order.items}<br>
-                  <strong>Total:</strong> GH₵${order.total}<br>
-                  <small>${order.date || ''}</small>
-                </div>
-              `;
-            });
-            orderList.innerHTML = html;
-          })
-          .catch(err => {
-            console.error("Error loading orders:", err);
-            orderList.innerHTML = "<p>Failed to load orders</p>";
-          });
+      function loadOrders(userEmail) {
+  const orderList = document.getElementById("order-list");
+
+  db.collection("orders").where("userEmail", "==", userEmail).get()
+    .then(snapshot => {
+      if (snapshot.empty) {
+        orderList.innerHTML = "<p>No orders found</p>";
+        return;
       }
+
+      let html = "";
+      snapshot.forEach(doc => {
+        const order = doc.data();
+        html += `
+          <div class="order">
+            <strong>ID:</strong> ${order.orderId || doc.id}<br>
+            <strong>Item:</strong> ${order.items || '—'}<br>
+          </div>
+        `;
+      });
+      orderList.innerHTML = html;
+    })
+    .catch(err => {
+      console.error("Error loading orders:", err);
+      orderList.innerHTML = "<p>Failed to load orders</p>";
+    });
+}
 
       // Profile image logic
       const profileImage = document.getElementById("profileImage");
