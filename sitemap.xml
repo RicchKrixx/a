@@ -6,27 +6,27 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://bixmax.store/fashion/</loc>
+    <loc>https://bixmax.store/BixMax%20fashion/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://bixmax.store/grocery/</loc>
+    <loc>https://bixmax.store/BixMax%20grocery/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://bixmax.store/electronics/</loc>
+    <loc>https://bixmax.store/BixMax%20electronics/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bixmax.store/Home%20Essentials/</loc>
+    <loc>https://bixmax.store/BixMax%20Home%20Essentials/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bixmax.store/Beauty%20%26%20personal%20care/</loc>
+    <loc>https://bixmax.store/BixMax%20Beauty%20%26%20personal%20care/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
