@@ -173,30 +173,30 @@
         steps[0].status = "Completed";
         steps[0].time = now.toLocaleTimeString();
         renderSteps();
-        await delay(1500);
+        await delay(3500);
 
         steps[1].status = "In Progress";
         steps[1].time = now.toLocaleTimeString();
         renderSteps();
-        await delay(2500);
+        await delay(4500);
 
         steps[1].status = "Successful";
         renderSteps();
-        await delay(1500);
+        await delay(3500);
 
         steps[2].status = "Shipping...";
         steps[2].time = new Date().toLocaleTimeString();
         renderSteps();
-        await delay(2000);
+        await delay(5000);
 
         steps[2].status = "Shipped";
         renderSteps();
-        await delay(2000);
+        await delay(5000);
 
         steps[3].status = "Out for Delivery";
         steps[3].time = new Date().toLocaleTimeString();
         renderSteps();
-        await delay(2000);
+        await delay(5000);
 
         steps[3].status = "Delivered";
         renderSteps();
