@@ -147,13 +147,6 @@ border-left: 4px solid #ffcc00;
 border-radius: 5px;
 }
 
-footer {
-display: flex;
-color: white;
-}
- footer span {
-color: blue;
-}
 /* Responsive */
 @media (max-width: 480px) {
 nav ul {
@@ -324,11 +317,6 @@ font-size: 16px;
 .contact {margin: 0.4rem 0; color: lightblue;
 text-decoration: none;}
 
-.foot {
-background: #111; color: #fff; padding: 2.5rem 1rem; font-family: sans-serif; border-top: 2px solid cyan; box-shadow: 0 -4px 20px rgba(0,255,255,0.1);
-margin-left: 0;
-}
-
   </style>
 </head>
 <body id="pageBody">
@@ -393,65 +381,69 @@ margin-left: 0;
 </div>
 </section>
 
-<section class="foot">
-  <div style="display: flex; flex-wrap: wrap; gap: 2rem; max-width: 1200px; margin: auto;>
-    <!-- About -->
-    <div style="flex: 1 1 220px;">
-      <h3 style="color: cyan;">About Us</h3>
-      <p style="line-height: 1.6;">
-        BixMAX Shop is the Number 1 online marketplace for everyone. Shop easily within your comfort zone!
+<footer style="background: #0a0a0a; color: #ccc; padding: 2rem 1rem; font-family: 'Segoe UI', sans-serif;">
+  <div style="max-width: 1200px; margin: auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;">
+    
+    <!-- Logo & About -->
+    <div>
+      <h2 style="color: cyan; font-weight: bold;">BizMAX</h2>
+      <p style="margin-top: 0.5rem; font-size: 0.9rem; line-height: 1.5;">
+        Your all-in-one online shopping experience. Fast, secure, and affordable for everyone.
+      </p>
+      <p style="margin-top: 0.5rem;">
+        <a href="mailto:support@bixmax.store" style="color: lightblue; text-decoration: none;">📧 support@bixmax.store</a>
+      </p>
+      <p>
+        <a href="https://wa.me/233551234567" target="_blank" style="color: lightblue; text-decoration: none;">💬 WhatsApp Support</a>
       </p>
     </div>
 
     <!-- Quick Links -->
-    <div style="flex: 1 1 160px;">
-      <h3 style="color: cyan;">Quick Links</h3>
-      <a href="/BixMax fashion/" style="display: block; margin: 0.4rem 0; color: lightblue;">Fashion</a>
-      <a href="/BixMax grocery/" style="display: block; margin: 0.4rem 0; color: lightblue;">Groceries</a>
-      <a href="/BixMax electronics/" style="display: block; margin: 0.4rem 0; color: lightblue;">Electronics</a>
-      <a href="/dashboard/" style="display: block; margin: 0.4rem 0; color: lightblue;">Dashboard</a>
+    <div>
+      <h3 style="color: lightblue;">Quick Links</h3>
+      <ul style="list-style: none; padding: 0; margin-top: 0.5rem;">
+        <li><a href="/BixMax home" style="color: #ccc; text-decoration: none;">🏠 Home</a></li>
+        <li><a href="/history/" style="color: #ccc; text-decoration: none;">📑Order History</a></li>
+        <li><a href="/dashboard/" style="color: #ccc; text-decoration: none;">📊Dashboard</a></li>
+        <li><a href="/track/" style="color: #ccc; text-decoration: none;">📦 Track Order</a></li>
+      </ul>
     </div>
 
-    <!-- Support & Policies -->
-    <div style="flex: 1 1 180px;">
-      <h3 style="color: cyan;">Support & Policies</h3>
-      <a href="/about/" style="display: block; margin: 0.4rem 0; color: lightblue;">About Us</a>
-      <a href="/privacy/" style="display: block; margin: 0.4rem 0; color: lightblue;">Privacy Policy</a>
-      <a href="/terms/" style="display: block; margin: 0.4rem 0; color: lightblue;">Terms of Service</a>
-      <a href="tel:+233536345825" style="display: block; margin: 0.4rem 0; color: lightblue;">Contact</a>
+    <!-- BizMAX Services -->
+    <div>
+      <h3 style="color: lightblue;">Services</h3>
+      <ul style="list-style: none; padding: 0; margin-top: 0.5rem;">
+        <li><a href="/BixMax fashion/" style="color: #ccc; text-decoration: none;">👗 Fashion</a></li>
+        <li><a href="/BixMax grocery/" style="color: #ccc; text-decoration: none;">🍎 Grocery</a></li>
+        <li><a href="/BixMax electronics/" style="color: #ccc; text-decoration: none;">📱 Electronics</a></li>
+        <li><a href="/help/" style="color: #ccc; text-decoration: none;">❓ Help Center</a></li>
+      </ul>
     </div>
 
-    <!-- Contact Info -->
-    <div style="flex: 1 1 240px;">
-      <h3 style="color: cyan;">Contact</h3>
-<p>
-<a class="contact" href="tel:0536345825">📞Contact: 0536345825</a></p><br>
-<p>
-      <a class="contact" href="https://wa.me/233536345825?text=Hello%20BizMAX%2C%20I%20need%20assistance" target="_blank">
-💬WhatsApp: +233536345825
-</a></p><br>
-<p>
-      <a class="contact" href="mailto:support@bixmax.store">Email: support@bixmax.store</a></p><br>
-<p>
-      <a class="contact" href="mailto:info@bixmax.store">Email: info@bixmax.store</a></p><br>
-      <p style="margin: 0.4rem 0; color: lightblue;">Accra Ghana</p>
-    </div>
-
-    <!-- Newsletter -->
-    <div style="flex: 1 1 260px;">
-      <h3 style="color: cyan;">Sparkler</h3>
-      <p style="margin-bottom: 0.5rem;">Subscribe to Our Newsletter</p>
-      <form id="newsletter-form">
-        <input type="email" name="email" placeholder="Enter your email" style="width: 100%; padding: 0.6rem; border: none; border-radius: 6px; margin-bottom: 0.5rem;">
-        <button type="submit" style="padding: 0.6rem 1.2rem; border: none; background: cyan; color: #000; border-radius: 6px; width: 100%; font-weight: bold;">Subscribe</button>
+    <!-- Social & Newsletter -->
+    <div>
+      <h3 style="color: lightblue;">Stay Connected</h3>
+      <form onsubmit="alert('Subscribed!'); return false;" style="margin-top: 0.5rem;">
+        <input type="email" placeholder="Your email" required
+          style="padding: 0.5rem; width: 100%; border-radius: 8px; border: none; margin-bottom: 0.5rem;">
+        <button type="submit"
+          style="background: cyan; color: #000; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer;">
+          Subscribe
+        </button>
       </form>
-<p id="newsletter-msg"></p>
+      <div style="margin-top: 1rem;">
+        <a href="#" style="color: lightblue; margin-right: 0.5rem;">🌐 Facebook</a>
+        <a href="#" style="color: lightblue; margin-right: 0.5rem;">🐦 Twitter</a>
+        <a href="#" style="color: lightblue;">📸 Instagram</a>
+      </div>
     </div>
- <footer style="align: center;"><span>&copy;</span> BixMAX 2025. All rights reserved.</footer>
   </div>
-</section>
 
-
+  <hr style="margin: 2rem 0; border-color: #333;">
+  <p style="text-align: center; font-size: 0.8rem; color: #777;">
+    &copy; 2025 BizMAX. All rights reserved. | Built for smart online shopping.
+  </p>
+</footer>
 <script>
   document.getElementById("newsletter-form").addEventListener("submit", function(e) {
     e.preventDefault();
