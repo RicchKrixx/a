@@ -437,31 +437,23 @@ font-size: 16px;
 </section>
 
 
-
 <script>
-  document.getElementById("newsletter-form").addEventListener("submit", function (e) {
+  document.getElementById("newsletter-form").addEventListener("submit", function(e) {
     e.preventDefault();
-    const form = this;
-    const email = form.email.value.trim();
-    const msg = document.getElementById("newsletter-msg");
 
-    msg.textContent = "Please wait...";
-    
+    const email = this.email.value;
+
     fetch("https://script.google.com/macros/s/AKfycbw5p9ZheBPp0xYlvBJtA47S8yzouLBjbzNbj8NBmpXR-UnzENfoX6JjEpi72e8VTycY/exec", {
       method: "POST",
       body: new URLSearchParams({ email })
     })
     .then(res => res.text())
     .then(response => {
-      if (response === "Subscribed") {
-        msg.textContent = "Thanks for subscribing!";
-        form.reset();
-      } else {
-        msg.textContent = "Something went wrong. Please try again.";
-      }
+      alert(response); // Example: "Subscribed"
+      this.reset();    // Clear form
     })
     .catch(() => {
-      msg.textContent = "Network error. Try again later.";
+      alert("Something went wrong. Please try again.");
     });
   });
 </script>
