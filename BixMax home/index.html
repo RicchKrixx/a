@@ -314,10 +314,113 @@ font-size: 16px;
 .card img {
  border-radius: 20px;
 }
-.contact {margin: 0.4rem 0; color: lightblue;
-text-decoration: none;}
 
   </style>
+<style>
+  footer {
+    background: #0a0a0a;
+    color: #ccc;
+    padding: 3rem 1.5rem 5rem;
+    font-family: 'Segoe UI', sans-serif;
+    position: relative;
+  }
+
+  .footer-container {
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+
+  .footer-column {
+    flex: 1 1 220px;
+    min-width: 200px;
+  }
+
+  .footer-column h3 {
+    color: cyan;
+    margin-bottom: 1rem;
+  }
+
+  .footer-column ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .footer-column ul li {
+    margin: 0.5rem 0;
+  }
+
+  .footer-column a {
+    color: #ccc;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .footer-column a:hover {
+    color: lightblue;
+  }
+
+  .footer-logo h2 {
+    color: cyan;
+  }
+
+  .footer-bottom {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 0.8rem;
+    color: #777;
+  }
+
+  .newsletter input[type="email"] {
+    padding: 0.5rem;
+    width: 100%;
+    border-radius: 8px;
+    border: none;
+    margin-bottom: 0.5rem;
+  }
+
+  .newsletter button {
+    background: cyan;
+    color: #000;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  .social-links a {
+    display: inline-block;
+    margin-right: 0.5rem;
+    color: lightblue;
+    font-size: 0.9rem;
+  }
+
+  /* Back to Top Button */
+  #backToTop {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: cyan;
+    color: black;
+    border: none;
+    padding: 0.7rem 1rem;
+    border-radius: 50px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 10px #0ff8;
+    display: none;
+    z-index: 1000;
+  }
+
+  #backToTop:hover {
+    background: lightblue;
+  }
+</style>
+
 </head>
 <body id="pageBody">
 <div class="container">
@@ -381,70 +484,74 @@ text-decoration: none;}
 </div>
 </section>
 
-<footer style="background: #0a0a0a; color: #ccc; padding: 2rem 1rem; font-family: 'Segoe UI', sans-serif;">
-  <div style="max-width: 1200px; margin: auto; display: grid;
-margin-top: 10px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;">
-    
-    <!-- Logo & About -->
-    <div>
-      <h2 style="color: cyan; font-weight: bold;">BixMAX</h2>
-      <p style="margin-top: 0.5rem; font-size: 0.9rem; line-height: 1.5;">
-        Your all-in-one online shopping experience. Fast, secure, and affordable for everyone.
-      </p>
-      <p style="margin-top: 0.5rem;">
-        <a href="mailto:support@bixmax.store" style="color: lightblue; text-decoration: none;">📧 support@bixmax.store</a>
-      </p>
-      <p>
-        <a href="https://wa.me/233551234567" target="_blank" style="color: lightblue; text-decoration: none;">💬 WhatsApp Support</a>
-      </p>
+<footer>
+  <div class="footer-container">
+    <!-- Column 1: Logo and Info -->
+    <div class="footer-column footer-logo">
+      <h2>BizMAX</h2>
+      <p>Your all-in-one online shopping experience.</p>
+      <p><a href="mailto:support@bixmax.store">📧 support@bixmax.store</a></p>
+      <p><a href="https://wa.me/233551234567" target="_blank">💬 WhatsApp Support</a></p>
     </div>
 
-    <!-- Quick Links -->
-    <div>
-      <h3 style="color: lightblue;">Quick Links</h3>
-      <ul style="list-style: none; padding: 0; margin-top: 0.5rem;">
-        <li><a href="/BixMax home" style="color: #ccc; text-decoration: none;">🏠 Home</a></li>
-        <li><a href="/history/" style="color: #ccc; text-decoration: none;">📑Order History</a></li>
-        <li><a href="/dashboard/" style="color: #ccc; text-decoration: none;">📊Dashboard</a></li>
-        <li><a href="/track/" style="color: #ccc; text-decoration: none;">📦 Track Order</a></li>
+    <!-- Column 2: Quick Links -->
+    <div class="footer-column">
+      <h3>Quick Links</h3>
+      <ul>
+        <li><a href="/BixMax home/">🏠 Home</a></li>
+        <li><a href="/history/">📑 Order history</a></li>
+        <li><a href="/dashboard/">📊 Dashboard</a></li>
+        <li><a href="/track/">📦 Track Order</a></li>
       </ul>
     </div>
 
-    <!-- BizMAX Services -->
-    <div>
-      <h3 style="color: lightblue;">Services</h3>
-      <ul style="list-style: none; padding: 0; margin-top: 0.5rem;">
-        <li><a href="/BixMax fashion/" style="color: #ccc; text-decoration: none;">👗 Fashion</a></li>
-        <li><a href="/BixMax grocery/" style="color: #ccc; text-decoration: none;">🍎 Grocery</a></li>
-        <li><a href="/BixMax electronics/" style="color: #ccc; text-decoration: none;">📱 Electronics</a></li>
-        <li><a href="/help/" style="color: #ccc; text-decoration: none;">❓ Help Center</a></li>
+    <!-- Column 3: Services -->
+    <div class="footer-column">
+      <h3>Services</h3>
+      <ul>
+        <li><a href="/BixMax fashion/">👗 Fashion</a></li>
+        <li><a href="/BixMax grocery/">🍎 Grocery</a></li>
+        <li><a href="/BixMax electronics/">📱 Electronics</a></li>
+        <li><a href="/help/">❓ Help Center</a></li>
       </ul>
     </div>
 
-    <!-- Social & Newsletter -->
-    <div>
-      <h3 style="color: lightblue;">Stay Connected</h3>
-      <form onsubmit="alert('Subscribed!'); return false;" style="margin-top: 0.5rem;">
-        <input type="email" placeholder="Your email" required
-          style="padding: 0.5rem; width: 100%; border-radius: 8px; border: none; margin-bottom: 0.5rem;">
-        <button type="submit"
-          style="background: cyan; color: #000; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer;">
-          Subscribe
-        </button>
+    <!-- Column 4: Newsletter -->
+    <div class="footer-column newsletter">
+      <h3>Stay Updated</h3>
+      <form onsubmit="alert('Subscribed!'); return false;">
+        <input type="email" placeholder="Your email" required>
+        <button type="submit">Subscribe</button>
       </form>
-      <div style="margin-top: 1rem;">
-        <a href="#" style="color: lightblue; margin-right: 0.5rem;">🌐 Facebook</a>
-        <a href="#" style="color: lightblue; margin-right: 0.5rem;">🐦 Twitter</a>
-        <a href="#" style="color: lightblue;">📸 Instagram</a>
+      <div class="social-links" style="margin-top: 1rem;">
+        <a href="#">🌐 Facebook</a>
+        <a href="#">🐦 Twitter</a>
+        <a href="#">📸 Instagram</a>
       </div>
     </div>
   </div>
 
-  <hr style="margin: 2rem 0; border-color: #333;">
-  <p style="text-align: center; font-size: 0.8rem; color: #777;">
-    &copy; 2025 BizMAX. All rights reserved. | Built for smart online shopping.
-  </p>
+  <div class="footer-bottom">
+    <hr style="border-color: #222; margin: 2rem 0;">
+    &copy; 2025 BizMAX. All rights reserved.
+  </div>
 </footer>
+
+<!-- Back to Top Button -->
+<button id="backToTop" onclick="scrollToTop()">↑ Top</button>
+
+<script>
+  // Show/hide the Back to Top button
+  window.onscroll = function () {
+    document.getElementById('backToTop').style.display =
+      document.documentElement.scrollTop > 300 ? 'block' : 'none';
+  };
+
+  function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+
 <script>
   document.getElementById("newsletter-form").addEventListener("submit", function(e) {
     e.preventDefault();
