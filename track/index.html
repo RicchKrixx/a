@@ -3,28 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Order Stepper</title>
+  <title>Order Status Tracker</title>
   <style>
     body {
-      font-family: sans-serif;
-      background: #f8fafc;
+      font-family: "Segoe UI", sans-serif;
+      background: #f1f5f9;
+      padding: 40px;
       display: flex;
       justify-content: center;
-      padding: 40px;
     }
 
     .stepper-box {
-      background-color: white;
-      border-radius: 12px;
+      background: white;
+      border-radius: 16px;
       padding: 32px;
-      width: 400px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      width: 90%;
+      max-width: 480px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
     }
 
     .stepper-step {
       display: flex;
-      margin-bottom: 32px;
+      align-items: flex-start;
       position: relative;
+      margin-bottom: 36px;
     }
 
     .stepper-step:last-child {
@@ -33,12 +35,12 @@
 
     .stepper-line {
       position: absolute;
-      left: 19px;
+      left: 20px;
       top: 40px;
       bottom: -32px;
       width: 2px;
       background-color: #e2e8f0;
-      z-index: 1;
+      z-index: 0;
     }
 
     .stepper-step:last-child .stepper-line {
@@ -49,173 +51,161 @@
       width: 40px;
       height: 40px;
       border-radius: 50%;
+      flex-shrink: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-right: 16px;
-      z-index: 2;
       font-weight: bold;
+      z-index: 1;
     }
 
-    .stepper-completed .stepper-circle {
+    .completed .stepper-circle {
       background-color: #0f172a;
       color: white;
     }
 
-    .stepper-active .stepper-circle {
-      border: 2px solid #0f172a;
-      color: #0f172a;
+    .active .stepper-circle {
+      border: 3px solid #1d4ed8;
+      color: #1d4ed8;
+      background: white;
     }
 
-    .stepper-pending .stepper-circle {
+    .pending .stepper-circle {
       border: 2px solid #e2e8f0;
       color: #94a3b8;
     }
 
     .stepper-content {
+      margin-left: 16px;
       flex: 1;
     }
 
-    .stepper-title {
+    .step-title {
       font-weight: 600;
       margin-bottom: 4px;
     }
 
-    .stepper-completed .stepper-title,
-    .stepper-active .stepper-title {
+    .step-status {
+      font-size: 14px;
+      margin-top: 4px;
+      padding: 2px 10px;
+      border-radius: 12px;
+      display: inline-block;
+    }
+
+    .completed .step-title,
+    .active .step-title {
       color: #0f172a;
     }
 
-    .stepper-pending .stepper-title {
+    .pending .step-title {
       color: #94a3b8;
     }
 
-    .stepper-status {
-      font-size: 13px;
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 12px;
-      margin-top: 4px;
-    }
-
-    .stepper-completed .stepper-status {
+    .completed .step-status {
       background-color: #dcfce7;
-      color: #166534;
+      color: #15803d;
     }
 
-    .stepper-active .stepper-status {
+    .active .step-status {
       background-color: #dbeafe;
       color: #1d4ed8;
     }
 
-    .stepper-pending .stepper-status {
+    .pending .step-status {
       background-color: #f1f5f9;
       color: #64748b;
     }
 
-    .stepper-time {
+    .step-time {
       font-size: 12px;
       color: #94a3b8;
-      margin-top: 4px;
-    }
-
-    .stepper-controls {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 32px;
-    }
-
-    .stepper-button {
-      padding: 8px 16px;
-      border-radius: 6px;
-      border: 1px solid #e2e8f0;
-      background-color: white;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 14px;
-    }
-
-    .stepper-button-primary {
-      background-color: #0f172a;
-      color: white;
-      border-color: #0f172a;
-    }
-
-    .stepper-button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
+      margin-top: 2px;
     }
   </style>
 </head>
 <body>
-  <div class="stepper-box">
-    <div id="stepper-container">
-      <!-- Steps will be inserted here by JavaScript -->
-    </div>
 
-    <div class="stepper-controls">
-      <button id="prevBtn" class="stepper-button">← Previous</button>
-      <button id="nextBtn" class="stepper-button stepper-button-primary">Next →</button>
-    </div>
+  <div class="stepper-box" id="stepper">
+    <!-- Steps are rendered here -->
   </div>
 
   <script>
     const steps = [
-      { title: "Order Placed", status: "Completed", time: "Jul 24, 08:30 AM" },
-      { title: "Processing", status: "In Progress", time: "Jul 24, 09:10 AM" },
-      { title: "Shipping", status: "Pending", time: "Est: Jul 25" },
-      { title: "Delivered", status: "Pending", time: "Est: Jul 26" }
+      { title: "Order Placed", status: "Pending", time: "..." },
+      { title: "Processing", status: "Pending", time: "..." },
+      { title: "Shipping", status: "Pending", time: "..." },
+      { title: "Delivery", status: "Pending", time: "..." }
     ];
 
-    let currentStep = 1;
+    const container = document.getElementById("stepper");
 
     function renderSteps() {
-      const container = document.getElementById("stepper-container");
       container.innerHTML = "";
-
-      steps.forEach((step, index) => {
-        let state = "stepper-pending";
-        if (index < currentStep) state = "stepper-completed";
-        else if (index === currentStep) state = "stepper-active";
+      steps.forEach((step, i) => {
+        let state = "pending";
+        if (step.status.includes("Completed") || step.status.includes("Delivered") || step.status.includes("Successful") || step.status.includes("Shipped")) {
+          state = "completed";
+        } else if (step.status !== "Pending") {
+          state = "active";
+        }
 
         container.innerHTML += `
           <div class="stepper-step ${state}">
-            <div class="stepper-circle">
-              ${index < currentStep ? `
-                <svg viewBox="0 0 16 16" fill="currentColor" width="16" height="16">
-                  <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z"/>
-                </svg>` : index + 1}
-            </div>
-            ${index < steps.length - 1 ? `<div class="stepper-line"></div>` : ""}
+            <div class="stepper-circle">${state === "completed" ? "✔" : i + 1}</div>
+            ${i < steps.length - 1 ? `<div class="stepper-line"></div>` : ""}
             <div class="stepper-content">
-              <div class="stepper-title">${step.title}</div>
-              <div class="stepper-status">${step.status}</div>
-              <div class="stepper-time">${step.time}</div>
+              <div class="step-title">${step.title}</div>
+              <div class="step-status">${step.status}</div>
+              <div class="step-time">${step.time}</div>
             </div>
           </div>
         `;
       });
-
-      // Disable buttons appropriately
-      document.getElementById("prevBtn").disabled = currentStep === 0;
-      document.getElementById("nextBtn").disabled = currentStep === steps.length - 1;
     }
 
-    // Event Listeners
-    document.getElementById("prevBtn").onclick = () => {
-      if (currentStep > 0) currentStep--;
-      renderSteps();
-    };
+    // Simulate progress over time
+    function simulateProgress() {
+      const delay = (ms) => new Promise(res => setTimeout(res, ms));
 
-    document.getElementById("nextBtn").onclick = () => {
-      if (currentStep < steps.length - 1) currentStep++;
-      renderSteps();
-    };
+      (async () => {
+        const now = new Date();
+        steps[0].status = "Completed";
+        steps[0].time = now.toLocaleTimeString();
+        renderSteps();
+        await delay(1500);
 
-    // Initial render
+        steps[1].status = "In Progress";
+        steps[1].time = now.toLocaleTimeString();
+        renderSteps();
+        await delay(2500);
+
+        steps[1].status = "Successful";
+        renderSteps();
+        await delay(1500);
+
+        steps[2].status = "Shipping...";
+        steps[2].time = new Date().toLocaleTimeString();
+        renderSteps();
+        await delay(2000);
+
+        steps[2].status = "Shipped";
+        renderSteps();
+        await delay(2000);
+
+        steps[3].status = "Out for Delivery";
+        steps[3].time = new Date().toLocaleTimeString();
+        renderSteps();
+        await delay(2000);
+
+        steps[3].status = "Delivered";
+        renderSteps();
+      })();
+    }
+
     renderSteps();
+    simulateProgress();
   </script>
+
 </body>
 </html>
