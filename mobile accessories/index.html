@@ -256,32 +256,44 @@ const searchInput = document.getElementById('searchInput');
 const notFoundMessage = document.getElementById('notFoundMessage');
 const container = document.getElementById('mobileContainer');
 
+function fuzzyMatch(item, keywords) {
+  const name = item.name.toLowerCase();
+  const price = item.price.toString().toLowerCase();
+
+  return keywords.some(keyword =>
+    name.includes(keyword) || price.includes(keyword)
+  );
+}
+
 searchInput.addEventListener('input', () => {
   const query = searchInput.value.trim().toLowerCase();
   const cached = localStorage.getItem("Mobile");
-
   if (!cached) return;
 
-  let items = JSON.parse(cached);
+  const items = JSON.parse(cached);
 
-  // Filter based on search
-  const filtered = items.filter(item =>
-    item.name.toLowerCase().includes(query) ||
-    item.price.toString().includes(query)
-  );
-
-  if (filtered.length > 0) {
-    notFoundMessage.style.display = "none";
-    renderMobile(filtered); // already defined above
-  } else {
-    container.innerHTML = "";
-    notFoundMessage.style.display = "block";
+  // Split query into chunks of 2 or more letters (e.g. afabed => af, fa, ab, be, ed)
+  let keywords = [];
+  for (let i = 0; i < query.length - 1; i++) {
+    keywords.push(query.slice(i, i + 2));
   }
 
-  // If search input is cleared, show all again
+  // If query is empty, show all
   if (!query) {
     notFoundMessage.style.display = "none";
     renderMobile(items);
+    return;
+  }
+
+  // Filter based on fuzzy keywords
+  const filtered = items.filter(item => fuzzyMatch(item, keywords));
+
+  if (filtered.length > 0) {
+    notFoundMessage.style.display = "none";
+    renderMobile(filtered);
+  } else {
+    container.innerHTML = "";
+    notFoundMessage.style.display = "block";
   }
 });
 </script>
