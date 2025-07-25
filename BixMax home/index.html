@@ -316,6 +316,110 @@ font-size: 16px;
 }
 
   </style>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        footer {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            padding: 60px 0 20px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 200px;
+            margin-bottom: 30px;
+        }
+
+        .footer-logo {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+
+        .footer-section h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-section ul li a {
+            color: #cccccc;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section ul li a:hover {
+            color: #ffffff;
+        }
+
+        .contact-info p {
+            margin-bottom: 10px;
+            color: #cccccc;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .social-icons a {
+            color: #cccccc;
+            font-size: 20px;
+            transition: color 0.3s ease;
+        }
+
+        .social-icons a:hover {
+            color: #ffffff;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #333333;
+            padding-top: 20px;
+            text-align: center;
+            margin-top: 40px;
+            color: #cccccc;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .footer-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .social-icons {
+                justify-content: center;
+            }
+        }
+    </style>
 
 </head>
 <body id="pageBody">
@@ -380,170 +484,61 @@ font-size: 16px;
 </div>
 </section>
 
-<style>
-  .footer {
-    background-color: #0f0f0f;
-    color: #ccc;
-    padding: 3rem 1rem;
-    font-family: 'Segoe UI', sans-serif;
-    border-top: 1px solid #222;
-    box-shadow: 0 -4px 20px rgba(0, 255, 255, 0.05);
-  }
 
-  .footer-content {
-    max-width: 1200px;
-    margin: auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 2rem;
-  }
+   <footer>
+        <div class="footer-container">
+            <!-- Company Info -->
+            <div class="footer-section company-info">
+                <div class="footer-logo">BixMAX</div>
+                <p>We are a innovative company dedicated to providing top-notch solutions for our clients worldwide.</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
 
-  .footer-column h4 {
-    color: cyan;
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
-  }
+            <!-- Quick Links -->
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Services</a></li>
+                    <li><a href="#">Portfolio</a></li>
+                    <li><a href="#">Blog</a></li>
+                </ul>
+            </div>
 
-  .footer-column ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
+            <!-- Resources -->
+            <div class="footer-section">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="#">Documentation</a></li>
+                    <li><a href="#">Support</a></li>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
 
-  .footer-column ul li {
-    margin: 0.5rem 0;
-  }
+            <!-- Contact Info -->
+            <div class="footer-section contact-info">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Accra Ghana</p>
+                <p><i class="fas fa-phone"></i> +233 (53) 634-5825</p>
+                <p><i class="fas fa-envelope"></i> contact@bixmax.com</p>
+            </div>
+        </div>
 
-  .footer-column ul li a {
-    color: #aaa;
-    text-decoration: none;
-    transition: color 0.3s ease;
-    font-size: 0.95rem;
-  }
+        <div class="footer-bottom">
+            <p>&copy; 2025 BixMAX. All rights reserved.</p>
+        </div>
+    </footer>
 
-  .footer-column ul li a:hover {
-    color: lightblue;
-  }
-
-  .footer-brand {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: cyan;
-    margin-bottom: 0.5rem;
-  }
-
-  .footer-social a {
-    display: inline-block;
-    margin-right: 0.6rem;
-    color: lightblue;
-    text-decoration: none;
-    font-size: 1rem;
-  }
-
-  .footer-bottom {
-    text-align: center;
-    padding-top: 2rem;
-    font-size: 0.85rem;
-    color: #777;
-  }
-
-  .back-to-top {
-    display: inline-block;
-    margin-top: 1rem;
-    background: cyan;
-    color: #000;
-    padding: 0.4rem 1rem;
-    border-radius: 30px;
-    font-weight: bold;
-    text-decoration: none;
-    transition: 0.3s;
-  }
-
-  .back-to-top:hover {
-    background: lightblue;
-  }
-
-  @media (max-width: 600px) {
-    .footer-content {
-      text-align: center;
-    }
-
-    .footer-social {
-      margin-top: 1rem;
-    }
-  }
-</style>
-
-<footer class="footer">
-  <div class="footer-content">
-
-    <!-- Brand & Info -->
-    <div class="footer-column">
-      <div class="footer-brand">BizMAX</div>
-      <p style="font-size: 0.95rem;">
-        The all-in-one shop for fashion, food, electronics, and more — built for students and smart buyers.
-      </p>
-      <div class="footer-social" style="margin-top: 1rem;">
-        <a href="#">🌐 Facebook</a>
-        <a href="#">🐦 Twitter</a>
-        <a href="#">📸 Instagram</a>
-      </div>
-    </div>
-
-    <!-- Quick Links -->
-    <div class="footer-column">
-      <h4>Quick Links</h4>
-      <ul>
-        <li><a href="/index.html">Home</a></li>
-        <li><a href="/shop.html">Shop</a></li>
-        <li><a href="/cart.html">Cart</a></li>
-        <li><a href="/checkout.html">Checkout</a></li>
-        <li><a href="/track.html">Track Order</a></li>
-      </ul>
-    </div>
-
-    <!-- Categories -->
-    <div class="footer-column">
-      <h4>Categories</h4>
-      <ul>
-        <li><a href="/fashion.html">Fashion</a></li>
-        <li><a href="/grocery.html">Grocery</a></li>
-        <li><a href="/electronics.html">Electronics</a></li>
-        <li><a href="/help.html">Help Center</a></li>
-      </ul>
-    </div>
-
-    <!-- Contact & Newsletter -->
-    <div class="footer-column">
-      <h4>Contact</h4>
-      <ul>
-        <li><a href="mailto:support@bixmax.store">📧 support@bixmax.store</a></li>
-        <li><a href="https://wa.me/233551234567" target="_blank">💬 WhatsApp Support</a></li>
-      </ul>
-      <h4 style="margin-top: 1.5rem;">Newsletter</h4>
-      <form onsubmit="alert('Subscribed!'); return false;">
-        <input type="email" placeholder="Your email"
-               style="width: 100%; padding: 0.5rem; margin-top: 0.3rem; border-radius: 8px; border: none;">
-        <button type="submit"
-                style="margin-top: 0.5rem; width: 100%; background: cyan; color: black; border: none; padding: 0.5rem; border-radius: 8px; cursor: pointer;">
-          Subscribe
-        </button>
-      </form>
-    </div>
-
-  </div>
-
-  <div class="footer-bottom">
-    &copy; 2025 BizMAX. All rights reserved.<br>
-    <a href="#" class="back-to-top" onclick="scrollToTop()">↑ Back to Top</a>
-  </div>
-</footer>
-
-<script>
-  function scrollToTop() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-</script>
+    <!-- Font Awesome for icons (you'll need to include this in your project) -->
+    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script>
 <script>
   document.getElementById("newsletter-form").addEventListener("submit", function(e) {
     e.preventDefault();
