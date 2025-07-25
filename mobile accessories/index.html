@@ -251,5 +251,40 @@
   
     updateCartCount();  
   </script>
+<script>
+  const searchInput = document.getElementById("searchInput");
+  const container = document.getElementById("mobileContainer");
+  const notFoundMessage = document.getElementById("notFoundMessage");
+
+  searchInput.addEventListener("input", () => {
+    const query = searchInput.value.trim().toLowerCase();
+    const items = container.querySelectorAll(".item");
+
+    let visibleCount = 0;
+
+    items.forEach(item => {
+      const name = item.querySelector("h3").textContent.toLowerCase();
+      const price = item.querySelector("p").textContent.toLowerCase();
+
+      if (name.includes(query) || price.includes(query)) {
+        item.style.display = "block";
+        visibleCount++;
+      } else {
+        item.style.display = "none";
+      }
+    });
+
+    if (query && visibleCount === 0) {
+      notFoundMessage.style.display = "block";
+    } else {
+      notFoundMessage.style.display = "none";
+    }
+
+    // If input is cleared, show all items
+    if (!query) {
+      items.forEach(item => item.style.display = "block");
+    }
+  });
+</script>
 </body>
 </html>
