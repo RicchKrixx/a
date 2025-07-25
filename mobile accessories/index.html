@@ -256,15 +256,24 @@
   const container = document.getElementById("mobileContainer");
   const notFoundMessage = document.getElementById("notFoundMessage");
 
-  searchInput.addEventListener("input", () => {
+  // Debounce function to limit search execution
+  function debounce(func, delay) {
+    let timeoutId;
+    return function (...args) {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func.apply(this, args), delay);
+    };
+  }
+
+  const handleSearch = debounce(() => {
     const query = searchInput.value.trim().toLowerCase();
-    const items = container.querySelectorAll(".item");
+    const items = container.querySelectorAll(".product");
 
     let visibleCount = 0;
 
     items.forEach(item => {
-      const name = item.querySelector("h3").textContent.toLowerCase();
-      const price = item.querySelector("p").textContent.toLowerCase();
+      const name = item.querySelector(".product-name").textContent.toLowerCase();
+      const price = item.querySelector(".product-price").textContent.toLowerCase();
 
       if (name.includes(query) || price.includes(query)) {
         item.style.display = "block";
@@ -274,17 +283,14 @@
       }
     });
 
-    if (query && visibleCount === 0) {
-      notFoundMessage.style.display = "block";
-    } else {
-      notFoundMessage.style.display = "none";
-    }
+    notFoundMessage.style.display = query && visibleCount === 0 ? "block" : "none";
 
-    // If input is cleared, show all items
     if (!query) {
-      items.forEach(item => item.style.display = "block");
+      items.forEach(item => (item.style.display = "block"));
     }
-  });
+  }, 300);
+
+  searchInput.addEventListener("input", handleSearch);
 </script>
 </body>
 </html>
