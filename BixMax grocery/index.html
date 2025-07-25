@@ -79,6 +79,7 @@ font-weight: bold;
 h3 {
 color: black;
 }
+/*
 .products {
 display: flex;
 gap: 16px;
@@ -117,6 +118,64 @@ margin: 6px 0;
 font-size: 15px;
 font-weight: bold;
 }
+*/
+.products {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Exactly 4 columns */
+  gap: 16px;
+  padding-bottom: 6px;
+  max-height: 420px; /* Adjust based on .product height for 2 rows */
+  overflow: hidden; /* Prevent scrolling beyond 2 rows */
+}
+
+.product {
+  padding: 5px;
+  border-radius: 35px;
+  min-width: 150px;
+  text-align: center;
+  background: darkcyan;
+  color: white;
+  margin: 10px auto;
+  font-weight: bold;
+  box-shadow: 0 0 10px cyan;
+  height: 280px; /* Fixed height for consistent grid */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.product img {
+  min-width: 160px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 30px;
+}
+
+.product h3 {
+  font-size: 16px;
+  margin: 6px 0;
+}
+
+.product p {
+  font-size: 15px;
+  font-weight: bold;
+}
+
+@media (max-width: 500px) {
+  .products {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns on small screens */
+    gap: 12px;
+    max-height: 600px; /* Adjust for 2 columns × 4 rows (or fewer) */
+  }
+  .product {
+    min-width: 140px;
+    height: 260px; /* Slightly smaller for mobile */
+  }
+  .product img {
+    min-width: 140px;
+    height: 140px;
+  }
+}
 .add-btn {
 background: cyan;
 color: white;
@@ -147,7 +206,7 @@ text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
 text-shadow: 0 0 15px #0ff, 0 0 25px #0ff, 0 0 35px #0ff;
 }
 }
-
+/*
 @media (max-width: 500px) {
 .products {
 gap: 12px;
@@ -156,7 +215,7 @@ gap: 12px;
 min-width: 150px;
 }
 }
-
+*/
 footer {
 color: white;
 padding: 15px;
@@ -526,89 +585,89 @@ updateCartCount();
 
   </script>   
   <!-- Firebase SDKs -->  
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>  
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>  <script>  
-  // Firebase config  
-  const firebaseConfig = {  
-    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",  
-    authDomain: "bixmax-6c24c.firebaseapp.com",  
-    projectId: "bixmax-6c24c",  
-    storageBucket: "bixmax-6c24c.appspot.com",  
-    messagingSenderId: "37740442541",  
-    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"  
-  };  
-  
-  // Initialize Firebase  
-  firebase.initializeApp(firebaseConfig);  
-  const db = firebase.firestore();  
-  
-  // Render category items  
-  function renderCategoryItems(categoryName, containerId, items) {  
-    const container = document.getElementById(containerId);  
-    container.innerHTML = "";  
-  
-    if (items.length === 0) {  
-      container.innerHTML = `<p>No ${categoryName} available.</p>`;  
-      return;  
-    }  
-  
-    items.forEach(data => {  
-      const productEl = document.createElement("div");  
-      productEl.className = "product";  
-      productEl.innerHTML = `  
-        <img src="${data.image}" alt="${data.name}" />  
-        <h3>${data.name}</h3>  
-        <p>GH¢${data.price}</p>  
-        <button class="add-btn" onclick="addToCart('${data.name}', '${data.image}', ${data.price})">Add to Cart</button>  
-      `;  
-      container.appendChild(productEl);  
-    });  
-  }  
-  
-  // Fetch and listen for changes  
-  function listenToCategory(categoryName, containerId) {  
-    // Load cached items first  
-    const cached = localStorage.getItem(`grocery-${categoryName}`);  
-    if (cached) {  
-      try {  
-        const items = JSON.parse(cached);  
-        renderCategoryItems(categoryName, containerId, items);  
-      } catch (e) {  
-        console.warn(`Cache error for ${categoryName}:`, e);  
-      }  
-    }  
-  
-    // Realtime Firestore listener  
-    db.collection("grocery")  
-      .doc(categoryName)  
-      .collection("items")  
-      .onSnapshot((snapshot) => {  
-        const items = [];  
-        snapshot.forEach(doc => items.push(doc.data()));  
-  
-        // Save to localStorage  
-        localStorage.setItem(`grocery-${categoryName}`, JSON.stringify(items));  
-  
-        // Render new data  
-        renderCategoryItems(categoryName, containerId, items);  
-      }, (error) => {  
-        console.error(`Error fetching ${categoryName}:`, error);  
-        document.getElementById(containerId).innerHTML = `<p>Error loading ${categoryName}</p>`;  
-      });  
-  }  
-  
-  // List of categories and their container IDs  
-  const categories = [  
-    { name: "Vegetables", id: "vegetablesContainer" },  
-    { name: "Fruits", id: "fruitsContainer" },  
-    { name: "Beverages", id: "beveragesContainer" },  
-    { name: "Bakery", id: "bakeryContainer" },  
-    { name: "Packaged Foods", id: "packagedContainer" },  
-  ];  
-  
-  // Listen to all categories  
-  categories.forEach(cat => listenToCategory(cat.name, cat.id));  
-</script> 
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script>
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+  authDomain: "bixmax-6c24c.firebaseapp.com",
+  projectId: "bixmax-6c24c",
+  storageBucket: "bixmax-6c24c.appspot.com",
+  messagingSenderId: "37740442541",
+  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// Render category items (limited to 8 for 4x2 grid)
+function renderCategoryItems(categoryName, containerId, items) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = "";
+
+  if (items.length === 0) {
+    container.innerHTML = `<p>No ${categoryName} available.</p>`;
+    return;
+  }
+
+  // Limit to 8 items for 4x2 grid
+  const limitedItems = items.slice(0, 8);
+
+  limitedItems.forEach(data => {
+    const productEl = document.createElement("div");
+    productEl.className = "product";
+    productEl.innerHTML = `
+      <img src="${data.image}" alt="${data.name}" />
+      <h3>${data.name}</h3>
+      <p>GH¢${data.price}</p>
+      <button class="add-btn" onclick="addToCart('${data.name}', '${data.image}', ${data.price})">Add to Cart</button>
+    `;
+    container.appendChild(productEl);
+  });
+}
+
+// Fetch and listen for changes
+function listenToCategory(categoryName, containerId) {
+  // Load cached items first
+  const cached = localStorage.getItem(`grocery-${categoryName}`);
+  if (cached) {
+    try {
+      const items = JSON.parse(cached);
+      renderCategoryItems(categoryName, containerId, items);
+    } catch (e) {
+      console.warn(`Cache error for ${categoryName}:`, e);
+    }
+  }
+
+  // Realtime Firestore listener
+  db.collection("grocery")
+    .doc(categoryName)
+    .collection("items")
+    .onSnapshot((snapshot) => {
+      const items = [];
+      snapshot.forEach(doc => items.push(doc.data()));
+      localStorage.setItem(`grocery-${categoryName}`, JSON.stringify(items));
+      renderCategoryItems(categoryName, containerId, items);
+    }, (error) => {
+      console.error(`Error fetching ${categoryName}:`, error);
+      document.getElementById(containerId).innerHTML = `<p>Error loading ${categoryName}</p>`;
+    });
+}
+
+// List of categories and their container IDs
+const categories = [
+  { name: "Vegetables", id: "vegetablesContainer" },
+  { name: "Fruits", id: "fruitsContainer" },
+  { name: "Beverages", id: "beveragesContainer" },
+  { name: "Bakery", id: "bakeryContainer" },
+  { name: "Packaged Foods", id: "packagedContainer" }
+];
+
+// Listen to all categories
+categories.forEach(cat => listenToCategory(cat.name, cat.id));
+</script>
  </body>  
 </html>
 
