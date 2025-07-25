@@ -214,7 +214,13 @@ border-radius: 10px;
 <body>    
     <header>    
             <h1>BixMAX</h1>    
-        <h3>All-in-One Online Shop</h3>  <a href="/cart/" class="cart-icon glow" id="cartIcon">🛒<span id="cartCount">0</span></a>  </header>  <div class="container">    
+        <h3>All-in-One Online Shop</h3>  <a href="/cart/" class="cart-icon glow" id="cartIcon">🛒<span id="cartCount">0</span></a>  </header>
+
+<div style="padding: 10px; text-align: center;">
+  <input type="text" id="searchInput" placeholder="Search groceries..." style="width: 90%; padding: 10px; font-size: 16px; border-radius: 12px; border: none; outline: none; box-shadow: 0 0 5px cyan;">
+</div>
+
+  <div class="container">    
   <!-- Fashion Sections -->    
 <div class="category">    
   <div class="cat-header">    
@@ -447,6 +453,36 @@ updateCartCount();
   
   // Listen to all categories  
   categories.forEach(cat => listenToCategory(cat.name, cat.id));  
-</script>  </body>  
+</script> 
+<script>
+  const searchInput = document.getElementById('searchInput');
+
+  searchInput.addEventListener('input', () => {
+    const query = searchInput.value.trim().toLowerCase();
+    if (!query) {
+      // If search box is cleared, re-render all cached data
+      categories.forEach(cat => {
+        const cached = localStorage.getItem(`grocery-${cat.name}`);
+        if (cached) {
+          renderCategoryItems(cat.name, cat.id, JSON.parse(cached));
+        }
+      });
+      return;
+    }
+
+    // Filter across all categories
+    categories.forEach(cat => {
+      const container = document.getElementById(cat.id);
+      const cached = localStorage.getItem(`grocery-${cat.name}`);
+      if (cached) {
+        const items = JSON.parse(cached).filter(item =>
+          item.name.toLowerCase().includes(query)
+        );
+        renderCategoryItems(cat.name, cat.id, items);
+      }
+    });
+  });
+</script>
+ </body>  
 </html>
 
