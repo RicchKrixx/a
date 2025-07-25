@@ -1,673 +1,620 @@
-<!DOCTYPE html>  <html lang="en">    <head>    
-  <meta charset="UTF-8" />    
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>    
-  <title>BixMAX | Grocery</title>    
-  <style>    
-    * { margin: 0;     
-padding: 0;     
-box-sizing:     
-border-box;     
-}    
-      body {    
-      font-family: Arial, sans-serif;    
-      background: lightblue;    
-      margin: 0;    
-      padding: 0;    
-}  header {  width:100%;
-padding:24px;
-border-radius:16px;
-backdrop-filter: blur(25px);
-color: white;
-display: flex;
-flex-direction: column;
-align-items:center;
-font-weight: bold;
-background-size: cover;
-margin-bottom: 10px;
-
-}
-.cart-icon {
-position: fixed;
-font-size: 35px;
-text-decoration: none;
-color: white;
-margin-top: 5px;
-right: 17px;
-}
-
-#cartCount {
-position: absolute;
-top: -8px;
-right: -12px;
-background: red;
-color: white;
-font-size: 14px;
-font-weight: bold;
-border-radius: 50%;
-padding: 2px 6px;
-}
-
-section {
-padding: 0;
-}
-
-.category {
-margin-bottom: 40px;
-}
-
-.category a {
-margin-right: 10px;
-}
-
-.cat-header {
-display: flex;
-justify-content: space-between;
-align-items: center;
-margin-bottom: 10px;
-}
-
-.cat-header h2 {
-margin: 0;
-}
-
-.cat-header a {
-font-size: 14px;
-text-decoration: none;
-font-weight: bold;
-}
-
-h3 {
-color: black;
-}
-/*
-.products {
-display: flex;
-gap: 16px;
-overflow-x: auto;
-padding-bottom: 6px;
-}
-
-.product {
-padding: 5px;
-border-radius: 35px;
-min-width: 150px;
-text-align: center;
-flex-shrink: 0;
-text-align: center;
-background: darkcyan;
-color: white;
-margin: 10px auto;
-font-weight: bold;
-box-shadow: 0 0 10px cyan;
-}
-
-.product img {
-padding: 0;
-min-width: 160px;
-height: 160px;
-object-fit: cover;
-border-radius: 30px;
-}
-
-.product h3 {
-font-size: 16px;
-margin: 6px 0;
-}
-
-.product p {
-font-size: 15px;
-font-weight: bold;
-}
-*/
-.products {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr); /* Exactly 4 columns */
-  gap: 16px;
-  padding-bottom: 6px;
-  max-height: 420px; /* Adjust based on .product height for 2 rows */
-  overflow: hidden; /* Prevent scrolling beyond 2 rows */
-}
-
-.product {
-  padding: 5px;
-  border-radius: 35px;
-  min-width: 150px;
-  text-align: center;
-  background: darkcyan;
-  color: white;
-  margin: 10px auto;
-  font-weight: bold;
-  box-shadow: 0 0 10px cyan;
-  height: 280px; /* Fixed height for consistent grid */
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.product img {
-  min-width: 160px;
-  height: 160px;
-  object-fit: cover;
-  border-radius: 30px;
-}
-
-.product h3 {
-  font-size: 16px;
-  margin: 6px 0;
-}
-
-.product p {
-  font-size: 15px;
-  font-weight: bold;
-}
-
-@media (max-width: 500px) {
-  .products {
-    grid-template-columns: repeat(2, 1fr); /* 2 columns on small screens */
-    gap: 12px;
-    max-height: 600px; /* Adjust for 2 columns × 4 rows (or fewer) */
-  }
-  .product {
-    min-width: 140px;
-    height: 260px; /* Slightly smaller for mobile */
-  }
-  .product img {
-    min-width: 140px;
-    height: 140px;
-  }
-}
-.add-btn {
-background: cyan;
-color: white;
-padding: 8px 12px;
-border: none;
-border-radius: 10px;
-cursor: pointer;
-margin-top: 8px;
-font-weight: bold;
-}
-
-.add-btn:hover {
-background: #008b8b;
-}
-
-/* Always glowing */
-.glow {
-animation: brightGlow 1.5s infinite ease-in-out;
-color: cyan;
-text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
-}
-
-@keyframes brightGlow {
-0%, 100% {
-text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
-}
-50% {
-text-shadow: 0 0 15px #0ff, 0 0 25px #0ff, 0 0 35px #0ff;
-}
-}
-/*
-@media (max-width: 500px) {
-.products {
-gap: 12px;
-}
-.product {
-min-width: 150px;
-}
-}
-*/
-footer {
-color: white;
-padding: 15px;
-margin-top: 15px;
-width: 100%;
-border-radius:16px;
-background: darkcyan;
-color: white;
-margin: 10px auto;
-font-weight: bold;
-box-shadow: 0 0 10px cyan;
-color: white;
-display: flex;
-flex-direction: column;
-align-content: center;
-}
-/* Shake animation */
-@keyframes shake {
-0% { transform: translateX(0); }
-20% { transform: translateX(-4px); }
-40% { transform: translateX(4px); }
-60% { transform: translateX(-4px); }
-80% { transform: translateX(4px); }
-100% { transform: translateX(0); }
-}
-
-.shake {
-animation: shake 0.4s ease;
-}
-.modal {
-display: none;
-position: fixed;
-top: 0; left: 0; right: 0; bottom: 0;
-background: rgba(0,0,0,0.6);
-justify-content: center;
-align-items: center;
-z-index: 999;
-}
-.modal-content {
-background: white;
-padding: 20px;
-border-radius: 16px;
-max-width: 300px;
-text-align: center;
-}
-.modal-content select, .modal-content button {
-margin: 10px 0;
-padding: 10px;
-width: 100%;
-border-radius: 10px;
-}
-
-</style> 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-        }
-
-        footer {
-            background-color: #1a1a1a;
-            color: #ffffff;
-            padding: 60px 0 20px;
-            font-size: 16px;
-            line-height: 1.6;
-        }
-
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            gap: 30px;
-        }
-
-        .footer-section {
-            flex: 1;
-            min-width: 200px;
-            margin-bottom: 30px;
-        }
-
-        .footer-logo {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #ffffff;
-        }
-
-        .footer-section h3 {
-            font-size: 18px;
-            margin-bottom: 20px;
-            color: #ffffff;
-        }
-
-        .footer-section ul {
-            list-style: none;
-        }
-
-        .footer-section ul li {
-            margin-bottom: 10px;
-        }
-
-        .footer-section ul li a {
-            color: #cccccc;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .footer-section ul li a:hover {
-            color: #ffffff;
-        }
-
-        .contact-info p {
-            margin-bottom: 10px;
-            color: #cccccc;
-        }
-
-        .social-icons {
-            display: flex;
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .social-icons a {
-            color: #cccccc;
-            font-size: 20px;
-            transition: color 0.3s ease;
-        }
-
-        .social-icons a:hover {
-            color: #ffffff;
-        }
-
-        .footer-bottom {
-            border-top: 1px solid #333333;
-            padding-top: 20px;
-            text-align: center;
-            margin-top: 40px;
-            color: #cccccc;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .footer-container {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .social-icons {
-                justify-content: center;
-            }
-        }
-    </style>
- </head>    
-<body>    
-    <header>    
-            <h1>BixMAX</h1>    
-        <h3>All-in-One Online Shop</h3>  <a href="/cart/" class="cart-icon glow" id="cartIcon">🛒<span id="cartCount">0</span></a>  </header>
-
-
-  <div class="container">    
-  <!-- Fashion Sections -->    
-<div class="category">    
-  <div class="cat-header">    
-    <h2>Vegetables</h2>    
-    <a href="/vegetables/">View All</a>  
-  </div>    
-  <div class="products" id="vegetablesContainer">  
-    <!-- Firebase will load .product elements here -->  
-  </div>    
-</div>    <!-- Fashion Sections -->    <div class="category">    
-  <div class="cat-header">    
-    <h2>Fruits</h2>    
-    <a href="/fruits/">View All</a>  
-  </div>    
-  <div class="products" id="fruitsContainer">  
-    <!-- Firebase will load .product elements here -->  
-  </div>    
-</div>    <div class="category">    
-  <div class="cat-header">    
-    <h2>Beverages</h2>    
-    <a href="/beverages/">View All</a>  
-  </div>    
-  <div class="products" id="beveragesContainer">  
-    <!-- Firebase will load .product elements here -->  
-  </div>    
-</div>  <div class="category">    
-  <div class="cat-header">    
-    <h2>Bakery</h2>    
-    <a href="/bakery/">View All</a>  
-  </div>    
-  <div class="products" id="bakeryContainer">  
-    <!-- Firebase will load .product elements here -->  
-  </div>    
-</div>  <div class="category">    
-  <div class="cat-header">    
-    <h2>Packaged Foods</h2>    
-    <a href="/packaged foods/">View All</a>  
-  </div>    
-  <div class="products" id="packagedContainer">  
-    <!-- Firebase will load .product elements here -->  
-  </div>    
-</div>  </div>  
-    <footer>
-        <div class="footer-container">
-            <!-- Company Info -->
-            <div class="footer-section company-info">
-                <div class="footer-logo">BixMAX</div>
-                <p>We are a innovative company dedicated to providing top-notch solutions for our clients worldwide.</p>
-                <div class="social-icons">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                </div>
-            </div>
-
-            <!-- Quick Links -->
-            <div class="footer-section">
-                <h3>Quick Links</h3>
-                <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Services</a></li>
-                    <li><a href="#">Portfolio</a></li>
-                    <li><a href="#">Blog</a></li>
-                </ul>
-            </div>
-
-            <!-- Resources -->
-            <div class="footer-section">
-                <h3>Resources</h3>
-                <ul>
-                    <li><a href="#">Documentation</a></li>
-                    <li><a href="#">Support</a></li>
-                    <li><a href="#">FAQ</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">Terms of Service</a></li>
-                </ul>
-            </div>
-
-            <!-- Contact Info -->
-            <div class="footer-section contact-info">
-                <h3>Contact Us</h3>
-                <p><i class="fas fa-map-marker-alt"></i> Accra Ghana</p>
-                <p><i class="fas fa-phone"></i> +233 (53) 634-5825</p>
-                <p><i class="fas fa-envelope"></i> contact@bixmax.com</p>
-            </div>
-        </div>
-
-        <div class="footer-bottom">
-            <p>&copy; 2025 BixMAX. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <!-- Font Awesome for icons (you'll need to include this in your project) -->
-    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script> 
-
- <!-- 🔘 Variation Popup HTML (injects dynamically by script) -->    <script>    
-    const variationItems = {    
-      "Nike Air": { color: ["Red", "White"], size: ["42", "43", "44"] },    
-      "Summer Dress": { color: ["Blue", "Yellow"], size: ["S", "M", "L"] },    
-      "Ray-Ban": { color: ["Black", "Gold"] }    
-    };          
-   const cartCountEl = document.getElementById("cartCount");    function updateCartCount() {    
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];    
-  const count = cart.reduce((sum, item) => sum + item.qty, 0);    
-  cartCountEl.textContent = count;    
-}    
-
-function addToCart(name, img, price) {    
-  if (variationItems[name]) {    
-    showVariationPopup(name, img, price, variationItems[name]);    
-  } else {    
-    saveToCart({ name, image: img, price, qty: 1 });    
-  }    
-}    
-
-function saveToCart(item) {    
-  const cart = JSON.parse(localStorage.getItem("cart") || "[]");    
-  const existing = cart.find(i =>    
-    i.name === item.name &&    
-    (!i.color || i.color === item.color) &&    
-    (!i.size || i.size === item.size)    
-  );    
-  if (existing) {    
-    existing.qty += 1;    
-  } else {    
-    cart.push(item);    
-  }    
-  localStorage.setItem("cart", JSON.stringify(cart));    
-  updateCartCount();    
-  animateCartIcon();    
-}    
-
-function animateCartIcon() {    
-  const cartIcon = document.querySelector(".cart-icon");    
-  cartIcon.classList.remove("shake");    
-  void cartIcon.offsetWidth;    
-  cartIcon.classList.add("shake");    
-  cartIcon.addEventListener("animationend", () => {    
-    cartIcon.classList.remove("shake");    
-  }, { once: true });    
-}    
-
-function showVariationPopup(name, img, price, variations) {    
-  const overlay = document.createElement("div");    
-  overlay.style.cssText = `    
-    position:fixed;top:0;left:0;width:100%;height:100%;    
-    background:rgba(0,0,0,0.6);display:flex;justify-content:center;align-items:center;z-index:9999;    
-  `;    
-
-  const popup = document.createElement("div");    
-  popup.style.cssText = `    
-    background:white;padding:20px;border-radius:14px;width:90%;max-width:340px;text-align:center;    
-    box-shadow:0 0 20px cyan;    
-  `;    
-
-  let optionsHTML = "";    
-  if (variations.color) {    
-    optionsHTML += `    
-      <label style="font-weight:bold;">Color:    
-        <select id="popupColor">    
-          ${variations.color.map(c => `<option value="${c}">${c}</option>`).join("")}    
-        </select>    
-      </label><br><br>    
-    `;    
-  }    
-  if (variations.size) {    
-    optionsHTML += `    
-      <label style="font-weight:bold;">Size:    
-        <select id="popupSize">    
-          ${variations.size.map(s => `<option value="${s}">${s}</option>`).join("")}    
-        </select>    
-      </label><br><br>    
-    `;    
-  }    
-
-  popup.innerHTML = `    
-    <h3>Select Options</h3>    
-    <p style="margin-bottom:10px;font-weight:bold;">${name}</p>    
-    ${optionsHTML}    
-    <button onclick="confirmVariation('${name}','${img}',${price})" style="padding:10px 20px;background:#1976d2;color:white;border:none;border-radius:8px;">Confirm</button>    
-    <br><br>    
-    <button onclick="this.closest('div').parentNode.remove()" style="background:none;color:red;border:none;">Cancel</button>    
-  `;    
-
-  overlay.appendChild(popup);    
-  document.body.appendChild(overlay);    
-}    
-
-function confirmVariation(name, img, price) {    
-  const color = document.getElementById("popupColor")?.value;    
-  const size = document.getElementById("popupSize")?.value;    
-  const item = { name, image: img, price, qty: 1 };    
-  if (color) item.color = color;    
-  if (size) item.size = size;    
-  saveToCart(item);    
-  document.querySelector("body > div:last-child").remove();    
-}    
-
-updateCartCount();
-
-  </script>   
-  <!-- Firebase SDKs -->  
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-<script>
-// Firebase config
-const firebaseConfig = {
-  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-  authDomain: "bixmax-6c24c.firebaseapp.com",
-  projectId: "bixmax-6c24c",
-  storageBucket: "bixmax-6c24c.appspot.com",
-  messagingSenderId: "37740442541",
-  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-};
-
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-// Render category items (limited to 8 for 4x2 grid)
-function renderCategoryItems(categoryName, containerId, items) {
-  const container = document.getElementById(containerId);
-  container.innerHTML = "";
-
-  if (items.length === 0) {
-    container.innerHTML = `<p>No ${categoryName} available.</p>`;
-    return;
-  }
-
-  // Limit to 8 items for 4x2 grid
-  const limitedItems = items.slice(0, 8);
-
-  limitedItems.forEach(data => {
-    const productEl = document.createElement("div");
-    productEl.className = "product";
-    productEl.innerHTML = `
-      <img src="${data.image}" alt="${data.name}" />
-      <h3>${data.name}</h3>
-      <p>GH¢${data.price}</p>
-      <button class="add-btn" onclick="addToCart('${data.name}', '${data.image}', ${data.price})">Add to Cart</button>
-    `;
-    container.appendChild(productEl);
-  });
-}
-
-// Fetch and listen for changes
-function listenToCategory(categoryName, containerId) {
-  // Load cached items first
-  const cached = localStorage.getItem(`grocery-${categoryName}`);
-  if (cached) {
-    try {
-      const items = JSON.parse(cached);
-      renderCategoryItems(categoryName, containerId, items);
-    } catch (e) {
-      console.warn(`Cache error for ${categoryName}:`, e);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BixMAX | Grocery</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-  }
+    body {
+      font-family: Arial, sans-serif;
+      background: lightblue;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      width: 100%;
+      padding: 24px;
+      border-radius: 16px;
+      backdrop-filter: blur(25px);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-weight: bold;
+      background-size: cover;
+      margin-bottom: 10px;
+    }
+    .cart-icon {
+      position: fixed;
+      font-size: 35px;
+      text-decoration: none;
+      color: white;
+      margin-top: 5px;
+      right: 17px;
+    }
+    #cartCount {
+      position: absolute;
+      top: -8px;
+      right: -12px;
+      background: red;
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 50%;
+      padding: 2px 6px;
+    }
+    section {
+      padding: 0;
+    }
+    .category {
+      margin-bottom: 40px;
+      width: 100%; /* Ensure full width for grid */
+    }
+    .category a {
+      margin-right: 10px;
+    }
+    .cat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .cat-header h2 {
+      margin: 0;
+    }
+    .cat-header a {
+      font-size: 14px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    h3 {
+      color: black;
+    }
+    .products {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr); /* Exactly 4 columns */
+      gap: 16px;
+      padding: 10px;
+      max-height: 600px; /* Adjusted for 2 rows */
+      overflow: hidden; /* Prevent scrolling */
+      width: 100%; /* Ensure full width */
+    }
+    .product {
+      padding: 5px;
+      border-radius: 35px;
+      text-align: center;
+      background: darkcyan;
+      color: white;
+      font-weight: bold;
+      box-shadow: 0 0 10px cyan;
+      height: 280px; /* Fixed height for consistency */
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .product img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 30px;
+    }
+    .product h3 {
+      font-size: 16px;
+      margin: 6px 0;
+    }
+    .product p {
+      font-size: 15px;
+      font-weight: bold;
+    }
+    .add-btn {
+      background: cyan;
+      color: white;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 8px;
+      font-weight: bold;
+    }
+    .add-btn:hover {
+      background: #008b8b;
+    }
+    .glow {
+      animation: brightGlow 1.5s infinite ease-in-out;
+      color: cyan;
+      text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
+    }
+    @keyframes brightGlow {
+      0%, 100% {
+        text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
+      }
+      50% {
+        text-shadow: 0 0 15px #0ff, 0 0 25px #0ff, 0 0 35px #0ff;
+      }
+    }
+    @media (max-width: 500px) {
+      .products {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns on small screens */
+        gap: 12px;
+        max-height: 600px; /* Allow up to 4 rows */
+      }
+      .product {
+        height: 260px; /* Slightly smaller for mobile */
+      }
+      .product img {
+        height: 140px;
+      }
+    }
+    footer {
+      color: white;
+      padding: 15px;
+      margin-top: 15px;
+      width: 100%;
+      border-radius: 16px;
+      background: darkcyan;
+      margin: 10px auto;
+      font-weight: bold;
+      box-shadow: 0 0 10px cyan;
+      display: flex;
+      flex-direction: column;
+      align-content: center;
+    }
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      20% { transform: translateX(-4px); }
+      40% { transform: translateX(4px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+      100% { transform: translateX(0); }
+    }
+    .shake {
+      animation: shake 0.4s ease;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      max-width: 300px;
+      text-align: center;
+    }
+    .modal-content select, .modal-content button {
+      margin: 10px 0;
+      padding: 10px;
+      width: 100%;
+      border-radius: 10px;
+    }
+    /* Second footer styles */
+    footer {
+      background-color: #1a1a1a;
+      color: #ffffff;
+      padding: 60px 0 20px;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 30px;
+    }
+    .footer-section {
+      flex: 1;
+      min-width: 200px;
+      margin-bottom: 30px;
+    }
+    .footer-logo {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #ffffff;
+    }
+    .footer-section h3 {
+      font-size: 18px;
+      margin-bottom: 20px;
+      color: #ffffff;
+    }
+    .footer-section ul {
+      list-style: none;
+    }
+    .footer-section ul li {
+      margin-bottom: 10px;
+    }
+    .footer-section ul li a {
+      color: #cccccc;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    .footer-section ul li a:hover {
+      color: #ffffff;
+    }
+    .contact-info p {
+      margin-bottom: 10px;
+      color: #cccccc;
+    }
+    .social-icons {
+      display: flex;
+      gap: 15px;
+      margin-top: 15px;
+    }
+    .social-icons a {
+      color: #cccccc;
+      font-size: 20px;
+      transition: color 0.3s ease;
+    }
+    .social-icons a:hover {
+      color: #ffffff;
+    }
+    .footer-bottom {
+      border-top: 1px solid #333333;
+      padding-top: 20px;
+      text-align: center;
+      margin-top: 40px;
+      color: #cccccc;
+    }
+    @media (max-width: 768px) {
+      .footer-container {
+        flex-direction: column;
+        text-align: center;
+      }
+      .social-icons {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>BixMAX</h1>
+    <h3>All-in-One Online Shop</h3>
+    <a href="/cart/" class="cart-icon glow" id="cartIcon">🛒<span id="cartCount">0</span></a>
+  </header>
+  <div style="padding: 10px; text-align: center;">
+    <input type="text" id="searchInput" placeholder="Search groceries..." style="width: 90%; padding: 10px; font-size: 16px; border-radius: 12px; border: none; outline: none; box-shadow: 0 0 5px cyan;">
+  </div>
+  <p id="notFoundMessage" style="display:none; text-align:center; margin-top:1rem; font-size:1.2rem; color:gray;">
+    😢 No matching products found.
+  </p>
+  <div class="container">
+    <div class="category">
+      <div class="cat-header">
+        <h2>Vegetables</h2>
+        <a href="/vegetables/">View All</a>
+      </div>
+      <div class="products" id="vegetablesContainer"></div>
+    </div>
+    <div class="category">
+      <div class="cat-header">
+        <h2>Fruits</h2>
+        <a href="/fruits/">View All</a>
+      </div>
+      <div class="products" id="fruitsContainer"></div>
+    </div>
+    <div class="category">
+      <div class="cat-header">
+        <h2>Beverages</h2>
+        <a href="/beverages/">View All</a>
+      </div>
+      <div class="products" id="beveragesContainer"></div>
+    </div>
+    <div class="category">
+      <div class="cat-header">
+        <h2>Bakery</h2>
+        <a href="/bakery/">View All</a>
+      </div>
+      <div class="products" id="bakeryContainer"></div>
+    </div>
+    <div class="category">
+      <div class="cat-header">
+        <h2>Packaged Foods</h2>
+        <a href="/packaged foods/">View All</a>
+      </div>
+      <div class="products" id="packagedContainer"></div>
+    </div>
+  </div>
+  <footer>
+    <div class="footer-container">
+      <div class="footer-section company-info">
+        <div class="footer-logo">BixMAX</div>
+        <p>We are an innovative company dedicated to providing top-notch solutions for our clients worldwide.</p>
+        <div class="social-icons">
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+      </div>
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Services</a></li>
+          <li><a href="#">Portfolio</a></li>
+          <li><a href="#">Blog</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Resources</h3>
+        <ul>
+          <li><a href="#">Documentation</a></li>
+          <li><a href="#">Support</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+        </ul>
+      </div>
+      <div class="footer-section contact-info">
+        <h3>Contact Us</h3>
+        <p><i class="fas fa-map-marker-alt"></i> Accra Ghana</p>
+        <p><i class="fas fa-phone"></i> +233 (53) 634-5825</p>
+        <p><i class="fas fa-envelope"></i> contact@bixmax.com</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 BixMAX. All rights reserved.</p>
+    </div>
+  </footer>
 
-  // Realtime Firestore listener
-  db.collection("grocery")
-    .doc(categoryName)
-    .collection("items")
-    .onSnapshot((snapshot) => {
-      const items = [];
-      snapshot.forEach(doc => items.push(doc.data()));
-      localStorage.setItem(`grocery-${categoryName}`, JSON.stringify(items));
-      renderCategoryItems(categoryName, containerId, items);
-    }, (error) => {
-      console.error(`Error fetching ${categoryName}:`, error);
-      document.getElementById(containerId).innerHTML = `<p>Error loading ${categoryName}</p>`;
-    });
-}
+  <!-- Font Awesome (replace with your valid kit ID) -->
+  <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script>
 
-// List of categories and their container IDs
-const categories = [
-  { name: "Vegetables", id: "vegetablesContainer" },
-  { name: "Fruits", id: "fruitsContainer" },
-  { name: "Beverages", id: "beveragesContainer" },
-  { name: "Bakery", id: "bakeryContainer" },
-  { name: "Packaged Foods", id: "packagedContainer" }
-];
+  <!-- Variation Popup Script -->
+  <script>
+    const variationItems = {
+      "Nike Air": { color: ["Red", "White"], size: ["42", "43", "44"] },
+      "Summer Dress": { color: ["Blue", "Yellow"], size: ["S", "M", "L"] },
+      "Ray-Ban": { color: ["Black", "Gold"] }
+    };
+    const cartCountEl = document.getElementById("cartCount");
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const count = cart.reduce((sum, item) => sum + item.qty, 0);
+      cartCountEl.textContent = count;
+    }
+    function addToCart(name, img, price) {
+      if (variationItems[name]) {
+        showVariationPopup(name, img, price, variationItems[name]);
+      } else {
+        saveToCart({ name, image: img, price, qty: 1 });
+      }
+    }
+    function saveToCart(item) {
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      const existing = cart.find(i =>
+        i.name === item.name &&
+        (!i.color || i.color === item.color) &&
+        (!i.size || i.size === item.size)
+      );
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push(item);
+      }
+      localStorage.setItem("cart", JSON.stringify(cart));
+      updateCartCount();
+      animateCartIcon();
+    }
+    function animateCartIcon() {
+      const cartIcon = document.querySelector(".cart-icon");
+      cartIcon.classList.remove("shake");
+      void cartIcon.offsetWidth;
+      cartIcon.classList.add("shake");
+      cartIcon.addEventListener("animationend", () => {
+        cartIcon.classList.remove("shake");
+      }, { once: true });
+    }
+    function showVariationPopup(name, img, price, variations) {
+      const overlay = document.createElement("div");
+      overlay.style.cssText = `
+        position:fixed;top:0;left:0;width:100%;height:100%;
+        background:rgba(0,0,0,0.6);display:flex;justify-content:center;align-items:center;z-index:9999;
+      `;
+      const popup = document.createElement("div");
+      popup.style.cssText = `
+        background:white;padding:20px;border-radius:14px;width:90%;max-width:340px;text-align:center;
+        box-shadow:0 0 20px cyan;
+      `;
+      let optionsHTML = "";
+      if (variations.color) {
+        optionsHTML += `
+          <label style="font-weight:bold;">Color:
+            <select id="popupColor">
+              ${variations.color.map(c => `<option value="${c}">${c}</option>`).join("")}
+            </select>
+          </label><br><br>
+        `;
+      }
+      if (variations.size) {
+        optionsHTML += `
+          <label style="font-weight:bold;">Size:
+            <select id="popupSize">
+              ${variations.size.map(s => `<option value="${s}">${s}</option>`).join("")}
+            </select>
+          </label><br><br>
+        `;
+      }
+      popup.innerHTML = `
+        <h3>Select Options</h3>
+        <p style="margin-bottom:10px;font-weight:bold;">${name}</p>
+        ${optionsHTML}
+        <button onclick="confirmVariation('${name}','${img}',${price})" style="padding:10px 20px;background:#1976d2;color:white;border:none;border-radius:8px;">Confirm</button>
+        <br><br>
+        <button onclick="this.closest('div').parentNode.remove()" style="background:none;color:red;border:none;">Cancel</button>
+      `;
+      overlay.appendChild(popup);
+      document.body.appendChild(overlay);
+    }
+    function confirmVariation(name, img, price) {
+      const color = document.getElementById("popupColor")?.value;
+      const size = document.getElementById("popupSize")?.value;
+      const item = { name, image: img, price, qty: 1 };
+      if (color) item.color = color;
+      if (size) item.size = size;
+      saveToCart(item);
+      document.querySelector("body > div:last-child").remove();
+    }
+    updateCartCount();
+  </script>
 
-// Listen to all categories
-categories.forEach(cat => listenToCategory(cat.name, cat.id));
-</script>
- </body>  
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script>
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+      authDomain: "bixmax-6c24c.firebaseapp.com",
+      projectId: "bixmax-6c24c",
+      storageBucket: "bixmax-6c24c.appspot.com",
+      messagingSenderId: "37740442541",
+      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Render category items (limited to 8 for 4x2 grid)
+    function renderCategoryItems(categoryName, containerId, items) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+
+      if (items.length === 0) {
+        container.innerHTML = `<p>No ${categoryName} available.</p>`;
+        return;
+      }
+
+      // Limit to 8 items for 4x2 grid
+      const limitedItems = items.slice(0, 8);
+
+      limitedItems.forEach(data => {
+        const productEl = document.createElement("div");
+        productEl.className = "product";
+        productEl.innerHTML = `
+          <img src="${data.image}" alt="${data.name}" />
+          <h3>${data.name}</h3>
+          <p>GH¢${data.price}</p>
+          <button class="add-btn" onclick="addToCart('${data.name}', '${data.image}', ${data.price})">Add to Cart</button>
+        `;
+        container.appendChild(productEl);
+      });
+    }
+
+    // Fetch and listen for changes
+    function listenToCategory(categoryName, containerId) {
+      // Load cached items first
+      const cached = localStorage.getItem(`grocery-${categoryName}`);
+      if (cached) {
+        try {
+          const items = JSON.parse(cached);
+          renderCategoryItems(categoryName, containerId, items);
+        } catch (e) {
+          console.warn(`Cache error for ${categoryName}:`, e);
+        }
+      }
+
+      // Realtime Firestore listener
+      db.collection("grocery")
+        .doc(categoryName)
+        .collection("items")
+        .onSnapshot((snapshot) => {
+          const items = [];
+          snapshot.forEach(doc => items.push(doc.data()));
+          localStorage.setItem(`grocery-${categoryName}`, JSON.stringify(items));
+          renderCategoryItems(categoryName, containerId, items);
+        }, (error) => {
+          console.error(`Error fetching ${categoryName}:`, error);
+          document.getElementById(containerId).innerHTML = `<p>Error loading ${categoryName}</p>`;
+        });
+    }
+
+    // List of categories and their container IDs
+    const categories = [
+      { name: "Vegetables", id: "vegetablesContainer" },
+      { name: "Fruits", id: "fruitsContainer" },
+      { name: "Beverages", id: "beveragesContainer" },
+      { name: "Bakery", id: "bakeryContainer" },
+      { name: "Packaged Foods", id: "packagedContainer" }
+    ];
+
+    // Listen to all categories
+    categories.forEach(cat => listenToCategory(cat.name, cat.id));
+  </script>
+
+  <!-- Search Script -->
+  <script>
+    const searchInput = document.getElementById('searchInput');
+    const notFoundMessage = document.getElementById('notFoundMessage');
+
+    // Debounce function to limit search execution
+    function debounce(func, delay) {
+      let timeoutId;
+      return function (...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => func.apply(this, args), delay);
+      };
+    }
+
+    const handleSearch = debounce(() => {
+      const query = searchInput.value.trim().toLowerCase();
+      let totalVisible = 0;
+
+      categories.forEach(cat => {
+        const cached = localStorage.getItem(`grocery-${cat.name}`);
+        const container = document.getElementById(cat.id);
+        const categoryBlock = container.closest(".category");
+
+        if (!cached) {
+          categoryBlock.style.display = "none";
+          return;
+        }
+
+        const items = JSON.parse(cached);
+
+        // Filter items and limit to 8 for 4x2 grid
+        const filtered = items
+          .filter(item =>
+            item.name.toLowerCase().includes(query) ||
+            item.price.toString().includes(query)
+          )
+          .slice(0, 8);
+
+        if (!query) {
+          // Show up to 8 original items when input is cleared
+          categoryBlock.style.display = "block";
+          renderCategoryItems(cat.name, cat.id, items.slice(0, 8));
+          totalVisible++;
+        } else if (filtered.length > 0) {
+          categoryBlock.style.display = "block";
+          renderCategoryItems(cat.name, cat.id, filtered);
+          totalVisible++;
+        } else {
+          categoryBlock.style.display = "none";
+        }
+      });
+
+      // Show "not found" message if no visible categories
+      notFoundMessage.style.display = query && totalVisible === 0 ? "block" : "none";
+    }, 300);
+
+    searchInput.addEventListener('input', handleSearch);
+  </script>
+</body>
 </html>
-
