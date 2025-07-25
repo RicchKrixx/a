@@ -264,6 +264,9 @@ border-radius: 10px;
   </div>    
 </div>  </div>    
   <footer>&copy; BixMAX 2025. All rights reserved.</footer>    
+<p id="notFoundMessage" style="display:none; text-align:center; margin-top:1rem; font-size:1.2rem; color:gray;">
+  😢 No matching products found.
+</p>
  <!-- 🔘 Variation Popup HTML (injects dynamically by script) -->    <script>    
     const variationItems = {    
       "Nike Air": { color: ["Red", "White"], size: ["42", "43", "44"] },    
@@ -456,22 +459,12 @@ updateCartCount();
 </script> 
 <script>
 const searchInput = document.getElementById('searchInput');
+const notFoundMessage = document.getElementById('notFoundMessage');
 
 searchInput.addEventListener('input', () => {
   const query = searchInput.value.trim().toLowerCase();
+  let totalVisible = 0;
 
-  if (!query) {
-    // Restore original cached data for all categories
-    categories.forEach(cat => {
-      const cached = localStorage.getItem(`grocery-${cat.name}`);
-      if (cached) {
-        renderCategoryItems(cat.name, cat.id, JSON.parse(cached));
-      }
-    });
-    return;
-  }
-
-  // Filter and display only matching items per category
   categories.forEach(cat => {
     const cached = localStorage.getItem(`grocery-${cat.name}`);
     const container = document.getElementById(cat.id);
@@ -483,17 +476,33 @@ searchInput.addEventListener('input', () => {
     }
 
     const items = JSON.parse(cached);
+
+    // Filter items based on name or price
     const filtered = items.filter(item =>
-      item.name.toLowerCase().includes(query)
+      item.name.toLowerCase().includes(query) ||
+      item.price.toString().includes(query)
     );
 
-    if (filtered.length === 0) {
-      categoryBlock.style.display = "none";
-    } else {
+    if (!query) {
+      // Show all original items when input is cleared
+      categoryBlock.style.display = "block";
+      renderCategoryItems(cat.name, cat.id, items);
+      totalVisible++;
+    } else if (filtered.length > 0) {
       categoryBlock.style.display = "block";
       renderCategoryItems(cat.name, cat.id, filtered);
+      totalVisible++;
+    } else {
+      categoryBlock.style.display = "none";
     }
   });
+
+  // Show "not found" message if no visible categories
+  if (query && totalVisible === 0) {
+    notFoundMessage.style.display = "block";
+  } else {
+    notFoundMessage.style.display = "none";
+  }
 });
 </script>
  </body>  
