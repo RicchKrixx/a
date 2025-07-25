@@ -456,12 +456,22 @@ updateCartCount();
 </script> 
 <script>
 const searchInput = document.getElementById('searchInput');
-const categoryFilter = document.getElementById('categoryFilter');
 
-function applyFilters() {
+searchInput.addEventListener('input', () => {
   const query = searchInput.value.trim().toLowerCase();
-  const selectedCategory = categoryFilter.value;
 
+  if (!query) {
+    // Restore original cached data for all categories
+    categories.forEach(cat => {
+      const cached = localStorage.getItem(`grocery-${cat.name}`);
+      if (cached) {
+        renderCategoryItems(cat.name, cat.id, JSON.parse(cached));
+      }
+    });
+    return;
+  }
+
+  // Filter and display only matching items per category
   categories.forEach(cat => {
     const cached = localStorage.getItem(`grocery-${cat.name}`);
     const container = document.getElementById(cat.id);
@@ -473,13 +483,9 @@ function applyFilters() {
     }
 
     const items = JSON.parse(cached);
-
-    // Filter based on search query
-    const filtered = items.filter(item => {
-      const matchesQuery = item.name.toLowerCase().includes(query);
-      const matchesCategory = selectedCategory === "all" || cat.name === selectedCategory;
-      return matchesQuery && matchesCategory;
-    });
+    const filtered = items.filter(item =>
+      item.name.toLowerCase().includes(query)
+    );
 
     if (filtered.length === 0) {
       categoryBlock.style.display = "none";
@@ -488,10 +494,7 @@ function applyFilters() {
       renderCategoryItems(cat.name, cat.id, filtered);
     }
   });
-}
-
-searchInput.addEventListener('input', applyFilters);
-categoryFilter.addEventListener('change', applyFilters);
+});
 </script>
  </body>  
 </html>
