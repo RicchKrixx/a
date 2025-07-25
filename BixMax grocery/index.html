@@ -86,7 +86,7 @@ overflow-x: auto;
 padding-bottom: 6px;
 }
 
-.product {
+/*.product {
 padding: 5px;
 border-radius: 35px;
 min-width: 150px;
@@ -117,7 +117,64 @@ margin: 6px 0;
 font-size: 15px;
 font-weight: bold;
 }
+*/
+.products {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Exactly 4 columns */
+  gap: 16px;
+  padding-bottom: 6px;
+  max-height: 420px; /* Adjust based on .product height for 2 rows */
+  overflow: hidden; /* Prevent scrolling beyond 2 rows */
+}
 
+.product {
+  padding: 5px;
+  border-radius: 35px;
+  min-width: 150px;
+  text-align: center;
+  background: darkcyan;
+  color: white;
+  margin: 10px auto;
+  font-weight: bold;
+  box-shadow: 0 0 10px cyan;
+  height: 280px; /* Fixed height for consistent grid */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.product img {
+  min-width: 160px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 30px;
+}
+
+.product h3 {
+  font-size: 16px;
+  margin: 6px 0;
+}
+
+.product p {
+  font-size: 15px;
+  font-weight: bold;
+}
+
+@media (max-width: 500px) {
+  .products {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns on small screens */
+    gap: 12px;
+    max-height: 600px; /* Adjust for 2 columns × 4 rows (or fewer) */
+  }
+  .product {
+    min-width: 140px;
+    height: 260px; /* Slightly smaller for mobile */
+  }
+  .product img {
+    min-width: 140px;
+    height: 140px;
+  }
+}
 .add-btn {
 background: cyan;
 color: white;
@@ -321,9 +378,6 @@ border-radius: 10px;
             <h1>BixMAX</h1>    
         <h3>All-in-One Online Shop</h3>  <a href="/cart/" class="cart-icon glow" id="cartIcon">🛒<span id="cartCount">0</span></a>  </header>
 
-<div style="padding: 10px; text-align: center;">
-  <input type="text" id="searchInput" placeholder="Search groceries..." style="width: 90%; padding: 10px; font-size: 16px; border-radius: 12px; border: none; outline: none; box-shadow: 0 0 5px cyan;">
-</div>
 
   <div class="container">    
   <!-- Fashion Sections -->    
@@ -368,9 +422,6 @@ border-radius: 10px;
     <!-- Firebase will load .product elements here -->  
   </div>    
 </div>  </div>  
-<p id="notFoundMessage" style="display:none; text-align:center; margin-top:1rem; font-size:1.2rem; color:gray;">
-  😢 No matching products found.
-</p>  
     <footer>
         <div class="footer-container">
             <!-- Company Info -->
@@ -616,54 +667,6 @@ updateCartCount();
   // Listen to all categories  
   categories.forEach(cat => listenToCategory(cat.name, cat.id));  
 </script> 
-<script>
-const searchInput = document.getElementById('searchInput');
-const notFoundMessage = document.getElementById('notFoundMessage');
-
-searchInput.addEventListener('input', () => {
-  const query = searchInput.value.trim().toLowerCase();
-  let totalVisible = 0;
-
-  categories.forEach(cat => {
-    const cached = localStorage.getItem(`grocery-${cat.name}`);
-    const container = document.getElementById(cat.id);
-    const categoryBlock = container.closest(".category");
-
-    if (!cached) {
-      categoryBlock.style.display = "none";
-      return;
-    }
-
-    const items = JSON.parse(cached);
-
-    // Filter items based on name or price
-    const filtered = items.filter(item =>
-      item.name.toLowerCase().includes(query) ||
-      item.price.toString().includes(query)
-    );
-
-    if (!query) {
-      // Show all original items when input is cleared
-      categoryBlock.style.display = "block";
-      renderCategoryItems(cat.name, cat.id, items);
-      totalVisible++;
-    } else if (filtered.length > 0) {
-      categoryBlock.style.display = "block";
-      renderCategoryItems(cat.name, cat.id, filtered);
-      totalVisible++;
-    } else {
-      categoryBlock.style.display = "none";
-    }
-  });
-
-  // Show "not found" message if no visible categories
-  if (query && totalVisible === 0) {
-    notFoundMessage.style.display = "block";
-  } else {
-    notFoundMessage.style.display = "none";
-  }
-});
-</script>
  </body>  
 </html>
 
