@@ -455,33 +455,43 @@ updateCartCount();
   categories.forEach(cat => listenToCategory(cat.name, cat.id));  
 </script> 
 <script>
-  const searchInput = document.getElementById('searchInput');
+const searchInput = document.getElementById('searchInput');
+const categoryFilter = document.getElementById('categoryFilter');
 
-  searchInput.addEventListener('input', () => {
-    const query = searchInput.value.trim().toLowerCase();
-    if (!query) {
-      // If search box is cleared, re-render all cached data
-      categories.forEach(cat => {
-        const cached = localStorage.getItem(`grocery-${cat.name}`);
-        if (cached) {
-          renderCategoryItems(cat.name, cat.id, JSON.parse(cached));
-        }
-      });
+function applyFilters() {
+  const query = searchInput.value.trim().toLowerCase();
+  const selectedCategory = categoryFilter.value;
+
+  categories.forEach(cat => {
+    const cached = localStorage.getItem(`grocery-${cat.name}`);
+    const container = document.getElementById(cat.id);
+    const categoryBlock = container.closest(".category");
+
+    if (!cached) {
+      categoryBlock.style.display = "none";
       return;
     }
 
-    // Filter across all categories
-    categories.forEach(cat => {
-      const container = document.getElementById(cat.id);
-      const cached = localStorage.getItem(`grocery-${cat.name}`);
-      if (cached) {
-        const items = JSON.parse(cached).filter(item =>
-          item.name.toLowerCase().includes(query)
-        );
-        renderCategoryItems(cat.name, cat.id, items);
-      }
+    const items = JSON.parse(cached);
+
+    // Filter based on search query
+    const filtered = items.filter(item => {
+      const matchesQuery = item.name.toLowerCase().includes(query);
+      const matchesCategory = selectedCategory === "all" || cat.name === selectedCategory;
+      return matchesQuery && matchesCategory;
     });
+
+    if (filtered.length === 0) {
+      categoryBlock.style.display = "none";
+    } else {
+      categoryBlock.style.display = "block";
+      renderCategoryItems(cat.name, cat.id, filtered);
+    }
   });
+}
+
+searchInput.addEventListener('input', applyFilters);
+categoryFilter.addEventListener('change', applyFilters);
 </script>
  </body>  
 </html>
