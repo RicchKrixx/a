@@ -147,151 +147,88 @@
 </p>  
   <footer>&copy; BixMAX 2025. All rights reserved.</footer>  
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import {
-      getFirestore,
-      collection,
-      onSnapshot
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+  import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-      authDomain: "bixmax-6c24c.firebaseapp.com",
-      projectId: "bixmax-6c24c",
-      storageBucket: "bixmax-6c24c.appspot.com",
-      messagingSenderId: "37740442541",
-      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyCU4kWk-l7FDF4AJDk-WbA2A4GRvVWFaOw",
+    authDomain: "bizmax-data.firebaseapp.com",
+    projectId: "bizmax-data",
+    storageBucket: "bizmax-data.appspot.com",
+    messagingSenderId: "589563081184",
+    appId: "1:589563081184:web:bb7fd79ccad222e87197ae",
+    measurementId: "G-DWR05P5WGR"
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const container = document.getElementById("mobileContainer");
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-    function renderMobile(items) {
-      container.innerHTML = "";
-      items.forEach(data => {
-        const div = document.createElement("div");
-        div.className = "product";
-        div.innerHTML = `
-          <img src="${data.image}" alt="${data.name}" />
-          <div class="product-name">${data.name}</div>
-          <div class="product-price">GH₵${data.price.toFixed(2)}</div>
-          <button class="add-btn"
-            data-id="${data.id}"
-            data-name="${data.name}"
-            data-price="${data.price}"
-            data-image="${data.image}"
-            data-category="Mobile">
-            Add to Cart
-          </button>
-        `;
-        container.appendChild(div);
+  const container = document.getElementById("mobileContainer");
+  const notFoundMessage = document.getElementById("notFoundMessage");
+  let mobileItems = []; // ✅ Declare globally for use in search
+
+  const renderMobile = (items) => {
+    container.innerHTML = ""; // Clear current items
+    items.forEach((item) => {
+      const product = document.createElement("div");
+      product.className = "product";
+      product.innerHTML = `
+        <img src="${item.image}" alt="${item.name}">
+        <div class="product-name">${item.name}</div>
+        <div class="product-price">GH₵ ${item.price}</div>
+        <button class="add-to-cart" data-id="${item.id}">Add to Cart</button>
+      `;
+      container.appendChild(product);
+    });
+  };
+
+  // ✅ Load data from Firestore and render
+  onSnapshot(collection(db, "Mobile"), (snapshot) => {
+    const items = [];
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      items.push({
+        id: doc.id,
+        name: data.name,
+        price: data.price,
+        image: data.image,
       });
+    });
 
-      document.querySelectorAll('.add-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const product = {
-            id: btn.dataset.id,
-            name: btn.dataset.name,
-            price: parseFloat(btn.dataset.price),
-            image: btn.dataset.image,
-            category: btn.dataset.category
-          };
-          addToCart(product);
-        });
-      });
-    }
-
-    // Load from cache first
-    const cached = localStorage.getItem("Mobile");
-    if (cached) {
-      try {
-        const items = JSON.parse(cached);
-        renderMobile(items);
-      } catch (e) {
-        console.error("Error parsing cached shirts:", e);
-      }
-    }
-
-    // Firestore real-time listener (only updates on data change)
- onSnapshot(collection(db, "category", "Mobile Accessory", "items"), snapshot => {
-  const items = [];
-  snapshot.forEach(doc => {
-    items.push({ ...doc.data(), id: doc.id });
+    mobileItems = items;
+    localStorage.setItem("Mobile", JSON.stringify(items));
+    renderMobile(items);
   });
-  localStorage.setItem("Mobile", JSON.stringify(items));
-  mobileItems = items; // ✅ store it in memory
-  renderMobile(items);
-});
 
-    function addToCart(product) {
-      let cart = JSON.parse(localStorage.getItem("cart")) || [];
-      const index = cart.findIndex(item => item.id === product.id);
-      if (index >= 0) {
-        cart[index].qty += 1;
-      } else {
-        cart.push({ ...product, qty: 1 });
-      }
-      localStorage.setItem("cart", JSON.stringify(cart));
-      updateCartCount();
-      animateCart();
+  // ✅ Live search logic
+  const searchInput = document.getElementById('searchInput');
+  searchInput.addEventListener('input', () => {
+    const query = searchInput.value.trim().toLowerCase();
+    const cached = localStorage.getItem("Mobile");
+
+    if (!cached) return;
+
+    const items = JSON.parse(cached);
+
+    const filtered = items.filter(item =>
+      item.name.toLowerCase().includes(query) ||
+      item.price.toString().includes(query)
+    );
+
+    if (filtered.length > 0) {
+      notFoundMessage.style.display = "none";
+      renderMobile(filtered);
+    } else {
+      container.innerHTML = "";
+      notFoundMessage.style.display = "block";
     }
 
-    function updateCartCount() {
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      const count = cart.reduce((sum, item) => sum + item.qty, 0);
-      document.getElementById("cartCount").textContent = count;
+    if (!query) {
+      notFoundMessage.style.display = "none";
+      renderMobile(items);
     }
-
-    function animateCart() {
-      const cartIcon = document.querySelector(".cart-icon");
-      cartIcon.classList.add("shake");
-      setTimeout(() => cartIcon.classList.remove("shake"), 500);
-    }
-
-    updateCartCount();
-  </script>
-<script>
-const searchInput = document.getElementById('searchInput');
-const notFoundMessage = document.getElementById('notFoundMessage');
-const container = document.getElementById('mobileContainer');
-
-function fuzzyMatch(item, keywords) {
-  const name = item.name.toLowerCase();
-  const price = item.price.toString().toLowerCase();
-
-  return keywords.some(keyword =>
-    name.includes(keyword) || price.includes(keyword)
-  );
-}
-
-searchInput.addEventListener('input', () => {
-  const query = searchInput.value.trim().toLowerCase();
-
-  // If query is empty, restore all items
-  if (!query) {
-    notFoundMessage.style.display = "none";
-    renderMobile(mobileItems); // ✅ use in-memory data
-    return;
-  }
-
-  // Fuzzy split (like before)
-  let keywords = [];
-  for (let i = 0; i < query.length - 1; i++) {
-    keywords.push(query.slice(i, i + 2));
-  }
-
-  const filtered = mobileItems.filter(item => fuzzyMatch(item, keywords));
-
-  if (filtered.length > 0) {
-    notFoundMessage.style.display = "none";
-    renderMobile(filtered);
-  } else {
-    container.innerHTML = "";
-    notFoundMessage.style.display = "block";
-  }
-});
+  });
 </script>
 </body>
 </html>
