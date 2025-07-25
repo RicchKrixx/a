@@ -1,471 +1,451 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BixMAX | Electronics</title>
-  <style>
-    * { margin: 0; 
-padding: 0; 
-box-sizing: 
-border-box; 
+<!DOCTYPE html>  <html lang="en">    <head>    
+  <meta charset="UTF-8" />    
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>    
+  <title>BixMAX | Electronics</title>    
+  <style>    
+    * { margin: 0;     
+padding: 0;     
+box-sizing:     
+border-box;     
+}    
+      body {    
+      font-family: Arial, sans-serif;    
+      background: lightblue;    
+      margin: 0;    
+      padding: 0;    
+}  header {  width:100%;
+padding:24px;
+border-radius:16px;
+backdrop-filter: blur(25px);
+color: white;
+display: flex;
+flex-direction: column;
+align-items:center;
+font-weight: bold;
+background-size: cover;
+margin-bottom: 10px;
+
 }
-      body {
-      font-family: Arial, sans-serif;
-      background: lightblue;
-      margin: 0;
-      padding: 0;
+.cart-icon {
+position: fixed;
+font-size: 35px;
+text-decoration: none;
+color: white;
+margin-top: 5px;
+right: 17px;
 }
 
-header {
-
-        width:100%;
-        padding:24px;
-        border-radius:16px;
-    backdrop-filter: blur(25px);
-        color: white;
-        display: flex;
-        flex-direction: column;
-        align-items:center;
-        font-weight: bold;
-        background-size: cover;
-        margin-bottom: 10px;
+#cartCount {
+position: absolute;
+top: -8px;
+right: -12px;
+background: red;
+color: white;
+font-size: 14px;
+font-weight: bold;
+border-radius: 50%;
+padding: 2px 6px;
 }
-    .cart-icon {
-      position: fixed;
-      font-size: 35px;
-      text-decoration: none;
-      color: white;
-      margin-top: 5px;
-      right: 17px; 
-    }
 
-    #cartCount {
-      position: absolute;
-      top: -8px;
-      right: -12px;
-      background: red;
-      color: white;
-      font-size: 14px;
-      font-weight: bold;
-      border-radius: 50%;
-      padding: 2px 6px;
-    }
+section {
+padding: 0;
+}
 
-    section {
-      padding: 0;
-    }
+.category {
+margin-bottom: 40px;
+}
 
-    .category {
-      margin-bottom: 40px;
-    }
 .category a {
-    margin-right: 10px;
+margin-right: 10px;
 }
 
-    .cat-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
+.cat-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 10px;
+}
 
-    .cat-header h2 {
-      margin: 0;
-    }
+.cat-header h2 {
+margin: 0;
+}
 
-    .cat-header a {
-      font-size: 14px;
-      text-decoration: none;
-      font-weight: bold;
-    }
+.cat-header a {
+font-size: 14px;
+text-decoration: none;
+font-weight: bold;
+}
+
 h3 {
 color: black;
 }
-    .products {
-      display: flex;
-      gap: 16px;
-      overflow-x: auto;
-      padding-bottom: 6px;
-    }
+.products {
+display: flex;
+gap: 16px;
+overflow-x: auto;
+padding-bottom: 6px;
+}
 
-    .product {
-      padding: 5px;
-      border-radius: 35px;
-      min-width: 150px;
-      text-align: center;
-      flex-shrink: 0;
-      text-align: center;
-      background: darkcyan;
-      color: white;
-      margin: 10px auto;
-      font-weight: bold;
-      box-shadow: 0 0 10px cyan;
-    }
+.product {
+padding: 5px;
+border-radius: 35px;
+min-width: 150px;
+text-align: center;
+flex-shrink: 0;
+text-align: center;
+background: darkcyan;
+color: white;
+margin: 10px auto;
+font-weight: bold;
+box-shadow: 0 0 10px cyan;
+}
 
-    .product img {
-      padding: 0;
-      min-width: 160px;
-      height: 160px;
-      object-fit: cover;
-      border-radius: 30px;
-    }
+.product img {
+padding: 0;
+min-width: 160px;
+height: 160px;
+object-fit: cover;
+border-radius: 30px;
+}
 
-    .product h3 {
-      font-size: 16px;
-      margin: 6px 0;
-    }
+.product h3 {
+font-size: 16px;
+margin: 6px 0;
+}
 
-    .product p {
-      font-size: 15px;
-      font-weight: bold;
-    }
+.product p {
+font-size: 15px;
+font-weight: bold;
+}
 
-    .add-btn {
-      background: cyan;
-      color: white;
-      padding: 8px 12px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      margin-top: 8px;
-      font-weight: bold;
-    }
+.add-btn {
+background: cyan;
+color: white;
+padding: 8px 12px;
+border: none;
+border-radius: 10px;
+cursor: pointer;
+margin-top: 8px;
+font-weight: bold;
+}
 
-    .add-btn:hover {
-      background: #008b8b;
-    }
+.add-btn:hover {
+background: #008b8b;
+}
+
 /* Always glowing */
 .glow {
-  animation: brightGlow 1.5s infinite ease-in-out;
-  color: cyan;
-  text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
+animation: brightGlow 1.5s infinite ease-in-out;
+color: cyan;
+text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
 }
 
 @keyframes brightGlow {
-  0%, 100% {
-    text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
-  }
-  50% {
-    text-shadow: 0 0 15px #0ff, 0 0 25px #0ff, 0 0 35px #0ff;
-  }
+0%, 100% {
+text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
+}
+50% {
+text-shadow: 0 0 15px #0ff, 0 0 25px #0ff, 0 0 35px #0ff;
+}
 }
 
-    @media (max-width: 500px) {
-      .products {
-        gap: 12px;
-      }
-      .product {
-        min-width: 150px;
-      }
-    }
+@media (max-width: 500px) {
+.products {
+gap: 12px;
+}
+.product {
+min-width: 150px;
+}
+}
+
 footer {
-    color: white;
-    padding: 15px;
-    margin-top: 15px;
-        width: 100%;
-        border-radius:16px;
-      background: darkcyan;
-      color: white;
-      margin: 10px auto;
-      font-weight: bold;
-      box-shadow: 0 0 10px cyan;
-        color: white;
-        display: flex;
-        flex-direction: column;
-        align-content: center;
+color: white;
+padding: 15px;
+margin-top: 15px;
+width: 100%;
+border-radius:16px;
+background: darkcyan;
+color: white;
+margin: 10px auto;
+font-weight: bold;
+box-shadow: 0 0 10px cyan;
+color: white;
+display: flex;
+flex-direction: column;
+align-content: center;
 }
 /* Shake animation */
 @keyframes shake {
-  0% { transform: translateX(0); }
-  20% { transform: translateX(-4px); }
-  40% { transform: translateX(4px); }
-  60% { transform: translateX(-4px); }
-  80% { transform: translateX(4px); }
-  100% { transform: translateX(0); }
+0% { transform: translateX(0); }
+20% { transform: translateX(-4px); }
+40% { transform: translateX(4px); }
+60% { transform: translateX(-4px); }
+80% { transform: translateX(4px); }
+100% { transform: translateX(0); }
 }
 
 .shake {
-  animation: shake 0.4s ease;
+animation: shake 0.4s ease;
 }
 .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.6);
-      justify-content: center;
-      align-items: center;
-      z-index: 999;
-    }
+display: none;
+position: fixed;
+top: 0; left: 0; right: 0; bottom: 0;
+background: rgba(0,0,0,0.6);
+justify-content: center;
+align-items: center;
+z-index: 999;
+}
 .modal-content {
-      background: white;
-      padding: 20px;
-      border-radius: 16px;
-      max-width: 300px;
-      text-align: center;
-    }
-    .modal-content select, .modal-content button {
-      margin: 10px 0;
-      padding: 10px;
-      width: 100%;
-      border-radius: 10px;
-    }
-  </style>
-</head>
-<body>
-    <header>
-            <h1>BixMAX</h1>
-        <h3>All-in-One Online Shop</h3>
+background: white;
+padding: 20px;
+border-radius: 16px;
+max-width: 300px;
+text-align: center;
+}
+.modal-content select, .modal-content button {
+margin: 10px 0;
+padding: 10px;
+width: 100%;
+border-radius: 10px;
+}
 
-<a href="cart.html" class="cart-icon glow" id="cartIcon">🛒<span id="cartCount">0</span></a>
+</style>  </head>    
+<body>    
+    <header>    
+            <h1>BixMAX</h1>    
+        <h3>All-in-One Online Shop</h3>  <a href="/cart/" class="cart-icon glow" id="cartIcon">🛒<span id="cartCount">0</span></a>  </header>  <div class="container">    
+  <!-- Fashion Sections -->    
+<div class="category">    
+  <div class="cat-header">    
+    <h2>Mobile Accessories</h2>    
+    <a href="/accessories/">View All</a>  
+  </div>    
+  <div class="products" id="accessoryContainer">  
+    <!-- Firebase will load .product elements here -->  
+  </div>    
+</div>    <!-- Fashion Sections -->    <div class="category">    
+  <div class="cat-header">    
+    <h2>Home Appliances</h2>    
+    <a href="/appliances/">View All</a>  
+  </div>    
+  <div class="products" id="applianceContainer">  
+    <!-- Firebase will load .product elements here -->  
+  </div>    
+</div>    <div class="category">    
+  <div class="cat-header">    
+    <h2>Home Security</h2>    
+    <a href="/security/">View All</a>  
+  </div>    
+  <div class="products" id="securityContainer">  
+    <!-- Firebase will load .product elements here -->  
+  </div>    
+</div>  <div class="category">    
+  <div class="cat-header">    
+    <h2>Tools and Machinery</h2>    
+    <a href="/tools/">View All</a>  
+  </div>    
+  <div class="products" id="toolContainer">  
+    <!-- Firebase will load .product elements here -->  
+  </div>    
+</div>  <div class="category">    
+  <div class="cat-header">    
+    <h2>Electrical Materials</h2>    
+    <a href="/materials/">View All</a>  
+  </div>    
+  <div class="products" id="materialContainer">  
+    <!-- Firebase will load .product elements here -->  
+  </div>    
+</div>  </div>    
+  <footer>&copy; BixMAX 2025. All rights reserved.</footer>    
+ <!-- 🔘 Variation Popup HTML (injects dynamically by script) -->    <script>    
+    const variationItems = {    
+      "Nike Air": { color: ["Red", "White"], size: ["42", "43", "44"] },    
+      "Summer Dress": { color: ["Blue", "Yellow"], size: ["S", "M", "L"] },    
+      "Ray-Ban": { color: ["Black", "Gold"] }    
+    };          
+   const cartCountEl = document.getElementById("cartCount");    function updateCartCount() {    
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];    
+  const count = cart.reduce((sum, item) => sum + item.qty, 0);    
+  cartCountEl.textContent = count;    
+}    
 
-    </header>
-<div class="container">
-  <!-- Fashion Sections -->
-    <div class="category">
-      <div class="cat-header">
-        <h2>Mobile Accessories</h2>
-        <a href="accessories.html">View All</a>
-      </div>
-      <div class="products">
-        <div class="product">
-          <img src="pp.jpeg" alt="phone">
-          <h3>Mobile Phone</h3>
-          <p>GH¢30</p>
-          <button class="add-btn" onclick="addToCart('Mobile Phone', 'pp.jpeg', 30)">Add to Cart</button>
-        </div>
-        <div class="product">
-          <img src="pp.jpeg" alt="ipad">
-          <h3>iPad</h3>
-          <p>GH¢25</p>
-          <button class="add-btn" onclick="addToCart('iPad', 'pp.jpeg', 25)">Add to Cart</button>
-        </div>
-        <div class="product">
-          <img src="pp.jpeg" alt="headphone">
-          <h3>HeadPhone</h3>
-          <p>GH¢35</p>
-          <button class="add-btn" onclick="addToCart('Headphone', 'pp.jpeg', 35)">Add to Cart</button>
-        </div>
-      </div>
-    </div>
-<div class="category">
-      <div class="cat-header">
-        <h2>Home Appliances</h2>
-        <a href="appliances.html">View All</a></div>
-      <div class="products">
-        <div class="product">
-          <img src="pp.jpeg" alt="air conditioner">
-          <h3>Air Conditioner</h3>
-          <p>GH¢1500</p>
-          <button class="add-btn" onclick="addToCart('Air Conditioner', 'pp.jpeg', 1500)">Add to Cart</button>
-        </div>
-        <div class="product">
-          <img src="pp.jpeg" alt="freezer">
-          <h3>Chest Freezer</h3>
-          <p>GH¢6000</p>
-          <button class="add-btn" onclick="addToCart('Chest freezer', 'pp.jpeg', 6000)">Add to Cart</button>
-        </div>
-        <div class="product">
-          <img src="pp.jpeg" alt="microwave">
-          <h3>Microwave</h3>
-          <p>GH¢30</p>
-          <button class="add-btn" onclick="addToCart('Microwave', 'pp.jpeg', 30)">Add to Cart</button>
-        </div>
-      </div>
-    </div>
+function addToCart(name, img, price) {    
+  if (variationItems[name]) {    
+    showVariationPopup(name, img, price, variationItems[name]);    
+  } else {    
+    saveToCart({ name, image: img, price, qty: 1 });    
+  }    
+}    
 
-    <div class="category">
-      <div class="cat-header">
-        <h2>Home security</h2>
-        <a href="security.html">View All</a>
-      </div>
-      <div class="products">
-        <div class="product">
-          <img src="pp.jpeg" alt="camera">
-          <h3>HD Camera</h3>
-          <p>GH¢80</p>
-          <button class="add-btn" onclick="addToCart('HD Camera', 'pp.jpeg', 80)">Add to Cart</button>
-        </div>
-        <div class="product">
-          <img src="pp.jpeg" alt="sensor">
-          <h3>Motion Sensor</h3>
-          <p>GH¢50</p>
-          <button class="add-btn" onclick="addToCart('Motion Sensor', 'pp.jpeg', 50)">Add to Cart</button>
-        </div>
-        <div class="product">
-          <img src="pp.jpeg" alt="dictator">
-          <h3>Camera Dictator</h3>
-          <p>GH¢70</p>
-          <button class="add-btn" onclick="addToCart('Camera Dictator', 'pp.jpeg', 70)">Add to Cart</button>
-        </div>
-      </div>
-    </div>
+function saveToCart(item) {    
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");    
+  const existing = cart.find(i =>    
+    i.name === item.name &&    
+    (!i.color || i.color === item.color) &&    
+    (!i.size || i.size === item.size)    
+  );    
+  if (existing) {    
+    existing.qty += 1;    
+  } else {    
+    cart.push(item);    
+  }    
+  localStorage.setItem("cart", JSON.stringify(cart));    
+  updateCartCount();    
+  animateCartIcon();    
+}    
 
-    <div class="category">
-      <div class="cat-header">
-        <h2>Electrical tools</h2>
-        <a href="tools.html">View All</a>
-      </div>
-      <div class="products">
-        <div class="product">
-          <img src="pp.jpeg" alt="Socket">
-          <h3>Socket</h3>
-          <p>GH¢100</p>
-          <button class="add-btn" onclick="addToCart('Socket', 'pp.jpeg', 100)">Add to Cart</button>
-        </div>
-        <div class="product">
-          <img src="pp.jpeg" alt="tester">
-          <h3>Tester</h3>
-          <p>GH¢90</p>
-          <button class="add-btn" onclick="addToCart('Tester', 'pp.jpeg', 90)">Add to Cart</button>
-        </div>
-        <div class="product">
-          <img src="pp.jpeg" alt="box">
-          <h3>Tools Box</h3>
-          <p>GH¢75</p>
-          <button class="add-btn" onclick="addToCart('Tools Box', 'pp.jpeg', 75)">Add to Cart</button>
-        </div>
-      </div>
-    </div>
+function animateCartIcon() {    
+  const cartIcon = document.querySelector(".cart-icon");    
+  cartIcon.classList.remove("shake");    
+  void cartIcon.offsetWidth;    
+  cartIcon.classList.add("shake");    
+  cartIcon.addEventListener("animationend", () => {    
+    cartIcon.classList.remove("shake");    
+  }, { once: true });    
+}    
 
-    <div class="category">
-      <div class="cat-header">
-        <h2>Electrical materials</h2>
-        <a href="glasses.html">View All</a>
-      </div>
-      <div class="products">
-        <div class="product">
-          <img src="pp.jpeg" alt="wire">
-          <h3>Wire</h3>
-          <p>GH¢50</p>
-          <button class="add-btn" onclick="addToCart('Wire', 'pp.jpeg', 50)">Add to Cart</button>
-        </div>
-        <div class="product">
-          <img src="pp.jpeg" alt="tape">
-          <h3>Fishing tape</h3>
-          <p>GH¢25</p>
-          <button class="add-btn" onclick="addToCart('Fishing tape', 'pp.jpeg', 25)">Add to Cart</button>
-        </div>
-        <div class="product">
-          <img src="pp.jpeg" alt="Glasses">
-          <h3>Bulb</h3>
-          <p>GH¢35</p>
-          <button class="add-btn" onclick="addToCart('Bulb', 'pp.jpeg', 35)">Add to Cart</button>
-        </div>
-      </div>
-    </div>
-</div>
-  <footer>&copy; BixMAX 2025. All rights reserved.</footer>
-  <!-- Script -->
-<!-- 🔘 Variation Popup HTML (injects dynamically by script) -->
+function showVariationPopup(name, img, price, variations) {    
+  const overlay = document.createElement("div");    
+  overlay.style.cssText = `    
+    position:fixed;top:0;left:0;width:100%;height:100%;    
+    background:rgba(0,0,0,0.6);display:flex;justify-content:center;align-items:center;z-index:9999;    
+  `;    
 
-  <script>
-    const variationItems = {
-      "Nike Air": { color: ["Red", "White"], size: ["42", "43", "44"] },
-      "Summer Dress": { color: ["Blue", "Yellow"], size: ["S", "M", "L"] },
-      "Ray-Ban": { color: ["Black", "Gold"] }
-    };
+  const popup = document.createElement("div");    
+  popup.style.cssText = `    
+    background:white;padding:20px;border-radius:14px;width:90%;max-width:340px;text-align:center;    
+    box-shadow:0 0 20px cyan;    
+  `;    
 
-    const cartCountEl = document.getElementById("cartCount");
+  let optionsHTML = "";    
+  if (variations.color) {    
+    optionsHTML += `    
+      <label style="font-weight:bold;">Color:    
+        <select id="popupColor">    
+          ${variations.color.map(c => `<option value="${c}">${c}</option>`).join("")}    
+        </select>    
+      </label><br><br>    
+    `;    
+  }    
+  if (variations.size) {    
+    optionsHTML += `    
+      <label style="font-weight:bold;">Size:    
+        <select id="popupSize">    
+          ${variations.size.map(s => `<option value="${s}">${s}</option>`).join("")}    
+        </select>    
+      </label><br><br>    
+    `;    
+  }    
 
-    function updateCartCount() {
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      const count = cart.reduce((sum, item) => sum + item.qty, 0);
-      cartCountEl.textContent = count;
-    }
+  popup.innerHTML = `    
+    <h3>Select Options</h3>    
+    <p style="margin-bottom:10px;font-weight:bold;">${name}</p>    
+    ${optionsHTML}    
+    <button onclick="confirmVariation('${name}','${img}',${price})" style="padding:10px 20px;background:#1976d2;color:white;border:none;border-radius:8px;">Confirm</button>    
+    <br><br>    
+    <button onclick="this.closest('div').parentNode.remove()" style="background:none;color:red;border:none;">Cancel</button>    
+  `;    
 
-    function addToCart(name, img, price) {
-      if (variationItems[name]) {
-        showVariationPopup(name, img, price, variationItems[name]);
-      } else {
-        saveToCart({ name, image: img, price, qty: 1 });
-      }
-    }
+  overlay.appendChild(popup);    
+  document.body.appendChild(overlay);    
+}    
 
-    function saveToCart(item) {
-      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-      const existing = cart.find(i =>
-        i.name === item.name &&
-        (!i.color || i.color === item.color) &&
-        (!i.size || i.size === item.size)
-      );
-      if (existing) {
-        existing.qty += 1;
-      } else {
-        cart.push(item);
-      }
-      localStorage.setItem("cart", JSON.stringify(cart));
-      updateCartCount();
-      animateCartIcon();
-    }
+function confirmVariation(name, img, price) {    
+  const color = document.getElementById("popupColor")?.value;    
+  const size = document.getElementById("popupSize")?.value;    
+  const item = { name, image: img, price, qty: 1 };    
+  if (color) item.color = color;    
+  if (size) item.size = size;    
+  saveToCart(item);    
+  document.querySelector("body > div:last-child").remove();    
+}    
 
-    function animateCartIcon() {
-      const cartIcon = document.querySelector(".cart-icon");
-      cartIcon.classList.remove("shake");
-      void cartIcon.offsetWidth;
-      cartIcon.classList.add("shake");
-      cartIcon.addEventListener("animationend", () => {
-        cartIcon.classList.remove("shake");
-      }, { once: true });
-    }
+updateCartCount();
 
-    function showVariationPopup(name, img, price, variations) {
-      const overlay = document.createElement("div");
-      overlay.style.cssText = `
-        position:fixed;top:0;left:0;width:100%;height:100%;
-        background:rgba(0,0,0,0.6);display:flex;justify-content:center;align-items:center;z-index:9999;
-      `;
+  </script>   
+  <!-- Firebase SDKs -->  
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>  
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>  <script>  
+  // Firebase config  
+  const firebaseConfig = {  
+    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",  
+    authDomain: "bixmax-6c24c.firebaseapp.com",  
+    projectId: "bixmax-6c24c",  
+    storageBucket: "bixmax-6c24c.appspot.com",  
+    messagingSenderId: "37740442541",  
+    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"  
+  };  
 
-      const popup = document.createElement("div");
-      popup.style.cssText = `
-        background:white;padding:20px;border-radius:14px;width:90%;max-width:340px;text-align:center;
-        box-shadow:0 0 20px cyan;
-      `;
+  // Initialize Firebase  
+  firebase.initializeApp(firebaseConfig);  
+  const db = firebase.firestore();  
 
-      let optionsHTML = "";
-      if (variations.color) {
-        optionsHTML += `
-          <label style="font-weight:bold;">Color:
-            <select id="popupColor">
-              ${variations.color.map(c => `<option value="${c}">${c}</option>`).join("")}
-            </select>
-          </label><br><br>
-        `;
-      }
-      if (variations.size) {
-        optionsHTML += `
-          <label style="font-weight:bold;">Size:
-            <select id="popupSize">
-              ${variations.size.map(s => `<option value="${s}">${s}</option>`).join("")}
-            </select>
-          </label><br><br>
-        `;
-      }
+  // Render category items  
+  function renderCategoryItems(categoryName, containerId, items) {  
+    const container = document.getElementById(containerId);  
+    container.innerHTML = "";  
 
-      popup.innerHTML = `
-        <h3>Select Options</h3>
-        <p style="margin-bottom:10px;font-weight:bold;">${name}</p>
-        ${optionsHTML}
-        <button onclick="confirmVariation('${name}','${img}',${price})" style="padding:10px 20px;background:#1976d2;color:white;border:none;border-radius:8px;">Confirm</button>
-        <br><br>
-        <button onclick="this.closest('div').parentNode.remove()" style="background:none;color:red;border:none;">Cancel</button>
-      `;
+    if (items.length === 0) {  
+      container.innerHTML = `<p>No ${categoryName} available.</p>`;  
+      return;  
+    }  
 
-      overlay.appendChild(popup);
-      document.body.appendChild(overlay);
-    }
+    items.forEach(data => {  
+      const productEl = document.createElement("div");  
+      productEl.className = "product";  
+      productEl.innerHTML = `  
+        <img src="${data.image}" alt="${data.name}" />  
+        <h3>${data.name}</h3>  
+        <p>GH¢${data.price}</p>  
+        <button class="add-btn" onclick="addToCart('${data.name}', '${data.image}', ${data.price})">Add to Cart</button>  
+      `;  
+      container.appendChild(productEl);  
+    });  
+  }  
 
-    function confirmVariation(name, img, price) {
-      const color = document.getElementById("popupColor")?.value;
-      const size = document.getElementById("popupSize")?.value;
-      const item = { name, image: img, price, qty: 1 };
-      if (color) item.color = color;
-      if (size) item.size = size;
-      saveToCart(item);
-      document.querySelector("body > div:last-child").remove();
-    }
+  // Fetch and listen for changes  
+  function listenToCategory(categoryName, containerId) {  
+    // Load cached items first  
+    const cached = localStorage.getItem(`electronics-${categoryName}`);  
+    if (cached) {  
+      try {  
+        const items = JSON.parse(cached);  
+        renderCategoryItems(categoryName, containerId, items);  
+      } catch (e) {  
+        console.warn(`Cache error for ${categoryName}:`, e);  
+      }  
+    }  
 
-    updateCartCount();
-  </script>
-</body>
+    // Realtime Firestore listener  
+    db.collection("electronics")  
+      .doc(categoryName)  
+      .collection("items")  
+      .onSnapshot((snapshot) => {  
+        const items = [];  
+        snapshot.forEach(doc => items.push(doc.data()));  
+
+        // Save to localStorage  
+        localStorage.setItem(`electronics-${categoryName}`, JSON.stringify(items));  
+
+        // Render new data  
+        renderCategoryItems(categoryName, containerId, items);  
+      }, (error) => {  
+        console.error(`Error fetching ${categoryName}:`, error);  
+        document.getElementById(containerId).innerHTML = `<p>Error loading ${categoryName}</p>`;  
+      });  
+  }  
+
+  // List of categories and their container IDs  
+  const categories = [  
+    { name: "Mobile Accessories", id: "accessoryContainer" },  
+    { name: "Home Appliances", id: "applianceContainer" },  
+    { name: "Home Security", id: "securityContainer" },  
+    { name: "Tools and Machinery", id: "toolContainer" },  
+    { name: "Electrical Materials", id: "materialContainer" },  
+  ];  
+
+  // Listen to all categories  
+  categories.forEach(cat => listenToCategory(cat.name, cat.id));  
+</script>  </body>  
 </html>
