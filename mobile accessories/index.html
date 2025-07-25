@@ -215,14 +215,15 @@
     }
 
     // Firestore real-time listener (only updates on data change)
-    onSnapshot(collection(db, "category", "Mobile Accessory", "items"), snapshot => {
-      const items = [];
-      snapshot.forEach(doc => {
-        items.push({ ...doc.data(), id: doc.id });
-      });
-      localStorage.setItem("Mobile", JSON.stringify(items));
-      renderMobile(items);
-    });
+ onSnapshot(collection(db, "category", "Mobile Accessory", "items"), snapshot => {
+  const items = [];
+  snapshot.forEach(doc => {
+    items.push({ ...doc.data(), id: doc.id });
+  });
+  localStorage.setItem("Mobile", JSON.stringify(items));
+  mobileItems = items; // ✅ store it in memory
+  renderMobile(items);
+});
 
     function addToCart(product) {
       let cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -267,26 +268,21 @@ function fuzzyMatch(item, keywords) {
 
 searchInput.addEventListener('input', () => {
   const query = searchInput.value.trim().toLowerCase();
-  const cached = localStorage.getItem("Mobile");
-  if (!cached) return;
 
-  const items = JSON.parse(cached);
+  // If query is empty, restore all items
+  if (!query) {
+    notFoundMessage.style.display = "none";
+    renderMobile(mobileItems); // ✅ use in-memory data
+    return;
+  }
 
-  // Split query into chunks of 2 or more letters (e.g. afabed => af, fa, ab, be, ed)
+  // Fuzzy split (like before)
   let keywords = [];
   for (let i = 0; i < query.length - 1; i++) {
     keywords.push(query.slice(i, i + 2));
   }
 
-  // If query is empty, show all
-  if (!query) {
-    notFoundMessage.style.display = "none";
-    renderMobile(items);
-    return;
-  }
-
-  // Filter based on fuzzy keywords
-  const filtered = items.filter(item => fuzzyMatch(item, keywords));
+  const filtered = mobileItems.filter(item => fuzzyMatch(item, keywords));
 
   if (filtered.length > 0) {
     notFoundMessage.style.display = "none";
