@@ -268,29 +268,28 @@
   }
 
   const handleSearch = debounce(() => {
-    const query = searchInput.value.trim().toLowerCase();
-    const items = container.querySelectorAll(".product");
+  const query = searchInput.value.trim().toLowerCase();
+  const items = container.querySelectorAll(".product");
 
-    let visibleCount = 0;
+  let visibleCount = 0;
 
-    items.forEach(item => {
-      const name = item.querySelector(".product-name").textContent.toLowerCase();
-      const price = item.querySelector(".product-price").textContent.toLowerCase();
+  items.forEach(item => {
+    const name = item.querySelector(".product-name").textContent.toLowerCase();
 
-      if (name.includes(query) {
-        item.style.display = "block";
-        visibleCount++;
-      } else {
-        item.style.display = "none";
-      }
-    });
-
-    notFoundMessage.style.display = query && visibleCount === 0 ? "block" : "none";
-
-    if (!query) {
-      items.forEach(item => (item.style.display = "block"));
+    if (name.includes(query)) {
+      item.style.display = "block";
+      visibleCount++;
+    } else {
+      item.style.display = "none";
     }
-  }, 300);
+  });
+
+  notFoundMessage.style.display = query && visibleCount === 0 ? "block" : "none";
+
+  if (!query) {
+    items.forEach(item => (item.style.display = "block"));
+  }
+}, 300);
 
   searchInput.addEventListener("input", handleSearch);
 </script>
