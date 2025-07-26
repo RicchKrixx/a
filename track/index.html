@@ -2,120 +2,90 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Order Tracking | BizMAX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order Tracker</title>
   <style>
     body {
-      margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: #f4f9fb;
-      color: #222;
-      padding: 2rem 1rem;
+      background: #f5f7fb;
+      padding: 20px;
+      margin: 0;
     }
-
-    .tracker-wrapper {
-      max-width: 600px;
-      margin: auto;
-    }
-
-    .search-box {
+    .search-container {
+      max-width: 400px;
+      margin: 0 auto;
       text-align: center;
-      margin-bottom: 2rem;
     }
-
-    .search-box input {
+    .search-container input {
       width: 80%;
-      max-width: 300px;
       padding: 10px;
       border-radius: 8px;
       border: 1px solid #ccc;
-      outline: none;
       margin-bottom: 10px;
     }
-
-    .search-box button {
-      background: #00bcd4;
-      color: white;
-      border: none;
+    .search-container button {
       padding: 10px 20px;
+      background: #00bcd4;
+      border: none;
+      color: white;
       border-radius: 8px;
       cursor: pointer;
-      font-weight: bold;
     }
-
-    #errorMsg {
-      color: red;
-      font-size: 0.9rem;
-      margin-top: 10px;
-    }
-
     .stepper {
       display: flex;
       flex-direction: column;
-      gap: 20px;
-      margin-top: 30px;
+      max-width: 500px;
+      margin: 30px auto;
     }
-
     .step {
       display: flex;
       align-items: center;
+      margin-bottom: 20px;
     }
-
-    .circle {
-      width: 28px;
-      height: 28px;
+    .step .circle {
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
       background: #ccc;
+      display: inline-block;
+      text-align: center;
+      line-height: 24px;
       color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       margin-right: 10px;
-      font-size: 14px;
-      font-weight: bold;
     }
-
     .step.active .circle {
       background: #00bcd4;
     }
-
     .step.complete .circle {
       background: #4caf50;
     }
-
-    .label {
+    .step .label {
       font-size: 16px;
     }
   </style>
-
-  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 </head>
 <body>
-  <div class="tracker-wrapper">
-    <div id="search-section" class="search-box">
-      <h2>📦 Track Your Order</h2>
-      <input type="text" id="orderIdInput" placeholder="Enter Order ID" />
-      <br />
-      <button onclick="searchOrder()">Track</button>
-      <p id="errorMsg"></p>
-    </div>
-
-    <div id="tracker" class="stepper" style="display: none;"></div>
+  <div id="search-section" class="search-container">
+    <h2>Track Your Order</h2>
+    <input type="text" id="orderIdInput" placeholder="Enter your Order ID" />
+    <button onclick="searchOrder()">Track</button>
+    <p id="errorMsg" style="color:red;"></p>
   </div>
 
-  <script>
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-      authDomain: "bixmax-6c24c.firebaseapp.com",
-      projectId: "bixmax-6c24c",
-      storageBucket: "bixmax-6c24c.appspot.com",
-      messagingSenderId: "37740442541",
-      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-    };
+  <div id="tracker" class="stepper" style="display:none;"></div>
 
+  <script>
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "",
+      messagingSenderId: "",
+      appId: ""
+    };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
@@ -134,29 +104,23 @@
       const tracker = document.getElementById("tracker");
       tracker.innerHTML = "";
       const currentIndex = steps.indexOf(currentStatus);
-
       steps.forEach((step, index) => {
-        const stepDiv = document.createElement("div");
-        stepDiv.classList.add("step");
-        if (index < currentIndex) stepDiv.classList.add("complete");
-        else if (index === currentIndex) stepDiv.classList.add("active");
-
-        stepDiv.innerHTML = `
+        const div = document.createElement("div");
+        div.className = "step";
+        if (index < currentIndex) div.classList.add("complete");
+        else if (index === currentIndex) div.classList.add("active");
+        div.innerHTML = `
           <div class="circle">${index + 1}</div>
           <div class="label">${step}</div>
         `;
-        tracker.appendChild(stepDiv);
+        tracker.appendChild(div);
       });
     }
 
     function searchOrder() {
       const id = document.getElementById("orderIdInput").value.trim();
       const errorMsg = document.getElementById("errorMsg");
-
-      if (!id) {
-        errorMsg.textContent = "Please enter an Order ID.";
-        return;
-      }
+      if (!id) return (errorMsg.textContent = "Please enter an Order ID.");
 
       db.collection("orders").doc(id).onSnapshot((doc) => {
         if (doc.exists) {
@@ -165,7 +129,7 @@
           document.getElementById("tracker").style.display = "block";
           renderStepper(data.status);
         } else {
-          errorMsg.textContent = "❌ Order not found. Check your Order ID.";
+          errorMsg.textContent = "Order not found. Check your Order ID.";
         }
       });
     }
