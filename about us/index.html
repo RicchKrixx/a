@@ -149,24 +149,49 @@
     <article style="background: #f9f9f9; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 1rem;">
       <img src="images/blog1.jpg" alt="Shopping tips" style="width: 100%; border-radius: 8px;">
       <h3 style="margin-top: 0.8rem;">Top 10 Shopping Tips to Save More on BizMAX</h3>
-      <p style="font-size: 0.95rem;">Discover how to get the best deals, use discount codes, and find high-quality products for less.</p>
-      <a href="#blog-post-1" style="color: #00a8e8; text-decoration: underline;">Read More</a>
+      <p style="font-size: 0.95rem;">
+        Discover how to get the best deals, use discount codes, and find high-quality products for less.
+        <span class="more-text" style="display: none;">
+          <br>🛍 Look out for flash sales and bundle deals.<br>
+          📩 Subscribe to our newsletter for exclusive coupons.<br>
+          🔍 Compare sellers and check customer ratings.<br>
+          🧠 Use your cart to save items and monitor price drops.
+        </span>
+      </p>
+      <button onclick="toggleReadMore(this)" style="background: none; color: #00a8e8; border: none; cursor: pointer;">Read More</button>
     </article>
 
     <!-- Blog Post 2 -->
     <article style="background: #f9f9f9; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 1rem;">
       <img src="images/blog2.jpg" alt="Order tracking" style="width: 100%; border-radius: 8px;">
       <h3 style="margin-top: 0.8rem;">How Our Order Tracking Works</h3>
-      <p style="font-size: 0.95rem;">Learn how to monitor your order status in real-time from the moment you place it to delivery.</p>
-      <a href="#blog-post-2" style="color: #00a8e8; text-decoration: underline;">Read More</a>
+      <p style="font-size: 0.95rem;">
+        Learn how to monitor your order status in real-time from the moment you place it to delivery.
+        <span class="more-text" style="display: none;">
+          <br>🚚 Once your order is placed, you'll receive an Order ID.<br>
+          ⏱ You can track each stage: Processing → Confirmed → On The Way → Delivered.<br>
+          📱 Use our tracking page or WhatsApp support to stay updated.<br>
+          🔔 Enable browser notifications to receive status alerts instantly.
+        </span>
+      </p>
+      <button onclick="toggleReadMore(this)" style="background: none; color: #00a8e8; border: none; cursor: pointer;">Read More</button>
     </article>
 
     <!-- Blog Post 3 -->
     <article style="background: #f9f9f9; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 1rem;">
       <img src="images/blog3.jpg" alt="Tech gadgets" style="width: 100%; border-radius: 8px;">
       <h3 style="margin-top: 0.8rem;">5 Must-Have Gadgets You Can Get for Under ₵300</h3>
-      <p style="font-size: 0.95rem;">Explore affordable tech deals that are perfect for school, work, and entertainment.</p>
-      <a href="#blog-post-3" style="color: #00a8e8; text-decoration: underline;">Read More</a>
+      <p style="font-size: 0.95rem;">
+        Explore affordable tech deals that are perfect for school, work, and entertainment.
+        <span class="more-text" style="display: none;">
+          <br>📸 Mini ring lights for content creation.<br>
+          🔊 Bluetooth speakers with long battery life.<br>
+          🖱 Wireless mouse and keyboards for easier workspace.<br>
+          🔋 Power banks with fast charging support.<br>
+          🎧 Noise-cancelling earbuds for under ₵250!
+        </span>
+      </p>
+      <button onclick="toggleReadMore(this)" style="background: none; color: #00a8e8; border: none; cursor: pointer;">Read More</button>
     </article>
   </div>
 </section>
@@ -420,6 +445,14 @@
   scrollTopBtn.onclick = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+</script>
+<script>
+  function toggleReadMore(btn) {
+    const moreText = btn.previousElementSibling.querySelector('.more-text');
+    const isVisible = moreText.style.display === 'inline' || moreText.style.display === 'block';
+    moreText.style.display = isVisible ? 'none' : 'inline';
+    btn.textContent = isVisible ? 'Read More' : 'Read Less';
+  }
 </script>
 </body>
 </html>
