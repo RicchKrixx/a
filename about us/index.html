@@ -206,7 +206,7 @@
         </button>
       </form>
 
-<p id="confirmation" style="display:none; color: green;">Message sent successfully ✅</p>
+<p id="responseMsg"></p>
     </div>
 
     <!-- Other Support Options -->
@@ -353,25 +353,37 @@
   });
 </script>
 <script>
-  const form = document.getElementById("supportForm");
-  const confirmation = document.getElementById("confirmation");
-
-  form.addEventListener("submit", function (e) {
+  document.getElementById("supportForm").addEventListener("submit", function (e) {
     e.preventDefault();
 
-    const name = form.name.value.trim();
-    const email = form.email.value.trim();
-    const message = form.message.value.trim();
-    const timestamp = new Date().toLocaleString();
+    const form = e.target;
+    const timestamp = new Date().toLocaleString(); // Adds timestamp
 
-    const supportData = JSON.parse(localStorage.getItem("supportMessages") || "[]");
+    const data = {
+      data: {
+        timestamp: timestamp,
+        name: form.name.value,
+        email: form.email.value,
+        message: form.message.value
+      }
+    };
 
-    supportData.push({ name, email, message, timestamp });
-
-    localStorage.setItem("supportMessages", JSON.stringify(supportData));
-
-    confirmation.style.display = "block";
-    form.reset();
+    fetch("https://sheetdb.io/api/v1/foshadcwykc6l", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(response => {
+      document.getElementById("responseMsg").textContent = "✅ Message sent!";
+      form.reset();
+    })
+    .catch(error => {
+      document.getElementById("responseMsg").textContent = "❌ Failed to send message.";
+      console.error(error);
+    });
   });
 </script>
 </body>
