@@ -2,137 +2,214 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Order Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Local Delivery Tracker</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f5f7fb;
-      padding: 20px;
-      margin: 0;
-    }
-    .search-container {
-      max-width: 400px;
-      margin: 0 auto;
-      text-align: center;
-    }
-    .search-container input {
-      width: 80%;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      margin-bottom: 10px;
-    }
-    .search-container button {
-      padding: 10px 20px;
-      background: #00bcd4;
-      border: none;
-      color: white;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    .stepper {
+      font-family: "Segoe UI", sans-serif;
+      background: #f1f5f9;
+      padding: 40px;
       display: flex;
-      flex-direction: column;
-      max-width: 500px;
-      margin: 30px auto;
+      justify-content: center;
     }
-    .step {
+
+    .stepper-box {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      width: 95%;
+      max-width: 500px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    .stepper-step {
+      display: flex;
+      align-items: flex-start;
+      position: relative;
+      margin-bottom: 36px;
+    }
+
+    .stepper-step:last-child {
+      margin-bottom: 0;
+    }
+
+    .stepper-line {
+      position: absolute;
+      left: 20px;
+      top: 40px;
+      bottom: -32px;
+      width: 2px;
+      background-color: #e2e8f0;
+      z-index: 0;
+    }
+
+    .stepper-step:last-child .stepper-line {
+      display: none;
+    }
+
+    .stepper-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      flex-shrink: 0;
       display: flex;
       align-items: center;
-      margin-bottom: 20px;
+      justify-content: center;
+      font-weight: bold;
+      z-index: 1;
     }
-    .step .circle {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: #ccc;
-      display: inline-block;
-      text-align: center;
-      line-height: 24px;
+
+    .completed .stepper-circle {
+      background-color: #0f172a;
       color: white;
-      margin-right: 10px;
     }
-    .step.active .circle {
-      background: #00bcd4;
+
+    .active .stepper-circle {
+      border: 3px solid #1d4ed8;
+      color: #1d4ed8;
+      background: white;
     }
-    .step.complete .circle {
-      background: #4caf50;
+
+    .pending .stepper-circle {
+      border: 2px solid #e2e8f0;
+      color: #94a3b8;
     }
-    .step .label {
-      font-size: 16px;
+
+    .stepper-content {
+      margin-left: 16px;
+      flex: 1;
+    }
+
+    .step-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .step-status {
+      font-size: 14px;
+      margin-top: 4px;
+      padding: 2px 10px;
+      border-radius: 12px;
+      display: inline-block;
+    }
+
+    .completed .step-title,
+    .active .step-title {
+      color: #0f172a;
+    }
+
+    .pending .step-title {
+      color: #94a3b8;
+    }
+
+    .completed .step-status {
+      background-color: #dcfce7;
+      color: #15803d;
+    }
+
+    .active .step-status {
+      background-color: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .pending .step-status {
+      background-color: #f1f5f9;
+      color: #64748b;
+    }
+
+    .step-time {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 2px;
     }
   </style>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 </head>
 <body>
-  <div id="search-section" class="search-container">
-    <h2>Track Your Order</h2>
-    <input type="text" id="orderIdInput" placeholder="Enter your Order ID" />
-    <button onclick="searchOrder()">Track</button>
-    <p id="errorMsg" style="color:red;"></p>
+
+  <div class="stepper-box" id="stepper">
+    <!-- Steps rendered by JavaScript -->
   </div>
 
-  <div id="tracker" class="stepper" style="display:none;"></div>
-
   <script>
-    // Firebase Config
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_DOMAIN",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "",
-      messagingSenderId: "",
-      appId: ""
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
     const steps = [
-      "Order Placed",
-      "Order Confirmed",
-      "Preparing Order",
-      "In Progress",
-      "Courier Picked Up",
-      "Delivery Pending",
-      "Delivered",
-      "Completed"
+      { title: "Order Placed", status: "Pending", time: "..." },
+      { title: "Order Confirmed", status: "Pending", time: "..." },
+      { title: "Preparing Order", status: "Pending", time: "..." },
+      { title: "Ready for Pickup", status: "Pending", time: "..." },
+      { title: "Out for Delivery", status: "Pending", time: "..." },
+      { title: "Delivered", status: "Pending", time: "..." }
     ];
 
-    function renderStepper(currentStatus) {
-      const tracker = document.getElementById("tracker");
-      tracker.innerHTML = "";
-      const currentIndex = steps.indexOf(currentStatus);
-      steps.forEach((step, index) => {
-        const div = document.createElement("div");
-        div.className = "step";
-        if (index < currentIndex) div.classList.add("complete");
-        else if (index === currentIndex) div.classList.add("active");
-        div.innerHTML = `
-          <div class="circle">${index + 1}</div>
-          <div class="label">${step}</div>
-        `;
-        tracker.appendChild(div);
-      });
-    }
+    const container = document.getElementById("stepper");
 
-    function searchOrder() {
-      const id = document.getElementById("orderIdInput").value.trim();
-      const errorMsg = document.getElementById("errorMsg");
-      if (!id) return (errorMsg.textContent = "Please enter an Order ID.");
-
-      db.collection("orders").doc(id).onSnapshot((doc) => {
-        if (doc.exists) {
-          const data = doc.data();
-          document.getElementById("search-section").style.display = "none";
-          document.getElementById("tracker").style.display = "block";
-          renderStepper(data.status);
-        } else {
-          errorMsg.textContent = "Order not found. Check your Order ID.";
+    function renderSteps() {
+      container.innerHTML = "";
+      steps.forEach((step, i) => {
+        let state = "pending";
+        if (["Confirmed", "Prepared", "Picked", "En Route", "Delivered"].some(s => step.status.includes(s)) || step.status === "Completed") {
+          state = "completed";
+        } else if (step.status !== "Pending") {
+          state = "active";
         }
+
+        container.innerHTML += `
+          <div class="stepper-step ${state}">
+            <div class="stepper-circle">${state === "completed" ? "✔" : i + 1}</div>
+            ${i < steps.length - 1 ? `<div class="stepper-line"></div>` : ""}
+            <div class="stepper-content">
+              <div class="step-title">${step.title}</div>
+              <div class="step-status">${step.status}</div>
+              <div class="step-time">${step.time}</div>
+            </div>
+          </div>
+        `;
       });
     }
+
+    function simulateLocalDelivery() {
+      const delay = (ms) => new Promise(res => setTimeout(res, ms));
+
+      (async () => {
+        const now = new Date();
+
+        steps[0].status = "Completed";
+        steps[0].time = now.toLocaleTimeString();
+        renderSteps();
+        await delay(1500);
+
+        steps[1].status = "Confirmed";
+        steps[1].time = new Date().toLocaleTimeString();
+        renderSteps();
+        await delay(1500);
+
+        steps[2].status = "Preparing";
+        steps[2].time = new Date().toLocaleTimeString();
+        renderSteps();
+        await delay(1500);
+
+        steps[2].status = "Prepared";
+        renderSteps();
+        await delay(1500);
+
+        steps[3].status = "Picked Up";
+        steps[3].time = new Date().toLocaleTimeString();
+        renderSteps();
+        await delay(1500);
+
+        steps[4].status = "En Route";
+        steps[4].time = new Date().toLocaleTimeString();
+        renderSteps();
+        await delay(2000);
+
+        steps[5].status = "Delivered";
+        steps[5].time = new Date().toLocaleTimeString();
+        renderSteps();
+      })();
+    }
+
+    renderSteps();
+    simulateLocalDelivery();
   </script>
+
 </body>
 </html>
