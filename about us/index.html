@@ -35,6 +35,26 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.05);
       margin-bottom: 2rem;
     }
+#scrollTopBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999;
+  font-size: 18px;
+  background: cyan;
+  color: black;
+  border: none;
+  border-radius: 50px;
+  padding: 10px 15px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  cursor: pointer;
+  display: none;
+  transition: all 0.3s ease;
+}
+
+#scrollTopBtn:hover {
+  background: #00bcd4;
+}
   </style>
 <style>
 .faq-question {
@@ -343,7 +363,7 @@
 </a>.</p>
   </div>
   </section>
-
+<button id="scrollTopBtn" title="Go to top">↑ Top</button>
 <script>
   document.querySelectorAll(".faq-question").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -385,6 +405,21 @@
       console.error(error);
     });
   });
+</script>
+<script>
+  const scrollTopBtn = document.getElementById("scrollTopBtn");
+
+  window.onscroll = () => {
+    if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+      scrollTopBtn.style.display = "block";
+    } else {
+      scrollTopBtn.style.display = "none";
+    }
+  };
+
+  scrollTopBtn.onclick = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 </script>
 </body>
 </html>
