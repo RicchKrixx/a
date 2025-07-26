@@ -397,7 +397,27 @@ font-size: 16px;
             .footer-container {
                 flex-direction: column;
                 text-align: center;
-            }
+            }}
+#scrollTopBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999;
+  font-size: 18px;
+  background: lightblue;
+  color: black;
+  border: none;
+  border-radius: 50px;
+  padding: 10px 15px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  cursor: pointer;
+  display: none;
+  transition: all 0.3s ease;
+}
+
+#scrollTopBtn:hover {
+  background: #00bcd4;
+}
 
     </style>
 
@@ -477,10 +497,10 @@ font-size: 16px;
             <div class="footer-section">
                 <h3>Quick Links</h3>
                 <ul>
-                    <li><a href="#pageBody">Home</a></li>
+                    <li><a href="#container">Home</a></li>
                     <li><a href="/about us/">About Us</a></li>
-                    <li><a href="#services">Services</a></li>
-                    <li><a href="#blog">Blog</a></li>
+                    <li><a href="about us#services">Services</a></li>
+                    <li><a href="/about us#blog">Blog</a></li>
                 </ul>
             </div>
 
@@ -488,11 +508,11 @@ font-size: 16px;
             <div class="footer-section">
                 <h3>Resources</h3>
                 <ul>
-                    <li><a href="#documentation">Documentation</a></li>
-                    <li><a href="#support">Support</a></li>
-                    <li><a href="#faq">FAQ</a></li>
-                    <li><a href="#privacy-policy">Privacy Policy</a></li>
-                    <li><a href="#terms">Terms of Service</a></li>
+                    <li><a href="about us#documentation">Documentation</a></li>
+                    <li><a href="/about us#support">Support</a></li>
+                    <li><a href="/about us/#faq">FAQ</a></li>
+                    <li><a href="/about us/#privacy-policy">Privacy Policy</a></li>
+                    <li><a href="/about us/#terms">Terms of Service</a></li>
                 </ul>
             </div>
 
@@ -577,6 +597,22 @@ font-size: 16px;
             <p>&copy; 2025 BixMAX. All rights reserved.</p>
         </div>
     </footer>
+<button id="scrollTopBtn" title="Go to top">↑ Top</button>
+<script>
+  const scrollTopBtn = document.getElementById("scrollTopBtn");
+
+  window.onscroll = () => {
+    if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+      scrollTopBtn.style.display = "block";
+    } else {
+      scrollTopBtn.style.display = "none";
+    }
+  };
+
+  scrollTopBtn.onclick = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+</script>
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <!-- Font Awesome for icons (you'll need to include this in your project) -->
     <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script>
