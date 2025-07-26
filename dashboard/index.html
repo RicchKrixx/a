@@ -248,16 +248,24 @@
           }
 
           let html = "";
-          snapshot.forEach(doc => {
-            const order = doc.data();
-            html += `
-              <div class="order">
-                <strong>ID:</strong> ${order.orderId || doc.id}<br>
-                <strong>Item:</strong> ${order.items || '—'}<br>
-                <strong>Status:</strong> ${order.status || 'Pending'}
-              </div>
-            `;
-          });
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const orderEl = document.createElement("div");
+          orderEl.className = "order-card";
+          orderEl.innerHTML = `
+            <h3>🧾 Order ID: ${data.id}</h3>
+            <p><strong>Date:</strong> ${new Date(data.timestamp).toLocaleString()}</p>
+            <p><strong>Total:</strong> GH₵${data.total}</p>
+            <p><strong>Payment Method:</strong> ${data.method}</p>
+            <p><strong>Items:</strong> ${data.items}</p>
+          <p><strong>Status:</strong> ${data.status || "Pending"}</p>
+          `;
+          container.prepend(orderEl);
+        });
+
+
+
+
           orderList.innerHTML = html;
         })
         .catch(err => {
