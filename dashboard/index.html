@@ -93,65 +93,52 @@
       font-weight: bold;
     }
 
-    .orders {
+    .dashboard-links {
+      width: 100%;
+      margin-top: 20px;
       background: rgba(255, 255, 255, 0.05);
-      border-left: 4px solid cyan;
       padding: 20px;
       border-radius: 12px;
       box-shadow: 0 0 10px cyan;
-      margin-bottom: 20px;
-      width: 100%;
     }
 
-    .orders h2 {
-      margin-top: 0;
-      font-size: 20px;
-      border-bottom: 1px solid #333;
-      padding-bottom: 5px;
+    .dashboard-links ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
     }
 
-    .order {
-      margin-bottom: 10px;
-      border-bottom: 1px solid #333;
-      padding-bottom: 8px;
+    .dashboard-links li {
+      padding: 12px;
+      border-bottom: 1px solid #334155;
     }
 
-    .btns {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      width: 100%;
+    .dashboard-links li:last-child {
+      border-bottom: none;
     }
 
-    .btns button {
-      flex: 1 1 120px;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      background: cyan;
-      color: #000;
+    .dashboard-links a {
+      color: cyan;
+      text-decoration: none;
       font-weight: bold;
-      cursor: pointer;
-      box-shadow: 0 0 10px cyan;
-      transition: background 0.3s;
+      display: block;
     }
 
-    .btns button:hover {
-      background: white;
+    .dashboard-links a:hover {
+      text-decoration: underline;
     }
 
     @media (max-width: 500px) {
-      .orders {
-        padding: 15px;
-      }
-
       .user-info #user-name {
         font-size: 16px;
       }
 
-      .btns button {
-        flex: 1 1 100%;
+      .dashboard-links {
+        padding: 15px;
+      }
+
+      .dashboard-links li {
+        padding: 10px;
       }
     }
   </style>
@@ -176,145 +163,94 @@
       </div>
     </div>
 
-    <!-- Optional: Show only the latest 5 orders -->
-    <div class="orders" style="margin-top: 10px;">
-      <h2>Latest Orders</h2>
-      <div id="order-list">Loading...</div>
-    </div>
-
-    <div class="btns">
-      <button onclick="window.location.href='/track/'">📦 Track Order</button>
-      <button onclick="window.location.href='/about us/#support'">🛠️ Support</button>
-      <button onclick="window.location.href='/help/'">❓ Help</button>
-      <button onclick="window.location.href='/BixMax home/'">🏠 Go Home</button>
-      <button onclick="logout()">🚪 Logout</button>
+    <div class="dashboard-links">
+      <ul>
+        <li><a href="/orders history/">📜 View Order History</a></li>
+        <li><a href="/track/">📦 Track Your Order</a></li>
+        <li><a href="/about us/#support">🛠️ Support</a></li>
+        <li><a href="/help/">❓ Help Center</a></li>
+        <li><a href="/BixMax home/">🏠 Return to Homepage</a></li>
+        <li><a href="#" onclick="logout()">🚪 Logout</a></li>
+      </ul>
     </div>
   </div>
 
-  <!-- Firebase SDKs (Compat) -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
-<script>
-  function logout() {
-    firebase.auth().signOut().then(() => {
-      window.location.href = "/auth/";
-    });
-  }
-
-  window.onload = function () {
-    const firebaseConfig = {
-      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-      authDomain: "bixmax-6c24c.firebaseapp.com",
-      projectId: "bixmax-6c24c",
-      storageBucket: "bixmax-6c24c.appspot.com",
-      messagingSenderId: "37740442541",
-      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    let currentEmail = "";
-
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        const name = user.displayName || user.email.split('@')[0];
-        document.getElementById("user-name").textContent = name;
-        document.getElementById("user-email").textContent = user.email;
-        currentEmail = user.email;
-
-        loadOrders(); // initial
-        loadProfileImage(user.email);
-        setInterval(loadOrders, 5000); // auto-refresh every 5 sec
-      } else {
+  <script>
+    function logout() {
+      firebase.auth().signOut().then(() => {
         window.location.href = "/auth/";
-      }
-    });
-
-    function loadOrders() {
-      const orderList = document.getElementById("order-list");
-      if (!currentEmail || !orderList) return;
-
-      db.collection("orders")
-        .where("userEmail", "==", currentEmail)
-        .orderBy("timestamp", "desc")
-        .limit(5)
-        .get()
-        .then(snapshot => {
-          if (snapshot.empty) {
-            orderList.innerHTML = "<p>No recent orders</p>";
-            return;
-          }
-
-          let html = "";
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          const orderEl = document.createElement("div");
-          orderEl.className = "order-card";
-          orderEl.innerHTML = `
-            <h3>🧾 Order ID: ${data.id}</h3>
-            <p><strong>Date:</strong> ${new Date(data.timestamp).toLocaleString()}</p>
-            <p><strong>Total:</strong> GH₵${data.total}</p>
-            <p><strong>Payment Method:</strong> ${data.method}</p>
-            <p><strong>Items:</strong> ${data.items}</p>
-          <p><strong>Status:</strong> ${data.status || "Pending"}</p>
-          `;
-          container.prepend(orderEl);
-        });
-
-
-
-
-          orderList.innerHTML = html;
-        })
-        .catch(err => {
-          console.error("Error loading orders:", err);
-          orderList.innerHTML = "<p>Failed to load orders</p>";
-        });
+      });
     }
 
-    function getImageKey(email) {
-      return "profileImage_" + email;
-    }
-
-    function loadProfileImage(email) {
-      const savedImage = localStorage.getItem(getImageKey(email));
-      if (savedImage) profileImage.src = savedImage;
-    }
-
-    const profileImage = document.getElementById("profileImage");
-    const dropdownMenu = document.getElementById("dropdownMenu");
-    const uploadInput = document.getElementById("uploadImage");
-    const deleteImage = document.getElementById("deleteImage");
-
-    profileImage.addEventListener("click", (e) => {
-      e.stopPropagation();
-      dropdownMenu.style.display = dropdownMenu.style.display === "block" ? "none" : "block";
-    });
-
-    document.addEventListener("click", () => {
-      dropdownMenu.style.display = "none";
-    });
-
-    uploadInput.addEventListener("change", (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        profileImage.src = reader.result;
-        localStorage.setItem(getImageKey(currentEmail), reader.result);
-        dropdownMenu.style.display = "none";
+    window.onload = function () {
+      const firebaseConfig = {
+        apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+        authDomain: "bixmax-6c24c.firebaseapp.com",
+        projectId: "bixmax-6c24c",
+        storageBucket: "bixmax-6c24c.appspot.com",
+        messagingSenderId: "37740442541",
+        appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
       };
-      reader.readAsDataURL(file);
-    });
 
-    deleteImage.addEventListener("click", () => {
-      localStorage.removeItem(getImageKey(currentEmail));
-      profileImage.src = "https://www.svgrepo.com/show/384674/account-avatar-profile-user-11.svg";
-      dropdownMenu.style.display = "none";
-    });
-  };
-</script>
+      firebase.initializeApp(firebaseConfig);
+
+      firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+          const name = user.displayName || user.email.split('@')[0];
+          document.getElementById("user-name").textContent = name;
+          document.getElementById("user-email").textContent = user.email;
+          loadProfileImage(user.email);
+        } else {
+          window.location.href = "/auth/";
+        }
+      });
+
+      function getImageKey(email) {
+        return "profileImage_" + email;
+      }
+
+      function loadProfileImage(email) {
+        const savedImage = localStorage.getItem(getImageKey(email));
+        if (savedImage) profileImage.src = savedImage;
+      }
+
+      const profileImage = document.getElementById("profileImage");
+      const dropdownMenu = document.getElementById("dropdownMenu");
+      const uploadInput = document.getElementById("uploadImage");
+      const deleteImage = document.getElementById("deleteImage");
+      let currentEmail = "";
+
+      profileImage.addEventListener("click", (e) => {
+        e.stopPropagation();
+        dropdownMenu.style.display = dropdownMenu.style.display === "block" ? "none" : "block";
+      });
+
+      document.addEventListener("click", () => {
+        dropdownMenu.style.display = "none";
+      });
+
+      uploadInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          profileImage.src = reader.result;
+          localStorage.setItem(getImageKey(currentEmail), reader.result);
+          dropdownMenu.style.display = "none";
+        };
+        reader.readAsDataURL(file);
+      });
+
+      deleteImage.addEventListener("click", () => {
+        localStorage.removeItem(getImageKey(currentEmail));
+        profileImage.src = "https://www.svgrepo.com/show/384674/account-avatar-profile-user-11.svg";
+        dropdownMenu.style.display = "none";
+      });
+    };
+  </script>
 </body>
 </html>
