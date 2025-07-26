@@ -86,7 +86,7 @@
             <p><strong>Items:</strong> ${data.items}</p>
           <p><strong>Status:</strong> ${data.status || "Pending"}</p>
           `;
-          container.appendChild(orderEl);
+          container.prepend(orderEl);
         });
       } else {
         alert("Please sign in to view your order history.");
