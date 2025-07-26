@@ -197,7 +197,7 @@
     <!-- Contact Form -->
     <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
       <h3 style="margin-bottom: 1rem;">📨 Contact Us</h3>
-      <form>
+      <form id="supportForm">
         <input type="text" placeholder="Your Name" required style="width: 100%; padding: 0.6rem; margin-bottom: 0.8rem; border-radius: 8px; border: 1px solid #ccc;">
         <input type="email" placeholder="Your Email" required style="width: 100%; padding: 0.6rem; margin-bottom: 0.8rem; border-radius: 8px; border: 1px solid #ccc;">
         <textarea placeholder="Describe your issue..." rows="4" style="width: 100%; padding: 0.6rem; border-radius: 8px; border: 1px solid #ccc;"></textarea>
@@ -205,6 +205,8 @@
           Submit
         </button>
       </form>
+
+<p id="confirmation" style="display:none; color: green;">Message sent successfully ✅</p>
     </div>
 
     <!-- Other Support Options -->
@@ -348,6 +350,28 @@
       const item = btn.parentElement;
       item.classList.toggle("active");
     });
+  });
+</script>
+<script>
+  const form = document.getElementById("supportForm");
+  const confirmation = document.getElementById("confirmation");
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const name = form.name.value.trim();
+    const email = form.email.value.trim();
+    const message = form.message.value.trim();
+    const timestamp = new Date().toLocaleString();
+
+    const supportData = JSON.parse(localStorage.getItem("supportMessages") || "[]");
+
+    supportData.push({ name, email, message, timestamp });
+
+    localStorage.setItem("supportMessages", JSON.stringify(supportData));
+
+    confirmation.style.display = "block";
+    form.reset();
   });
 </script>
 </body>
