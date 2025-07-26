@@ -117,21 +117,6 @@
     .shake {
       animation: shake 0.4s ease;
     }
-    footer {
-      color: white;
-      padding: 15px;
-      margin-top: 15px;
-      width: 100%;
-      border-radius: 16px;
-      background: darkcyan;
-      margin: 10px auto;
-      font-weight: bold;
-      box-shadow: 0 0 10px cyan;
-      display: flex;
-      align-content: center;
-      justify-content: center;
-      margin-bottom: 0px;
-    }
   </style>
 </head>
 <body>
@@ -148,7 +133,27 @@
   😢 No matching products found.
 </p>  
 
-  <footer>&copy; BixMAX 2025. All rights reserved.</footer>  
+<footer style="
+  background: #0f172a;
+  color: #fff;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.9rem;
+  box-shadow: 0 -2px 6px rgba(0,0,0,0.2);
+  border-top: 1px solid #1e293b;
+">
+  <nav style="margin-bottom: 0.7rem;">
+    <a href="index.html" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Home</a>
+    <a href="fashion.html" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Fashion</a>
+    <a href="grocery.html" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Grocery</a>
+    <a href="electronics.html" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Electronics</a>
+    <a href="contact.html" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Contact</a>
+  </nav>
+  <p style="color: #cbd5e1; font-size: 0.85rem;">
+    © 2025 BixMAX. All rights reserved. Crafted with passion.
+  </p>
+</footer>
  <script type="module">  
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";  
     import {  
