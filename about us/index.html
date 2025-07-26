@@ -4,7 +4,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About & Legal | BixMAX</title>
   <style>
-    body {
+    
+  html {
+    scroll-behavior: smooth;
+  }
+
+      body {
       font-family: Arial, sans-serif;
       line-height: 1.6;
       background: #f9f9f9;
@@ -196,40 +201,52 @@
   </div>
 </section>
  
-<section id="documentation" style="padding: 2rem; background-color: #f4f7fa;">
-  <h2 style="font-size: 2rem; color: #0b132b;">📘 Documentation</h2>
-  <p style="margin-bottom: 1.5rem; font-size: 1rem;">
-    Get step-by-step guides and resources to help you use <strong>BizMAX</strong> efficiently. Whether you're a customer or a seller, our documentation is here to help.
-  </p>
+<!-- Hidden Guides Section -->
+<section style="padding: 2rem; background-color: #ffffff;">
+  <!-- Guide 1 -->
+  <div id="doc-order" style="margin-bottom: 2rem;">
+    <h2>🔐 How to Place an Order</h2>
+    <p>
+      1. Browse categories or use the search bar to find your product.<br>
+      2. Tap "Add to Cart" to save items.<br>
+      3. Visit your Cart to review selections.<br>
+      4. Click "Checkout" and fill in your delivery info.<br>
+      5. Choose payment method (Paystack or Cash on Delivery) and place your order.
+    </p>
+  </div>
 
-  <div style="display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
-    <!-- Doc 1 -->
-    <div style="background: white; padding: 1.2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-      <h3 style="margin-bottom: 0.5rem;">🔐 How to Place an Order</h3>
-      <p style="font-size: 0.95rem;">Learn how to browse, add items to cart, and checkout with ease.</p>
-      <a href="#doc-order" style="color: #00a8e8; font-weight: bold; text-decoration: underline;">View Guide</a>
-    </div>
+  <!-- Guide 2 -->
+  <div id="doc-tracking" style="margin-bottom: 2rem;">
+    <h2>📦 Track Your Order</h2>
+    <p>
+      After placing your order, you’ll receive an Order ID.<br>
+      1. Go to our tracking page.<br>
+      2. Enter your Order ID to view live status updates.<br>
+      3. Follow your order as it progresses: Processing → Confirmed → On The Way → Delivered.
+    </p>
+  </div>
 
-    <!-- Doc 2 -->
-    <div style="background: white; padding: 1.2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-      <h3 style="margin-bottom: 0.5rem;">📦 Track Your Order</h3>
-      <p style="font-size: 0.95rem;">Use your Order ID to monitor your delivery in real-time.</p>
-      <a href="#doc-tracking" style="color: #00a8e8; font-weight: bold; text-decoration: underline;">View Guide</a>
-    </div>
+  <!-- Guide 3 -->
+  <div id="doc-payment" style="margin-bottom: 2rem;">
+    <h2>🧾 Payment & Invoices</h2>
+    <p>
+      We accept:<br>
+      - 💳 Online payments via Paystack (Visa, MasterCard, MoMo).<br>
+      - 💵 Cash on Delivery in select areas.<br><br>
+      Your receipt will be shown after checkout and can also be emailed. Save your Order ID for reference.
+    </p>
+  </div>
 
-    <!-- Doc 3 -->
-    <div style="background: white; padding: 1.2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-      <h3 style="margin-bottom: 0.5rem;">🧾 Payment & Invoices</h3>
-      <p style="font-size: 0.95rem;">Understand how to pay with Paystack or Cash on Delivery and get your receipts.</p>
-      <a href="#doc-payment" style="color: #00a8e8; font-weight: bold; text-decoration: underline;">View Guide</a>
-    </div>
-
-    <!-- Doc 4 -->
-    <div style="background: white; padding: 1.2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-      <h3 style="margin-bottom: 0.5rem;">👩‍💼 For Sellers: Add Your Products</h3>
-      <p style="font-size: 0.95rem;">A simple guide for vendors to list and manage their items on BizMAX.</p>
-      <a href="#doc-sellers" style="color: #00a8e8; font-weight: bold; text-decoration: underline;">View Guide</a>
-    </div>
+  <!-- Guide 4 -->
+  <div id="doc-sellers">
+    <h2>👩‍💼 For Sellers: Add Your Products</h2>
+    <p>
+      1. Register or sign in as a seller.<br>
+      2. Go to your Seller Dashboard.<br>
+      3. Click “Add Product” and fill in name, price, description, and images.<br>
+      4. Set stock quantity and variations (like size, color).<br>
+      5. Click “Publish” and your item goes live!
+    </p>
   </div>
 </section>
   <section id="support" style="padding: 2rem; background-color: #e6f4f9;">
