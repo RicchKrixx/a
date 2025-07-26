@@ -601,21 +601,7 @@ font-size: 16px;
             <p>&copy; 2025 BixMAX. All rights reserved.</p>
         </div>
 </footer>
-<script>
-  const scrollTopBtn = document.getElementById("scrollTopBtn");
 
-  window.onscroll = () => {
-    if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
-      scrollTopBtn.style.display = "block";
-    } else {
-      scrollTopBtn.style.display = "none";
-    }
-  };
-
-  scrollTopBtn.onclick = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-</script>
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <!-- Font Awesome for icons (you'll need to include this in your project) -->
     <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script>
@@ -727,6 +713,21 @@ font-size: 16px;
     cards[current].classList.add("active");
     current = (current + 1) % cards.length;
   }, 2000);
+</script>
+<script>
+  const scrollTopBtn = document.getElementById("scrollTopBtn");
+
+  window.onscroll = () => {
+    if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+      scrollTopBtn.style.display = "block";
+    } else {
+      scrollTopBtn.style.display = "none";
+    }
+  };
+
+  scrollTopBtn.onclick = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 </script>
 </div>
 </body>
