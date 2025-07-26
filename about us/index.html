@@ -36,6 +36,35 @@
       margin-bottom: 2rem;
     }
   </style>
+<style>
+.faq-question {
+  width: 100%;
+  text-align: left;
+  padding: 1rem;
+  font-size: 1rem;
+  background: #ffffff;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.faq-question:hover {
+  background: #e0f7ff;
+}
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  padding: 0 1rem;
+  background: #ffffff;
+  transition: max-height 0.3s ease;
+  border-radius: 0 0 10px 10px;
+}
+.faq-item.active .faq-answer {
+  max-height: 300px;
+  padding: 1rem;
+}
+</style>
 </head>
 <body>  <nav>
     <a href="#about-us">About Us</a>
@@ -48,35 +77,184 @@
     <a href="#terms">Terms of Service</a>
   </nav>  <section id="about-us">
     <h2>About Us</h2>
-    <p>BixMAX is your one-stop online shopping platform offering fashion, grocery, electronics, and lifestyle products. We are dedicated to providing a seamless, secure, and enjoyable shopping experience with a modern and mobile-friendly interface. Our goal is to empower small businesses, vendors, and customers with powerful tools and fast service.</p>
-  </section>  <section id="services">
-    <h2>Services</h2>
-    <ul>
-      <li>Fashion Shopping</li>
-      <li>Grocery Ordering</li>
-      <li>Online Payment with Paystack</li>
-      <li>Real-time Order Tracking</li>
-      <li>Admin Dashboard for Vendors</li>
-      <li>Customer Support via WhatsApp and Email</li>
-    </ul>
-  </section>  <section id="blog">
-    <h2>Blog</h2>
-    <p>Stay tuned for news, shopping tips, updates, and promotions. We share the latest trends in online shopping and product releases.</p>
-  </section>  <section id="documentation">
-    <h2>Documentation</h2>
-    <p>Need technical help or API integration? Visit our developer documentation (coming soon) for guides and examples on how to integrate with BizMAX tools.</p>
-  </section>  <section id="support">
-    <h2>Support</h2>
-    <p>Having trouble? Contact our support team via WhatsApp or Email. We respond quickly to inquiries and order issues.</p>
-  </section>  <section id="faq">
-    <h2>Frequently Asked Questions (FAQ)</h2>
-    <h3>Q: How do I place an order?</h3>
-    <p>A: Browse products, add to cart, then go to checkout and submit your order.</p>
-    <h3>Q: How do I track my order?</h3>
-    <p>A: Use the Order ID on the tracking page to check live updates.</p>
-    <h3>Q: What payment methods are accepted?</h3>
-    <p>A: We support Pay on Delivery and secure online payment via Paystack.</p>
-  </section> 
+     <h2>About BizMAX</h2>
+  <p>
+    Welcome to <strong>BixMAX</strong> — your one-stop online shopping destination designed to bring convenience, affordability, and style right to your fingertips. At BizMAX, we believe in making shopping easy, fast, and enjoyable for everyone.
+  </p>
+  <p>
+    Whether you're looking for fashion, groceries, electronics, home essentials, or lifestyle products, BixMAX offers a curated selection of high-quality items from trusted vendors — all at competitive prices.
+  </p>
+  <p>
+    We're passionate about delivering exceptional customer experiences, with a sleek interface, fast delivery options, flexible payments (including Pay on Delivery and online payment), and real-time order tracking.
+  </p>
+  <p>
+    Our mission is to empower shoppers across Ghana and beyond with access to a secure and seamless e-commerce platform they can trust.
+  </p>
+  </section>
+  <section id="services">
+  <h2>Our Services</h2>
+  <p>
+    At <strong>BizMAX</strong>, we offer a range of digital retail services to meet the everyday needs of our customers with ease and reliability. Below is a list of what we proudly provide:
+  </p>
+
+  <ul>
+    <li><strong>🛍️ Online Shopping Platform:</strong> A fast, mobile-friendly shop with thousands of products across fashion, groceries, tech, lifestyle, and more.</li>
+
+    <li><strong>🚚 Nationwide Delivery:</strong> Fast and secure delivery across major regions, with real-time order tracking and flexible shipping options.</li>
+
+    <li><strong>💳 Multiple Payment Methods:</strong> Pay on Delivery, Paystack-secured online payments, and mobile money integration.</li>
+
+    <li><strong>🎨 Product Variations:</strong> Customers can select product sizes, colors, and types before adding to cart, making shopping personalized.</li>
+
+    <li><strong>🧾 Instant Receipt & Order Tracking:</strong> Customers receive an instant receipt and can track their order status using their Order ID.</li>
+
+    <li><strong>💬 Customer Support:</strong> Friendly support via WhatsApp, email, and live chat — with future support for AI chatbots and Twilio messaging.</li>
+
+    <li><strong>📦 Vendor-Friendly Platform:</strong> We partner with trusted suppliers and brands to bring high-quality goods to our customers.</li>
+
+    <li><strong>📢 Promotions & Discounts:</strong> Regular sales, giveaways, and discount campaigns to help customers save more.</li>
+
+    <li><strong>📚 Helpful Resources:</strong> Access to blogs, product guides, FAQs, and documentation to improve shopping confidence.</li>
+  </ul>
+  </section>
+
+ <section id="blog" style="padding: 2rem;">
+  <h2 style="font-size: 2rem; color: #0b132b;">📝 Our Blog</h2>
+  <p style="margin-bottom: 1.5rem;">
+    Stay updated with the latest tips, product news, trends, and shopping insights from <strong>BizMAX</strong>. Whether you're a shopper, seller, or enthusiast — our blog has something valuable for you.
+  </p>
+
+  <div style="display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+    <!-- Blog Post 1 -->
+    <article style="background: #f9f9f9; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 1rem;">
+      <img src="images/blog1.jpg" alt="Shopping tips" style="width: 100%; border-radius: 8px;">
+      <h3 style="margin-top: 0.8rem;">Top 10 Shopping Tips to Save More on BizMAX</h3>
+      <p style="font-size: 0.95rem;">Discover how to get the best deals, use discount codes, and find high-quality products for less.</p>
+      <a href="#blog-post-1" style="color: #00a8e8; text-decoration: underline;">Read More</a>
+    </article>
+
+    <!-- Blog Post 2 -->
+    <article style="background: #f9f9f9; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 1rem;">
+      <img src="images/blog2.jpg" alt="Order tracking" style="width: 100%; border-radius: 8px;">
+      <h3 style="margin-top: 0.8rem;">How Our Order Tracking Works</h3>
+      <p style="font-size: 0.95rem;">Learn how to monitor your order status in real-time from the moment you place it to delivery.</p>
+      <a href="#blog-post-2" style="color: #00a8e8; text-decoration: underline;">Read More</a>
+    </article>
+
+    <!-- Blog Post 3 -->
+    <article style="background: #f9f9f9; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 1rem;">
+      <img src="images/blog3.jpg" alt="Tech gadgets" style="width: 100%; border-radius: 8px;">
+      <h3 style="margin-top: 0.8rem;">5 Must-Have Gadgets You Can Get for Under ₵300</h3>
+      <p style="font-size: 0.95rem;">Explore affordable tech deals that are perfect for school, work, and entertainment.</p>
+      <a href="#blog-post-3" style="color: #00a8e8; text-decoration: underline;">Read More</a>
+    </article>
+  </div>
+</section>
+ 
+<section id="documentation" style="padding: 2rem; background-color: #f4f7fa;">
+  <h2 style="font-size: 2rem; color: #0b132b;">📘 Documentation</h2>
+  <p style="margin-bottom: 1.5rem; font-size: 1rem;">
+    Get step-by-step guides and resources to help you use <strong>BizMAX</strong> efficiently. Whether you're a customer or a seller, our documentation is here to help.
+  </p>
+
+  <div style="display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+    <!-- Doc 1 -->
+    <div style="background: white; padding: 1.2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+      <h3 style="margin-bottom: 0.5rem;">🔐 How to Place an Order</h3>
+      <p style="font-size: 0.95rem;">Learn how to browse, add items to cart, and checkout with ease.</p>
+      <a href="#doc-order" style="color: #00a8e8; font-weight: bold; text-decoration: underline;">View Guide</a>
+    </div>
+
+    <!-- Doc 2 -->
+    <div style="background: white; padding: 1.2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+      <h3 style="margin-bottom: 0.5rem;">📦 Track Your Order</h3>
+      <p style="font-size: 0.95rem;">Use your Order ID to monitor your delivery in real-time.</p>
+      <a href="#doc-tracking" style="color: #00a8e8; font-weight: bold; text-decoration: underline;">View Guide</a>
+    </div>
+
+    <!-- Doc 3 -->
+    <div style="background: white; padding: 1.2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+      <h3 style="margin-bottom: 0.5rem;">🧾 Payment & Invoices</h3>
+      <p style="font-size: 0.95rem;">Understand how to pay with Paystack or Cash on Delivery and get your receipts.</p>
+      <a href="#doc-payment" style="color: #00a8e8; font-weight: bold; text-decoration: underline;">View Guide</a>
+    </div>
+
+    <!-- Doc 4 -->
+    <div style="background: white; padding: 1.2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+      <h3 style="margin-bottom: 0.5rem;">👩‍💼 For Sellers: Add Your Products</h3>
+      <p style="font-size: 0.95rem;">A simple guide for vendors to list and manage their items on BizMAX.</p>
+      <a href="#doc-sellers" style="color: #00a8e8; font-weight: bold; text-decoration: underline;">View Guide</a>
+    </div>
+  </div>
+</section>
+  <section id="support" style="padding: 2rem; background-color: #e6f4f9;">
+  <h2 style="font-size: 2rem; color: #0b132b;">🛠️ Need Help? We're Here for You</h2>
+  <p style="margin-bottom: 1.5rem; font-size: 1rem; max-width: 600px;">
+    If you’re facing issues, want to report a bug, or simply have a question, our support team is ready to assist you.
+  </p>
+
+  <div style="display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+    <!-- Contact Form -->
+    <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+      <h3 style="margin-bottom: 1rem;">📨 Contact Us</h3>
+      <form>
+        <input type="text" placeholder="Your Name" required style="width: 100%; padding: 0.6rem; margin-bottom: 0.8rem; border-radius: 8px; border: 1px solid #ccc;">
+        <input type="email" placeholder="Your Email" required style="width: 100%; padding: 0.6rem; margin-bottom: 0.8rem; border-radius: 8px; border: 1px solid #ccc;">
+        <textarea placeholder="Describe your issue..." rows="4" style="width: 100%; padding: 0.6rem; border-radius: 8px; border: 1px solid #ccc;"></textarea>
+        <button type="submit" style="margin-top: 1rem; background-color: #00a8e8; color: white; padding: 0.6rem 1.2rem; border: none; border-radius: 8px; cursor: pointer;">
+          Submit
+        </button>
+      </form>
+    </div>
+
+    <!-- Other Support Options -->
+    <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+      <h3 style="margin-bottom: 1rem;">📞 Quick Help Options</h3>
+      <ul style="list-style: none; padding-left: 0;">
+        <li style="margin-bottom: 0.6rem;">💬 WhatsApp: <a href="https://wa.me/233536345825" target="_blank" style="color: #00a8e8;">Chat Now</a></li>
+        <li style="margin-bottom: 0.6rem;">📧 Email: <a href="mailto:support@bizmax.store" style="color: #00a8e8;">support@bizmax.store</a></li>
+        <li style="margin-bottom: 0.6rem;">📄 View our <a href="#documentation" style="color: #00a8e8;">Documentation</a></li>
+        <li style="margin-bottom: 0.6rem;">❓ Visit our <a href="#faq" style="color: #00a8e8;">FAQs</a></li>
+      </ul>
+    </div>
+  </div>
+</section>
+ <section id="faq" style="padding: 2rem; background-color: #f0f9ff;">
+  <h2 style="font-size: 2rem; color: #0b132b;">❓ Frequently Asked Questions</h2>
+  <p style="margin-bottom: 1.5rem; max-width: 600px; font-size: 1rem;">
+    Have a question? Check below before reaching out — you might find your answer here.
+  </p>
+
+  <div class="faq-container" style="display: grid; gap: 1rem;">
+    <div class="faq-item">
+      <button class="faq-question">🛍️ How do I place an order?</button>
+      <div class="faq-answer">Simply browse your favorite items, add them to your cart, and proceed to checkout. You can choose Pay on Delivery or Online Payment.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">🚚 How long does delivery take?</button>
+      <div class="faq-answer">Delivery typically takes 1–3 business days within major cities, and 3–5 days for outskirt areas.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">💸 What payment methods do you accept?</button>
+      <div class="faq-answer">We accept Mobile Money, Bank Cards (via Paystack), and Pay on Delivery (where available).</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">📦 Can I track my order?</button>
+      <div class="faq-answer">Yes! Use your Order ID on our <a href="#tracking" style="color: #00a8e8;">Order Tracking</a> page to see real-time updates.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">↩️ What is your return policy?</button>
+      <div class="faq-answer">Items can be returned within 7 days if they’re unused and in original condition. Read our full policy in the documentation.</div>
+    </div>
+  </div>
+</section>
+
+
+
 
 
  <section id="privacy-policy">
@@ -162,5 +340,15 @@
     <p>If you have any questions about these terms, please contact us at<a href="mailto: support@bixmax.store" style="text-decoration:none;"> <strong>support@bixmax.store</strong>
 </a>.</p>
   </div>
-  </section></body>
+  </section>
+
+<script>
+  document.querySelectorAll(".faq-question").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const item = btn.parentElement;
+      item.classList.toggle("active");
+    });
+  });
+</script>
+</body>
 </html>
