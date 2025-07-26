@@ -277,7 +277,7 @@
       const name = item.querySelector(".product-name").textContent.toLowerCase();
       const price = item.querySelector(".product-price").textContent.toLowerCase();
 
-      if (name.includes(query) || price.includes(query)) {
+      if (name.includes(query) {
         item.style.display = "block";
         visibleCount++;
       } else {
