@@ -84,13 +84,13 @@
             <p><strong>Total:</strong> GH₵${data.total}</p>
             <p><strong>Payment Method:</strong> ${data.method}</p>
             <p><strong>Items:</strong> ${data.items}</p>
-            <p><strong>Status:</strong> Pending</p>
+          <p><strong>Status:</strong> ${data.status || "Pending"}</p>
           `;
           container.appendChild(orderEl);
         });
       } else {
         alert("Please sign in to view your order history.");
-        window.location.href = "/login"; // redirect if needed
+        window.location.href = "/login/"; // redirect if needed
       }
     });
   </script>
