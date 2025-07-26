@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BizMAX Dashboard</title>
+  <title>BixMAX Dashboard</title>
   <style>
     body {
       margin: 0;
@@ -154,7 +154,6 @@
         flex: 1 1 100%;
       }
     }
-        
   </style>
 </head>
 <body>
@@ -177,16 +176,21 @@
       </div>
     </div>
 
-    <div class="orders">
-      <h2>Order History</h2>
-      <div id="order-list">Loading orders...</div>
+    <!-- Optional: Show only the latest 5 orders -->
+    <div class="orders" style="margin-top: 10px;">
+      <h2>Latest Orders</h2>
+      <div id="order-list">Loading...</div>
     </div>
 
     <div class="btns">
+      <button onclick="window.location.href='/track/'">📦 Track Order</button>
+      <button onclick="window.location.href='/about us/#support'">🛠️ Support</button>
+      <button onclick="window.location.href='/help/'">❓ Help</button>
       <button onclick="window.location.href='/BixMax home/'">🏠 Go Home</button>
       <button onclick="logout()">🚪 Logout</button>
     </div>
   </div>
+
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -213,52 +217,51 @@
       let currentEmail = "";
 
       firebase.auth().onAuthStateChanged(user => {
-  if (user) {
-    const name = user.displayName || user.email.split('@')[0];
-    document.getElementById("user-name").textContent = name;
-    document.getElementById("user-email").textContent = user.email;
-    currentEmail = user.email;
+        if (user) {
+          const name = user.displayName || user.email.split('@')[0];
+          document.getElementById("user-name").textContent = name;
+          document.getElementById("user-email").textContent = user.email;
+          currentEmail = user.email;
 
-    loadOrders(user.email); // instead of user.uid
-    loadProfileImage(user.email);
-  } else {
-    window.location.href = "/auth/";
-  }
-});
+          loadOrders(user.email); // show only latest
+          loadProfileImage(user.email);
+        } else {
+          window.location.href = "/auth/";
+        }
+      });
 
       function loadOrders(userEmail) {
-  const orderList = document.getElementById("order-list");
+        const orderList = document.getElementById("order-list");
 
-  db.collection("orders").where("userEmail", "==", userEmail).get()
-    .then(snapshot => {
-      if (snapshot.empty) {
-        orderList.innerHTML = "<p>No orders found</p>";
-        return;
+        db.collection("orders")
+          .where("userEmail", "==", userEmail)
+          .orderBy("timestamp", "desc") // requires a timestamp field
+          .limit(5)
+          .get()
+          .then(snapshot => {
+            if (snapshot.empty) {
+              orderList.innerHTML = "<p>No recent orders</p>";
+              return;
+            }
+
+            let html = "";
+            snapshot.forEach(doc => {
+              const order = doc.data();
+              html += `
+                <div class="order">
+                  <strong>ID:</strong> ${order.orderId || doc.id}<br>
+                  <strong>Item:</strong> ${order.items || '—'}<br>
+                  <strong>Status:</strong> ${order.status || 'Pending'}
+                </div>
+              `;
+            });
+            orderList.innerHTML = html;
+          })
+          .catch(err => {
+            console.error("Error loading orders:", err);
+            orderList.innerHTML = "<p>Failed to load orders</p>";
+          });
       }
-
-      let html = "";
-      snapshot.forEach(doc => {
-        const order = doc.data();
-        html += `
-          <div class="order">
-            <strong>ID:</strong> ${order.orderId || doc.id}<br>
-            <strong>Item:</strong> ${order.items || '—'}<br>
-          </div>
-        `;
-      });
-      orderList.innerHTML = html;
-    })
-    .catch(err => {
-      console.error("Error loading orders:", err);
-      orderList.innerHTML = "<p>Failed to load orders</p>";
-    });
-}
-
-      // Profile image logic
-      const profileImage = document.getElementById("profileImage");
-      const dropdownMenu = document.getElementById("dropdownMenu");
-      const uploadInput = document.getElementById("uploadImage");
-      const deleteImage = document.getElementById("deleteImage");
 
       function getImageKey(email) {
         return "profileImage_" + email;
@@ -268,6 +271,11 @@
         const savedImage = localStorage.getItem(getImageKey(email));
         if (savedImage) profileImage.src = savedImage;
       }
+
+      const profileImage = document.getElementById("profileImage");
+      const dropdownMenu = document.getElementById("dropdownMenu");
+      const uploadInput = document.getElementById("uploadImage");
+      const deleteImage = document.getElementById("deleteImage");
 
       profileImage.addEventListener("click", (e) => {
         e.stopPropagation();
