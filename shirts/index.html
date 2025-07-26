@@ -212,12 +212,12 @@
         const items = JSON.parse(cached);  
         renderShirts(items);  
       } catch (e) {  
-        console.error("Error parsing cached Shirt:", e);  
+        console.error("Error parsing cached Shirts:", e);  
       }  
     }  
 
     // Firestore real-time listener (only updates on data change)  
-    onSnapshot(collection(db, "category", "Shirts", "items"), snapshot => {  
+    onSnapshot(collection(db, "category", "Shirt", "items"), snapshot => {  
       const items = [];  
       snapshot.forEach(doc => {  
         items.push({ ...doc.data(), id: doc.id });  
@@ -255,7 +255,7 @@
   </script>
 <script>
   const searchInput = document.getElementById("searchInput");
-  const container = document.getElementById("mobileContainer");
+  const container = document.getElementById("shirtContainer");
   const notFoundMessage = document.getElementById("notFoundMessage");
 
   // Debounce function to limit search execution
