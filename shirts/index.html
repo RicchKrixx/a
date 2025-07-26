@@ -150,6 +150,70 @@
     <a href="electronics.html" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Electronics</a>
     <a href="contact.html" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Contact</a>
   </nav>
+<style>
+  .socials {
+    display: flex;
+    gap: 14px;
+    padding: 1rem;
+    justify-content: center;
+  }
+
+  .socials a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    color: white;
+    font-size: 20px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+  }
+
+  .socials a:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+  }
+
+  .facebook { background: #3b5998; }
+  .instagram { background: #e1306c; }
+  .tiktok { background: #000; }
+  .x { background: #1da1f2; }
+  .whatsapp { background: #00b489; }
+
+  /* Optional Tooltip */
+  .socials a::after {
+    content: attr(data-label);
+    position: absolute;
+    bottom: -30px;
+    background: #333;
+    color: #fff;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    opacity: 0;
+    transform: translateY(5px);
+    pointer-events: none;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .socials a:hover::after {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+
+<div class="socials">
+  <a href="#" class="facebook" data-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+  <a href="#" class="instagram" data-label="Instagram"><i class="fab fa-instagram"></i></a>
+  <a href="#" class="tiktok" data-label="TikTok"><i class="fab fa-tiktok"></i></a>
+  <a href="#" class="x" data-label="X (Twitter)"><i class="fab fa-x-twitter"></i></a>
+ <a href="https://wa.me/233536345825?text=Hello%20BixMAX%2C%20I%20need%20assistance" class="whatsapp" data-label="Whatsapp"><i class="fab fa-whatsapp"></i></a>
+</div>
   <p style="color: #cbd5e1; font-size: 0.85rem;">
     © 2025 BixMAX. All rights reserved. Crafted with passion.
   </p>
