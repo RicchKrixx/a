@@ -1,122 +1,135 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BizMAX Dashboard</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BizMAX Admin Dashboard</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(145deg, #0f172a, #1e293b);
-      color: white;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem;
-    }
-
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 1.5rem;
-      text-align: center;
-    }
-
-    .order-list {
-      width: 100%;
-      max-width: 700px;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .order-card {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(12px);
-      border-radius: 12px;
-      padding: 1rem;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-      transition: transform 0.3s ease;
-    }
-
-    .order-card:hover {
-      transform: scale(1.01);
-    }
-
-    .order-header {
-      display: flex;
-      justify-content: space-between;
-      font-weight: bold;
-      margin-bottom: 0.5rem;
-    }
-
-    .order-body {
-      font-size: 0.95rem;
-      line-height: 1.4;
-    }
-
-    .assigned-rider {
-      margin-top: 0.5rem;
-      font-style: italic;
-      color: #38bdf8;
-    }
+    body { font-family: Arial, sans-serif; background: #0f172a; color: #f1f5f9; margin: 0; padding: 0; }
+    header { padding: 1rem; background: #1e293b; text-align: center; font-size: 1.5rem; }
+    nav { display: flex; justify-content: space-around; background: #1e293b; padding: 0.5rem; }
+    nav button { background: #1e40af; color: #fff; padding: 0.5rem 1rem; border: none; border-radius: 5px; cursor: pointer; }
+    .section { display: none; padding: 1rem; }
+    .active { display: block; }
+    form { margin-top: 1rem; }
+    form input, form select { display: block; width: 100%; padding: 0.5rem; margin-bottom: 1rem; border-radius: 5px; border: 1px solid #ccc; }
+    .card { background: #1e293b; padding: 1rem; margin: 1rem 0; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+    img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 10px; }
   </style>
 </head>
 <body>
+  <header>BizMAX Admin Dashboard</header>
+  <nav>
+    <button onclick="showSection('orders')">Orders</button>
+    <button onclick="showSection('riders')">Riders</button>
+  </nav>  <!-- Orders Section -->  <div id="orders" class="section active">
+    <h2>New Orders</h2>
+    <div id="ordersList"></div>
+  </div>  <!-- Riders Section -->  <div id="riders" class="section">
+    <h2>Register Rider</h2>
+    <form id="riderForm">
+      <input type="text" placeholder="Full Name" id="riderName" required />
+      <input type="tel" placeholder="Phone Number" id="riderPhone" required />
+      <input type="text" placeholder="Location" id="riderLocation" required />
+      <input type="file" accept="image/*" id="riderPic" required />
+      <button type="submit">Add Rider</button>
+    </form>
+    <h3>Riders List</h3>
+    <div id="ridersList"></div>
+  </div>  <script>
+   // Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+  authDomain: "bixmax-6c24c.firebaseapp.com",
+  projectId: "bixmax-6c24c",
+  storageBucket: "bixmax-6c24c.appspot.com",
+  messagingSenderId: "37740442541",
+  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+};
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-  <h1>📦 BizMAX Orders Dashboard</h1>
-
-  <div class="order-list" id="orderList">
-    <!-- Orders will appear here -->
-  </div>
-
-  <script>
-    // Simulated order data (from localStorage or Google Sheets)
-    const orders = [
-      { id: "ORD1001", name: "Jasper", items: "2x Sneakers, 1x Glasses", total: "GHS 300" },
-      { id: "ORD1002", name: "Amma", items: "1x Dress", total: "GHS 150" },
-      { id: "ORD1003", name: "Kwame", items: "1x Shirt, 1x Watch", total: "GHS 240" }
-    ];
-
-    const riders = ["Rider A", "Rider B", "Rider C", "Rider D"];
-    let riderIndex = 0;
-
-    function assignRider() {
-      const rider = riders[riderIndex % riders.length];
-      riderIndex++;
-      return rider;
+    // UI Navigation
+    function showSection(id) {
+      document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
     }
 
-    function renderOrders() {
-      const container = document.getElementById("orderList");
-      container.innerHTML = "";
-
-      orders.forEach(order => {
-        const rider = assignRider();
-
-        const card = document.createElement("div");
-        card.className = "order-card";
-
-        card.innerHTML = `
-          <div class="order-header">
-            <span>Order #${order.id}</span>
-            <span>${order.total}</span>
-          </div>
-          <div class="order-body">
-            <strong>Customer:</strong> ${order.name}<br>
-            <strong>Items:</strong> ${order.items}
-            <div class="assigned-rider">🛵 Assigned: ${rider}</div>
-          </div>
-        `;
-
-        container.appendChild(card);
+    // Load Orders
+    function loadOrders() {
+      db.collection("orders").onSnapshot(snapshot => {
+        const list = document.getElementById("ordersList");
+        list.innerHTML = "";
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          list.innerHTML += `<div class="card">
+            <b>${data.customerName}</b> - ${data.total} GHC<br>
+            <small>${data.address}</small><br>
+            <i>Assigned Rider: ${data.rider || 'Pending'}</i>
+          </div>`;
+        });
       });
     }
+    loadOrders();
 
-    renderOrders();
-  </script>
+    // Register Rider
+    document.getElementById("riderForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const name = riderName.value;
+      const phone = riderPhone.value;
+      const location = riderLocation.value;
+      const pic = riderPic.files[0];
 
-</body>
+      const reader = new FileReader();
+      reader.onload = function() {
+        const picData = reader.result;
+        const rider = { name, phone, location, pic: picData, status: 'available' };
+        db.collection("riders").add(rider).then(() => {
+          alert("Rider added");
+          riderForm.reset();
+          loadRiders();
+        });
+      }
+      reader.readAsDataURL(pic);
+    });
+
+    // Load Riders
+    function loadRiders() {
+      db.collection("riders").get().then(snapshot => {
+        const list = document.getElementById("ridersList");
+        list.innerHTML = "";
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          list.innerHTML += `<div class="card">
+            <div style="display: flex; align-items: center;">
+              <img src="${data.pic}" alt="Rider Pic" />
+              <div>
+                <b>${data.name}</b><br>
+                ${data.phone} - ${data.location}<br>
+                <i>Status: ${data.status}</i>
+              </div>
+            </div>
+          </div>`;
+        });
+      });
+    }
+    loadRiders();
+
+    // Auto Assign Riders on New Order
+    db.collection("orders").onSnapshot(async (snapshot) => {
+      const ridersSnapshot = await db.collection("riders").where("status", "==", "available").get();
+      const riders = ridersSnapshot.docs;
+      if (riders.length === 0) return;
+
+      snapshot.forEach(async (doc) => {
+        const data = doc.data();
+        if (!data.rider) {
+          const rider = riders[Math.floor(Math.random() * riders.length)];
+          await db.collection("orders").doc(doc.id).update({ rider: rider.data().name });
+          await db.collection("riders").doc(rider.id).update({ status: "busy" });
+        }
+      });
+    });
+  </script></body>
 </html>
