@@ -3,65 +3,108 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dispatch Dashboard | BizMAX</title>
+  <title>Dispatch Dashboard | BixMAX</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       background: #f5f5f5;
       padding: 20px;
       color: #333;
+      max-width: 600px;
+      margin: auto;
     }
+
+    h2, h3 {
+      text-align: center;
+    }
+
     button {
       padding: 10px 16px;
       background: #008cff;
       color: white;
       border: none;
-      border-radius: 5px;
+      border-radius: 8px;
       cursor: pointer;
+      margin: 10px auto;
+      display: block;
+      width: 100%;
+      max-width: 300px;
     }
+
     .modal {
       display: none;
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
       background: rgba(0,0,0,0.5);
-      justify-content: center; align-items: center;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 15px;
+      overflow-y: auto;
     }
+
     .modal-content {
       background: white;
       padding: 20px;
       border-radius: 10px;
-      width: 90%; max-width: 400px;
+      width: 100%;
+      max-width: 400px;
     }
+
     input {
       display: block;
       margin: 10px 0;
-      padding: 8px;
+      padding: 10px;
       width: 100%;
-      border-radius: 5px;
+      border-radius: 6px;
       border: 1px solid #ccc;
+      font-size: 16px;
     }
+
     #photoPreview {
-      width: 100px;
+      width: 100%;
+      max-width: 100px;
       margin-top: 10px;
       display: none;
+      border-radius: 8px;
     }
+
     .riders-list {
       margin-top: 30px;
     }
+
     .rider-card {
       background: #fff;
       border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 10px;
-      margin-bottom: 10px;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .rider-card img {
+      width: 70px;
+      height: auto;
+      margin-top: 8px;
+      border-radius: 6px;
+    }
+
+    @media (max-width: 480px) {
+      .modal-content {
+        padding: 15px;
+      }
+      button {
+        font-size: 15px;
+        padding: 10px;
+      }
     }
   </style>
 </head>
 <body>
 
 <h2>Dispatch Dashboard</h2>
-<button id="openModalBtn">Register Rider</button>
+<button id="openModalBtn">➕ Register Rider</button>
 
 <!-- Modal -->
 <div class="modal" id="riderModal">
@@ -70,34 +113,33 @@
     <input type="text" id="riderName" placeholder="Rider Name" />
     <input type="email" id="riderEmail" placeholder="Email" />
     <input type="tel" id="riderPhone" placeholder="Phone" />
-    <input type="text" id="riderPhoto" placeholder="Photo (e.g. pp.jpeg or URL)" />
-    <img id="photoPreview" />
+    <input type="text" id="riderPhoto" placeholder="Photo URL (optional)" />
+    <img id="photoPreview" alt="Preview" />
 
-    <button id="registerBtn">Create Rider</button>
-    <button onclick="closeModal()">Cancel</button>
+    <button id="registerBtn">✅ Create Rider</button>
+    <button onclick="closeModal()" style="background:#ccc; color:#333;">❌ Cancel</button>
   </div>
 </div>
 
 <!-- Rider List -->
 <div class="riders-list" id="riderList">
   <h3>Registered Riders</h3>
-  <!-- Riders will load here -->
 </div>
 
-<!-- Firebase SDK -->
+<!-- Firebase Script -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  // Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-  authDomain: "bixmax-6c24c.firebaseapp.com",
-  projectId: "bixmax-6c24c",
-  storageBucket: "bixmax-6c24c.appspot.com",
-  messagingSenderId: "37740442541",
-  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-};
+  const firebaseConfig = {
+    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+    authDomain: "bixmax-6c24c.firebaseapp.com",
+    projectId: "bixmax-6c24c",
+    storageBucket: "bixmax-6c24c.appspot.com",
+    messagingSenderId: "37740442541",
+    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+  };
+
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
@@ -116,10 +158,14 @@ const firebaseConfig = {
 
   riderPhotoInput.addEventListener('input', () => {
     const path = riderPhotoInput.value.trim();
-    photoPreview.src = path;
-    photoPreview.style.display = 'block';
-    photoPreview.onerror = () => photoPreview.style.display = 'none';
-    photoPreview.onload = () => photoPreview.style.display = 'block';
+    if (path) {
+      photoPreview.src = path;
+      photoPreview.style.display = 'block';
+      photoPreview.onerror = () => photoPreview.style.display = 'none';
+      photoPreview.onload = () => photoPreview.style.display = 'block';
+    } else {
+      photoPreview.style.display = 'none';
+    }
   });
 
   document.getElementById('registerBtn').addEventListener('click', async () => {
@@ -129,7 +175,7 @@ const firebaseConfig = {
     const photo = document.getElementById('riderPhoto').value.trim();
 
     if (!name || !email || !phone) {
-      alert("Please fill all fields.");
+      alert("Please fill all required fields.");
       return;
     }
 
@@ -153,6 +199,7 @@ const firebaseConfig = {
       loadRiders();
     } catch (err) {
       console.error("Error adding rider:", err);
+      alert("Failed to register rider. Try again.");
     }
   });
 
@@ -169,7 +216,7 @@ const firebaseConfig = {
           ID: ${r.riderId}<br>
           Email: ${r.email}<br>
           Phone: ${r.phone}<br>
-          <img src="${r.photo}" style="width:70px;margin-top:5px;" onerror="this.style.display='none'" />
+          ${r.photo ? `<img src="${r.photo}" alt="Rider" onerror="this.style.display='none'" />` : ""}
         </div>
       `;
     });
