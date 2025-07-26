@@ -3,14 +3,49 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Local Delivery Tracker</title>
+  <title>Track Order | BizMAX</title>
   <style>
     body {
       font-family: "Segoe UI", sans-serif;
       background: #f1f5f9;
-      padding: 40px;
+      padding: 40px 16px;
       display: flex;
       justify-content: center;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .search-box {
+      text-align: center;
+      margin-bottom: 2rem;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .search-box input {
+      width: 80%;
+      max-width: 300px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      outline: none;
+      margin-bottom: 10px;
+    }
+
+    .search-box button {
+      background: #00bcd4;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #errorMsg {
+      color: red;
+      font-size: 0.9rem;
+      margin-top: 10px;
     }
 
     .stepper-box {
@@ -123,92 +158,92 @@
       margin-top: 2px;
     }
   </style>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
-  <div class="stepper-box" id="stepper">
-    <!-- Steps rendered by JavaScript -->
+  <div class="search-box" id="searchBox">
+    <h2>Track Your Order</h2>
+    <input type="text" id="orderIdInput" placeholder="Enter Order ID">
+    <br>
+    <button onclick="searchOrder()">Track</button>
+    <p id="errorMsg"></p>
   </div>
 
+  <div class="stepper-box" id="stepper" style="display:none;"></div>
+
   <script>
-    const steps = [
-      { title: "Order Placed", status: "Pending", time: "..." },
-      { title: "Order Confirmed", status: "Pending", time: "..." },
-      { title: "Preparing Order", status: "Pending", time: "..." },
-      { title: "Ready for Pickup", status: "Pending", time: "..." },
-      { title: "Out for Delivery", status: "Pending", time: "..." },
-      { title: "Delivered", status: "Pending", time: "..." }
+    const firebaseConfig = {
+      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+      authDomain: "bixmax-6c24c.firebaseapp.com",
+      projectId: "bixmax-6c24c",
+      storageBucket: "bixmax-6c24c.appspot.com",
+      messagingSenderId: "37740442541",
+      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const stepTitles = [
+      "Order Placed",
+      "Order Confirmed",
+      "Preparing Order",
+      "Ready for Pickup",
+      "Out for Delivery",
+      "Delivered"
     ];
 
-    const container = document.getElementById("stepper");
-
-    function renderSteps() {
+    function renderSteps(status, timestamps = {}) {
+      const container = document.getElementById("stepper");
       container.innerHTML = "";
-      steps.forEach((step, i) => {
+
+      const currentIndex = stepTitles.findIndex(s => s.toLowerCase() === status.toLowerCase());
+
+      stepTitles.forEach((title, i) => {
         let state = "pending";
-        if (["Confirmed", "Prepared", "Picked", "En Route", "Delivered"].some(s => step.status.includes(s)) || step.status === "Completed") {
-          state = "completed";
-        } else if (step.status !== "Pending") {
-          state = "active";
-        }
+        if (i < currentIndex) state = "completed";
+        else if (i === currentIndex) state = "active";
+
+        const stepTime = timestamps[title] || "...";
 
         container.innerHTML += `
           <div class="stepper-step ${state}">
             <div class="stepper-circle">${state === "completed" ? "✔" : i + 1}</div>
-            ${i < steps.length - 1 ? `<div class="stepper-line"></div>` : ""}
+            ${i < stepTitles.length - 1 ? `<div class="stepper-line"></div>` : ""}
             <div class="stepper-content">
-              <div class="step-title">${step.title}</div>
-              <div class="step-status">${step.status}</div>
-              <div class="step-time">${step.time}</div>
+              <div class="step-title">${title}</div>
+              <div class="step-status">${state.charAt(0).toUpperCase() + state.slice(1)}</div>
+              <div class="step-time">${stepTime}</div>
             </div>
           </div>
         `;
       });
     }
 
-    function simulateLocalDelivery() {
-      const delay = (ms) => new Promise(res => setTimeout(res, ms));
+    function searchOrder() {
+      const id = document.getElementById("orderIdInput").value.trim();
+      const errorMsg = document.getElementById("errorMsg");
 
-      (async () => {
-        const now = new Date();
+      if (!id) return errorMsg.textContent = "Please enter a valid Order ID.";
 
-        steps[0].status = "Completed";
-        steps[0].time = now.toLocaleTimeString();
-        renderSteps();
-        await delay(1500);
-
-        steps[1].status = "Confirmed";
-        steps[1].time = new Date().toLocaleTimeString();
-        renderSteps();
-        await delay(1500);
-
-        steps[2].status = "Preparing";
-        steps[2].time = new Date().toLocaleTimeString();
-        renderSteps();
-        await delay(1500);
-
-        steps[2].status = "Prepared";
-        renderSteps();
-        await delay(1500);
-
-        steps[3].status = "Picked Up";
-        steps[3].time = new Date().toLocaleTimeString();
-        renderSteps();
-        await delay(1500);
-
-        steps[4].status = "En Route";
-        steps[4].time = new Date().toLocaleTimeString();
-        renderSteps();
-        await delay(2000);
-
-        steps[5].status = "Delivered";
-        steps[5].time = new Date().toLocaleTimeString();
-        renderSteps();
-      })();
+      db.collection("orders").doc(id).get().then(doc => {
+        if (doc.exists) {
+          const data = doc.data();
+          const status = data.status || "Order Placed";
+          const timestamps = data.timestamps || {};
+          renderSteps(status, timestamps);
+          document.getElementById("searchBox").style.display = "none";
+          document.getElementById("stepper").style.display = "block";
+        } else {
+          errorMsg.textContent = "Order not found. Please check your Order ID.";
+        }
+      }).catch(() => {
+        errorMsg.textContent = "Something went wrong. Try again later.";
+      });
     }
-
-    renderSteps();
-    simulateLocalDelivery();
   </script>
 
 </body>
