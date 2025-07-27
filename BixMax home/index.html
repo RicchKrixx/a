@@ -730,44 +730,6 @@ font-size: 16px;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 </script>
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    // Make sure browser supports Notifications
-    if (!("Notification" in window)) {
-      console.warn("Browser does not support notifications.");
-      return;
-    }
-
-    // Check if permission already granted
-    if (Notification.permission === "granted") {
-      // Delay a bit to show notification after page settles
-      setTimeout(() => {
-        new Notification("👋 Welcome to BizMAX!", {
-          body: "Explore new arrivals and deals today!",
-          icon: "https://bixmax.store/favicon.ico" // replace with your logo if you want
-        });
-      }, 2000);
-    }
-
-    // If not yet granted or denied, ask for permission
-    else if (Notification.permission !== "denied") {
-      Notification.requestPermission().then(permission => {
-        if (permission === "granted") {
-          setTimeout(() => {
-            new Notification("👋 Welcome to BizMAX!", {
-              body: "Explore new arrivals and deals today!",
-              icon: "https://bixmax.store/favicon.ico"
-            });
-          }, 2000);
-        } else {
-          console.log("User blocked notifications.");
-        }
-      });
-    } else {
-      console.log("Notifications already denied.");
-    }
-  });
-</script>
 </div>
 </body>
 </html>
