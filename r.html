@@ -1,42 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <title>BizMAX Notification Test</title>
+  <meta charset="UTF-8">
+  <title>BizMAX Push Notification Test</title>
 </head>
-<body style="font-family: sans-serif; text-align: center; padding: 40px;">
-  <h2>BizMAX Notification Test</h2>
-  <p>If notifications are working, you’ll see a test message soon.</p>
+<body style="font-family: sans-serif; padding: 2rem; text-align: center;">
+  <h2>🔔 BizMAX Notification Test</h2>
+  <p>Wait 5 seconds. A notification should appear if everything is working.</p>
 
   <script>
+    function showNotification() {
+      try {
+        const options = {
+          body: "This is a test push notification from BizMAX!",
+          icon: "https://bixmax.store/favicon.ico",
+          vibrate: [200, 100, 200],
+          tag: "test-notification",
+          renotify: true,
+          requireInteraction: true // stays until tapped
+        };
+        new Notification("✅ BizMAX Alert", options);
+      } catch (e) {
+        alert("Notification failed: " + e.message);
+      }
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
       if (!("Notification" in window)) {
-        alert("❌ Notifications are not supported on this browser.");
+        alert("❌ Notifications not supported on this device.");
         return;
       }
 
       if (Notification.permission === "granted") {
-        setTimeout(() => {
-          new Notification("✅ BizMAX Test", {
-            body: "This is a test push notification.",
-            icon: "https://bixmax.store/favicon.ico"
-          });
-        }, 3000);
+        setTimeout(showNotification, 5000);
       } else if (Notification.permission !== "denied") {
         Notification.requestPermission().then(permission => {
           if (permission === "granted") {
-            setTimeout(() => {
-              new Notification("✅ BizMAX Test", {
-                body: "This is a test push notification.",
-                icon: "https://bixmax.store/favicon.ico"
-              });
-            }, 3000);
+            setTimeout(showNotification, 5000);
           } else {
             alert("❌ Notification permission denied.");
           }
         });
       } else {
-        alert("❌ Notifications were previously denied. You must allow them in your browser settings.");
+        alert("❌ Notifications blocked. Enable from browser settings.");
       }
     });
   </script>
