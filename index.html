@@ -211,6 +211,30 @@ setInterval(cycleColors, period);
       });
     }
   });
+
+// Firebase Messaging setup (include after Firebase initialization)
+const messaging = firebase.messaging();
+
+messaging.getToken({ vapidKey: "YOUR_PUBLIC_VAPID_KEY" }).then((currentToken) => {
+  if (currentToken) {
+    localStorage.setItem("fcmToken", currentToken);
+
+    // Optional: send welcome message on first visit
+    if (!localStorage.getItem("welcomeSent")) {
+      new Notification("🎉 Welcome to BizMAX", {
+        body: "We’re glad to have you here!",
+        icon: "/icons/icon.png" // optional
+      });
+      localStorage.setItem("welcomeSent", "true");
+    }
+
+  } else {
+    console.log("No registration token available.");
+  }
+}).catch((err) => {
+  console.error("An error occurred while retrieving token.", err);
+});
 </script>
+
 </body>
 </html>
