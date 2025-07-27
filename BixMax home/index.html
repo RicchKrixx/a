@@ -732,15 +732,27 @@ font-size: 16px;
 </script>
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    if ('Notification' in window) {
+    if (!("Notification" in window)) {
+      console.warn("Browser does not support notifications.");
+      return;
+    }
+
+    if (Notification.permission === "granted") {
+      // Already allowed — send notification immediately
+      new Notification("🎉 Thanks for shopping with BizMAX!", {
+        body: "We'll keep you updated about your order status.",
+        icon: "https://i.postimg.cc/vTPd6n8Y/download.jpg"
+      });
+    } else if (Notification.permission !== "denied") {
       // Ask for permission
       Notification.requestPermission().then(permission => {
         if (permission === "granted") {
-          // Send notification if allowed
           new Notification("🎉 Thanks for shopping with BizMAX!", {
             body: "We'll keep you updated about your order status.",
-            icon: "https://yourdomain.com/logo.png" // Optional: change to your BizMAX logo
+            icon: "https://i.postimg.cc/vTPd6n8Y/download.jpg"
           });
+        } else {
+          console.log("Notifications denied by user.");
         }
       });
     }
