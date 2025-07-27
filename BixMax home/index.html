@@ -732,27 +732,39 @@ font-size: 16px;
 </script>
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    if (!("Notification" in window)) {
-      console.warn("Browser does not support notifications.");
+    // Only run on secure origin (https or localhost)
+    if (location.protocol !== "https:" && location.hostname !== "localhost") {
+      console.warn("Notifications only work on HTTPS or localhost.");
       return;
     }
 
+    if (!("Notification" in window)) {
+      console.warn("This browser does not support notifications.");
+      return;
+    }
+
+    // If permission already granted, show the notification
     if (Notification.permission === "granted") {
-      // Already allowed — send notification immediately
-      new Notification("🎉 Thanks for shopping with BizMAX!", {
-        body: "We'll keep you updated about your order status.",
-        icon: "https://i.postimg.cc/vTPd6n8Y/download.jpg"
-      });
-    } else if (Notification.permission !== "denied") {
-      // Ask for permission
+      setTimeout(() => {
+        new Notification("👋 Welcome to BizMAX!", {
+          body: "Enjoy shopping with real-time updates!",
+          icon: "https://yourdomain.com/logo.png" // Optional: use your favicon or brand logo
+        });
+      }, 2000); // delay so it shows after page settles
+    }
+
+    // If permission not yet granted, ask for it
+    else if (Notification.permission !== "denied") {
       Notification.requestPermission().then(permission => {
         if (permission === "granted") {
-          new Notification("🎉 Thanks for shopping with BizMAX!", {
-            body: "We'll keep you updated about your order status.",
-            icon: "https://i.postimg.cc/vTPd6n8Y/download.jpg"
-          });
+          setTimeout(() => {
+            new Notification("👋 Welcome to BizMAX!", {
+              body: "Enjoy shopping with real-time updates!",
+              icon: "https://yourdomain.com/logo.png"
+            });
+          }, 2000);
         } else {
-          console.log("Notifications denied by user.");
+          console.log("Notifications were denied by the user.");
         }
       });
     }
