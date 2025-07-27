@@ -8,7 +8,48 @@
     body {
       font-family: Arial, sans-serif;
       background: #f4f7fa;
-      color: #0f172a;
+      <!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>BizMAX Notification Test</title></head>
+<body>
+  <h1>Notification Test</h1>
+  <p>Checking logs in console...</p>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      console.log("DOM loaded, requesting permission…");
+
+      if (!("Notification" in window)) {
+        console.log("Browser does not support notifications");
+        return;
+      }
+
+      function sendNotification() {
+        console.log("Triggering notification");
+        new Notification("🚀 Test Alert from BizMAX", {
+          body: "If you can see this, push notifications are working!",
+          icon: "https://bixmax.store/favicon.ico"
+        });
+      }
+
+      console.log("Current permission:", Notification.permission);
+
+      if (Notification.permission === "granted") {
+        setTimeout(sendNotification, 3000);
+      } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then(permission => {
+          console.log("Permission returned:", permission);
+          if (permission === "granted") {
+            setTimeout(sendNotification, 3000);
+          }
+        });
+      } else {
+        console.log("Permission was denied earlier");
+      }
+    });
+  </script>
+</body>
+</html> #0f172a;
       text-align: center;
       padding: 50px;
     }
