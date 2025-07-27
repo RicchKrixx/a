@@ -1,102 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>BizMAX Notification Test</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f7fa;
-      <!DOCTYPE html>
-<html lang="en">
-<head><meta charset="UTF-8"><title>BizMAX Notification Test</title></head>
-<body>
-  <h1>Notification Test</h1>
-  <p>Checking logs in console...</p>
+</head>
+<body style="font-family: sans-serif; text-align: center; padding: 40px;">
+  <h2>BizMAX Notification Test</h2>
+  <p>If notifications are working, you’ll see a test message soon.</p>
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      console.log("DOM loaded, requesting permission…");
-
       if (!("Notification" in window)) {
-        console.log("Browser does not support notifications");
+        alert("❌ Notifications are not supported on this browser.");
         return;
       }
 
-      function sendNotification() {
-        console.log("Triggering notification");
-        new Notification("🚀 Test Alert from BizMAX", {
-          body: "If you can see this, push notifications are working!",
-          icon: "https://bixmax.store/favicon.ico"
-        });
-      }
-
-      console.log("Current permission:", Notification.permission);
-
       if (Notification.permission === "granted") {
-        setTimeout(sendNotification, 3000);
+        setTimeout(() => {
+          new Notification("✅ BizMAX Test", {
+            body: "This is a test push notification.",
+            icon: "https://bixmax.store/favicon.ico"
+          });
+        }, 3000);
       } else if (Notification.permission !== "denied") {
         Notification.requestPermission().then(permission => {
-          console.log("Permission returned:", permission);
           if (permission === "granted") {
-            setTimeout(sendNotification, 3000);
+            setTimeout(() => {
+              new Notification("✅ BizMAX Test", {
+                body: "This is a test push notification.",
+                icon: "https://bixmax.store/favicon.ico"
+              });
+            }, 3000);
+          } else {
+            alert("❌ Notification permission denied.");
           }
         });
       } else {
-        console.log("Permission was denied earlier");
+        alert("❌ Notifications were previously denied. You must allow them in your browser settings.");
       }
     });
   </script>
-</body>
-</html> #0f172a;
-      text-align: center;
-      padding: 50px;
-    }
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-    p {
-      font-size: 1rem;
-    }
-  </style>
-</head>
-<body>
-  <h1>🔔 BizMAX Notifications</h1>
-  <p>If notifications are allowed, you'll see one in a few seconds...</p>
-
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    console.log("DOM loaded");
-
-    if (!("Notification" in window)) {
-      alert("This browser does not support notifications.");
-      return;
-    }
-
-    function sendAutoNotification() {
-      console.log("Sending notification...");
-      new Notification("🎉 Welcome to BizMAX!", {
-        body: "Enjoy hot deals and more!",
-        icon: "https://bixmax.store/favicon.ico"
-      });
-    }
-
-    if (Notification.permission === "granted") {
-      console.log("Permission already granted.");
-      setTimeout(sendAutoNotification, 3000);
-    } else if (Notification.permission !== "denied") {
-      Notification.requestPermission().then(permission => {
-        console.log("Permission result:", permission);
-        if (permission === "granted") {
-          setTimeout(sendAutoNotification, 3000);
-        }
-      });
-    } else {
-      console.log("Notifications denied.");
-    }
-  });
-</script>
 </body>
 </html>
