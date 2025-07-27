@@ -450,6 +450,9 @@ font-size: 16px;
 <hr style="border: none; height: 1px; background-color: #333333;" />
 <br>
 <hr style="border: none; height: 1px; background-color: #333333;" />
+<button onclick="enableNotifications()" style="padding: 10px 20px; border: none; border-radius: 8px; background: #0ea5e9; color: white; font-size: 1rem;">
+  🔔 Enable Notifications
+</button>
 <li><a href="/help/">ℹ️Help</a></li>
       <li><a href="tel:0536345825">☎️Contact</a></li>
     </ul>
@@ -729,6 +732,25 @@ font-size: 16px;
   scrollTopBtn.onclick = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+</script>
+<script>
+  function enableNotifications() {
+    if (!('Notification' in window)) {
+      alert("Sorry, your browser doesn't support notifications.");
+      return;
+    }
+
+    Notification.requestPermission().then(permission => {
+      if (permission === "granted") {
+        new Notification("🎉 Notifications Enabled!", {
+          body: "BizMAX will keep you updated!",
+          icon: "https://yourdomain.com/logo.png" // Optional: add your brand icon
+        });
+      } else {
+        alert("You blocked notifications. You can enable them from browser settings.");
+      }
+    });
+  }
 </script>
 </div>
 </body>
