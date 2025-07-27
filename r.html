@@ -25,31 +25,37 @@
   <h1>🔔 BizMAX Notifications</h1>
   <p>If notifications are allowed, you'll see one in a few seconds...</p>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      if (!("Notification" in window)) {
-        alert("This browser does not support notifications.");
-        return;
-      }
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOM loaded");
 
-      function sendAutoNotification() {
-        new Notification("🎉 Welcome to BizMAX!", {
-          body: "Enjoy hot deals, gadgets, and fashion — only on bixmax.store!",
-          icon: "https://bixmax.store/favicon.ico" // Change to your logo if needed
-        });
-      }
+    if (!("Notification" in window)) {
+      alert("This browser does not support notifications.");
+      return;
+    }
 
-      // Check permission
-      if (Notification.permission === "granted") {
-        setTimeout(sendAutoNotification, 3000);
-      } else if (Notification.permission !== "denied") {
-        Notification.requestPermission().then(permission => {
-          if (permission === "granted") {
-            setTimeout(sendAutoNotification, 3000);
-          }
-        });
-      }
-    });
-  </script>
+    function sendAutoNotification() {
+      console.log("Sending notification...");
+      new Notification("🎉 Welcome to BizMAX!", {
+        body: "Enjoy hot deals and more!",
+        icon: "https://bixmax.store/favicon.ico"
+      });
+    }
+
+    if (Notification.permission === "granted") {
+      console.log("Permission already granted.");
+      setTimeout(sendAutoNotification, 3000);
+    } else if (Notification.permission !== "denied") {
+      Notification.requestPermission().then(permission => {
+        console.log("Permission result:", permission);
+        if (permission === "granted") {
+          setTimeout(sendAutoNotification, 3000);
+        }
+      });
+    } else {
+      console.log("Notifications denied.");
+    }
+  });
+</script>
 </body>
 </html>
