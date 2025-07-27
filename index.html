@@ -188,8 +188,21 @@ setInterval(cycleColors, period);
 
 
   </script>
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
+ const firebaseConfig = {
+  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+  authDomain: "bixmax-6c24c.firebaseapp.com",
+  projectId: "bixmax-6c24c",
+  storageBucket: "bixmax-6c24c.appspot.com",
+  messagingSenderId: "37740442541",
+  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+};
+
+firebase.initializeApp(firebaseConfig);
+const messaging = firebase.messaging(); document.addEventListener("DOMContentLoaded", () => {
     if (!("Notification" in window)) return;
 
     function sendAutoNotification() {
@@ -234,6 +247,9 @@ messaging.getToken({ vapidKey: "BH5eMzDhRuf3e2cS3wpQlvsd7RdthC1hpmSNkIvX1bbvxhwm
 }).catch((err) => {
   console.error("An error occurred while retrieving token.", err);
 });
+if ('serviceWorker' in navigator && 'Notification' in window) {
+  // Initialize Firebase and request token
+}
 </script>
 
 </body>
