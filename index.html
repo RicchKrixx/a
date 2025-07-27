@@ -192,22 +192,21 @@ setInterval(cycleColors, period);
   document.addEventListener("DOMContentLoaded", () => {
     if (!("Notification" in window)) return;
 
+    function sendAutoNotification() {
+      new Notification("👋 Welcome to BizMAX!", {
+        body: "Enjoy hot deals, fashion, gadgets and more.",
+        icon: "https://bixmax.store/favicon.ico" // You can change this icon
+      });
+    }
+
+    // Only send notification if permission is granted
     if (Notification.permission === "granted") {
-      setTimeout(() => {
-        new Notification("👋 Welcome to BizMAX!", {
-          body: "Enjoy hot deals and fashion trends now!",
-          icon: "https://bixmax.store/favicon.ico"
-        });
-      }, 1500);
+      setTimeout(sendAutoNotification, 3000); // Delay 3 seconds
     } else if (Notification.permission !== "denied") {
+      // Ask for permission first
       Notification.requestPermission().then(permission => {
         if (permission === "granted") {
-          setTimeout(() => {
-            new Notification("👋 Welcome to BizMAX!", {
-              body: "Enjoy hot deals and fashion trends now!",
-              icon: "https://bixmax.store/favicon.ico"
-            });
-          }, 1500);
+          setTimeout(sendAutoNotification, 3000);
         }
       });
     }
