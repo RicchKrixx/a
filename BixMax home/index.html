@@ -732,41 +732,39 @@ font-size: 16px;
 </script>
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    // Only run on secure origin (https or localhost)
-    if (location.protocol !== "https:" && location.hostname !== "localhost") {
-      console.warn("Notifications only work on HTTPS or localhost.");
-      return;
-    }
-
+    // Make sure browser supports Notifications
     if (!("Notification" in window)) {
-      console.warn("This browser does not support notifications.");
+      console.warn("Browser does not support notifications.");
       return;
     }
 
-    // If permission already granted, show the notification
+    // Check if permission already granted
     if (Notification.permission === "granted") {
+      // Delay a bit to show notification after page settles
       setTimeout(() => {
         new Notification("👋 Welcome to BizMAX!", {
-          body: "Enjoy shopping with real-time updates!",
-          icon: "https://yourdomain.com/logo.png" // Optional: use your favicon or brand logo
+          body: "Explore new arrivals and deals today!",
+          icon: "https://bixmax.store/favicon.ico" // replace with your logo if you want
         });
-      }, 2000); // delay so it shows after page settles
+      }, 2000);
     }
 
-    // If permission not yet granted, ask for it
+    // If not yet granted or denied, ask for permission
     else if (Notification.permission !== "denied") {
       Notification.requestPermission().then(permission => {
         if (permission === "granted") {
           setTimeout(() => {
             new Notification("👋 Welcome to BizMAX!", {
-              body: "Enjoy shopping with real-time updates!",
-              icon: "https://yourdomain.com/logo.png"
+              body: "Explore new arrivals and deals today!",
+              icon: "https://bixmax.store/favicon.ico"
             });
           }, 2000);
         } else {
-          console.log("Notifications were denied by the user.");
+          console.log("User blocked notifications.");
         }
       });
+    } else {
+      console.log("Notifications already denied.");
     }
   });
 </script>
