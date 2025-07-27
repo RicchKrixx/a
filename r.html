@@ -1,281 +1,55 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dispatch Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>BizMAX Notification Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    * {
-      box-sizing: border-box;
-    }
     body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: #f8f9fa;
-      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f4f7fa;
+      color: #0f172a;
+      text-align: center;
+      padding: 50px;
     }
-    h1, h2 {
-      color: #333;
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
     }
-    .container {
-      max-width: 1200px;
-      margin: auto;
+    p {
+      font-size: 1rem;
     }
-    .card {
-      background: #fff;
-      border-radius: 10px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
-    .card h2 {
-      margin-top: 0;
-    }
-    button {
-      padding: 10px 15px;
-      border: none;
-      background-color: #007bff;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    th, td {
-      padding: 10px;
-      border: 1px solid #ddd;
-      text-align: left;
-    }
-    th {
-      background-color: #f1f1f1;
-    }
-    .status-dot {
-      display: inline-block;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      margin-right: 8px;
-    }
-    .status-dot.online { background-color: #28a745; }
-    .status-dot.offline { background-color: #dc3545; }
-    .status-dot.busy { background-color: #ffc107; }#modal {
-  display: none;
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.5);
-  justify-content: center;
-  align-items: center;
-}
-#modal .modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 90%;
-  max-width: 400px;
-}
-#modal input {
-  margin: 8px 0;
-  width: 100%;
-  padding: 10px;
-}
-
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Dispatch Dashboard</h1><!-- Register Modal Trigger -->
-<div class="card">
-  <h2>Rider Management</h2>
-  <button onclick="openModal()">Register New Rider</button>
-</div>
+  <h1>🔔 BizMAX Notifications</h1>
+  <p>If notifications are allowed, you'll see one in a few seconds...</p>
 
-<!-- Modal Registration Form -->
-<div id="modal">
-  <div class="modal-content">
-    <h2>Register Rider</h2>
-    <input type="email" id="email" placeholder="Email" required />
-    <input type="text" id="name" placeholder="Name" required />
-    <input type="text" id="phone" placeholder="Phone Number" required />
-    <input type="text" id="ghanaCard" placeholder="Ghana Card Number" required />
-    <input type="text" id="profilePic" placeholder="Profile Pic (filename or URL)" />
-    <button onclick="submitRegistration()">Register</button>
-    <button style="background:#dc3545" onclick="closeModal()">Cancel</button>
-  </div>
-</div>
-
-<!-- Riders Table -->
-<div class="card">
-  <h2>Registered Riders</h2>
-  <table>
-    <thead>
-      <tr><th>Name</th><th>Email</th><th>Phone</th><th>Ghana Card</th><th>Profile</th><th>Status</th><th>Kick</th></tr>
-    </thead>
-    <tbody id="riderList"></tbody>
-  </table>
-</div>
-
-<!-- Availability -->
-<div class="card">
-  <h2>Availability</h2>
-  <div id="availabilityList"></div>
-</div>
-
-<!-- Assign Order -->
-<div class="card">
-  <h2>Assign Order</h2>
-  <button onclick="assignOrder()">Assign Order</button>
-</div>
-
-<!-- Delivery Fee Summary -->
-<div class="card">
-  <h2>Delivery Fees (5 PM Daily)</h2>
-  <table>
-    <thead><tr><th>Rider</th><th>Fee</th><th>Date</th></tr></thead>
-    <tbody id="feesList"></tbody>
-  </table>
-</div>
-
-<!-- Total Sales -->
-<div class="card">
-  <h2>Total Sales</h2>
-  <table>
-    <thead><tr><th>Date</th><th>Total Sales</th></tr></thead>
-    <tbody id="salesList"></tbody>
-  </table>
-</div>
-
-  </div>  <script>
-    const getRiders = () => JSON.parse(localStorage.getItem("riders") || "[]");
-    const saveRiders = data => localStorage.setItem("riders", JSON.stringify(data));
-    const getFees = () => JSON.parse(localStorage.getItem("fees") || "[]");
-    const saveFees = data => localStorage.setItem("fees", JSON.stringify(data));
-    const getSales = () => JSON.parse(localStorage.getItem("sales") || "[]");
-    const saveSales = data => localStorage.setItem("sales", JSON.stringify(data));
-
-    function openModal() { document.getElementById("modal").style.display = "flex"; }
-    function closeModal() { document.getElementById("modal").style.display = "none"; }
-
-    function submitRegistration() {
-      const id = "rider_" + Date.now();
-      const rider = {
-        id,
-        email: email.value,
-        name: name.value,
-        phone: phone.value,
-        ghanaCard: ghanaCard.value,
-        profilePic: profilePic.value,
-        status: "offline",
-        orderCount: 0
-      };
-      const riders = getRiders();
-      riders.push(rider);
-      saveRiders(riders);
-      closeModal();
-      displayRiders();
-      displayAvailability();
-    }
-
-    function displayRiders() {
-      const tbody = document.getElementById("riderList");
-      tbody.innerHTML = "";
-      getRiders().forEach(r => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${r.name}</td>
-          <td>${r.email}</td>
-          <td>${r.phone}</td>
-          <td>${r.ghanaCard}</td>
-          <td><img src="${r.profilePic}" width="30" height="30" /></td>
-          <td>${r.status}</td>
-          <td><button style="background:#dc3545" onclick="kickRider('${r.id}')">Kick</button></td>
-        `;
-        tbody.appendChild(row);
-      });
-    }
-
-    function displayAvailability() {
-      const list = document.getElementById("availabilityList");
-      list.innerHTML = "";
-      getRiders().forEach(r => {
-        const dot = `<span class="status-dot ${r.status}"></span>`;
-        const tag = document.createElement("div");
-        tag.innerHTML = `${dot} ${r.name} - Orders: ${r.orderCount}`;
-        list.appendChild(tag);
-      });
-    }
-
-    function kickRider(id) {
-      const riders = getRiders().filter(r => r.id !== id);
-      saveRiders(riders);
-      displayRiders();
-      displayAvailability();
-    }
-
-    function assignOrder() {
-      let riders = getRiders();
-      let available = riders.filter(r => r.orderCount < 5);
-      if (available.length === 0) return alert("No available riders");
-      available.sort((a,b) => a.orderCount - b.orderCount);
-      available[0].orderCount++;
-      available[0].status = available[0].orderCount >= 5 ? "busy" : "online";
-      saveRiders(riders);
-      displayAvailability();
-    }
-
-    function updateFeesAndSales() {
-      const now = new Date();
-      if (now.getHours() === 17 && now.getMinutes() === 0) {
-        const date = now.toISOString().split("T")[0];
-        const riders = getRiders();
-        const fees = getFees();
-        const sales = getSales();
-        let total = 0;
-        riders.forEach(r => {
-          const fee = r.orderCount * 5;
-          total += fee;
-          fees.push({ rider: r.name, amount: fee, date });
-          r.orderCount = 0; // reset
-        });
-        sales.push({ date, amount: total });
-        saveFees(fees);
-        saveSales(sales);
-        saveRiders(riders);
-        displayFees();
-        displaySales();
-        displayAvailability();
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (!("Notification" in window)) {
+        alert("This browser does not support notifications.");
+        return;
       }
-    }
 
-    function displayFees() {
-      const body = document.getElementById("feesList");
-      body.innerHTML = "";
-      getFees().forEach(f => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${f.rider}</td><td>${f.amount}</td><td>${f.date}</td>`;
-        body.appendChild(tr);
-      });
-    }
+      function sendAutoNotification() {
+        new Notification("🎉 Welcome to BizMAX!", {
+          body: "Enjoy hot deals, gadgets, and fashion — only on bixmax.store!",
+          icon: "https://bixmax.store/favicon.ico" // Change to your logo if needed
+        });
+      }
 
-    function displaySales() {
-      const body = document.getElementById("salesList");
-      body.innerHTML = "";
-      getSales().forEach(s => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${s.date}</td><td>${s.amount}</td>`;
-        body.appendChild(tr);
-      });
-    }
-
-    setInterval(updateFeesAndSales, 60000); // every minute
-    displayRiders();
-    displayAvailability();
-    displayFees();
-    displaySales();
-  </script></body>
+      // Check permission
+      if (Notification.permission === "granted") {
+        setTimeout(sendAutoNotification, 3000);
+      } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then(permission => {
+          if (permission === "granted") {
+            setTimeout(sendAutoNotification, 3000);
+          }
+        });
+      }
+    });
+  </script>
+</body>
 </html>
