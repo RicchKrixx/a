@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Edit Fashion - BizMAX</title>
+  <title>Edit Fashion - BixMAX</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
@@ -88,7 +88,7 @@ const firebaseConfig = {
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const categories = ["Shirt", "Dress", "Sneaker", "Chain", "Glass", "Vegetable", "Fruit", "Beverage", "Bakery","Packaged Food", "Beauty", "Bedroom", "Kitchen", "Bathroom", "Living Room", "Cleaning", "Mobile Accessory", "Home Appliance", "Home Security", "Electrical Tool", "Electrical Material"];
+    const categories = ["Shirt", "Dress", "Sneaker", "Jewelry", "Glass", "Vegetable", "Fruit", "Beverage", "Bakery","Packaged Food", "Beauty", "Bedroom", "Kitchen", "Bathroom", "Living Room", "Cleaning", "Mobile Accessory", "Home Appliance", "Home Security", "Electrical Tool", "Electrical Material"];
     const container = document.getElementById("categoryEdit");
 
     for (let cat of categories) {
