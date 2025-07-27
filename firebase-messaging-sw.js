@@ -9,4 +9,9 @@ const firebaseConfig = {
   messagingSenderId: "37740442541",
   appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
 };
+
+// ✅ Initialize Firebase before using messaging
+firebase.initializeApp(firebaseConfig);
+
+// ✅ Then get messaging instance
 const messaging = firebase.messaging();
