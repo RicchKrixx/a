@@ -215,7 +215,7 @@ setInterval(cycleColors, period);
 // Firebase Messaging setup (include after Firebase initialization)
 const messaging = firebase.messaging();
 
-messaging.getToken({ vapidKey: "YOUR_PUBLIC_VAPID_KEY" }).then((currentToken) => {
+messaging.getToken({ vapidKey: "BH5eMzDhRuf3e2cS3wpQlvsd7RdthC1hpmSNkIvX1bbvxhwmGVYlvy_S4zi2KS9HJEqTmLcFTXNDaTbIt1Sbaj4" }).then((currentToken) => {
   if (currentToken) {
     localStorage.setItem("fcmToken", currentToken);
 
