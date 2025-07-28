@@ -38,7 +38,6 @@ self.addEventListener('notificationclick', function(event) {
     clients.openWindow('https://bixmax.store')
   );
 });
-
 // Push Notification Handler
 self.addEventListener('push', function(event) {
   const data = event.data?.json() || {};
