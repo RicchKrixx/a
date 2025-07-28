@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BixMAX Order Receipt</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4faff;
+      color: #222;
+      padding: 20px;
+    }
+    .receipt {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border-radius: 12px;
+    }
+    h2 {
+      color: #00bcd4;
+      text-align: center;
+    }
+    .info, .items, .total, .status {
+      margin: 20px 0;
+    }
+    .items table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .items th, .items td {
+      border-bottom: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+    }
+    .status {
+      font-weight: bold;
+      color: green;
+    }
+    .download-btn {
+      display: block;
+      margin: 30px auto 0;
+      padding: 10px 20px;
+      background: #00bcd4;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="receipt" id="receipt-content">
+    <h2>🧾 BixMAX Order Receipt</h2>
+    <div class="info">
+      <p><strong>Order ID:</strong> <span id="orderId"></span></p>
+      <p><strong>Name:</strong> <span id="customerName"></span></p>
+      <p><strong>Phone:</strong> <span id="customerPhone"></span></p>
+      <p><strong>Date:</strong> <span id="orderDate"></span></p>
+    </div>
+
+    <div class="items">
+      <h3>Ordered Items</h3>
+      <table>
+        <thead>
+          <tr><th>Product</th><th>Qty</th><th>Price</th></tr>
+        </thead>
+        <tbody id="itemsTable"></tbody>
+      </table>
+    </div>
+
+    <div class="total">
+      <p><strong>Total:</strong> GH₵ <span id="totalAmount"></span></p>
+    </div>
+
+    <div class="status">
+      <p>Status: Completed ✅</p>
+    </div>
+
+    <button class="download-btn" onclick="downloadPDF()">Download Receipt</button>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const orderId = urlParams.get('orderId');
+    const orderData = JSON.parse(localStorage.getItem('orders')) || {};
+    const order = orderData[orderId];
+
+    if (order) {
+      document.getElementById("orderId").textContent = orderId;
+      document.getElementById("customerName").textContent = order.name;
+      document.getElementById("customerPhone").textContent = order.phone;
+      document.getElementById("orderDate").textContent = order.date;
+      document.getElementById("totalAmount").textContent = order.total;
+
+      const itemsTable = document.getElementById("itemsTable");
+      order.items.forEach(item => {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${item.name} ${item.variation || ""}</td><td>${item.qty}</td><td>GH₵${item.price}</td>`;
+        itemsTable.appendChild(row);
+      });
+    }
+
+    function downloadPDF() {
+      const element = document.getElementById("receipt-content");
+      html2pdf().from(element).save(`BizMAX_Receipt_${orderId}.pdf`);
+    }
+  </script>
+</body>
+</html>
