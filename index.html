@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Welcome to BizMAX</title>
-  <style>
+  <title>Welcome to BixMAX</title>
+    <style>
     * {
       margin: 0;
       padding: 0;
@@ -94,7 +94,7 @@
         transform: scale(1);
         opacity: 1;
       }
-     
+
     }
      /* -------------  BizMAX Root Variables ------------- */
 :root {
@@ -157,100 +157,102 @@ html,body{height:100%;font-family:system-ui,Segoe UI,Roboto,sans-serif;overflow-
     <p>Your All-in-One Online Shop</p>
     <a href="/BixMax home/" class="enter-btn">Enter Now</a>
   </div>
-  
 
+  <!-- 👇 Gradient Animation Script -->
   <script>
-    /*
-  Every n seconds swap the root CSS variables with a new
-  triad pulled from an array.  Keeps the gradient fresh
-  without re-painting the DOM with oversized elements.
-*/
+    const colorSets = [
+      ['#00ffff', '#62d4ff', '#001529'],
+      ['#FFA500', '#40e9ff', '#002542'],
+      ['#22c1c3', '#FF0000', '#001d33'],
+      ['#00b7ff', '#1ae3ff', '#008000']
+    ];
+    let idx = 0;
+    const root = document.documentElement;
+    const period = 12000;
 
-const colorSets = [
-  ['#00ffff', '#62d4ff', '#001529'], // original BizMAX trio
-  ['#FFA500', '#40e9ff', '#002542'],
-  ['#22c1c3', '#FF0000', '#001d33'],
-  ['#00b7ff', '#1ae3ff', '#008000']
-];
+    function cycleColors() {
+      idx = (idx + 1) % colorSets.length;
+      root.style.setProperty('--clr-1', colorSets[idx][0]);
+      root.style.setProperty('--clr-2', colorSets[idx][1]);
+      root.style.setProperty('--clr-3', colorSets[idx][2]);
+    }
 
-let idx = 0;
-const root = document.documentElement;
-const period = 12000; // 12 s between shifts
-
-function cycleColors(){
-  idx = (idx + 1) % colorSets.length;
-  root.style.setProperty('--clr-1', colorSets[idx][0]);
-  root.style.setProperty('--clr-2', colorSets[idx][1]);
-  root.style.setProperty('--clr-3', colorSets[idx][2]);
-}
-
-setInterval(cycleColors, period);
-
-
+    setInterval(cycleColors, period);
   </script>
-<!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
-<script>
- const firebaseConfig = {
-  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-  authDomain: "bixmax-6c24c.firebaseapp.com",
-  projectId: "bixmax-6c24c",
-  storageBucket: "bixmax-6c24c.appspot.com",
-  messagingSenderId: "37740442541",
-  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-};
 
-firebase.initializeApp(firebaseConfig);
-const messaging = firebase.messaging(); document.addEventListener("DOMContentLoaded", () => {
-    if (!("Notification" in window)) return;
+  <!-- ✅ FIRST-TIME VISITOR LOGIC -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (!localStorage.getItem("bixmax_visited")) {
+        localStorage.setItem("bixmax_visited", "true");
+        console.log("First visit detected");
+      } else {
+        console.log("Returning visitor");
+      }
 
-    function sendAutoNotification() {
-      new Notification("👋 Welcome to BizMAX!", {
-        body: "Enjoy hot deals, fashion, gadgets and more.",
-        icon: "https://bixmax.store/favicon.ico" // You can change this icon
-      });
-    }
+      // Show inactivity reminder if more than 7 days since last visit
+      const now = Date.now();
+      const lastVisit = localStorage.getItem("bixmax_last_visit");
+      if (lastVisit && now - parseInt(lastVisit) > 7 * 24 * 60 * 60 * 1000) {
+        alert("👋 Welcome back! It’s been a while — check out what’s new on BixMAX.");
+      }
+      localStorage.setItem("bixmax_last_visit", now.toString());
+    });
+  </script>
 
-    // Only send notification if permission is granted
-    if (Notification.permission === "granted") {
-      setTimeout(sendAutoNotification, 3000); // Delay 3 seconds
-    } else if (Notification.permission !== "denied") {
-      // Ask for permission first
-      Notification.requestPermission().then(permission => {
-        if (permission === "granted") {
-          setTimeout(sendAutoNotification, 3000);
+  <!-- ✅ Firebase Notification Welcome -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+      authDomain: "bixmax-6c24c.firebaseapp.com",
+      projectId: "bixmax-6c24c",
+      storageBucket: "bixmax-6c24c.appspot.com",
+      messagingSenderId: "37740442541",
+      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const messaging = firebase.messaging();
+
+    document.addEventListener("DOMContentLoaded", () => {
+      if (!("Notification" in window)) return;
+
+      // Ask permission
+      if (Notification.permission === "granted") {
+        showWelcomeNotif();
+      } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then(permission => {
+          if (permission === "granted") {
+            showWelcomeNotif();
+          }
+        });
+      }
+
+      function showWelcomeNotif() {
+        // Only send once
+        if (!localStorage.getItem("bixmax_welcome_sent")) {
+          new Notification("🎉 Welcome to BixMAX", {
+            body: "We’re glad to have you here!",
+            icon: "https://bixmax.store/favicon.ico"
+          });
+          localStorage.setItem("bixmax_welcome_sent", "true");
         }
-      });
-    }
-  });
+      }
 
-// Firebase Messaging setup (include after Firebase initialization)
-const messaging = firebase.messaging();
-
-messaging.getToken({ vapidKey: "BH5eMzDhRuf3e2cS3wpQlvsd7RdthC1hpmSNkIvX1bbvxhwmGVYlvy_S4zi2KS9HJEqTmLcFTXNDaTbIt1Sbaj4" }).then((currentToken) => {
-  if (currentToken) {
-    localStorage.setItem("fcmToken", currentToken);
-
-    // Optional: send welcome message on first visit
-    if (!localStorage.getItem("welcomeSent")) {
-      new Notification("🎉 Welcome to BizMAX", {
-        body: "We’re glad to have you here!",
-        icon: "/icons/icon.png" // optional
-      });
-      localStorage.setItem("welcomeSent", "true");
-    }
-
-  } else {
-    console.log("No registration token available.");
-  }
-}).catch((err) => {
-  console.error("An error occurred while retrieving token.", err);
-});
-if ('serviceWorker' in navigator && 'Notification' in window) {
-  // Initialize Firebase and request token
-}
-</script>
+      // Register FCM token
+      messaging.getToken({ vapidKey: "BH5eMzDhRuf3e2cS3wpQlvsd7RdthC1hpmSNkIvX1bbvxhwmGVYlvy_S4zi2KS9HJEqTmLcFTXNDaTbIt1Sbaj4" })
+        .then((token) => {
+          if (token) {
+            localStorage.setItem("fcmToken", token);
+            console.log("FCM token saved");
+          }
+        }).catch(err => {
+          console.error("FCM token error", err);
+        });
+    });
+  </script>
 
 </body>
 </html>
