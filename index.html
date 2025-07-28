@@ -96,47 +96,44 @@
   }  
 
 }  
- /* -------------  BizMAX Root Variables ------------- */
-
+ 
 :root {
---clr-1: #FFA500;   /* orange            /
---clr-2: #62d4ff;   / light-blue      /
---clr-3: #001529;   / dark background */
+--clr-1: #FFA500;   
+--clr-2: #62d4ff;   
+--clr-3: #001529;   
 --blur-strength: 60px;
 }
 
-/* -------------  Reset & Layout ------------- /
 ,::before,::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;font-family:system-ui,Segoe UI,Roboto,sans-serif;overflow-x:hidden}
 
-/* -------------  Animated Gradient Layer ------------- /
 .bg{
 position:fixed;
-inset:0;                     / top:0, right:0, bottom:0, left:0 /
-z-index:-1;                  / behind everything /
+inset:0;                     
+ top:0, right:0, bottom:0, left:0 
+z-index:-1;         
 background:linear-gradient(115deg,var(--clr-1),var(--clr-2),var(--clr-3));
 background-size:300% 300%;
 animation:shift 10s ease-in-out infinite;
-filter:blur(var(--blur-strength));     / softens the color transitions */
+filter:blur(var(--blur-strength));      softens the color transitions 
 }
 
-/* Keyframes drive the “flow” of the gradient */
+
 @keyframes shift{
 0%  {background-position:0% 50%}
 50% {background-position:100% 50%}
 100% {background-position:0% 50%}
 }
 
-/* -------------  Demo Content Card ------------- /
 .content{
-min-height:100vh;            / centers the card vertically */
+min-height:100vh; 
 display:grid;
 place-items:center;
 text-align:center;
 }
 
 .card{
-background:rgba(255,255,255,0.08);   /* translucent glass effect */
+background:rgba(255,255,255,0.08);    translucent glass effect 
 backdrop-filter:blur(10px) saturate(150%);
 border-radius:1rem;
 padding:2.5rem clamp(1.5rem,4vw,4rem);
