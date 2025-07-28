@@ -5,16 +5,17 @@
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#00bcd4",
+  "orientation": "portrait",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "Bixmaxlogo.png",
       "sizes": "192x192",
-      "type": "https://i.postimg.cc/vTPd6n8Y/download.jpg"
+      "type": "image/png"
     },
     {
-      "src": "icon-512.png",
+      "src": "Bixmaxlogo.png",
       "sizes": "512x512",
-      "type": "https://i.postimg.cc/vTPd6n8Y/download.jpg"
+      "type": "image/png"
     }
   ]
 }
