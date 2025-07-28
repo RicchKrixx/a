@@ -12,8 +12,8 @@
       "type": "image/png"
     },
     {
-      "src": "Bixmaxlogo.png",
-      "sizes": "Bixmax.store.logo.png",
+      "src": "Bixmax.store.logo.png",
+      "sizes": "512×512",
       "type": "image/png"
     }
   ]
