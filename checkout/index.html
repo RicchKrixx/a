@@ -234,6 +234,14 @@ async function sendOrderToFirebase(orderId, data) {
     });
     localStorage.setItem("latestOrderId", orderId);
     console.log("✅ Order saved:", orderId);
+if ('Notification' in window && Notification.permission === 'granted') {
+  navigator.serviceWorker.ready.then(function(registration) {
+    registration.showNotification("🛍️ Order Placed!", {
+      body: "Thank you for shopping with BixMAX.",
+      icon: "https://bixmax.store/logo.png"
+    });
+  });
+}
     window.location.href = "/thankyou/?orderId=" + orderId;
   } catch (error) {
     console.error("❌ Error saving order:", error);
@@ -305,14 +313,7 @@ async function sendOrderToFirebase(orderId, data) {
       }
     });
   });
-if ('Notification' in window && Notification.permission === 'granted') {
-  navigator.serviceWorker.ready.then(function(registration) {
-    registration.showNotification("🛍️ Order Placed!", {
-      body: "Thank you for shopping with BixMAX.",
-      icon: "https://bixmax.store/logo.png"
-    });
-  });
-}
+
 </script>
 
 <script>
