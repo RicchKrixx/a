@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>BixMAX Notification Test</title>
+</head>
+<body style="font-family: sans-serif; padding: 2rem;">
+  <h2>🔔 Test BixMAX Notifications</h2>
+  <button id="testBtn" style="padding: 1rem; font-size: 1rem;">Click to Test Notification</button>
+
+  <script>
+    document.getElementById("testBtn").addEventListener("click", function () {
+      // Request permission if not yet granted
+      if (Notification.permission !== "granted") {
+        Notification.requestPermission().then(permission => {
+          if (permission === "granted") {
+            new Notification("🎉 BixMAX Notification", {
+              body: "Notifications are working on your phone!",
+            });
+          } else {
+            alert("Notification permission denied.");
+          }
+        });
+      } else {
+        new Notification("🎉 BixMAX Notification", {
+          body: "Notifications are working on your phone!",
+        });
+      }
+    });
+  </script>
+</body>
+</html>
