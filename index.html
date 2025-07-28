@@ -180,48 +180,13 @@ html,body{height:100%;font-family:system-ui,Segoe UI,Roboto,sans-serif;overflow-
   setInterval(cycleColors, period); // ✅ This was missing closing brace!
 </script>
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const now = Date.now();
-    const lastVisit = localStorage.getItem("bixmax_last_visit");
-    const firstVisit = !localStorage.getItem("bixmax_visited");
-    const enterBtn = document.querySelector(".enter-btn");
-
-    if ('serviceWorker' in navigator && 'PushManager' in window) {
-      navigator.serviceWorker.register('/service-worker.js').then(registration => {
-        console.log('✅ Service Worker registered');
-
-        enterBtn.addEventListener("click", () => {
-          if (firstVisit) {
-            localStorage.setItem("bixmax_visited", "yes");
-
-            if (Notification.permission === "granted") {
-              // 🔥 Send message to service worker to show welcome
-              registration.active.postMessage({
-                type: 'show-welcome'
-              });
-            } else {
-              Notification.requestPermission().then(permission => {
-                if (permission === "granted") {
-                  registration.active.postMessage({
-                    type: 'show-welcome'
-                  });
-                }
-              });
-            }
-          }
-
-          if (lastVisit && now - parseInt(lastVisit) > 7 * 24 * 60 * 60 * 1000) {
-            alert("👋 Welcome back! It’s been a while — check out what’s new on BixMAX.");
-          }
-
-          localStorage.setItem("bixmax_last_visit", now.toString());
-        });
-
-      }).catch(error => {
-        console.error("❌ Service Worker registration failed:", error);
+  // Ask for notification permission on every visit
+  Notification.requestPermission().then(permission => {
+    if (permission === "granted") {
+      new Notification("👋 Welcome to BixMAX!", {
+        body: "Thanks for visiting us!",
+        icon: "https://bixmax.store/logo.png"
       });
-    } else {
-      console.warn("Notifications or Service Workers not supported.");
     }
   });
 </script>
