@@ -156,10 +156,7 @@ html,body{height:100%;font-family:system-ui,Segoe UI,Roboto,sans-serif;overflow-
     <h1>Welcome to BixMAX</h1>
     <p>Your All-in-One Online Shop</p>
     <a href="/BixMax home/" class="enter-btn">Enter Now</a>
-<br><br><br><br>
-<button onclick="new Notification('🔔 BixMAX Test', { body: 'Notifications are working!' })">
-  Test Notification
-</button>
+
   </div>
 
   <!-- 👇 Gradient Animation Script -->
@@ -205,58 +202,33 @@ html,body{height:100%;font-family:system-ui,Segoe UI,Roboto,sans-serif;overflow-
   </script>
 
   <!-- ✅ Firebase Notification Welcome -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-      authDomain: "bixmax-6c24c.firebaseapp.com",
-      projectId: "bixmax-6c24c",
-      storageBucket: "bixmax-6c24c.appspot.com",
-      messagingSenderId: "37740442541",
-      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-    };
+<script>
+  // Check if first time visitor
+  const isFirstTime = !localStorage.getItem("bixmax_visited");
 
-    firebase.initializeApp(firebaseConfig);
-    const messaging = firebase.messaging();
+  if (isFirstTime) {
+    // Mark as visited
+    localStorage.setItem("bixmax_visited", "yes");
 
-    document.addEventListener("DOMContentLoaded", () => {
-      if (!("Notification" in window)) return;
-
-      // Ask permission
-      if (Notification.permission === "granted") {
-        showWelcomeNotif();
-      } else if (Notification.permission !== "denied") {
-        Notification.requestPermission().then(permission => {
-          if (permission === "granted") {
-            showWelcomeNotif();
-          }
-        });
-      }
-
-      function showWelcomeNotif() {
-        // Only send once
-        if (!localStorage.getItem("bixmax_welcome_sent")) {
-          new Notification("🎉 Welcome to BixMAX", {
-            body: "We’re glad to have you here!",
-            icon: "https://bixmax.store/favicon.ico"
+    // Show welcome notification if permission is granted
+    if (Notification.permission === "granted") {
+      new Notification("👋 Welcome to BixMAX!", {
+        body: "Thanks for visiting us. Enjoy your shopping!",
+        icon: "https://bixmax.store/logo.png" // Optional
+      });
+    } else {
+      // Ask permission and show notification if granted
+      Notification.requestPermission().then(permission => {
+        if (permission === "granted") {
+          new Notification("👋 Welcome to BixMAX!", {
+            body: "Thanks for visiting us. Enjoy your shopping!",
+            icon: "https://bixmax.store/logo.png"
           });
-          localStorage.setItem("bixmax_welcome_sent", "true");
         }
-      }
-
-      // Register FCM token
-      messaging.getToken({ vapidKey: "BH5eMzDhRuf3e2cS3wpQlvsd7RdthC1hpmSNkIvX1bbvxhwmGVYlvy_S4zi2KS9HJEqTmLcFTXNDaTbIt1Sbaj4" })
-        .then((token) => {
-          if (token) {
-            localStorage.setItem("fcmToken", token);
-            console.log("FCM token saved");
-          }
-        }).catch(err => {
-          console.error("FCM token error", err);
-        });
-    });
-  </script>
+      });
+    }
+  }
+</script>
 
 </body>
 </html>
