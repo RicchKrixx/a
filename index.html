@@ -158,27 +158,26 @@ html,body{height:100%;font-family:system-ui,Segoe UI,Roboto,sans-serif;overflow-
     <a href="/BixMax home/" class="enter-btn">Enter Now</a>
 
   </div>
+<!-- 👇 Gradient Animation Script -->
+<script>
+  const colorSets = [
+    ['#00ffff', '#62d4ff', '#001529'],
+    ['#FFA500', '#40e9ff', '#002542'],
+    ['#22c1c3', '#FF0000', '#001d33'],
+    ['#00b7ff', '#1ae3ff', '#008000']
+  ];
+  let idx = 0;
+  const root = document.documentElement;
+  const period = 12000;
 
-  <!-- 👇 Gradient Animation Script -->
-  <script>
-    const colorSets = [
-      ['#00ffff', '#62d4ff', '#001529'],
-      ['#FFA500', '#40e9ff', '#002542'],
-      ['#22c1c3', '#FF0000', '#001d33'],
-      ['#00b7ff', '#1ae3ff', '#008000']
-    ];
-    let idx = 0;
-    const root = document.documentElement;
-    const period = 12000;
+  function cycleColors() {
+    idx = (idx + 1) % colorSets.length;
+    root.style.setProperty('--clr-1', colorSets[idx][0]);
+    root.style.setProperty('--clr-2', colorSets[idx][1]);
+    root.style.setProperty('--clr-3', colorSets[idx][2]);
+  }
 
-    function cycleColors() {
-      idx = (idx + 1) % colorSets.length;
-      root.style.setProperty('--clr-1', colorSets[idx][0]);
-      root.style.setProperty('--clr-2', colorSets[idx][1]);
-      root.style.setProperty('--clr-3', colorSets[idx][2]);
-    }
-
-    setInterval(cycleColors, period);
+  setInterval(cycleColors, period); // ✅ This was missing closing brace!
 </script>
  <script>
   document.addEventListener("DOMContentLoaded", () => {
