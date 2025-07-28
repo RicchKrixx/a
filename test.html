@@ -1,38 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>BixMAX Notification Test</title>
-</head>
-<body style="font-family: sans-serif; padding: 2rem;">
-  <h2>🔔 Test BixMAX Notifications</h2>
- <button onclick="sendTestNotification()" style="padding: 10px 20px; font-size: 16px;">
-  🔔 Send Test Notification
-</button>
-
-<script>
-  // Ask for permission on load
-  document.addEventListener("DOMContentLoaded", () => {
-    if ("Notification" in window && Notification.permission !== "granted") {
-      Notification.requestPermission();
-    }
-  });
-
-  function sendTestNotification() {
-    if (!("Notification" in window)) {
-      alert("This browser does not support notifications.");
-      return;
-    }
-
-    if (Notification.permission === "granted") {
-      new Notification("🔔 BixMAX Notice", {
-        body: "Test notification sent successfully!",
-        icon: "https://cdn-icons-png.flaticon.com/512/565/565547.png", // optional icon
-      });
-    } else {
-      alert("Notifications are not allowed. Please enable them in your browser settings.");
-    }
-  }
-</script>
+<html>
+<head><meta charset="UTF-8"><title>Test Page</title></head>
+<body>
+  <button id="testBtn" style="padding:20px; font-size:20px;">
+    🔔 Click Me
+  </button>
+  <script>
+    document.getElementById('testBtn').addEventListener('click', function(){
+      alert('Button clicked');
+    });
+  </script>
 </body>
 </html>
