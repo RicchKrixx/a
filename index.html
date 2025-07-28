@@ -180,15 +180,29 @@ html,body{height:100%;font-family:system-ui,Segoe UI,Roboto,sans-serif;overflow-
   setInterval(cycleColors, period); // ✅ This was missing closing brace!
 </script>
 <script>
-  // Ask for notification permission on every visit
-  Notification.requestPermission().then(permission => {
-    if (permission === "granted") {
-      new Notification("👋 Welcome to BixMAX!", {
-        body: "Thanks for visiting us!",
-        icon: "https://bixmax.store/logo.png"
+  if (Notification.permission !== "granted") {
+    Notification.requestPermission().then(permission => {
+      if (permission === "granted") {
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.ready.then(function(registration) {
+            registration.showNotification("👋 Welcome to BixMAX!", {
+              body: "Thanks for visiting us!",
+              icon: "https://bixmax.store/logo.png"
+            });
+          });
+        }
+      }
+    });
+  } else {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.ready.then(function(registration) {
+        registration.showNotification("👋 Welcome back to BixMAX!", {
+          body: "Good to see you again!",
+          icon: "https://bixmax.store/logo.png"
+        });
       });
     }
-  });
+  }
 </script>
 
 </body>
