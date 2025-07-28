@@ -175,23 +175,18 @@ root.style.setProperty('--clr-3', colorSets[idx][2]);
 setInterval(cycleColors, period); // ✅ This was missing closing brace!
 </script>
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    if ('Notification' in window) {
-      const hasSeenWelcome = localStorage.getItem("bixmax_seen_welcome");
-
-      if (!hasSeenWelcome) {
-        Notification.requestPermission().then(permission => {
-          if (permission === "granted") {
-            new Notification("👋 Welcome to BixMAX!", {
-              body: "Thanks for visiting us!",
-              icon: "Bixmaxlogo.png" // ✅ Make sure this image exists in the same folder
-            });
-            localStorage.setItem("bixmax_seen_welcome", "yes");
-          }
+document.addEventListener('DOMContentLoaded', () => {
+  if ('Notification' in window) {
+    Notification.requestPermission().then(permission => {
+      if (permission === "granted") {
+        new Notification("👋 Welcome to BixMAX!", {
+          body: "Thanks for visiting us!",
+          icon: "Bixmaxlogo.png"
         });
       }
-    }
-  });
+    });
+  }
+});
 </script>
  <script>  
   if ("serviceWorker" in navigator) {  
