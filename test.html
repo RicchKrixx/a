@@ -1,14 +1,50 @@
 <!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"><title>Test Page</title></head>
-<body>
-  <button id="testBtn" style="padding:20px; font-size:20px;">
-    🔔 Click Me
-  </button>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BizMAX Notification Test</title>
+</head>
+<body style="text-align:center; padding:50px; font-family:sans-serif; background:#f0f8ff;">
+  <h2>🔔 BizMAX Notification Test</h2>
+  <p>Tap the button to trigger a test notification</p>
+  <button id="notifyBtn" style="padding:15px 30px; font-size:18px; border:none; background:#007bff; color:white; border-radius:8px;">Send Test Notification</button>
+
   <script>
-    document.getElementById('testBtn').addEventListener('click', function(){
-      alert('Button clicked');
+    document.getElementById("notifyBtn").addEventListener("click", function () {
+      // Step 1: Check if browser supports Notification API
+      if (!("Notification" in window)) {
+        alert("This browser does not support desktop or push notifications.");
+        return;
+      }
+
+      // Step 2: Handle permissions
+      if (Notification.permission === "granted") {
+        // Already granted
+        sendNotification();
+      } else if (Notification.permission !== "denied") {
+        // Ask for permission
+        Notification.requestPermission().then(permission => {
+          if (permission === "granted") {
+            sendNotification();
+          } else {
+            alert("Notification permission denied.");
+          }
+        });
+      } else {
+        alert("You’ve blocked notifications. Please enable them in your browser settings.");
+      }
     });
+
+    function sendNotification() {
+      const options = {
+        body: "🛍️ New offer just dropped on BizMAX!",
+        icon: "https://bixmax.store/icon.png", // Change if needed
+        vibrate: [100, 50, 100],
+        tag: "bizmax-offer",
+        renotify: true
+      };
+      new Notification("Hello from BizMAX 👋", options);
+    }
   </script>
 </body>
 </html>
