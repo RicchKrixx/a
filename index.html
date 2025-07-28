@@ -181,43 +181,43 @@ html,body{height:100%;font-family:system-ui,Segoe UI,Roboto,sans-serif;overflow-
 
   setInterval(cycleColors, period); // ✅ This was missing closing brace!
 </script>
-<script>
-  if ('Notification' in window && 'serviceWorker' in navigator) {
-    // Check if user already received the welcome notification
-    const hasSeenWelcome = localStorage.getItem("bixmax_seen_welcome");
 
-    if (!hasSeenWelcome) {
-      // Ask for permission
-      Notification.requestPermission().then(permission => {
-        if (permission === "granted") {
-          navigator.serviceWorker.ready.then(function(registration) {
-            registration.showNotification("👋 Welcome to BixMAX!", {
-              body: "Thanks for visiting us!",
-              icon: "https://bixmax.store/logo.png"
-            });
-            // Mark that user has seen it
-            localStorage.setItem("bixmax_seen_welcome", "yes");
-          });
-        }
-      });
-    }
-  }
-</script>
-<script>
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("/service-worker.js")
-        .then(reg => {
-          console.log("BixMAX service worker registered!");
-
-          // ✅ Show welcome notification once registered
-          if (navigator.serviceWorker.controller) {
-            navigator.serviceWorker.controller.postMessage({ type: "show-welcome" });
-          }
-        })
-        .catch(err => console.error("SW registration failed:", err));
-    });
-  }
-</script>
+<script>  
+  if ('Notification' in window && 'serviceWorker' in navigator) {  
+    // Check if user already received the welcome notification  
+    const hasSeenWelcome = localStorage.getItem("bixmax_seen_welcome");  
+  
+    if (!hasSeenWelcome) {  
+      // Ask for permission  
+      Notification.requestPermission().then(permission => {  
+        if (permission === "granted") {  
+          navigator.serviceWorker.ready.then(function(registration) {  
+            registration.showNotification("👋 Welcome to BixMAX!", {  
+              body: "Thanks for visiting us!",  
+              icon: "https://Bixmaxlogo.png"  
+            });  
+            // Mark that user has seen it  
+            localStorage.setItem("bixmax_seen_welcome", "yes");  
+          });  
+        }  
+      });  
+    }  
+  }  
+</script>  <script>  
+  if ("serviceWorker" in navigator) {  
+    window.addEventListener("load", () => {  
+      navigator.serviceWorker.register("/service-worker.js")  
+        .then(reg => {  
+          console.log("BixMAX service worker registered!");  
+  
+          // ✅ Show welcome notification once registered  
+          if (navigator.serviceWorker.controller) {  
+            navigator.serviceWorker.controller.postMessage({ type: "show-welcome" });  
+          }  
+        })  
+        .catch(err => console.error("SW registration failed:", err));  
+    });  
+  }  
+</script> 
 </body>
 </html>
