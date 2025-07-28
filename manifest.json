@@ -1,0 +1,20 @@
+{
+  "name": "BixMAX Store",
+  "short_name": "BixMAX",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#00bcd4",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "https://i.postimg.cc/vTPd6n8Y/download.jpg"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "https://i.postimg.cc/vTPd6n8Y/download.jpg"
+    }
+  ]
+}
