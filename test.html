@@ -1,37 +1,46 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Test Notification</title>
+  <title>Notification Test | BixMAX</title>
 </head>
-<body style="text-align:center; padding:40px; font-family:sans-serif;">
-  <h2>BizMAX Notification Test</h2>
-  <button onclick="notifyUser()" style="padding:15px 30px; font-size:18px; background:#007bff; color:white; border:none; border-radius:6px;">Send Notification</button>
+<body style="background:#e8f4ff; font-family:sans-serif; text-align:center; padding:50px;">
+
+  <h2>🔔 BixMAX Notification Test</h2>
+  <button id="notifyBtn" style="padding:15px 25px; font-size:16px;">Test Notification</button>
 
   <script>
-    function notifyUser() {
-      if (!("Notification" in window)) {
-        alert("Your browser doesn't support notifications.");
-        return;
-      }
-
-      if (Notification.permission === "granted") {
-        new Notification("🔔 BizMAX Offer!", {
-          body: "Check out new deals and updates now!",
-          icon: "https://bixmax.store/icon.png"
+    // Register service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(function(reg) {
+          console.log("Service Worker registered:", reg.scope);
+        })
+        .catch(function(err) {
+          console.error("Service Worker registration failed:", err);
         });
-      } else if (Notification.permission !== "denied") {
-        Notification.requestPermission().then(permission => {
-          if (permission === "granted") {
-            new Notification("🔔 BizMAX Offer!", {
-              body: "Check out new deals and updates now!",
-              icon: "https://bixmax.store/icon.png"
+    }
+
+    // Ask permission on load
+    Notification.requestPermission().then(function(permission) {
+      console.log("Permission:", permission);
+    });
+
+    // Trigger test notification
+    document.getElementById('notifyBtn').addEventListener('click', function () {
+      if (Notification.permission === 'granted') {
+        navigator.serviceWorker.getRegistration().then(function(reg) {
+          if (reg) {
+            reg.showNotification("Hello from BixMAX 👋", {
+              body: "You’re now subscribed to updates!",
+              icon: 'https://bixmax.store/logo.png',
+              badge: 'https://bixmax.store/icon.png'
             });
           }
         });
       } else {
-        alert("Notification permission was denied.");
+        alert("Please allow notifications first.");
       }
-    }
+    });
   </script>
 </body>
 </html>
