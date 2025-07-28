@@ -203,6 +203,21 @@ html,body{height:100%;font-family:system-ui,Segoe UI,Roboto,sans-serif;overflow-
     }
   }
 </script>
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("/service-worker.js")
+        .then(reg => {
+          console.log("BixMAX service worker registered!");
 
+          // ✅ Show welcome notification once registered
+          if (navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({ type: "show-welcome" });
+          }
+        })
+        .catch(err => console.error("SW registration failed:", err));
+    });
+  }
+</script>
 </body>
 </html>
