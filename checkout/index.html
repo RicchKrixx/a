@@ -156,7 +156,9 @@
         <option value="payment on delivery">Pay on Delivery</option>
         <option value="Paid">Pay Online</option>
       </select>
-
+<button onclick="sendOrderToFirebase('TEST123', {name:'Test User', method:'Test', items:[], email:'test@bixmax.com'})">
+Send Test Notification
+</button>
       <button id="actionBtn" type="button">Place Order</button>
     </div>
   </form>
@@ -301,7 +303,7 @@ if ('Notification' in window && Notification.permission === 'granted') {
           ref: orderId,
           callback: function (response) {
             orderData.method = "Paid";
-            sendOrderToFirebase(email, orderId, orderData);
+            sendOrderToFirebase(orderId, orderData);
           },
           onClose: function () {
             showLoader(false);
