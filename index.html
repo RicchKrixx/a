@@ -184,7 +184,7 @@ setInterval(cycleColors, period); // ✅ This was missing closing brace!
           if (permission === "granted") {
             new Notification("👋 Welcome to BixMAX!", {
               body: "Thanks for visiting us!",
-              icon: "https://Bixmaxlogo.png" // change if needed
+              icon: "Bixmaxlogo.png" // ✅ Make sure this image exists in the same folder
             });
             localStorage.setItem("bixmax_seen_welcome", "yes");
           }
@@ -192,7 +192,8 @@ setInterval(cycleColors, period); // ✅ This was missing closing brace!
       }
     }
   });
-</script>  <script>  
+</script>
+ <script>  
   if ("serviceWorker" in navigator) {  
     window.addEventListener("load", () => {  
       navigator.serviceWorker.register("/service-worker.js")  
