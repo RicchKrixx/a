@@ -179,41 +179,42 @@ html,body{height:100%;font-family:system-ui,Segoe UI,Roboto,sans-serif;overflow-
 
   setInterval(cycleColors, period); // ✅ This was missing closing brace!
 </script>
- <script>
+<script>
   document.addEventListener("DOMContentLoaded", () => {
     const now = Date.now();
     const lastVisit = localStorage.getItem("bixmax_last_visit");
     const firstVisit = !localStorage.getItem("bixmax_visited");
 
-    // 👉 First-time notification
-    if (firstVisit) {
-      localStorage.setItem("bixmax_visited", "yes");
+    const enterBtn = document.querySelector(".enter-btn");
 
-      if (Notification.permission === "granted") {
-        new Notification("👋 Welcome to BixMAX!", {
-          body: "Thanks for visiting us. Enjoy your shopping!",
-          icon: "https://bixmax.store/logo.png"
-        });
-      } else {
-        Notification.requestPermission().then(permission => {
-          if (permission === "granted") {
-            new Notification("👋 Welcome to BixMAX!", {
-              body: "Thanks for visiting us. Enjoy your shopping!",
-              icon: "https://bixmax.store/logo.png"
-            });
-          }
-        });
+    enterBtn.addEventListener("click", () => {
+      if (firstVisit) {
+        localStorage.setItem("bixmax_visited", "yes");
+
+        if (Notification.permission === "granted") {
+          new Notification("👋 Welcome to BixMAX!", {
+            body: "Thanks for visiting us. Enjoy your shopping!",
+            icon: "https://bixmax.store/logo.png"
+          });
+        } else {
+          Notification.requestPermission().then(permission => {
+            if (permission === "granted") {
+              new Notification("👋 Welcome to BixMAX!", {
+                body: "Thanks for visiting us. Enjoy your shopping!",
+                icon: "https://bixmax.store/logo.png"
+              });
+            }
+          });
+        }
       }
-    }
 
-    // 👉 7-day inactivity reminder
-    if (lastVisit && now - parseInt(lastVisit) > 7 * 24 * 60 * 60 * 1000) {
-      alert("👋 Welcome back! It’s been a while — check out what’s new on BixMAX.");
-    }
+      if (lastVisit && now - parseInt(lastVisit) > 7 * 24 * 60 * 60 * 1000) {
+        alert("👋 Welcome back! It’s been a while — check out what’s new on BixMAX.");
+      }
 
-    localStorage.setItem("bixmax_last_visit", now.toString());
+      localStorage.setItem("bixmax_last_visit", now.toString());
+    });
   });
 </script>
-
 </body>
 </html>
