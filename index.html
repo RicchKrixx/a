@@ -215,6 +215,40 @@ html,body{height:100%;font-family:system-ui,Segoe UI,Roboto,sans-serif;overflow-
       localStorage.setItem("bixmax_last_visit", now.toString());
     });
   });
+if ('serviceWorker' in navigator && 'PushManager' in window) {
+  navigator.serviceWorker.register('/service-worker.js').then(registration => {
+    console.log('Service Worker registered');
+
+    const showWelcomeNotification = () => {
+      registration.showNotification("👋 Welcome to BixMAX!", {
+        body: "Thanks for visiting us. Enjoy your shopping!",
+        icon: "https://bixmax.store/logo.png"
+      });
+    };
+
+    enterBtn.addEventListener("click", () => {
+      if (firstVisit) {
+        localStorage.setItem("bixmax_visited", "yes");
+
+        if (Notification.permission === "granted") {
+          showWelcomeNotification();
+        } else {
+          Notification.requestPermission().then(permission => {
+            if (permission === "granted") {
+              showWelcomeNotification();
+            }
+          });
+        }
+      }
+
+      if (lastVisit && now - parseInt(lastVisit) > 7 * 24 * 60 * 60 * 1000) {
+        alert("👋 Welcome back! It’s been a while — check out what’s new on BixMAX.");
+      }
+
+      localStorage.setItem("bixmax_last_visit", now.toString());
+    });
+  });
+}
 </script>
 </body>
 </html>
