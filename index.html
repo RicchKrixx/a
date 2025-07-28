@@ -1,185 +1,180 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#00bcd4">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Welcome to BixMAX</title>
-    <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+<!DOCTYPE html>  <html lang="en">  
+<head>  
+  <meta charset="UTF-8" />  
+  <link rel="manifest" href="manifest.json" />  
+  <meta name="theme-color" content="#00bcd4">  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>  
+  <title>Welcome to BixMAX</title>  
+    <style>  
+    * {  
+      margin: 0;  
+      padding: 0;  
+      box-sizing: border-box;  
+    }  body {  
+  height: 100vh;  
+  background-color: lightblue;  
+  font-family: Arial, sans-serif;  
+  display: flex;  
+  justify-content: center;  
+  align-items: center;  
+  flex-direction: column;  
+  overflow: hidden;  
+}  
 
-    body {
-      height: 100vh;
-      background-color: lightblue;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      overflow: hidden;
-    }
+.welcome-box {  
+  background: rgba(255, 255, 255, 0.05);  
+  backdrop-filter: blur(25px);  
+  border-radius: 30px;  
+  padding: 40px 30px;  
+  text-align: center;  
+  box-shadow: 0px 0px 30px 20px rgba(0, 0, 0, 0.1);  
+  border: solid 5px rgba(255, 255, 255, 0.1);  
+  color: white;  
+  max-width: 90%;  
+  opacity: 0;  
+  transform: translateY(50px);  
+  animation: fadeInUp 1.2s ease-out forwards;  
+}  
 
-    .welcome-box {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(25px);
-      border-radius: 30px;
-      padding: 40px 30px;
-      text-align: center;
-      box-shadow: 0px 0px 30px 20px rgba(0, 0, 0, 0.1);
-      border: solid 5px rgba(255, 255, 255, 0.1);
-      color: white;
-      max-width: 90%;
-      opacity: 0;
-      transform: translateY(50px);
-      animation: fadeInUp 1.2s ease-out forwards;
-    }
+.welcome-box h1 {  
+  font-size: 32px;  
+  margin-bottom: 15px;  
+  color: white;  
+  animation: popIn 1s ease-out 0.3s forwards;  
+  opacity: 0;  
+}  
 
-    .welcome-box h1 {
-      font-size: 32px;
-      margin-bottom: 15px;
-      color: white;
-      animation: popIn 1s ease-out 0.3s forwards;
-      opacity: 0;
-    }
+.welcome-box p {  
+  font-size: 18px;  
+  margin-bottom: 30px;  
+  animation: fadeIn 1s ease-out 0.6s forwards;  
+  opacity: 0;  
+}  
 
-    .welcome-box p {
-      font-size: 18px;
-      margin-bottom: 30px;
-      animation: fadeIn 1s ease-out 0.6s forwards;
-      opacity: 0;
-    }
+.enter-btn {  
+  background-color: cyan;  
+  color: black;  
+  padding: 12px 24px;  
+  border-radius: 30px;  
+  text-decoration: none;  
+  font-weight: bold;  
+  font-size: 16px;  
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);  
+  transition: transform 0.3s ease, background-color 0.3s ease;  
+  animation: fadeIn 1s ease-out 0.9s forwards;  
+  opacity: 0;  
+}  
 
-    .enter-btn {
-      background-color: cyan;
-      color: black;
-      padding: 12px 24px;
-      border-radius: 30px;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 16px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-      transition: transform 0.3s ease, background-color 0.3s ease;
-      animation: fadeIn 1s ease-out 0.9s forwards;
-      opacity: 0;
-    }
+.enter-btn:hover {  
+  background-color: #00bcbc;  
+  transform: scale(1.05);  
+}  
 
-    .enter-btn:hover {
-      background-color: #00bcbc;
-      transform: scale(1.05);
-    }
+/* Animations */  
+@keyframes fadeInUp {  
+  to {  
+    opacity: 1;  
+    transform: translateY(0);  
+  }  
+}  
 
-    /* Animations */
-    @keyframes fadeInUp {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+@keyframes fadeIn {  
+  to {  
+    opacity: 1;  
+  }  
+}  
 
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-      }
-    }
+@keyframes popIn {  
+  0% {  
+    transform: scale(0.8);  
+    opacity: 0;  
+  }  
+  100% {  
+    transform: scale(1);  
+    opacity: 1;  
+  }  
 
-    @keyframes popIn {
-      0% {
-        transform: scale(0.8);
-        opacity: 0;
-      }
-      100% {
-        transform: scale(1);
-        opacity: 1;
-      }
+}  
+ /* -------------  BizMAX Root Variables ------------- */
 
-    }
-     /* -------------  BizMAX Root Variables ------------- */
 :root {
-  --clr-1: #FFA500;   /* orange            */
-  --clr-2: #62d4ff;   /* light-blue      */
-  --clr-3: #001529;   /* dark background */
-  --blur-strength: 60px;
+--clr-1: #FFA500;   /* orange            /
+--clr-2: #62d4ff;   / light-blue      /
+--clr-3: #001529;   / dark background */
+--blur-strength: 60px;
 }
 
-/* -------------  Reset & Layout ------------- */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+/* -------------  Reset & Layout ------------- /
+,::before,::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;font-family:system-ui,Segoe UI,Roboto,sans-serif;overflow-x:hidden}
 
-/* -------------  Animated Gradient Layer ------------- */
+/* -------------  Animated Gradient Layer ------------- /
 .bg{
-  position:fixed;
-  inset:0;                     /* top:0, right:0, bottom:0, left:0 */
-  z-index:-1;                  /* behind everything */
-  background:linear-gradient(115deg,var(--clr-1),var(--clr-2),var(--clr-3));
-  background-size:300% 300%;
-  animation:shift 10s ease-in-out infinite;
-  filter:blur(var(--blur-strength));     /* softens the color transitions */
+position:fixed;
+inset:0;                     / top:0, right:0, bottom:0, left:0 /
+z-index:-1;                  / behind everything /
+background:linear-gradient(115deg,var(--clr-1),var(--clr-2),var(--clr-3));
+background-size:300% 300%;
+animation:shift 10s ease-in-out infinite;
+filter:blur(var(--blur-strength));     / softens the color transitions */
 }
 
 /* Keyframes drive the “flow” of the gradient */
 @keyframes shift{
-  0%  {background-position:0% 50%}
-  50% {background-position:100% 50%}
-  100% {background-position:0% 50%}
+0%  {background-position:0% 50%}
+50% {background-position:100% 50%}
+100% {background-position:0% 50%}
 }
 
-/* -------------  Demo Content Card ------------- */
+/* -------------  Demo Content Card ------------- /
 .content{
-  min-height:100vh;            /* centers the card vertically */
-  display:grid;
-  place-items:center;
-  text-align:center;
+min-height:100vh;            / centers the card vertically */
+display:grid;
+place-items:center;
+text-align:center;
 }
 
 .card{
-  background:rgba(255,255,255,0.08);   /* translucent glass effect */
-  backdrop-filter:blur(10px) saturate(150%);
-  border-radius:1rem;
-  padding:2.5rem clamp(1.5rem,4vw,4rem);
-  box-shadow:0 20px 30px -10px rgba(0,0,0,0.4);
-  color:#fff;
+background:rgba(255,255,255,0.08);   /* translucent glass effect */
+backdrop-filter:blur(10px) saturate(150%);
+border-radius:1rem;
+padding:2.5rem clamp(1.5rem,4vw,4rem);
+box-shadow:0 20px 30px -10px rgba(0,0,0,0.4);
+color:#fff;
 }
 
 /* Responsive tweaks */
 @media(max-width:480px){
-  .card{padding:1.75rem 1.25rem}
-  h1{font-size:1.75rem}
+.card{padding:1.75rem 1.25rem}
+h1{font-size:1.75rem}
 }
-  </style>
-</head>
-<body>
-  <div class="bg"></div>
-  <div class="welcome-box">
-    <h1>Welcome to BixMAX</h1>
-    <p>Your All-in-One Online Shop</p>
-    <a href="/BixMax home/" class="enter-btn">Enter Now</a>
+</style>
 
-  </div>
-<!-- 👇 Gradient Animation Script -->
-<script>
-  const colorSets = [
-    ['#00ffff', '#62d4ff', '#001529'],
-    ['#FFA500', '#40e9ff', '#002542'],
-    ['#22c1c3', '#FF0000', '#001d33'],
-    ['#00b7ff', '#1ae3ff', '#008000']
-  ];
-  let idx = 0;
-  const root = document.documentElement;
-  const period = 12000;
+</head>  
+<body>  
+  <div class="bg"></div>  
+  <div class="welcome-box">  
+    <h1>Welcome to BixMAX</h1>  
+    <p>Your All-in-One Online Shop</p>  
+    <a href="/BixMax home/" class="enter-btn">Enter Now</a>    </div>  
+<!-- 👇 Gradient Animation Script -->  
+<script>  
+  const colorSets = [  
+    ['#00ffff', '#62d4ff', '#001529'],  
+    ['#FFA500', '#40e9ff', '#002542'],  
+    ['#22c1c3', '#FF0000', '#001d33'],  
+    ['#00b7ff', '#1ae3ff', '#008000']  
+  ];  
+  let idx = 0;  
+  const root = document.documentElement;  
+  const period = 12000;  function cycleColors() {
+idx = (idx + 1) % colorSets.length;
+root.style.setProperty('--clr-1', colorSets[idx][0]);
+root.style.setProperty('--clr-2', colorSets[idx][1]);
+root.style.setProperty('--clr-3', colorSets[idx][2]);
+}
 
-  function cycleColors() {
-    idx = (idx + 1) % colorSets.length;
-    root.style.setProperty('--clr-1', colorSets[idx][0]);
-    root.style.setProperty('--clr-2', colorSets[idx][1]);
-    root.style.setProperty('--clr-3', colorSets[idx][2]);
-  }
-
-  setInterval(cycleColors, period); // ✅ This was missing closing brace!
+setInterval(cycleColors, period); // ✅ This was missing closing brace!
 </script>
 
 <script>  
@@ -194,7 +189,7 @@ html,body{height:100%;font-family:system-ui,Segoe UI,Roboto,sans-serif;overflow-
           navigator.serviceWorker.ready.then(function(registration) {  
             registration.showNotification("👋 Welcome to BixMAX!", {  
               body: "Thanks for visiting us!",  
-              icon: "https://Bixmaxlogo.png"  
+              icon: "https://bixmax.store/logo.png"  
             });  
             // Mark that user has seen it  
             localStorage.setItem("bixmax_seen_welcome", "yes");  
@@ -218,6 +213,5 @@ html,body{height:100%;font-family:system-ui,Segoe UI,Roboto,sans-serif;overflow-
         .catch(err => console.error("SW registration failed:", err));  
     });  
   }  
-</script> 
-</body>
+</script>  </body>  
 </html>
