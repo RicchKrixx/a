@@ -179,55 +179,41 @@ html,body{height:100%;font-family:system-ui,Segoe UI,Roboto,sans-serif;overflow-
     }
 
     setInterval(cycleColors, period);
-  </script>
+</script>
+ <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const now = Date.now();
+    const lastVisit = localStorage.getItem("bixmax_last_visit");
+    const firstVisit = !localStorage.getItem("bixmax_visited");
 
-  <!-- ✅ FIRST-TIME VISITOR LOGIC -->
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      if (!localStorage.getItem("bixmax_visited")) {
-        localStorage.setItem("bixmax_visited", "true");
-        console.log("First visit detected");
+    // 👉 First-time notification
+    if (firstVisit) {
+      localStorage.setItem("bixmax_visited", "yes");
+
+      if (Notification.permission === "granted") {
+        new Notification("👋 Welcome to BixMAX!", {
+          body: "Thanks for visiting us. Enjoy your shopping!",
+          icon: "https://bixmax.store/logo.png"
+        });
       } else {
-        console.log("Returning visitor");
+        Notification.requestPermission().then(permission => {
+          if (permission === "granted") {
+            new Notification("👋 Welcome to BixMAX!", {
+              body: "Thanks for visiting us. Enjoy your shopping!",
+              icon: "https://bixmax.store/logo.png"
+            });
+          }
+        });
       }
-
-      // Show inactivity reminder if more than 7 days since last visit
-      const now = Date.now();
-      const lastVisit = localStorage.getItem("bixmax_last_visit");
-      if (lastVisit && now - parseInt(lastVisit) > 7 * 24 * 60 * 60 * 1000) {
-        alert("👋 Welcome back! It’s been a while — check out what’s new on BixMAX.");
-      }
-      localStorage.setItem("bixmax_last_visit", now.toString());
-    });
-  </script>
-
-  <!-- ✅ Firebase Notification Welcome -->
-<script>
-  // Check if first time visitor
-  const isFirstTime = !localStorage.getItem("bixmax_visited");
-
-  if (isFirstTime) {
-    // Mark as visited
-    localStorage.setItem("bixmax_visited", "yes");
-
-    // Show welcome notification if permission is granted
-    if (Notification.permission === "granted") {
-      new Notification("👋 Welcome to BixMAX!", {
-        body: "Thanks for visiting us. Enjoy your shopping!",
-        icon: "https://bixmax.store/logo.png" // Optional
-      });
-    } else {
-      // Ask permission and show notification if granted
-      Notification.requestPermission().then(permission => {
-        if (permission === "granted") {
-          new Notification("👋 Welcome to BixMAX!", {
-            body: "Thanks for visiting us. Enjoy your shopping!",
-            icon: "https://bixmax.store/logo.png"
-          });
-        }
-      });
     }
-  }
+
+    // 👉 7-day inactivity reminder
+    if (lastVisit && now - parseInt(lastVisit) > 7 * 24 * 60 * 60 * 1000) {
+      alert("👋 Welcome back! It’s been a while — check out what’s new on BixMAX.");
+    }
+
+    localStorage.setItem("bixmax_last_visit", now.toString());
+  });
 </script>
 
 </body>
