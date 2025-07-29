@@ -254,6 +254,8 @@
         dropdownMenu.style.display = "none";
       });
     };
+</script>
+<script>
 
 import { getAuth, deleteUser } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
@@ -269,7 +271,7 @@ window.deleteAccount = function () {
     deleteUser(user)
       .then(() => {
         alert("Your account has been deleted.");
-        window.location.href = "/"; // redirect to homepage or sign-in
+        window.location.href = "/auth/"; // redirect to homepage or sign-in
       })
       .catch((error) => {
         if (error.code === "auth/requires-recent-login") {
