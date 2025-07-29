@@ -212,7 +212,36 @@ padding: 10px;
 width: 100%;
 border-radius: 10px;
 }
+#flyer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background-color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 1s ease;
+    }
 
+    #flyer img {
+      width: 90%;
+      max-width: 500px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    #fashionContent {
+      display: none;
+      padding: 20px;
+    }
+
+    .fadeOut {
+      opacity: 0;
+      pointer-events: none;
+    }
 </style> 
  </head>  
 <body> 
@@ -275,7 +304,33 @@ border-radius: 10px;
   </div>  
 </div>
  </div>    
-  <footer>&copy; BixMAX 2025. All rights reserved.</footer>   
+  <footer>&copy; BixMAX 2025. All rights reserved.</footer>  
+
+
+  <!-- FLYER IMAGE -->
+  <div id="flyer">
+    <img src="pp.jpeg" alt="Loading Flyer" />
+  </div>
+
+  <!-- FASHION CONTENT -->
+  <div id="fashionContent">
+    <h2>Welcome to BizMAX Fashion</h2>
+    <p>Your latest styles are now available!</p>
+    <!-- Add your fashion products here -->
+  </div>
+
+  <script>
+    // Delay then hide flyer and show fashion content
+    setTimeout(() => {
+      const flyer = document.getElementById('flyer');
+      flyer.classList.add('fadeOut');
+
+      setTimeout(() => {
+        flyer.style.display = 'none';
+        document.getElementById('fashionContent').style.display = 'block';
+      }, 1000); // wait for fade effect
+    }, 3000); // show flyer for 3 seconds
+  </script> 
  <!-- 🔘 Variation Popup HTML (injects dynamically by script) -->    <script>    
     const variationItems = {    
       "Nike Air": { color: ["Red", "White"], size: ["42", "43", "44"] },    
