@@ -172,6 +172,7 @@
         <li><a href="/help/">❓ Help Center</a></li>
         <li><a href="/BixMax home/">🏠 Return to Homepage</a></li>
         <li><a href="#" onclick="logout()">🚪 Logout</a></li>
+<li><button onclick="deleteAccount()">Delete My Account</button></li>
       </ul>
     </div>
   </div>
@@ -253,6 +254,36 @@
         dropdownMenu.style.display = "none";
       });
     };
+
+import { getAuth, deleteUser } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const auth = getAuth();
+
+window.deleteAccount = function () {
+  const user = auth.currentUser;
+
+  if (user) {
+    const confirmDelete = confirm("Are you sure you want to delete your account? This cannot be undone.");
+    if (!confirmDelete) return;
+
+    deleteUser(user)
+      .then(() => {
+        alert("Your account has been deleted.");
+        window.location.href = "/"; // redirect to homepage or sign-in
+      })
+      .catch((error) => {
+        if (error.code === "auth/requires-recent-login") {
+          alert("Please sign in again to delete your account.");
+          // Optional: Redirect to login page or reauthenticate user
+        } else {
+          alert("Error deleting account: " + error.message);
+        }
+      });
+  } else {
+    alert("No user is currently signed in.");
+  }
+};
   </script>
+
 </body>
 </html>
