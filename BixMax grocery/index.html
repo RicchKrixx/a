@@ -159,22 +159,7 @@ min-width: 150px;
 }
 }
 
-footer {
-color: white;
-padding: 15px;
-margin-top: 15px;
-width: 100%;
-border-radius:16px;
-background: darkcyan;
-color: white;
-margin: 10px auto;
-font-weight: bold;
-box-shadow: 0 0 10px cyan;
-color: white;
-display: flex;
-flex-direction: column;
-align-content: center;
-}
+
 /* Shake animation */
 @keyframes shake {
 0% { transform: translateX(0); }
@@ -212,105 +197,7 @@ border-radius: 10px;
 }
 
 </style> 
-    <style>
-
-        footer {
-            background-color: #1a1a1a;
-            color: #ffffff;
-            padding: 60px 0 20px;
-            font-size: 16px;
-            line-height: 1.6;
-            margin-bottom: 0;
-        }
-
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            gap: 30px;
-        }
-
-        .footer-section {
-            flex: 1;
-            min-width: 200px;
-            margin-bottom: 30px;
-        }
-
-        .footer-logo {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #ffffff;
-        }
-
-        .footer-section h3 {
-            font-size: 18px;
-            margin-bottom: 20px;
-            color: #ffffff;
-        }
-
-        .footer-section ul {
-            list-style: none;
-        }
-
-        .footer-section ul li {
-            margin-bottom: 10px;
-        }
-
-        .footer-section ul li a {
-            color: #cccccc;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .footer-section ul li a:hover {
-            color: #ffffff;
-        }
-
-        .contact-info p {
-            margin-bottom: 10px;
-            color: #cccccc;
-        }
-
-        .social-icons {
-            display: flex;
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .social-icons a {
-            color: #cccccc;
-            font-size: 20px;
-            transition: color 0.3s ease;
-        }
-
-        .social-icons a:hover {
-            color: #ffffff;
-        }
-
-        .footer-bottom {
-            border-top: 1px solid #333333;
-            padding-top: 20px;
-            text-align: center;
-            margin-top: 40px;
-            color: #cccccc;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .footer-container {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .social-icons {
-                justify-content: center;
-            }
-        }
-    </style>
+    
  </head>    
 <body>    
     <header>    
@@ -362,60 +249,7 @@ border-radius: 10px;
   </div>    
 </div> 
  </div>  
-    <footer>
-        <div class="footer-container">
-            <!-- Company Info -->
-            <div class="footer-section company-info">
-                <div class="footer-logo">BixMAX</div>
-                <p>We are a innovative company dedicated to providing top-notch solutions for our clients worldwide.</p>
-                <div class="social-icons">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                </div>
-            </div>
-
-            <!-- Quick Links -->
-            <div class="footer-section">
-                <h3>Quick Links</h3>
-                <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Services</a></li>
-                    <li><a href="#">Portfolio</a></li>
-                    <li><a href="#">Blog</a></li>
-                </ul>
-            </div>
-
-            <!-- Resources -->
-            <div class="footer-section">
-                <h3>Resources</h3>
-                <ul>
-                    <li><a href="#">Documentation</a></li>
-                    <li><a href="#">Support</a></li>
-                    <li><a href="#">FAQ</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">Terms of Service</a></li>
-                </ul>
-            </div>
-
-            <!-- Contact Info -->
-            <div class="footer-section contact-info">
-                <h3>Contact Us</h3>
-                <p><i class="fas fa-map-marker-alt"></i> Accra Ghana</p>
-                <p><i class="fas fa-phone"></i> +233 (53) 634-5825</p>
-                <p><i class="fas fa-envelope"></i> contact@bixmax.com</p>
-            </div>
-        </div>
-
-        <div class="footer-bottom">
-            <p>&copy; 2025 BixMAX. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <!-- Font Awesome for icons (you'll need to include this in your project) -->
-    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script> 
+   
 
  <!-- 🔘 Variation Popup HTML (injects dynamically by script) -->    <script>    
     const variationItems = {    
@@ -609,4 +443,92 @@ updateCartCount();
 </script> 
 
  </body>  
+<footer style="
+  position: absolute;
+  background: #0f172a;
+  color: #fff;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.9rem;
+  box-shadow: 0 -2px 6px rgba(0,0,0,0.2);
+  border-top: 1px solid #1e293b;
+ margin-bottom: 0;
+">
+  <nav style="margin-bottom: 0.7rem;">
+    <a href="/BixMax home/" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Home</a>
+    <a href="/BixMax fashion/" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Fashion</a>
+    <a href="/BixMax grocery/" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Grocery</a>
+    <a href="/BixMax electronics/" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Electronics</a>
+    <a href="/about us/#support" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Contact</a>
+  </nav>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  .socials {
+    display: flex;
+    gap: 8px;
+    padding: 1rem;
+    justify-content: center;
+  }
+
+  .socials a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    color: white;
+    font-size: 15px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+  }
+
+  .socials a:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+  }
+
+  .facebook { background: #3b5998; }
+  .instagram { background: #e1306c; }
+  .tiktok { background: #000; }
+  .x { background: #1da1f2; }
+  .whatsapp { background: #00b489; }
+
+  /* Optional Tooltip */
+  .socials a::after {
+    content: attr(data-label);
+    position: absolute;
+    bottom: -30px;
+    background: #333;
+    color: #fff;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    opacity: 0;
+    transform: translateY(5px);
+    pointer-events: none;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .socials a:hover::after {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+
+<div class="socials">
+  <a href="#" class="facebook" data-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+  <a href="#" class="instagram" data-label="Instagram"><i class="fab fa-instagram"></i></a>
+  <a href="#" class="tiktok" data-label="TikTok"><i class="fab fa-tiktok"></i></a>
+  <a href="#" class="x" data-label="X (Twitter)"><i class="fab fa-x-twitter"></i></a>
+ <a href="https://wa.me/233536345825?text=Hello%20BixMAX%2C%20I%20need%20assistance" class="whatsapp" data-label="Whatsapp"><i class="fab fa-whatsapp"></i></a>
+</div>
+  <p style="color: #cbd5e1; font-size: 0.85rem;">
+    © 2025 BixMAX. All rights reserved.
+  </p>
+</footer>
 </html> 
