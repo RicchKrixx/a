@@ -161,22 +161,7 @@ min-width: 150px;
 }
 }
 
-footer {
-color: white;
-padding: 15px;
-margin-top: 15px;
-width: 100%;
-border-radius:16px;
-background: darkcyan;
-color: white;
-margin: 10px auto;
-font-weight: bold;
-box-shadow: 0 0 10px cyan;
-color: white;
-display: flex;
-flex-direction: column;
-align-content: center;
-}
+
 /* Shake animation */
 @keyframes shake {
 0% { transform: translateX(0); }
@@ -212,53 +197,7 @@ padding: 10px;
 width: 100%;
 border-radius: 10px;
 }
-/* Flyer Section */
-    #flyer {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100vh;
-      background: radial-gradient(circle, #0f0f0f 50%, #1a1a1a 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      z-index: 9999;
-      transition: opacity 1s ease;
-    }
 
-    #flyer h1 {
-      font-size: 2.8rem;
-      text-align: center;
-      animation: glow 2s ease-in-out infinite alternate, colorShift 5s linear infinite;
-    }
-
-    @keyframes glow {
-      from {
-        text-shadow: 0 0 10px #00faff, 0 0 20px #00faff, 0 0 30px #00faff;
-      }
-      to {
-        text-shadow: 0 0 20px #0ff, 0 0 40px #0ff, 0 0 60px #0ff;
-      }
-    }
-
-    @keyframes colorShift {
-      0% { color: #00faff; }
-      25% { color: #39ff14; }
-      50% { color: #ff00ff; }
-      75% { color: #ffd700; }
-      100% { color: #00faff; }
-    }
-
-    #fashionContent {
-      display: none;
-      padding: 20px;
-    }
-
-    .fadeOut {
-      opacity: 0;
-      pointer-events: none;
-    }
 </style> 
  </head>  
 <body> 
@@ -323,34 +262,6 @@ border-radius: 10px;
  </div>    
   <footer>&copy; BixMAX 2025. All rights reserved.</footer>  
 
-
-
-  <!-- Animated Text Flyer -->
-  <div id="flyer">
-    <h1><a href="fashion.jpg"></a></h1>
-    <p style="color: #ccc; margin-top: 10px;">Loading your style...</p>
-  </div>
-
-  <!-- Real Fashion Page Content -->
-  <div id="fashionContent">
-    <h2>Explore the Latest Trends</h2>
-    <p>Our fashion catalog is ready for you.</p>
-    <!-- Add your product list here -->
-  </div>
-
-  <script>
-    // After 3 seconds, hide flyer and show content
-    setTimeout(() => {
-      const flyer = document.getElementById('flyer');
-      flyer.classList.add('fadeOut');
-
-      setTimeout(() => {
-        flyer.style.display = 'none';
-        document.getElementById('fashionContent').style.display = 'block';
-      }, 1000); // Match fade duration
-    }, 3000); // Delay for flyer visibility
-  </script>
-  </script> 
  <!-- 🔘 Variation Popup HTML (injects dynamically by script) -->    <script>    
     const variationItems = {    
       "Nike Air": { color: ["Red", "White"], size: ["42", "43", "44"] },    
@@ -542,4 +453,92 @@ updateCartCount();
   categories.forEach(cat => listenToCategory(cat.name, cat.id));  
 </script>  
 </body>
+<footer style="
+  position: absolute;
+  background: #0f172a;
+  color: #fff;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.9rem;
+  box-shadow: 0 -2px 6px rgba(0,0,0,0.2);
+  border-top: 1px solid #1e293b;
+ margin-bottom: 0;
+">
+  <nav style="margin-bottom: 0.7rem;">
+    <a href="/BixMax home/" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Home</a>
+    <a href="/BixMax fashion/" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Fashion</a>
+    <a href="/BixMax grocery/" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Grocery</a>
+    <a href="/BixMax electronics/" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Electronics</a>
+    <a href="/about us/#support" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Contact</a>
+  </nav>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  .socials {
+    display: flex;
+    gap: 8px;
+    padding: 1rem;
+    justify-content: center;
+  }
+
+  .socials a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    color: white;
+    font-size: 15px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+  }
+
+  .socials a:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+  }
+
+  .facebook { background: #3b5998; }
+  .instagram { background: #e1306c; }
+  .tiktok { background: #000; }
+  .x { background: #1da1f2; }
+  .whatsapp { background: #00b489; }
+
+  /* Optional Tooltip */
+  .socials a::after {
+    content: attr(data-label);
+    position: absolute;
+    bottom: -30px;
+    background: #333;
+    color: #fff;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    opacity: 0;
+    transform: translateY(5px);
+    pointer-events: none;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .socials a:hover::after {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+
+<div class="socials">
+  <a href="#" class="facebook" data-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+  <a href="#" class="instagram" data-label="Instagram"><i class="fab fa-instagram"></i></a>
+  <a href="#" class="tiktok" data-label="TikTok"><i class="fab fa-tiktok"></i></a>
+  <a href="#" class="x" data-label="X (Twitter)"><i class="fab fa-x-twitter"></i></a>
+ <a href="https://wa.me/233536345825?text=Hello%20BixMAX%2C%20I%20need%20assistance" class="whatsapp" data-label="Whatsapp"><i class="fab fa-whatsapp"></i></a>
+</div>
+  <p style="color: #cbd5e1; font-size: 0.85rem;">
+    © 2025 BixMAX. All rights reserved.
+  </p>
+</footer>
 </html>
