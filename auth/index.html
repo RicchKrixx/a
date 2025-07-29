@@ -2,143 +2,247 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BizMAX | Sign In</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BixMAX | Sign In</title>
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background: #0e1f2f;
-      color: #fff;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #0e1f2f 0%, #1b2e42 100%);
+      color: #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
       margin: 0;
     }
+
     .auth-container {
-      background: #1b2e42;
-      padding: 20px;
+      background: #ffffff;
+      color: #1b2e42;
+      padding: 2rem;
       border-radius: 16px;
-      box-shadow: 0 0 20px rgba(0,255,255,0.2);
-      width: 300px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 400px;
+      transition: transform 0.3s ease;
     }
+
+    .auth-container:hover {
+      transform: translateY(-4px);
+    }
+
     .auth-container h2 {
       text-align: center;
-      margin-bottom: 10px;
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: #1b2e42;
     }
+
     .auth-container input {
       width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 10px;
-      border: none;
+      padding: 0.9rem;
+      margin: 0.5rem 0;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 1rem;
       outline: none;
+      transition: border-color 0.3s ease;
     }
+
+    .auth-container input:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
     .auth-container button {
       width: 100%;
-      padding: 10px;
-      margin-top: 15px;
-      border-radius: 10px;
+      padding: 0.9rem;
+      margin: 1rem 0;
+      border-radius: 8px;
       border: none;
-      background: cyan;
-      color: #000;
-      font-weight: bold;
+      background: #3b82f6;
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: 500;
       cursor: pointer;
+      transition: background 0.3s ease;
     }
+
+    .auth-container button:hover {
+      background: #2563eb;
+    }
+
+    .google-signin {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+      color: #1f2937;
+    }
+
+    .google-signin:hover {
+      background: #f3f4f6;
+    }
+
+    .google-signin img {
+      width: 20px;
+      height: 20px;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1.5rem 0;
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #d1d5db;
+    }
+
     .switch-link {
       text-align: center;
-      margin-top: 10px;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #3b82f6;
       cursor: pointer;
-      color: lightblue;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .switch-link:hover {
+      color: #2563eb;
       text-decoration: underline;
     }
-    #nameInput { display: none; }
+
+    #nameInput {
+      display: none;
+    }
+
+    @media (max-width: 480px) {
+      .auth-container {
+        margin: 1rem;
+        padding: 1.5rem;
+      }
+    }
   </style>
 </head>
 <body>
+  <div class="auth-container">
+    <h2 id="formTitle">Sign In</h2>
+    <input type="text" id="nameInput" placeholder="Full Name" />
+    <input type="email" id="emailInput" placeholder="Email" />
+    <input type="password" id="passwordInput" placeholder="Password" />
+    <button onclick="handleAuth()">Sign In</button>
 
-<div class="auth-container">
-  <h2 id="formTitle">Sign In</h2>
-  <input type="text" id="nameInput" placeholder="Full Name" />
-  <input type="email" id="emailInput" placeholder="Email" />
-  <input type="password" id="passwordInput" placeholder="Password" />
-  <button onclick="handleAuth()">Sign In</button>
+    <div class="divider">or</div>
+    <button class="google-signin" onclick="signInWithGoogle()">
+      <img src="https://www.google.com/favicon.ico" alt="Google Icon" />
+      Sign in with Google
+    </button>
 
-  <div class="switch-link" onclick="toggleMode()">Don't have an account? Sign Up</div>
-  <div class="switch-link" onclick="resetPassword()">Forgot Password?</div>
-</div>
+    <div class="switch-link" onclick="toggleMode()">Don't have an account? Sign Up</div>
+    <div class="switch-link" onclick="resetPassword()">Forgot Password?</div>
+  </div>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import {
-    getAuth,
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    updateProfile,
-    sendPasswordResetEmail
-  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      updateProfile,
+      sendPasswordResetEmail,
+      GoogleAuthProvider,
+      signInWithPopup
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-    authDomain: "bixmax-6c24c.firebaseapp.com",
-    projectId: "bixmax-6c24c",
-    storageBucket: "bixmax-6c24c.appspot.com",
-    messagingSenderId: "37740442541",
-    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-  };
+    const firebaseConfig = {
+      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+      authDomain: "bixmax-6c24c.firebaseapp.com",
+      projectId: "bixmax-6c24c",
+      storageBucket: "bixmax-6c24c.appspot.com",
+      messagingSenderId: "37740442541",
+      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+    };
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth();
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const provider = new GoogleAuthProvider();
 
-  let isSignUp = false;
+    let isSignUp = false;
 
-  window.toggleMode = function () {
-    isSignUp = !isSignUp;
-    document.getElementById("formTitle").textContent = isSignUp ? "Sign Up" : "Sign In";
-    document.querySelector("button").textContent = isSignUp ? "Sign Up" : "Sign In";
-    document.querySelectorAll(".switch-link")[0].textContent = isSignUp
-      ? "Already have an account? Sign In"
-      : "Don't have an account? Sign Up";
-    document.getElementById("nameInput").style.display = isSignUp ? "block" : "none";
-  };
+    window.toggleMode = function () {
+      isSignUp = !isSignUp;
+      document.getElementById("formTitle").textContent = isSignUp ? "Sign Up" : "Sign In";
+      document.querySelector("button:not(.google-signin)").textContent = isSignUp ? "Sign Up" : "Sign In";
+      document.querySelectorAll(".switch-link")[0].textContent = isSignUp
+        ? "Already have an account? Sign In"
+        : "Don't have an account? Sign Up";
+      document.getElementById("nameInput").style.display = isSignUp ? "block" : "none";
+    };
 
-  window.handleAuth = function () {
-    const email = document.getElementById("emailInput").value;
-    const password = document.getElementById("passwordInput").value;
-    const name = document.getElementById("nameInput").value;
+    window.handleAuth = function () {
+      const email = document.getElementById("emailInput").value;
+      const password = document.getElementById("passwordInput").value;
+      const name = document.getElementById("nameInput").value;
 
-    if (isSignUp) {
-      createUserWithEmailAndPassword(auth, email, password)
-        .then(userCredential => {
-          return updateProfile(userCredential.user, { displayName: name });
-        })
-        .then(() => {
-          alert("Signup successful!");
-          window.location.href = "/dashboard/";
-        })
-        .catch(error => alert(error.message));
-    } else {
-      signInWithEmailAndPassword(auth, email, password)
-        .then(() => {
-          alert("Login successful!");
+      if (isSignUp) {
+        createUserWithEmailAndPassword(auth, email, password)
+          .then(userCredential => {
+            return updateProfile(userCredential.user, { displayName: name });
+          })
+          .then(() => {
+            alert("Signup successful!");
+            window.location.href = "/dashboard/";
+          })
+          .catch(error => alert(error.message));
+      } else {
+        signInWithEmailAndPassword(auth, email, password)
+          .then(() => {
+            alert("Login successful!");
+            window.location.href = "/BixMax home/";
+          })
+          .catch(error => alert(error.message));
+      }
+    };
+
+    window.signInWithGoogle = function () {
+      signInWithPopup(auth, provider)
+        .then(result => {
+          alert("Google Sign-In successful!");
           window.location.href = "/BixMax home/";
         })
         .catch(error => alert(error.message));
-    }
-  };
+    };
 
-  window.resetPassword = function () {
-    const email = prompt("Enter your email to reset your password:");
-    if (!email) return;
+    window.resetPassword = function () {
+      const email = prompt("Enter your email to reset your password:");
+      if (!email) return;
 
-    sendPasswordResetEmail(auth, email)
-      .then(() => {
-        alert("Password reset email sent! Check your inbox.");
-      })
-      .catch(error => {
-        alert("Error: " + error.message);
-      });
-  };
-</script>
+      sendPasswordResetEmail(auth, email)
+        .then(() => {
+          alert("Password reset email sent! Check your inbox.");
+        })
+        .catch(error => {
+          alert("Error: " + error.message);
+        });
+    };
+  </script>
 </body>
 </html>
