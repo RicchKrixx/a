@@ -274,7 +274,34 @@ border-radius: 10px;
   </div>  
 </div>
  </div>    
-  <footer>&copy; BixMAX 2025. All rights reserved.</footer>    
+  <footer>&copy; BixMAX 2025. All rights reserved.</footer>  
+
+<div id="intro" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;background-color:#081d2e;display:flex;justify-content:center;align-items:center;">
+  <img src="fashion.jpg" alt="Fashion Intro" style="max-width:90%;max-height:90%;border-radius:10px;opacity:0;transition:opacity 1s ease;">
+</div>
+
+<div id="mainContent" style="display:none;">
+  <!-- Your fashion page content here -->
+</div>
+
+<script>
+  const intro = document.getElementById('intro');
+  const img = intro.querySelector('img');
+
+  window.onload = () => {
+    img.style.opacity = 1; // fade in
+
+    setTimeout(() => {
+      intro.style.transition = 'opacity 1s ease';
+      intro.style.opacity = 0; // fade out
+
+      setTimeout(() => {
+        intro.style.display = 'none';
+        document.getElementById('mainContent').style.display = 'block';
+      }, 1000); // wait for fade out
+    }, 3000); // hold for 3 seconds
+  };
+</script>  
  <!-- 🔘 Variation Popup HTML (injects dynamically by script) -->    <script>    
     const variationItems = {    
       "Nike Air": { color: ["Red", "White"], size: ["42", "43", "44"] },    
