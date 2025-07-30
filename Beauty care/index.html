@@ -253,6 +253,46 @@
 
     updateCartCount();
   </script>
+<script>
+  const searchInput = document.getElementById("searchInput");
+  const container = document.getElementById("beautyContainer");
+  const notFoundMessage = document.getElementById("notFoundMessage");
+
+  // Debounce function to limit search execution
+  function debounce(func, delay) {
+    let timeoutId;
+    return function (...args) {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func.apply(this, args), delay);
+    };
+  }
+
+  const handleSearch = debounce(() => {
+  const query = searchInput.value.trim().toLowerCase();
+  const items = container.querySelectorAll(".product");
+
+  let visibleCount = 0;
+
+  items.forEach(item => {
+    const name = item.querySelector(".product-name").textContent.toLowerCase();
+
+    if (name.includes(query)) {
+      item.style.display = "block";
+      visibleCount++;
+    } else {
+      item.style.display = "none";
+    }
+  });
+
+  notFoundMessage.style.display = query && visibleCount === 0 ? "block" : "none";
+
+  if (!query) {
+    items.forEach(item => (item.style.display = "block"));
+  }
+}, 300);
+
+  searchInput.addEventListener("input", handleSearch);
+</script>
 </body>
 <footer style="
   position: absolute;
