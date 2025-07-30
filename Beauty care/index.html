@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>BizMAX | Shirts</title>
+  <title>BixMAX | Beauty & Personal care</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     * {
@@ -149,39 +149,59 @@
     const container = document.getElementById("beautyContainer");
 
     function renderBeauty(items) {
-      container.innerHTML = "";
-      items.forEach(data => {
-        const div = document.createElement("div");
-        div.className = "product";
-        div.innerHTML = `
-          <img src="${data.image}" alt="${data.name}" />
-          <div class="product-name">${data.name}</div>
-          <div class="product-price">GH₵${data.price.toFixed(2)}</div>
-          <button class="add-btn"
-            data-id="${data.id}"
-            data-name="${data.name}"
-            data-price="${data.price}"
-            data-image="${data.image}"
-            data-category="Shirt">
-            Add to Cart
-          </button>
-        `;
-        container.appendChild(div);
-      });
+  container.innerHTML = "";
+  items.forEach(data => {
+    const div = document.createElement("div");
+    div.className = "product";
+    div.innerHTML = `
+      <img src="${data.image}" alt="${data.name}" class="product-image" />
+      <div class="product-name">${data.name}</div>
+      <div class="product-price">GH₵${data.price.toFixed(2)}</div>
+      <button class="add-btn"
+        data-id="${data.id}"
+        data-name="${data.name}"
+        data-price="${data.price}"
+        data-image="${data.image}"
+        data-category="Beauty">
+        Add to Cart
+      </button>
+    `;
+    const img = div.querySelector(".product-image");
+    img.addEventListener("click", () => handleImageClick(data)); // ✅ proper handler
 
-      document.querySelectorAll('.add-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const product = {
-            id: btn.dataset.id,
-            name: btn.dataset.name,
-            price: parseFloat(btn.dataset.price),
-            image: btn.dataset.image,
-            category: btn.dataset.category
-          };
-          addToCart(product);
-        });
-      });
-    }
+    container.appendChild(div);
+  });
+
+  document.querySelectorAll('.add-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const product = {
+        id: btn.dataset.id,
+        name: btn.dataset.name,
+        price: parseFloat(btn.dataset.price),
+        image: btn.dataset.image,
+        category: btn.dataset.category
+      };
+      addToCart(product);
+    });
+  });
+}
+
+  function handleImageClick(data) {
+  const product = {
+    id: data.id,
+    name: data.name,
+    price: parseFloat(data.price),
+    image: data.image,
+    category: "Beauty"
+  };
+
+  addToCart(product);
+
+  // Optional: Redirect after short delay
+  setTimeout(() => {
+    window.location.href = "/cart/";
+  }, 300);
+}  
 
     // Load from cache first
     const cached = localStorage.getItem("Beauty");
