@@ -179,7 +179,7 @@
     <div class="switch-link" onclick="toggleMode()">Don't have an account? Sign Up</div>
     <div class="switch-link" onclick="resetPassword()">Forgot Password?</div>
   </div>
-
+<!--
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import {
@@ -264,6 +264,130 @@
         });
     };
   </script>
+-->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    updateProfile,
+    sendPasswordResetEmail,
+    GoogleAuthProvider,
+    signInWithPopup
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  import {
+    getFirestore,
+    collection,
+    query,
+    where,
+    getDocs,
+    addDoc
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+    authDomain: "bixmax-6c24c.firebaseapp.com",
+    projectId: "bixmax-6c24c",
+    storageBucket: "bixmax-6c24c.appspot.com",
+    messagingSenderId: "37740442541",
+    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const provider = new GoogleAuthProvider();
+
+  let isSignUp = false;
+
+  window.toggleMode = function () {
+    isSignUp = !isSignUp;
+    document.getElementById("formTitle").textContent = isSignUp ? "Sign Up" : "Sign In";
+    document.querySelector("button:not(.google-signin)").textContent = isSignUp ? "Sign Up" : "Sign In";
+    document.querySelectorAll(".switch-link")[0].textContent = isSignUp
+      ? "Already have an account? Sign In"
+      : "Don't have an account? Sign Up";
+    document.getElementById("nameInput").style.display = isSignUp ? "block" : "none";
+  };
+
+  window.handleAuth = async function () {
+    const email = document.getElementById("emailInput").value.trim();
+    const password = document.getElementById("passwordInput").value.trim();
+    const name = document.getElementById("nameInput").value.trim();
+
+    if (isSignUp) {
+      if (!name || !email || !password) {
+        alert("Please fill all fields.");
+        return;
+      }
+
+      try {
+        // Check if username already exists
+        const usersRef = collection(db, "users");
+        const q = query(usersRef, where("username", "==", name.toLowerCase()));
+        const snapshot = await getDocs(q);
+
+        if (!snapshot.empty) {
+          alert("Username already exists. Choose a different one.");
+          return;
+        }
+
+        // Create user
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // Set display name
+        await updateProfile(user, { displayName: name });
+
+        // Save username to Firestore
+        await addDoc(usersRef, {
+          uid: user.uid,
+          username: name.toLowerCase(),
+          email: email
+        });
+
+        alert("Signup successful!");
+        window.location.href = "/dashboard/";
+      } catch (error) {
+        alert(error.message);
+      }
+    } else {
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        alert("Login successful!");
+        window.location.href = "/BixMax home/";
+      } catch (error) {
+        alert(error.message);
+      }
+    }
+  };
+
+  window.signInWithGoogle = function () {
+    signInWithPopup(auth, provider)
+      .then(() => {
+        alert("Google Sign-In successful!");
+        window.location.href = "/BixMax home/";
+      })
+      .catch(error => {
+        alert(error.message);
+      });
+  };
+
+  window.resetPassword = function () {
+    const email = prompt("Enter your email to reset your password:");
+    if (!email) return;
+
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        alert("Password reset email sent! Check your inbox.");
+      })
+      .catch(error => {
+        alert("Error: " + error.message);
+      });
+  };
+</script>
 <script>
   function togglePassword() {
     const input = document.getElementById("passwordInput");
