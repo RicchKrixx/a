@@ -176,21 +176,7 @@
         container.appendChild(div);  
       });  
 
-     function handleImageClick(data) {
-  const product = {
-    id: data.id,
-    name: data.name,
-    price: parseFloat(data.price),
-    image: data.image,
-    category: "Shirt"
-  };
-  addToCart(product);
-
-  // Redirect to cart after brief animation
-  setTimeout(() => {
-    window.location.href = "/cart/";
-  }, 300);
-} document.querySelectorAll('.add-btn').forEach(btn => {  
+      document.querySelectorAll('.add-btn').forEach(btn => {  
         btn.addEventListener('click', () => {  
           const product = {  
             id: btn.dataset.id,  
@@ -293,7 +279,23 @@
   searchInput.addEventListener("input", handleSearch);
 </script>
 
+<script>
+function handleImageClick(data) {
+  const product = {
+    id: data.id,
+    name: data.name,
+    price: parseFloat(data.price),
+    image: data.image,
+    category: "Shirt"
+  };
+  addToCart(product);
+  setTimeout(() => {
+    window.location.href = "/cart/";
+  }, 300);
+}
 
+window.handleImageClick = handleImageClick;
+</script>
 
 </body>
 <footer style="
