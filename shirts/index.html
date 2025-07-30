@@ -192,42 +192,8 @@ function renderShirts(items) {
     });
   });
 }
-<!--
-    function renderShirts(items) {  
-      container.innerHTML = "";  
-      items.forEach(data => {  
-        const div = document.createElement("div");  
-        div.className = "product";  
-        div.innerHTML = `  
-          <img src="${data.image}" alt="${data.name}" onclick='handleImageClick(${JSON.stringify(data)})' /> 
-          <div class="product-name">${data.name}</div>  
-          <div class="product-price">GH₵${data.price.toFixed(2)}</div>  
-          <button class="add-btn"  
-            data-id="${data.id}"  
-            data-name="${data.name}"  
-            data-price="${data.price}"  
-            data-image="${data.image}"  
-            data-category="Shirt">  
-            Add to Cart  
-          </button>  
-        `;  
-        container.appendChild(div);  
-      });  
 
-      document.querySelectorAll('.add-btn').forEach(btn => {  
-        btn.addEventListener('click', () => {  
-          const product = {  
-            id: btn.dataset.id,  
-            name: btn.dataset.name,  
-            price: parseFloat(btn.dataset.price),  
-            image: btn.dataset.image,  
-            category: btn.dataset.category  
-          };  
-          addToCart(product);  
-        });  
-      });  
-    }  
--->
+    
     // Load from cache first  
     const cached = localStorage.getItem("shirts");  
     if (cached) {  
