@@ -428,15 +428,12 @@
     submitBtn.disabled = true;
     submitBtn.textContent = "Sending...";
 
-    const timestamp = new Date().toLocaleString();
-
-    try {
-      await addDoc(collection(db, "contactMessages"), {
-        timestamp,
-        name: form.name.value,
-        email: form.email.value,
-        message: form.message.value
-      });
+    await addDoc(collection(db, "contactMessages"), {
+  timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+  name: form.name.value,
+  email: form.email.value,
+  message: form.message.value
+});
 
       alert("✅ Your message has been sent successfully!");
       form.reset();
