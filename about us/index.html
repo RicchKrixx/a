@@ -362,7 +362,7 @@
 
  <section id="terms">
      <h2>Terms of Service</h2>
-    <p>Welcome to BizMAX! These Terms of Service govern your use of our website and services. By accessing or using BizMAX, you agree to be bound by these terms.</p>
+    <p>Welcome to BixMAX! These Terms of Service govern your use of our website and services. By accessing or using BizMAX, you agree to be bound by these terms.</p>
 
     <h3>1. Use of the Website</h3>
     <p>You must be at least 13 years old to use this website. You agree to use BizMAX for lawful purposes only.</p>
@@ -371,7 +371,7 @@
     <p>All orders are subject to acceptance and availability. We reserve the right to refuse or cancel any order. Online payments are processed securely via trusted gateways like Paystack.</p>
 
     <h3>3. Returns and Refunds</h3>
-    <p>We accept returns within 7 days of delivery for eligible items. To start a return, contact our support team. Refunds are issued based on the original payment method.</p>
+    <p>We accept returns within 5 days of delivery for eligible items. To start a return, contact our support team. Refunds are issued based on the original payment method.</p>
 
     <h3>4. Privacy Policy</h3>
     <p>Your privacy is important to us. Please review our <a href="#privacy-policy">Privacy Policy</a> to understand how we collect, use, and protect your data.</p>
@@ -399,31 +399,36 @@
     });
   });
 </script>
-  <!-- Firebase SDK scripts (paste inside <head> section if not already present) -->
+ <!-- Firebase SDK scripts -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
 
 <script>
-  // Firebase config for your project (replace with your actual info)
-  // Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-  authDomain: "bixmax-6c24c.firebaseapp.com",
-  projectId: "bixmax-6c24c",
-  storageBucket: "bixmax-6c24c.appspot.com",
-  messagingSenderId: "37740442541",
-  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-};
+  // Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+    authDomain: "bixmax-6c24c.firebaseapp.com",
+    projectId: "bixmax-6c24c",
+    storageBucket: "bixmax-6c24c.appspot.com",
+    messagingSenderId: "37740442541",
+    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+  };
+
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
 
-  // Handle form submit
+  // Form submit handler
   document.getElementById("supportForm").addEventListener("submit", function (e) {
     e.preventDefault();
 
     const form = e.target;
     const timestamp = new Date().toLocaleString();
+    const submitBtn = form.querySelector('button[type="submit"]');
+
+    // Disable button and show loading
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Sending...";
 
     db.collection("contactMessages").add({
       timestamp: timestamp,
@@ -438,16 +443,13 @@ const firebaseConfig = {
     .catch(error => {
       console.error("Error sending message: ", error);
       alert("❌ Failed to send your message. Please try again later.");
+    })
+    .finally(() => {
+      // Always re-enable the button
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Submit";
     });
   });
-
-const submitBtn = form.querySelector('button[type="submit"]');
-submitBtn.disabled = true;
-submitBtn.textContent = "Sending...";
-
-// inside then()
-submitBtn.disabled = false;
-submitBtn.textContent = "Submit";
 </script>
 <script>
   const scrollTopBtn = document.getElementById("scrollTopBtn");
