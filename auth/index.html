@@ -140,6 +140,23 @@
         padding: 1.5rem;
       }
     }
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper input {
+  padding-right: 40px;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: #6b7280;
+}
   </style>
 </head>
 <body>
@@ -147,7 +164,10 @@
     <h2 id="formTitle">Sign In</h2>
     <input type="text" id="nameInput" placeholder="Full Name" />
     <input type="email" id="emailInput" placeholder="Email" />
-    <input type="password" id="passwordInput" placeholder="Password" />
+   <div class="password-wrapper">
+  <input type="password" id="passwordInput" placeholder="Password" />
+  <span class="toggle-password" onclick="togglePassword()">👁️</span>
+</div>
     <button onclick="handleAuth()">Sign In</button>
 
     <div class="divider">or</div>
@@ -244,5 +264,14 @@
         });
     };
   </script>
+<script>
+  function togglePassword() {
+    const input = document.getElementById("passwordInput");
+    const icon = document.querySelector(".toggle-password");
+    const isPassword = input.type === "password";
+    input.type = isPassword ? "text" : "password";
+    icon.textContent = isPassword ? "🙈" : "👁️";
+  }
+</script>
 </body>
 </html>
