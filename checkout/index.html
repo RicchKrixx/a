@@ -385,9 +385,9 @@
   }
 
   function calculateDeliveryFee(distanceKm) {
-    const baseFee = 6;
-    const extraRate = 1.6;
-    return distanceKm <= 6 ? baseFee : baseFee + (distanceKm - 6) * extraRate;
+    const baseFee = 5;
+    const extraRate = 0.8;
+    return distanceKm <= 5 ? baseFee : baseFee + (distanceKm - 5) * extraRate;
   }
 
   function displayDeliveryFee() {
