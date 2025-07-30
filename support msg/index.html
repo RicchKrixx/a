@@ -53,39 +53,58 @@
   <div id="loading">Loading messages...</div>
   <div id="messagesContainer"></div>
 
-  <script>
-    const API_URL = "https://sheetdb.io/api/v1/foshadcwykc6l"; // Replace this
+<!-- Add Firebase SDKs before the script -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+<script>
+  // Your Firebase config (replace this with your actual config)
+  // Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+  authDomain: "bixmax-6c24c.firebaseapp.com",
+  projectId: "bixmax-6c24c",
+  storageBucket: "bixmax-6c24c.appspot.com",
+  messagingSenderId: "37740442541",
+  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+};
 
-    fetch(API_URL)
-      .then(res => res.json())
-      .then(data => {
-        const container = document.getElementById("messagesContainer");
-        const loading = document.getElementById("loading");
-        loading.style.display = "none";
+  // Initialize Firebase
+  const app = firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
 
-        if (data.length === 0) {
-          container.innerHTML = "<p>No messages found.</p>";
-          return;
-        }
+  const container = document.getElementById("messagesContainer");
+  const loading = document.getElementById("loading");
 
-        data.reverse().forEach(entry => {
-          const div = document.createElement("div");
-          div.className = "message";
+  db.collection("supportMessages")
+    .orderBy("timestamp", "desc")
+    .get()
+    .then((querySnapshot) => {
+      loading.style.display = "none";
 
-          div.innerHTML = `
-            <h4>${entry.name}</h4>
-            <p><strong>Email:</strong> ${entry.email}</p>
-            <p><strong>Message:</strong><br>${entry.message}</p>
-            <div class="timestamp">${entry.timestamp}</div>
-          `;
+      if (querySnapshot.empty) {
+        container.innerHTML = "<p>No messages found.</p>";
+        return;
+      }
 
-          container.appendChild(div);
-        });
-      })
-      .catch(err => {
-        document.getElementById("loading").textContent = "Failed to load messages.";
-        console.error(err);
+      querySnapshot.forEach((doc) => {
+        const entry = doc.data();
+        const div = document.createElement("div");
+        div.className = "message";
+
+        div.innerHTML = `
+          <h4>${entry.name || "No name"}</h4>
+          <p><strong>Email:</strong> ${entry.email || "No email"}</p>
+          <p><strong>Message:</strong><br>${entry.message || "No message"}</p>
+          <div class="timestamp">${entry.timestamp ? new Date(entry.timestamp.seconds * 1000).toLocaleString() : ""}</div>
+        `;
+
+        container.appendChild(div);
       });
-  </script>
+    })
+    .catch((error) => {
+      console.error("Error getting messages:", error);
+      loading.textContent = "Failed to load messages.";
+    });
+</script>
 </body>
 </html>
