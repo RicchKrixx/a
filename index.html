@@ -190,21 +190,16 @@
   });
 </script>
 
-  <script>
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("/service-worker.js")
-          .then(reg => {
-            console.log("BixMAX service worker registered!");
-            setTimeout(() => {
-              if (navigator.serviceWorker.controller) {
-                navigator.serviceWorker.controller.postMessage({ type: "show-welcome" });
-              }
-            }, 1000);
-          })
-          .catch(err => console.error("SW registration failed:", err));
-      });
-    }
-  </script>
+ <script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("/service-worker.js")
+        .then(reg => {
+          console.log("✅ BixMAX service worker registered.");
+        })
+        .catch(err => console.error("❌ Service worker registration failed:", err));
+    });
+  }
+</script>
 </body>
 </html>
