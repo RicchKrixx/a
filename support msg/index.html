@@ -75,7 +75,7 @@ const firebaseConfig = {
   const container = document.getElementById("messagesContainer");
   const loading = document.getElementById("loading");
 
-  db.collection("supportMessages")
+  db.collection("contactMessages")
     .orderBy("timestamp", "desc")
     .get()
     .then((querySnapshot) => {
