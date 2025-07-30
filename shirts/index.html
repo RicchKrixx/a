@@ -193,7 +193,22 @@ function renderShirts(items) {
   });
 }
 
-    
+  function handleImageClick(data) {
+  const product = {
+    id: data.id,
+    name: data.name,
+    price: parseFloat(data.price),
+    image: data.image,
+    category: "Shirt"
+  };
+
+  addToCart(product);
+
+  // Optional: Redirect after short delay
+  setTimeout(() => {
+    window.location.href = "/cart/";
+  }, 300);
+}  
     // Load from cache first  
     const cached = localStorage.getItem("shirts");  
     if (cached) {  
