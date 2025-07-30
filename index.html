@@ -172,22 +172,20 @@
     setInterval(cycleColors, period);
   </script>
 
-  <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const hasVisited = localStorage.getItem('bixmax_has_visited');
-
-    if (!hasVisited && 'Notification' in window) {
-      Notification.requestPermission().then(permission => {
-        if (permission === "granted") {
-          new Notification("👋 Welcome to BixMAX!", {
-            body: "Thanks for visiting us!",
-            icon: "Bixmaxlogo.png"
-          });
-        }
-      });
-
-      // Set flag so we don't show this again
-      localStorage.setItem('bixmax_has_visited', 'true');
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    if (!localStorage.getItem('bixmax_has_visited')) {
+      if ('Notification' in window && Notification.permission !== 'denied') {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            new Notification("👋 Welcome to BixMAX!", {
+              body: "Thanks for visiting us!",
+              icon: "Bixmaxlogo.png" // make sure the image exists
+            });
+            localStorage.setItem('bixmax_has_visited', 'true');
+          }
+        });
+      }
     }
   });
 </script>
