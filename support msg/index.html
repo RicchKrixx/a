@@ -54,66 +54,63 @@
   <div id="messagesContainer"></div>
 
   <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-
-  <script>
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-      authDomain: "bixmax-6c24c.firebaseapp.com",
-      projectId: "bixmax-6c24c",
-      storageBucket: "bixmax-6c24c.appspot.com",
-      messagingSenderId: "37740442541",
-      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-    };
-
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    const container = document.getElementById("messagesContainer");
-    const loading = document.getElementById("loading");
-
-    function fetchMessages() {
-      db.collection("contactMessages")
-        .orderBy("timestamp", "desc")
-        .get()
-        .then((querySnapshot) => {
-          container.innerHTML = ""; // clear old messages
-          loading.style.display = "none";
-
-          if (querySnapshot.empty) {
-            container.innerHTML = "<p>No messages found.</p>";
-            return;
-          }
-
-          querySnapshot.forEach((doc) => {
-  const entry = doc.data();
-  const div = document.createElement("div");
-  div.className = "message";
-
-  div.innerHTML = `
-    <h4>${entry.name || "No name"}</h4>
-    <p><strong>Email:</strong> ${entry.email || "No email"}</p>
-    <p><strong>Message:</strong><br>${entry.message || "No message"}</p>
-    <div class="timestamp">${entry.timestamp ? entry.timestamp.toDate().toLocaleString() : "No date"}</div>
-  `;
-
-  container.appendChild(div);
-});
-        })
-        .catch((error) => {
-          console.error("Error getting messages:", error);
-          loading.textContent = "Failed to load messages.";
-        });
-    }
-
-    // Fetch on load
-    fetchMessages();
-
-    // Fetch every 10 seconds
-    setInterval(fetchMessages, 10000);
+ <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>    <script>  
+    // Firebase config  
+    const firebaseConfig = {  
+      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",  
+      authDomain: "bixmax-6c24c.firebaseapp.com",  
+      projectId: "bixmax-6c24c",  
+      storageBucket: "bixmax-6c24c.appspot.com",  
+      messagingSenderId: "37740442541",  
+      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"  
+    };  
+  
+    // Initialize Firebase  
+    firebase.initializeApp(firebaseConfig);  
+    const db = firebase.firestore();  
+  
+    const container = document.getElementById("messagesContainer");  
+    const loading = document.getElementById("loading");  
+  
+    function fetchMessages() {  
+      db.collection("contactMessages")  
+        .orderBy("timestamp", "desc")  
+        .get()  
+        .then((querySnapshot) => {  
+          container.innerHTML = ""; // clear old messages  
+          loading.style.display = "none";  
+  
+          if (querySnapshot.empty) {  
+            container.innerHTML = "<p>No messages found.</p>";  
+            return;  
+          }  
+  
+          querySnapshot.forEach((doc) => {  
+            const entry = doc.data();  
+            const div = document.createElement("div");  
+            div.className = "message";  
+  
+            div.innerHTML = `  
+              <h4>${entry.name || "No name"}</h4>  
+              <p><strong>Email:</strong> ${entry.email || "No email"}</p>  
+              <p><strong>Message:</strong><br>${entry.message || "No message"}</p>  
+              <div class="timestamp">${entry.timestamp ? new Date(entry.timestamp.seconds * 1000).toLocaleString() : ""}</div>  
+            `;  
+  
+            container.appendChild(div);  
+          });  
+        })  
+        .catch((error) => {  
+          console.error("Error getting messages:", error);  
+          loading.textContent = "Failed to load messages.";  
+        });  
+    }  
+  
+    // Fetch on load  
+    fetchMessages();  
+  
+    // Fetch every 10 seconds  
+    setInterval(fetchMessages, 10000);  
   </script>
 </body>
 </html>
