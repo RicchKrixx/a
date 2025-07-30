@@ -161,7 +161,7 @@
         const div = document.createElement("div");  
         div.className = "product";  
         div.innerHTML = `  
-          <img src="${data.image}" alt="${data.name}" />  
+          <img src="${data.image}" alt="${data.name}" onclick='handleImageClick(${JSON.stringify(data)})' /> 
           <div class="product-name">${data.name}</div>  
           <div class="product-price">GH₵${data.price.toFixed(2)}</div>  
           <button class="add-btn"  
@@ -277,6 +277,22 @@
 }, 300);
 
   searchInput.addEventListener("input", handleSearch);
+
+function handleImageClick(data) {
+  const product = {
+    id: data.id,
+    name: data.name,
+    price: parseFloat(data.price),
+    image: data.image,
+    category: "Shirt"
+  };
+  addToCart(product);
+
+  // Redirect to cart after brief animation
+  setTimeout(() => {
+    window.location.href = "/cart/";
+  }, 300);
+}
 </script>
 </body>
 <footer style="
