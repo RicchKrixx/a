@@ -432,14 +432,22 @@ const firebaseConfig = {
       message: form.message.value
     })
     .then(() => {
-      document.getElementById("responseMsg").textContent = "✅ Message sent via Firebase!";
+      alert("✅ Your message has been sent successfully!");
       form.reset();
     })
     .catch(error => {
       console.error("Error sending message: ", error);
-      document.getElementById("responseMsg").textContent = "❌ Failed to send message.";
+      alert("❌ Failed to send your message. Please try again later.");
     });
   });
+
+const submitBtn = form.querySelector('button[type="submit"]');
+submitBtn.disabled = true;
+submitBtn.textContent = "Sending...";
+
+// inside then()
+submitBtn.disabled = false;
+submitBtn.textContent = "Submit";
 </script>
 <script>
   const scrollTopBtn = document.getElementById("scrollTopBtn");
