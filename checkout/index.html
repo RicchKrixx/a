@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>  <html lang="en">  
 <head>  
   <meta charset="UTF-8" />  
@@ -281,7 +280,7 @@
   
       if (paymentMethod === "Paid") {  
         PaystackPop.setup({  
-          key: 'pk_live_55fc4deb5da6100b52f981f9f754dc0249e7752f',  
+          key: 'pk_test_ff8b73d28aa1378375dfc0849072ca2ce077de0b',  
           email: email,  
           amount: grandTotal * 100,  
           currency: "GHS",  
@@ -359,9 +358,9 @@
   }  
   
   function calculateDeliveryFee(distanceKm) {  
-    const baseFee = 5;  
-    const extraRate = 0.8;  
-    return distanceKm <= 5 ? baseFee : baseFee + (distanceKm - 5) * extraRate;  
+    const baseFee = 6;  
+    const extraRate = 1.6;  
+    return distanceKm <= 6 ? baseFee : baseFee + (distanceKm - 6) * extraRate;  
   }  
   
   function displayDeliveryFee() {  
