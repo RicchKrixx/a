@@ -1,113 +1,103 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delivery Dispatch Dashboard</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js"></script>
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .toast { position: fixed; top: 20px; right: 20px; z-index: 1000; }
-        .hidden { display: none; }
-        .error { border: 2px solid red; }
-        table { font-size: 0.9rem; }
-        th, td { padding: 0.75rem; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Delivery Dispatch Dashboard</title>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f8f9fa;
+    }
+    header {
+      background: #00bcd4;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .container {
+      padding: 1rem;
+    }
+    h2 {
+      color: #333;
+      margin-top: 2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 2rem;
+    }
+    th, td {
+      padding: 8px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background-color: #f1f1f1;
+    }
+    input, select, button {
+      padding: 6px;
+      margin: 4px;
+    }
+    .form-section {
+      background: white;
+      padding: 1rem;
+      border-radius: 6px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+  </style>
 </head>
-<body class="bg-gray-50 min-h-screen p-6">
-    <div class="container mx-auto max-w-7xl">
-        <h1 class="text-3xl font-bold mb-8 text-gray-800 text-center">Delivery Dispatch Dashboard</h1>
+<body>
+  <header>
+    <h1>Delivery Dispatch Dashboard</h1>
+  </header>  <div class="container"><div class="form-section">
+  <h2>Register Rider</h2>
+  <form id="riderForm">
+    <input type="text" id="riderName" placeholder="Rider Name" required>
+    <input type="text" id="riderPhone" placeholder="Phone Number" required>
+    <input type="email" id="riderEmail" placeholder="Email">
+    <input type="text" id="riderVehicle" placeholder="Vehicle Type" required>
+    <select id="riderStatus">
+      <option value="available">Available</option>
+      <option value="busy">Busy</option>
+    </select>
+    <button type="submit">Register Rider</button>
+  </form>
+</div>
 
-        <!-- Rider Registration Panel -->
-        <div class="bg-white p-6 rounded-xl shadow-sm mb-8">
-            <h2 class="text-xl font-semibold mb-4 text-gray-700">Register New Rider</h2>
-            <form id="rider-form" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <input id="rider-name" type="text" placeholder="Rider Name" class="p-2 border rounded-md" required>
-                <input id="rider-id" type="text" placeholder="Rider ID (Auto-generated if empty)" class="p-2 border rounded-md">
-                <input id="rider-phone" type="tel" placeholder="Phone Number" class="p-2 border rounded-md" required>
-                <input id="rider-email" type="email" placeholder="Email" class="p-2 border rounded-md" required>
-                <select id="rider-vehicle" class="p-2 border rounded-md" required>
-                    <option value="">Select Vehicle Type</option>
-                    <option value="bike">Bike</option>
-                    <option value="car">Car</option>
-                    <option value="van">Van</option>
-                </select>
-                <input id="rider-zone" type="text" placeholder="Zone (e.g., Downtown)" class="p-2 border rounded-md">
-                <div class="flex items-center">
-                    <label class="mr-2 text-gray-600">Available:</label>
-                    <input id="rider-availability" type="checkbox" checked class="h-5 w-5">
-                </div>
-                <button type="submit" class="col-span-2 bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700">Register Rider</button>
-            </form>
-            <p id="rider-error" class="text-red-500 mt-2 hidden"></p>
-        </div>
+<h2>Orders</h2>
+<table id="ordersTable">
+  <thead>
+    <tr>
+      <th>Order ID</th>
+      <th>Customer</th>
+      <th>Items</th>
+      <th>Amount</th>
+      <th>Rider</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
 
-        <!-- Order Dashboard Panel -->
-        <div class="bg-white p-6 rounded-xl shadow-sm mb-8">
-            <h2 class="text-xl font-semibold mb-4 text-gray-700">Orders Dashboard</h2>
-            <input id="order-search" type="text" placeholder="Search by Order ID or Customer Name" class="w-full p-2 mb-4 border rounded-md">
-            <div class="overflow-x-auto">
-                <table id="orders-table" class="w-full border-collapse">
-                    <thead>
-                        <tr class="bg-gray-100">
-                            <th class="border-b text-left">Order ID</th>
-                            <th class="border-b text-left">Customer</th>
-                            <th class="border-b text-left">Address</th>
-                            <th class="border-b text-left">Items</th>
-                            <th class="border-b text-left">Total</th>
-                            <th class="border-b text-left">Rider</th>
-                            <th class="border-b text-left">Status</th>
-                            <th class="border-b text-left">Timestamp</th>
-                            <th class="border-b text-left">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="orders-tbody"></tbody>
-                </table>
-            </div>
-        </div>
+<h2>Riders</h2>
+<table id="ridersTable">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Phone</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
 
-        <!-- Rider Dashboard Panel -->
-        <div class="bg-white p-6 rounded-xl shadow-sm mb-8">
-            <h2 class="text-xl font-semibold mb-4 text-gray-700">Riders Dashboard</h2>
-            <div class="overflow-x-auto">
-                <table id="riders-table" class="w-full border-collapse">
-                    <thead>
-                        <tr class="bg-gray-100">
-                            <th class="border-b text-left">Rider ID</th>
-                            <th class="border-b text-left">Name</th>
-                            <th class="border-b text-left">Phone</th>
-                            <th class="border-b text-left">Vehicle</th>
-                            <th class="border-b text-left">Zone</th>
-                            <th class="border-b text-left">Status</th>
-                            <th class="border-b text-left">Order</th>
-                            <th class="border-b text-left">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="riders-tbody"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Google Maps Placeholder -->
-        <div class="bg-white p-6 rounded-xl shadow-sm">
-            <h2 class="text-xl font-semibold mb-4 text-gray-700">Rider Tracking (Placeholder)</h2>
-            <div id="map" class="h-64 bg-gray-200 flex items-center justify-center rounded-md">
-                <p class="text-gray-600">Google Maps Integration Placeholder (Add API Key to Enable)</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Toast Notification -->
-    <div id="toast" class="toast bg-blue-600 text-white p-4 rounded-lg shadow-lg hidden">
-        <span id="toast-message"></span>
-    </div>
-
-    <script>
-        // Firebase configuration
+  </div>  <script>
+    // Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
   authDomain: "bixmax-6c24c.firebaseapp.com",
@@ -117,266 +107,75 @@ const firebaseConfig = {
   appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
 };
 
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-        // DOM Elements
-        const riderForm = document.getElementById('rider-form');
-        const ordersTbody = document.getElementById('orders-tbody');
-        const ridersTbody = document.getElementById('riders-tbody');
-        const orderSearch = document.getElementById('order-search');
-        const toast = document.getElementById('toast');
-        const toastMessage = document.getElementById('toast-message');
+    const riderForm = document.getElementById('riderForm');
+    const ridersTable = document.getElementById('ridersTable').querySelector('tbody');
+    const ordersTable = document.getElementById('ordersTable').querySelector('tbody');
 
-        // Show Toast Notification
-        function showToast(message) {
-            toastMessage.textContent = message;
-            toast.classList.remove('hidden');
-            setTimeout(() => toast.classList.add('hidden'), 3000);
-        }
+    riderForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('riderName').value;
+      const phone = document.getElementById('riderPhone').value;
+      const email = document.getElementById('riderEmail').value;
+      const vehicle = document.getElementById('riderVehicle').value;
+      const status = document.getElementById('riderStatus').value;
+      await db.collection('riders').add({ name, phone, email, vehicle, status });
+      riderForm.reset();
+    });
 
-        // Generate Random ID
-        function generateId(prefix) {
-            return `${prefix}-${Math.random().toString(36).substr(2, 9)}`;
-        }
+    db.collection('riders').onSnapshot(snapshot => {
+      ridersTable.innerHTML = '';
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const row = `<tr><td>${data.name}</td><td>${data.phone}</td><td>${data.status}</td></tr>`;
+        ridersTable.innerHTML += row;
+      });
+    });
 
-        // Rider Registration
-        riderForm.addEventListener('submit', e => {
-            e.preventDefault();
-            const riderName = document.getElementById('rider-name').value;
-            const riderId = document.getElementById('rider-id').value || generateId('RIDER');
-            const riderPhone = document.getElementById('rider-phone').value;
-            const riderEmail = document.getElementById('rider-email').value;
-            const riderVehicle = document.getElementById('rider-vehicle').value;
-            const riderZone = document.getElementById('rider-zone').value;
-            const riderAvailability = document.getElementById('rider-availability').checked;
-            const riderError = document.getElementById('rider-error');
+    db.collection('orders').onSnapshot(snapshot => {
+      ordersTable.innerHTML = '';
+      snapshot.forEach(async doc => {
+        const data = doc.data();
+        let riderName = 'Assigning...';
 
-            // Validation
-            if (!riderName || !riderPhone || !riderEmail || !riderVehicle) {
-                riderError.classList.remove('hidden');
-                riderError.textContent = 'Please fill all required fields.';
-                return;
-            }
-
-            // Save to Firestore
-            db.collection('riders').doc(riderId).set({
-                name: riderName,
-                phone: riderPhone,
-                email: riderEmail,
-                vehicle: riderVehicle,
-                zone: riderZone || '',
-                available: riderAvailability,
-                assignedOrder: ''
-            }).then(() => {
-                riderForm.reset();
-                document.getElementById('rider-availability').checked = true;
-                showToast('Rider registered successfully!');
-            }).catch(error => {
-                riderError.classList.remove('hidden');
-                riderError.textContent = error.message;
-            });
-        });
-
-        // Initialize Dashboard
-        let allOrders = [];
-        function initDashboard() {
-            // Real-time Orders Listener
-            db.collection('orders').onSnapshot(snapshot => {
-                allOrders = [];
-                ordersTbody.innerHTML = '';
-                snapshot.forEach(doc => {
-                    const order = { id: doc.id, ...doc.data() };
-                    allOrders.push(order);
-                    renderOrder(order);
-
-                    // Auto-assign rider if pending
-                    if (order.status === 'Pending') {
-                        autoAssignRider(doc.id, order);
-                        showToast(`New order ${doc.id} received!`);
-                    }
-                });
-
-                // Status Update Handler
-                document.querySelectorAll('.status-select').forEach(select => {
-                    select.addEventListener('change', e => {
-                        const orderId = e.target.dataset.orderId;
-                        const newStatus = e.target.value;
-                        updateOrderStatus(orderId, newStatus);
-                    });
-                });
-
-                // Reassign Handler
-                document.querySelectorAll('.reassign-btn').forEach(btn => {
-                    btn.addEventListener('click', e => {
-                        const orderId = e.target.dataset.orderId;
-                        reassignRider(orderId);
-                    });
-                });
-            });
-
-            // Real-time Riders Listener
-            db.collection('riders').onSnapshot(snapshot => {
-                ridersTbody.innerHTML = '';
-                snapshot.forEach(doc => {
-                    const rider = doc.data();
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td class="border-b">${doc.id}</td>
-                        <td class="border-b">${rider.name}</td>
-                        <td class="border-b">${rider.phone}</td>
-                        <td class="border-b">${rider.vehicle}</td>
-                        <td class="border-b">${rider.zone || '-'}</td>
-                        <td class="border-b">${rider.available ? 'Available' : 'Busy'}</td>
-                        <td class="border-b">${rider.assignedOrder || '-'}</td>
-                        <td class="border-b">
-                            <button class="toggle-status-btn bg-blue-500 text-white px-2 py-1 rounded-md hover:bg-blue-600" data-rider-id="${doc.id}">
-                                ${rider.available ? 'Set Busy' : 'Set Available'}
-                            </button>
-                        </td>
-                    `;
-                    ridersTbody.appendChild(row);
-                });
-
-                // Toggle Status Handler
-                document.querySelectorAll('.toggle-status-btn').forEach(btn => {
-                    btn.addEventListener('click', e => {
-                        const riderId = e.target.dataset.riderId;
-                        toggleRiderStatus(riderId);
-                    });
-                });
-            });
-
-            // Search Orders
-            orderSearch.addEventListener('input', e => {
-                const query = e.target.value.toLowerCase();
-                ordersTbody.innerHTML = '';
-                allOrders
-                    .filter(order => 
-                        order.id.toLowerCase().includes(query) || 
-                        order.customerName.toLowerCase().includes(query)
-                    )
-                    .forEach(renderOrder);
-            });
-        }
-
-        // Render Order Row
-        function renderOrder(order) {
-            const itemsList = order.items.map(item => `${item.name} (x${item.qty})`).join(', ');
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td class="border-b">${order.id}</td>
-                <td class="border-b">${order.customerName} (${order.customerPhone})</td>
-                <td class="border-b">${order.address}</td>
-                <td class="border-b">${itemsList}</td>
-                <td class="border-b">$${order.total}</td>
-                <td class="border-b">${order.riderName || 'Unassigned'}</td>
-                <td class="border-b">
-                    <select class="status-select p-1 border rounded-md" data-order-id="${order.id}">
-                        <option value="Pending" ${order.status === 'Pending' ? 'selected' : ''}>Pending</option>
-                        <option value="Assigned" ${order.status === 'Assigned' ? 'selected' : ''}>Assigned</option>
-                        <option value="Out for Delivery" ${order.status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
-                        <option value="Delivered" ${order.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
-                    </select>
-                </td>
-                <td class="border-b">${new Date(order.timestamp.toDate()).toLocaleString()}</td>
-                <td class="border-b">
-                    <button class="reassign-btn bg-yellow-500 text-white px-2 py-1 rounded-md hover:bg-yellow-600" data-order-id="${order.id}">Reassign</button>
-                </td>
-            `;
-            ordersTbody.appendChild(row);
-        }
-
-        // Auto-assign Rider (Prioritize same zone)
-        async function autoAssignRider(orderId, order) {
-            let ridersSnapshot = await db.collection('riders')
-                .where('available', '==', true)
-                .where('zone', '==', order.zone || '')
-                .get();
-            
-            if (ridersSnapshot.empty) {
-                ridersSnapshot = await db.collection('riders')
-                    .where('available', '==', true)
-                    .get();
-            }
-
-            if (ridersSnapshot.empty) {
-                showToast('No available riders for order ' + orderId);
-                return;
-            }
-
-            const rider = ridersSnapshot.docs[0];
-            const riderData = rider.data();
-            await db.collection('orders').doc(orderId).update({
-                status: 'Assigned',
-                riderName: riderData.name,
-                riderContact: riderData.phone,
-                riderId: rider.id
-            });
-            await db.collection('riders').doc(rider.id).update({
-                available: false,
-                assignedOrder: orderId
-            });
-            showToast(`Order ${orderId} assigned to ${riderData.name}`);
-        }
-
-        // Update Order Status
-        async function updateOrderStatus(orderId, status) {
-            const orderDoc = await db.collection('orders').doc(orderId).get();
-            const order = orderDoc.data();
-            await db.collection('orders').doc(orderId).update({ status });
-            if (status === 'Delivered' && order.riderId) {
-                await db.collection('riders').doc(order.riderId).update({
-                    available: true,
-                    assignedOrder: ''
-                });
-            }
-        }
-
-        // Reassign Rider
-        async function reassignRider(orderId) {
-            const orderDoc = await db.collection('orders').doc(orderId).get();
-            const order = orderDoc.data();
-            if (order.riderId) {
-                await db.collection('riders').doc(order.riderId).update({
-                    available: true,
-                    assignedOrder: ''
-                });
-            }
-            await db.collection('orders').doc(orderId).update({
-                status: 'Pending',
-                riderName: '',
-                riderContact: '',
-                riderId: ''
-            });
-            showToast(`Order ${orderId} set to Pending for reassignment`);
-        }
-
-        // Toggle Rider Status
-        async function toggleRiderStatus(riderId) {
-            const riderDoc = await db.collection('riders').doc(riderId).get();
+        if (!data.riderId) {
+          const riderSnap = await db.collection('riders').where('status', '==', 'available').limit(1).get();
+          if (!riderSnap.empty) {
+            const riderDoc = riderSnap.docs[0];
             const rider = riderDoc.data();
-            await db.collection('riders').doc(riderId).update({
-                available: !rider.available
-            });
+            riderName = rider.name;
+            await db.collection('orders').doc(doc.id).update({ riderId: riderDoc.id, riderName: rider.name });
+            await db.collection('riders').doc(riderDoc.id).update({ status: 'busy' });
+          }
+        } else {
+          riderName = data.riderName || 'Assigned';
         }
 
-        // Initialize Dashboard on Load
-        initDashboard();
+        const row = `
+          <tr>
+            <td>${doc.id}</td>
+            <td>${data.customerName || 'N/A'}</td>
+            <td>${JSON.stringify(data.items)}</td>
+            <td>${data.amount || '0'}</td>
+            <td>${riderName}</td>
+            <td>
+              <select onchange="updateStatus('${doc.id}', this.value)">
+                <option value="pending" ${data.status === 'pending' ? 'selected' : ''}>Pending</option>
+                <option value="assigned" ${data.status === 'assigned' ? 'selected' : ''}>Assigned</option>
+                <option value="out" ${data.status === 'out' ? 'selected' : ''}>Out</option>
+                <option value="delivered" ${data.status === 'delivered' ? 'selected' : ''}>Delivered</option>
+              </select>
+            </td>
+          </tr>
+        `;
+        ordersTable.innerHTML += row;
+      });
+    });
 
-        // Google Maps Placeholder (Uncomment and add API key to enable)
-        /*
-        function initMap() {
-            const map = new google.maps.Map(document.getElementById('map'), {
-                center: { lat: -34.397, lng: 150.644 },
-                zoom: 8
-            });
-        }
-        */
-    </script>
-
-    <!-- Google Maps API (Uncomment to enable) -->
-    <!-- <script async src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script> -->
-</body>
+    function updateStatus(orderId, status) {
+      db.collection('orders').doc(orderId).update({ status });
+    }
+  </script></body>
 </html>
