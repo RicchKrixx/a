@@ -363,7 +363,7 @@ document.getElementById("gTotal").textContent = "GH¢" + total + fee;
   function calculateDeliveryFee(distanceKm) {  
     const baseFee = 5;  
     const extraRate = 1;  
-    return distanceKm <=  ? baseFee : baseFee + (distanceKm - 5) * extraRate;  
+    return distanceKm <= 5 ? baseFee : baseFee + (distanceKm - 5) * extraRate;  
   }  
   
   function displayDeliveryFee() {  
