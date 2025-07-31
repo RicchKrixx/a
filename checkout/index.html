@@ -116,9 +116,11 @@
   </style>  </head>  <body>  
 <button onclick="switchStyle()" style="position:fixed;top:15px;right:15px;padding:0;border:none; background:none;font-size:24px;">🎨</button>  <div class="card">  
   <h1>CHECKOUT</h1>  
-  <span>Amount to pay: <p id="grandTotal">GH¢0.00</p></span>    <div class="delivery-section" style="padding: 10px; border: 1px solid #444; background: #0f172a; color: white; border-radius: 8px; margin-top: 15px;">  
+   <div class="delivery-section" style="padding: 10px; border: 1px solid #444; background: #0f172a; color: white; border-radius: 8px; margin-top: 15px;">
+ <p><strong>Subtotal: </strong><span id="grandTotal">GH¢0.00</span> </p>   
     <h3 style="margin-bottom: 5px;">Delivery Fee</h3>  
     <p><strong>Delivery Charge:</strong> <span id="deliveryFee">Calculating...</span></p>  
+<p><strong>Amount To Pay: </strong><span id="gTotal">GH¢0.00</span> </p> 
   </div>    <form id="checkoutForm">  
     <div id="custInfo">  
       <label>Full Name</label>  
@@ -280,7 +282,7 @@
   
       if (paymentMethod === "Paid") {  
         PaystackPop.setup({  
-          key: 'pk_test_ff8b73d28aa1378375dfc0849072ca2ce077de0b',  
+          key: 'pk_live_55fc4deb5da6100b52f981f9f754dc0249e7752f',  
           email: email,  
           amount: grandTotal * 100,  
           currency: "GHS",  
@@ -327,6 +329,7 @@
   const saved = localStorage.getItem("grandTotal") || "0";  
   const total = parseFloat(saved).toFixed(2);  
   document.getElementById("grandTotal").textContent = "GH¢" + total;  
+document.getElementById("gTotal").textContent = "GH¢" + total + fee;  
 </script>  <script>  
   function switchStyle() {  
     const style2 = document.getElementById("style2");  
@@ -358,9 +361,9 @@
   }  
   
   function calculateDeliveryFee(distanceKm) {  
-    const baseFee = 6;  
-    const extraRate = 1.6;  
-    return distanceKm <= 6 ? baseFee : baseFee + (distanceKm - 6) * extraRate;  
+    const baseFee = 5;  
+    const extraRate = 1;  
+    return distanceKm <=  ? baseFee : baseFee + (distanceKm - 5) * extraRate;  
   }  
   
   function displayDeliveryFee() {  
