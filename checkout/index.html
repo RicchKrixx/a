@@ -119,7 +119,7 @@
    <div class="delivery-section" style="padding: 10px; border: 1px solid #444; background: #0f172a; color: white; border-radius: 8px; margin-top: 15px;">
  <p><strong>Subtotal: </strong><span id="grandTotal">GH¢0.00</span> </p>    
     <p><strong>Delivery Fee:</strong> <span id="deliveryFee">Calculating...</span></p>  
-<p><strong>Amount To Pay: </strong><span id="gTotal">GH¢0.00</span> </p> 
+<p><strong>Amount To Pay: </strong><span id="gTotal">Analysing...</span> </p> 
   </div>    <form id="checkoutForm">  
     <div id="custInfo">  
       <label>Full Name</label>  
@@ -283,7 +283,7 @@
         PaystackPop.setup({  
           key: 'pk_live_55fc4deb5da6100b52f981f9f754dc0249e7752f',  
           email: email,  
-          amount: grandTotal * 100,  
+          amount: gTotal * 100,  
           currency: "GHS",  
           ref: orderId,  
           callback: function (response) {  
@@ -300,7 +300,8 @@
       }  
     });  
   });  
-</script>  <script>  
+</script>
+  <script>  
   function getLocation() {  
     if (!navigator.geolocation) {  
       alert("Geolocation not supported.");  
