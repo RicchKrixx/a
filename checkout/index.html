@@ -333,19 +333,19 @@
  
 </script>
 <script> 
-let gTotal = 0; // make it global so Paystack can use it
+let gTotal = 0;
 
-document.getElementById("grandTotal").textContent = "GH¢" + total;
-
-// Wait until delivery fee is loaded
 function updateGTotalWithFee() {
   const feeText = document.getElementById("deliveryFee").textContent;
   const feeMatch = feeText.match(/[\d.]+/);
   const fee = feeMatch ? parseFloat(feeMatch[0]) : 0;
-  
-  gTotal = parseFloat(total) + fee;
 
-  document.getElementById("gTotal").textContent = "GH¢" + gTotal.toFixed(2);
+  if (!isNaN(total) && !isNaN(fee)) {
+    gTotal = parseFloat(total) + fee;
+    document.getElementById("gTotal").textContent = "GH¢" + gTotal.toFixed(2);
+  } else {
+    document.getElementById("gTotal").textContent = "Analysing...";
+  }
 }
 
 // Listen for delivery fee changes
