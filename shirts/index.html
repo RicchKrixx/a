@@ -256,6 +256,42 @@ function renderShirts(items) {
     }  
 
     updateCartCount();  
+
+  let selectedProduct = null;
+  let selectedSize = "";
+
+  function selectSize(size) {
+    selectedSize = size;
+    document.querySelectorAll('.size-btn').forEach(btn => {
+      btn.classList.remove('selected');
+    });
+    const buttons = document.querySelectorAll('.size-btn');
+    buttons.forEach(btn => {
+      if (btn.textContent === size) btn.classList.add('selected');
+    });
+  }
+
+  function confirmAddToCart() {
+    if (!selectedSize) {
+      alert("Please select a size");
+      return;
+    }
+
+    selectedProduct.size = selectedSize;
+    addToCart(selectedProduct);
+    closeSizePopup();
+  }
+
+  function openSizePopup(product) {
+    selectedProduct = { ...product };
+    selectedSize = "";
+    document.getElementById("sizePopup").style.display = "flex";
+    document.querySelectorAll('.size-btn').forEach(btn => btn.classList.remove('selected'));
+  }
+
+  function closeSizePopup() {
+    document.getElementById("sizePopup").style.display = "none";
+  }
   </script>
 <script>
   const searchInput = document.getElementById("searchInput");
@@ -328,43 +364,7 @@ function renderShirts(items) {
     color: white;
   }
 </style>
-<script>
-  let selectedProduct = null;
-  let selectedSize = "";
 
-  function selectSize(size) {
-    selectedSize = size;
-    document.querySelectorAll('.size-btn').forEach(btn => {
-      btn.classList.remove('selected');
-    });
-    const buttons = document.querySelectorAll('.size-btn');
-    buttons.forEach(btn => {
-      if (btn.textContent === size) btn.classList.add('selected');
-    });
-  }
-
-  function confirmAddToCart() {
-    if (!selectedSize) {
-      alert("Please select a size");
-      return;
-    }
-
-    selectedProduct.size = selectedSize;
-    addToCart(selectedProduct);
-    closeSizePopup();
-  }
-
-  function openSizePopup(product) {
-    selectedProduct = { ...product };
-    selectedSize = "";
-    document.getElementById("sizePopup").style.display = "flex";
-    document.querySelectorAll('.size-btn').forEach(btn => btn.classList.remove('selected'));
-  }
-
-  function closeSizePopup() {
-    document.getElementById("sizePopup").style.display = "none";
-  }
-</script>
 </body>
 <footer style="
   position: absolute;
