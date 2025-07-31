@@ -130,9 +130,9 @@
 
   <div class="delivery-section"id="breakdown" style="padding: 10px; border: 1px solid #444; background: #0f172a; color: white; border-radius: 8px; margin-top: 15px;" font-size: 16px;">
   <p>Subtotal: <span id="subtotal">GH₵0</span></p>
-  <p>Delivery: <span id="delivery">GH₵0</span></p>
+  <p>Delivery: <span id="deliveryFee">GH₵0</span></p>
   <hr style="margin: 8px 0;"/>
-  <p><strong>Total: <span id="grandTotal">GH₵0</span></strong></p>
+  <p><strong>Amount to pay: <span id="grandTotal">GH₵0</span></strong></p>
 </div>
  
 
@@ -365,7 +365,7 @@ let deliveryFee = 0;
     const fullTotal = (rawTotal + deliveryFee).toFixed(2);
     
     document.getElementById("subtotal").textContent = "GH₵" + rawTotal.toFixed(2);
-    document.getElementById("delivery").textContent = "GH₵" + deliveryFee.toFixed(2);
+    document.getElementById("deliveryFee").textContent = "GH₵" + deliveryFee.toFixed(2);
     document.getElementById("grandTotal").textContent = "GH₵" + fullTotal;
   }
 
