@@ -10,99 +10,104 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js"></script>
     <style>
-        /* Custom styles for enhanced UI */
         body { font-family: 'Inter', sans-serif; }
         .toast { position: fixed; top: 20px; right: 20px; z-index: 1000; }
         .hidden { display: none; }
         .error { border: 2px solid red; }
+        table { font-size: 0.9rem; }
+        th, td { padding: 0.75rem; }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen p-4">
-    <!-- Main Dashboard -->
-    <div id="dashboard" class="container mx-auto">
-        <h1 class="text-3xl font-bold mb-6 text-center">Delivery Dispatch Dashboard</h1>
+<body class="bg-gray-50 min-h-screen p-6">
+    <div class="container mx-auto max-w-7xl">
+        <h1 class="text-3xl font-bold mb-8 text-gray-800 text-center">Delivery Dispatch Dashboard</h1>
 
         <!-- Rider Registration Panel -->
-        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-            <h2 class="text-2xl font-bold mb-4">Register New Rider</h2>
-            <form id="rider-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input id="rider-name" type="text" placeholder="Rider Name" class="p-2 border rounded" required>
-                <input id="rider-id" type="text" placeholder="Rider ID (Auto-generated if empty)" class="p-2 border rounded">
-                <input id="rider-phone" type="tel" placeholder="Phone Number" class="p-2 border rounded" required>
-                <input id="rider-email" type="email" placeholder="Email" class="p-2 border rounded" required>
-                <select id="rider-vehicle" class="p-2 border rounded" required>
+        <div class="bg-white p-6 rounded-xl shadow-sm mb-8">
+            <h2 class="text-xl font-semibold mb-4 text-gray-700">Register New Rider</h2>
+            <form id="rider-form" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <input id="rider-name" type="text" placeholder="Rider Name" class="p-2 border rounded-md" required>
+                <input id="rider-id" type="text" placeholder="Rider ID (Auto-generated if empty)" class="p-2 border rounded-md">
+                <input id="rider-phone" type="tel" placeholder="Phone Number" class="p-2 border rounded-md" required>
+                <input id="rider-email" type="email" placeholder="Email" class="p-2 border rounded-md" required>
+                <select id="rider-vehicle" class="p-2 border rounded-md" required>
                     <option value="">Select Vehicle Type</option>
                     <option value="bike">Bike</option>
                     <option value="car">Car</option>
                     <option value="van">Van</option>
                 </select>
-                <input id="rider-zone" type="text" placeholder="Zone (Optional)" class="p-2 border rounded">
+                <input id="rider-zone" type="text" placeholder="Zone (e.g., Downtown)" class="p-2 border rounded-md">
                 <div class="flex items-center">
-                    <label class="mr-2">Available:</label>
+                    <label class="mr-2 text-gray-600">Available:</label>
                     <input id="rider-availability" type="checkbox" checked class="h-5 w-5">
                 </div>
-                <button type="submit" class="col-span-2 bg-green-600 text-white p-2 rounded hover:bg-green-700">Register Rider</button>
+                <button type="submit" class="col-span-2 bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700">Register Rider</button>
             </form>
             <p id="rider-error" class="text-red-500 mt-2 hidden"></p>
         </div>
 
         <!-- Order Dashboard Panel -->
-        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-            <h2 class="text-2xl font-bold mb-4">Orders Dashboard</h2>
-            <table id="orders-table" class="w-full border-collapse">
-                <thead>
-                    <tr class="bg-gray-200">
-                        <th class="p-2 border">Order ID</th>
-                        <th class="p-2 border">Customer</th>
-                        <th class="p-2 border">Address</th>
-                        <th class="p-2 border">Items</th>
-                        <th class="p-2 border">Total</th>
-                        <th class="p-2 border">Rider</th>
-                        <th class="p-2 border">Rider Contact</th>
-                        <th class="p-2 border">Status</th>
-                        <th class="p-2 border">Timestamp</th>
-                        <th class="p-2 border">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="orders-tbody"></tbody>
-            </table>
+        <div class="bg-white p-6 rounded-xl shadow-sm mb-8">
+            <h2 class="text-xl font-semibold mb-4 text-gray-700">Orders Dashboard</h2>
+            <input id="order-search" type="text" placeholder="Search by Order ID or Customer Name" class="w-full p-2 mb-4 border rounded-md">
+            <div class="overflow-x-auto">
+                <table id="orders-table" class="w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="border-b text-left">Order ID</th>
+                            <th class="border-b text-left">Customer</th>
+                            <th class="border-b text-left">Address</th>
+                            <th class="border-b text-left">Items</th>
+                            <th class="border-b text-left">Total</th>
+                            <th class="border-b text-left">Rider</th>
+                            <th class="border-b text-left">Status</th>
+                            <th class="border-b text-left">Timestamp</th>
+                            <th class="border-b text-left">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-tbody"></tbody>
+                </table>
+            </div>
         </div>
 
         <!-- Rider Dashboard Panel -->
-        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-            <h2 class="text-2xl font-bold mb-4">Riders Dashboard</h2>
-            <table id="riders-table" class="w-full border-collapse">
-                <thead>
-                    <tr class="bg-gray-200">
-                        <th class="p-2 border">Rider ID</th>
-                        <th class="p-2 border">Name</th>
-                        <th class="p-2 border">Phone</th>
-                        <th class="p-2 border">Vehicle</th>
-                        <th class="p-2 border">Status</th>
-                        <th class="p-2 border">Assigned Order</th>
-                        <th class="p-2 border">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="riders-tbody"></tbody>
-            </table>
+        <div class="bg-white p-6 rounded-xl shadow-sm mb-8">
+            <h2 class="text-xl font-semibold mb-4 text-gray-700">Riders Dashboard</h2>
+            <div class="overflow-x-auto">
+                <table id="riders-table" class="w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="border-b text-left">Rider ID</th>
+                            <th class="border-b text-left">Name</th>
+                            <th class="border-b text-left">Phone</th>
+                            <th class="border-b text-left">Vehicle</th>
+                            <th class="border-b text-left">Zone</th>
+                            <th class="border-b text-left">Status</th>
+                            <th class="border-b text-left">Order</th>
+                            <th class="border-b text-left">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="riders-tbody"></tbody>
+                </table>
+            </div>
         </div>
 
         <!-- Google Maps Placeholder -->
-        <div class="bg-white p-6 rounded-lg shadow-md">
-            <h2 class="text-2xl font-bold mb-4">Rider Tracking (Placeholder)</h2>
-            <div id="map" class="h-64 bg-gray-300 flex items-center justify-center">
-                <p>Google Maps Integration Placeholder (Add API Key to Enable)</p>
+        <div class="bg-white p-6 rounded-xl shadow-sm">
+            <h2 class="text-xl font-semibold mb-4 text-gray-700">Rider Tracking (Placeholder)</h2>
+            <div id="map" class="h-64 bg-gray-200 flex items-center justify-center rounded-md">
+                <p class="text-gray-600">Google Maps Integration Placeholder (Add API Key to Enable)</p>
             </div>
         </div>
     </div>
 
     <!-- Toast Notification -->
-    <div id="toast" class="toast bg-green-600 text-white p-4 rounded shadow-lg hidden">
+    <div id="toast" class="toast bg-blue-600 text-white p-4 rounded-lg shadow-lg hidden">
         <span id="toast-message"></span>
     </div>
 
     <script>
-      // Firebase configuration
+        // Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
   authDomain: "bixmax-6c24c.firebaseapp.com",
@@ -120,6 +125,7 @@ const firebaseConfig = {
         const riderForm = document.getElementById('rider-form');
         const ordersTbody = document.getElementById('orders-tbody');
         const ridersTbody = document.getElementById('riders-tbody');
+        const orderSearch = document.getElementById('order-search');
         const toast = document.getElementById('toast');
         const toastMessage = document.getElementById('toast-message');
 
@@ -174,35 +180,16 @@ const firebaseConfig = {
         });
 
         // Initialize Dashboard
+        let allOrders = [];
         function initDashboard() {
             // Real-time Orders Listener
             db.collection('orders').onSnapshot(snapshot => {
+                allOrders = [];
                 ordersTbody.innerHTML = '';
                 snapshot.forEach(doc => {
-                    const order = doc.data();
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td class="p-2 border">${doc.id}</td>
-                        <td class="p-2 border">${order.customerName} (${order.customerPhone})</td>
-                        <td class="p-2 border">${order.address}</td>
-                        <td class="p-2 border">${JSON.stringify(order.items)}</td>
-                        <td class="p-2 border">$${order.total}</td>
-                        <td class="p-2 border">${order.riderName || 'Unassigned'}</td>
-                        <td class="p-2 border">${order.riderContact || '-'}</td>
-                        <td class="p-2 border">
-                            <select class="status-select p-1 border rounded" data-order-id="${doc.id}">
-                                <option value="Pending" ${order.status === 'Pending' ? 'selected' : ''}>Pending</option>
-                                <option value="Assigned" ${order.status === 'Assigned' ? 'selected' : ''}>Assigned</option>
-                                <option value="Out for Delivery" ${order.status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
-                                <option value="Delivered" ${order.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
-                            </select>
-                        </td>
-                        <td class="p-2 border">${new Date(order.timestamp.toDate()).toLocaleString()}</td>
-                        <td class="p-2 border">
-                            <button class="reassign-btn bg-yellow-500 text-white p-1 rounded hover:bg-yellow-600" data-order-id="${doc.id}">Reassign</button>
-                        </td>
-                    `;
-                    ordersTbody.appendChild(row);
+                    const order = { id: doc.id, ...doc.data() };
+                    allOrders.push(order);
+                    renderOrder(order);
 
                     // Auto-assign rider if pending
                     if (order.status === 'Pending') {
@@ -236,14 +223,15 @@ const firebaseConfig = {
                     const rider = doc.data();
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td class="p-2 border">${doc.id}</td>
-                        <td class="p-2 border">${rider.name}</td>
-                        <td class="p-2 border">${rider.phone}</td>
-                        <td class="p-2 border">${rider.vehicle}</td>
-                        <td class="p-2 border">${rider.available ? 'Available' : 'Busy'}</td>
-                        <td class="p-2 border">${rider.assignedOrder || '-'}</td>
-                        <td class="p-2 border">
-                            <button class="toggle-status-btn bg-blue-500 text-white p-1 rounded hover:bg-blue-600" data-rider-id="${doc.id}">
+                        <td class="border-b">${doc.id}</td>
+                        <td class="border-b">${rider.name}</td>
+                        <td class="border-b">${rider.phone}</td>
+                        <td class="border-b">${rider.vehicle}</td>
+                        <td class="border-b">${rider.zone || '-'}</td>
+                        <td class="border-b">${rider.available ? 'Available' : 'Busy'}</td>
+                        <td class="border-b">${rider.assignedOrder || '-'}</td>
+                        <td class="border-b">
+                            <button class="toggle-status-btn bg-blue-500 text-white px-2 py-1 rounded-md hover:bg-blue-600" data-rider-id="${doc.id}">
                                 ${rider.available ? 'Set Busy' : 'Set Available'}
                             </button>
                         </td>
@@ -259,11 +247,60 @@ const firebaseConfig = {
                     });
                 });
             });
+
+            // Search Orders
+            orderSearch.addEventListener('input', e => {
+                const query = e.target.value.toLowerCase();
+                ordersTbody.innerHTML = '';
+                allOrders
+                    .filter(order => 
+                        order.id.toLowerCase().includes(query) || 
+                        order.customerName.toLowerCase().includes(query)
+                    )
+                    .forEach(renderOrder);
+            });
         }
 
-        // Auto-assign Rider (Simple: First available rider)
+        // Render Order Row
+        function renderOrder(order) {
+            const itemsList = order.items.map(item => `${item.name} (x${item.qty})`).join(', ');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="border-b">${order.id}</td>
+                <td class="border-b">${order.customerName} (${order.customerPhone})</td>
+                <td class="border-b">${order.address}</td>
+                <td class="border-b">${itemsList}</td>
+                <td class="border-b">$${order.total}</td>
+                <td class="border-b">${order.riderName || 'Unassigned'}</td>
+                <td class="border-b">
+                    <select class="status-select p-1 border rounded-md" data-order-id="${order.id}">
+                        <option value="Pending" ${order.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                        <option value="Assigned" ${order.status === 'Assigned' ? 'selected' : ''}>Assigned</option>
+                        <option value="Out for Delivery" ${order.status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
+                        <option value="Delivered" ${order.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+                    </select>
+                </td>
+                <td class="border-b">${new Date(order.timestamp.toDate()).toLocaleString()}</td>
+                <td class="border-b">
+                    <button class="reassign-btn bg-yellow-500 text-white px-2 py-1 rounded-md hover:bg-yellow-600" data-order-id="${order.id}">Reassign</button>
+                </td>
+            `;
+            ordersTbody.appendChild(row);
+        }
+
+        // Auto-assign Rider (Prioritize same zone)
         async function autoAssignRider(orderId, order) {
-            const ridersSnapshot = await db.collection('riders').where('available', '==', true).get();
+            let ridersSnapshot = await db.collection('riders')
+                .where('available', '==', true)
+                .where('zone', '==', order.zone || '')
+                .get();
+            
+            if (ridersSnapshot.empty) {
+                ridersSnapshot = await db.collection('riders')
+                    .where('available', '==', true)
+                    .get();
+            }
+
             if (ridersSnapshot.empty) {
                 showToast('No available riders for order ' + orderId);
                 return;
