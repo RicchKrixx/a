@@ -1,47 +1,120 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dispatch Dashboard | BizMAX</title>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-  <style>
-    body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; background: #f2f4f8; }
-    header { background: #007BFF; color: white; padding: 1rem 2rem; font-size: 1.5rem; text-align: center; }
-    .container { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; padding: 2rem; }
-    section { background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-    h2 { margin-top: 0; }
-    input, select, textarea { width: 100%; margin: 0.5rem 0 1rem; padding: 0.6rem; border-radius: 5px; border: 1px solid #ccc; }
-    button { background: #007BFF; color: white; padding: 0.6rem 1.2rem; border: none; border-radius: 5px; cursor: pointer; }
-    button:hover { background: #0056b3; }
-    .order, .rider { padding: 1rem; border-bottom: 1px solid #eee; }
-    .order:last-child, .rider:last-child { border-bottom: none; }
-    .status-btns button { margin-right: 0.5rem; margin-bottom: 0.5rem; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Dispatch Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js"></script>
+    <style>
+        /* Custom styles for enhanced UI */
+        body { font-family: 'Inter', sans-serif; }
+        .toast { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+        .hidden { display: none; }
+        .error { border: 2px solid red; }
+    </style>
 </head>
-<body>
-  <header>BizMAX Dispatch Dashboard</header>
-  <div class="container">
-    <!-- Rider Registration -->
-    <section>
-      <h2>Register New Rider</h2>
-      <input type="text" id="riderName" placeholder="Full Name" />
-      <input type="text" id="riderPhone" placeholder="Phone Number" />
-      <input type="email" id="riderEmail" placeholder="Email" />
-      <select id="riderVehicle">
-        <option value="Bike">Bike</option>
-        <option value="Car">Car</option>
-        <option value="Van">Van</option>
-      </select>
-      <button onclick="registerRider()">Register Rider</button>
-      <div id="riderList"></div>
-    </section><!-- Orders Dashboard -->
-<section>
-  <h2>Incoming Orders</h2>
-  <div id="orders"></div>
-</section>
+<body class="bg-gray-100 min-h-screen p-4">
+    <!-- Auth Section -->
+    <div id="auth-section" class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md mb-4">
+        <h2 class="text-2xl font-bold mb-4">Admin Login</h2>
+        <input id="email" type="email" placeholder="Email" class="w-full p-2 mb-2 border rounded">
+        <input id="password" type="password" placeholder="Password" class="w-full p-2 mb-2 border rounded">
+        <button id="login-btn" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Login</button>
+        <p id="auth-error" class="text-red-500 mt-2 hidden"></p>
+    </div>
 
-  </div>  <script>
+    <!-- Main Dashboard (Hidden until logged in) -->
+    <div id="dashboard" class="hidden">
+        <div class="container mx-auto">
+            <h1 class="text-3xl font-bold mb-6 text-center">Delivery Dispatch Dashboard</h1>
+            <button id="logout-btn" class="bg-red-600 text-white p-2 rounded mb-4 hover:bg-red-700">Logout</button>
+
+            <!-- Rider Registration Panel -->
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <h2 class="text-2xl font-bold mb-4">Register New Rider</h2>
+                <form id="rider-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input id="rider-name" type="text" placeholder="Rider Name" class="p-2 border rounded" required>
+                    <input id="rider-id" type="text" placeholder="Rider ID (Auto-generated if empty)" class="p-2 border rounded">
+                    <input id="rider-phone" type="tel" placeholder="Phone Number" class="p-2 border rounded" required>
+                    <input id="rider-email" type="email" placeholder="Email" class="p-2 border rounded" required>
+                    <select id="rider-vehicle" class="p-2 border rounded" required>
+                        <option value="">Select Vehicle Type</option>
+                        <option value="bike">Bike</option>
+                        <option value="car">Car</option>
+                        <option value="van">Van</option>
+                    </select>
+                    <input id="rider-zone" type="text" placeholder="Zone (Optional)" class="p-2 border rounded">
+                    <div class="flex items-center">
+                        <label class="mr-2">Available:</label>
+                        <input id="rider-availability" type="checkbox" checked class="h-5 w-5">
+                    </div>
+                    <button type="submit" class="col-span-2 bg-green-600 text-white p-2 rounded hover:bg-green-700">Register Rider</button>
+                </form>
+                <p id="rider-error" class="text-red-500 mt-2 hidden"></p>
+            </div>
+
+            <!-- Order Dashboard Panel -->
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <h2 class="text-2xl font-bold mb-4">Orders Dashboard</h2>
+                <table id="orders-table" class="w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="p-2 border">Order ID</th>
+                            <th class="p-2 border">Customer</th>
+                            <th class="p-2 border">Address</th>
+                            <th class="p-2 border">Items</th>
+                            <th class="p-2 border">Total</th>
+                            <th class="p-2 border">Rider</th>
+                            <th class="p-2 border">Rider Contact</th>
+                            <th class="p-2 border">Status</th>
+                            <th class="p-2 border">Timestamp</th>
+                            <th class="p-2 border">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-tbody"></tbody>
+                </table>
+            </div>
+
+            <!-- Rider Dashboard Panel -->
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <h2 class="text-2xl font-bold mb-4">Riders Dashboard</h2>
+                <table id="riders-table" class="w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="p-2 border">Rider ID</th>
+                            <th class="p-2 border">Name</th>
+                            <th class="p-2 border">Phone</th>
+                            <th class="p-2 border">Vehicle</th>
+                            <th class="p-2 border">Status</th>
+                            <th class="p-2 border">Assigned Order</th>
+                            <th class="p-2 border">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="riders-tbody"></tbody>
+                </table>
+            </div>
+
+            <!-- Google Maps Placeholder -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4">Rider Tracking (Placeholder)</h2>
+                <div id="map" class="h-64 bg-gray-300 flex items-center justify-center">
+                    <p>Google Maps Integration Placeholder (Add API Key to Enable)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast bg-green-600 text-white p-4 rounded shadow-lg hidden">
+        <span id="toast-message"></span>
+    </div>
+
+    <script>
     // Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
@@ -52,85 +125,263 @@ const firebaseConfig = {
   appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
 };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
 
-    // Register Rider
-    function registerRider() {
-      const name = document.getElementById('riderName').value;
-      const phone = document.getElementById('riderPhone').value;
-      const email = document.getElementById('riderEmail').value;
-      const vehicle = document.getElementById('riderVehicle').value;
+        // DOM Elements
+        const authSection = document.getElementById('auth-section');
+        const dashboard = document.getElementById('dashboard');
+        const loginBtn = document.getElementById('login-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const riderForm = document.getElementById('rider-form');
+        const ordersTbody = document.getElementById('orders-tbody');
+        const ridersTbody = document.getElementById('riders-tbody');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
 
-      if (!name || !phone) return alert("Name and phone are required");
-      const riderId = db.ref("riders").push().key;
-      db.ref("riders/" + riderId).set({
-        name, phone, email, vehicle, available: true, currentOrder: ""
-      });
-    }
+        // Authentication
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                authSection.classList.add('hidden');
+                dashboard.classList.remove('hidden');
+                initDashboard();
+            } else {
+                authSection.classList.remove('hidden');
+                dashboard.classList.add('hidden');
+            }
+        });
 
-    // Auto Assign Rider
-    function assignRiderToOrder(orderId, orderData) {
-      db.ref("riders").once('value', snapshot => {
-        const riders = snapshot.val();
-        let selectedRiderId = null;
+        loginBtn.addEventListener('click', () => {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const authError = document.getElementById('auth-error');
+            auth.signInWithEmailAndPassword(email, password)
+                .catch(error => {
+                    authError.classList.remove('hidden');
+                    authError.textContent = error.message;
+                });
+        });
 
-        for (let id in riders) {
-          if (riders[id].available) {
-            selectedRiderId = id;
-            break;
-          }
+        logoutBtn.addEventListener('click', () => {
+            auth.signOut();
+        });
+
+        // Show Toast Notification
+        function showToast(message) {
+            toastMessage.textContent = message;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3000);
         }
 
-        if (selectedRiderId) {
-          db.ref("orders/" + orderId + "/assignedRider").set(selectedRiderId);
-          db.ref("riders/" + selectedRiderId).update({ available: false, currentOrder: orderId });
+        // Generate Random ID
+        function generateId(prefix) {
+            return `${prefix}-${Math.random().toString(36).substr(2, 9)}`;
         }
-      });
-    }
 
-    // Fetch Orders
-    db.ref("orders").on('child_added', snapshot => {
-      const data = snapshot.val();
-      const id = snapshot.key;
-      const div = document.createElement("div");
-      div.className = "order";
-      div.innerHTML = `
-        <strong>Customer:</strong> ${data.customerName}<br>
-        <strong>Phone:</strong> ${data.customerPhone}<br>
-        <strong>Address:</strong> ${data.customerAddress}<br>
-        <strong>Items:</strong> ${data.items}<br>
-        <strong>Total:</strong> ${data.total}<br>
-        <strong>Status:</strong> ${data.status || 'Pending'}<br>
-        <strong>Rider:</strong> ${data.assignedRider || 'Unassigned'}<br>
-        <div class="status-btns">
-          <button onclick="updateStatus('${id}', 'Picked')">Picked</button>
-          <button onclick="updateStatus('${id}', 'On the Way')">On the Way</button>
-          <button onclick="updateStatus('${id}', 'Delivered')">Delivered</button>
-        </div>
-      `;
-      document.getElementById("orders").prepend(div);
+        // Rider Registration
+        riderForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const riderName = document.getElementById('rider-name').value;
+            const riderId = document.getElementById('rider-id').value || generateId('RIDER');
+            const riderPhone = document.getElementById('rider-phone').value;
+            const riderEmail = document.getElementById('rider-email').value;
+            const riderVehicle = document.getElementById('rider-vehicle').value;
+            const riderZone = document.getElementById('rider-zone').value;
+            const riderAvailability = document.getElementById('rider-availability').checked;
+            const riderError = document.getElementById('rider-error');
 
-      if (!data.assignedRider) assignRiderToOrder(id, data);
-    });
+            // Validation
+            if (!riderName || !riderPhone || !riderEmail || !riderVehicle) {
+                riderError.classList.remove('hidden');
+                riderError.textContent = 'Please fill all required fields.';
+                return;
+            }
 
-    function updateStatus(orderId, status) {
-      db.ref("orders/" + orderId + "/status").set(status);
-    }
+            // Save to Firestore
+            db.collection('riders').doc(riderId).set({
+                name: riderName,
+                phone: riderPhone,
+                email: riderEmail,
+                vehicle: riderVehicle,
+                zone: riderZone || '',
+                available: riderAvailability,
+                assignedOrder: ''
+            }).then(() => {
+                riderForm.reset();
+                document.getElementById('rider-availability').checked = true;
+                showToast('Rider registered successfully!');
+            }).catch(error => {
+                riderError.classList.remove('hidden');
+                riderError.textContent = error.message;
+            });
+        });
 
-    // Show Riders
-    db.ref("riders").on('value', snapshot => {
-      const riders = snapshot.val();
-      const list = document.getElementById('riderList');
-      list.innerHTML = '<h3>Registered Riders</h3>';
-      for (let id in riders) {
-        const r = riders[id];
-        list.innerHTML += `<div class="rider">
-          <strong>${r.name}</strong> - ${r.vehicle} <br>
-          ${r.phone} | ${r.email} <br>
-          Status: ${r.available ? 'Available' : 'Busy'}
-        </div>`;
-      }
-    });
-  </script></body>
+        // Initialize Dashboard
+        function initDashboard() {
+            // Real-time Orders Listener
+            db.collection('orders').onSnapshot(snapshot => {
+                ordersTbody.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const order = doc.data();
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="p-2 border">${doc.id}</td>
+                        <td class="p-2 border">${order.customerName} (${order.customerPhone})</td>
+                        <td class="p-2 border">${order.address}</td>
+                        <td class="p-2 border">${JSON.stringify(order.items)}</td>
+                        <td class="p-2 border">$${order.total}</td>
+                        <td class="p-2 border">${order.riderName || 'Unassigned'}</td>
+                        <td class="p-2 border">${order.riderContact || '-'}</td>
+                        <td class="p-2 border">
+                            <select class="status-select p-1 border rounded" data-order-id="${doc.id}">
+                                <option value="Pending" ${order.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                                <option value="Assigned" ${order.status === 'Assigned' ? 'selected' : ''}>Assigned</option>
+                                <option value="Out for Delivery" ${order.status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
+                                <option value="Delivered" ${order.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+                            </select>
+                        </td>
+                        <td class="p-2 border">${new Date(order.timestamp.toDate()).toLocaleString()}</td>
+                        <td class="p-2 border">
+                            <button class="reassign-btn bg-yellow-500 text-white p-1 rounded hover:bg-yellow-600" data-order-id="${doc.id}">Reassign</button>
+                        </td>
+                    `;
+                    ordersTbody.appendChild(row);
+
+                    // Auto-assign rider if pending
+                    if (order.status === 'Pending') {
+                        autoAssignRider(doc.id, order);
+                        showToast(`New order ${doc.id} received!`);
+                    }
+                });
+
+                // Status Update Handler
+                document.querySelectorAll('.status-select').forEach(select => {
+                    select.addEventListener('change', e => {
+                        const orderId = e.target.dataset.orderId;
+                        const newStatus = e.target.value;
+                        updateOrderStatus(orderId, newStatus);
+                    });
+                });
+
+                // Reassign Handler
+                document.querySelectorAll('.reassign-btn').forEach(btn => {
+                    btn.addEventListener('click', e => {
+                        const orderId = e.target.dataset.orderId;
+                        reassignRider(orderId);
+                    });
+                });
+            });
+
+            // Real-time Riders Listener
+            db.collection('riders').onSnapshot(snapshot => {
+                ridersTbody.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const rider = doc.data();
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="p-2 border">${doc.id}</td>
+                        <td class="p-2 border">${rider.name}</td>
+                        <td class="p-2 border">${rider.phone}</td>
+                        <td class="p-2 border">${rider.vehicle}</td>
+                        <td class="p-2 border">${rider.available ? 'Available' : 'Busy'}</td>
+                        <td class="p-2 border">${rider.assignedOrder || '-'}</td>
+                        <td class="p-2 border">
+                            <button class="toggle-status-btn bg-blue-500 text-white p-1 rounded hover:bg-blue-600" data-rider-id="${doc.id}">
+                                ${rider.available ? 'Set Busy' : 'Set Available'}
+                            </button>
+                        </td>
+                    `;
+                    ridersTbody.appendChild(row);
+                });
+
+                // Toggle Status Handler
+                document.querySelectorAll('.toggle-status-btn').forEach(btn => {
+                    btn.addEventListener('click', e => {
+                        const riderId = e.target.dataset.riderId;
+                        toggleRiderStatus(riderId);
+                    });
+                });
+            });
+        }
+
+        // Auto-assign Rider (Simple: First available rider)
+        async function autoAssignRider(orderId, order) {
+            const ridersSnapshot = await db.collection('riders').where('available', '==', true).get();
+            if (ridersSnapshot.empty) {
+                showToast('No available riders for order ' + orderId);
+                return;
+            }
+
+            const rider = ridersSnapshot.docs[0];
+            const riderData = rider.data();
+            await db.collection('orders').doc(orderId).update({
+                status: 'Assigned',
+                riderName: riderData.name,
+                riderContact: riderData.phone,
+                riderId: rider.id
+            });
+            await db.collection('riders').doc(rider.id).update({
+                available: false,
+                assignedOrder: orderId
+            });
+            showToast(`Order ${orderId} assigned to ${riderData.name}`);
+        }
+
+        // Update Order Status
+        async function updateOrderStatus(orderId, status) {
+            const orderDoc = await db.collection('orders').doc(orderId).get();
+            const order = orderDoc.data();
+            await db.collection('orders').doc(orderId).update({ status });
+            if (status === 'Delivered' && order.riderId) {
+                await db.collection('riders').doc(order.riderId).update({
+                    available: true,
+                    assignedOrder: ''
+                });
+            }
+        }
+
+        // Reassign Rider
+        async function reassignRider(orderId) {
+            const orderDoc = await db.collection('orders').doc(orderId).get();
+            const order = orderDoc.data();
+            if (order.riderId) {
+                await db.collection('riders').doc(order.riderId).update({
+                    available: true,
+                    assignedOrder: ''
+                });
+            }
+            await db.collection('orders').doc(orderId).update({
+                status: 'Pending',
+                riderName: '',
+                riderContact: '',
+                riderId: ''
+            });
+            showToast(`Order ${orderId} set to Pending for reassignment`);
+        }
+
+        // Toggle Rider Status
+        async function toggleRiderStatus(riderId) {
+            const riderDoc = await db.collection('riders').doc(riderId).get();
+            const rider = riderDoc.data();
+            await db.collection('riders').doc(riderId).update({
+                available: !rider.available
+            });
+        }
+
+        // Google Maps Placeholder (Uncomment and add API key to enable)
+        /*
+        function initMap() {
+            const map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: -34.397, lng: 150.644 },
+                zoom: 8
+            });
+        }
+        */
+    </script>
+
+    <!-- Google Maps API (Uncomment to enable) -->
+    <!-- <script async src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script> -->
+</body>
 </html>
