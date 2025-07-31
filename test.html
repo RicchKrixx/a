@@ -2,200 +2,135 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BizMAX Delivery Admin</title>
+  <title>Dispatch Dashboard | BizMAX</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background: #f4f6f8;
-      color: #333;
-    }
-    header {
-      background: #00bcd4;
-      padding: 1rem;
-      color: white;
-      text-align: center;
-    }
-    main {
-      padding: 1rem;
-      max-width: 1200px;
-      margin: auto;
-    }
-    h2 {
-      color: #00bcd4;
-    }
-    .card {
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      padding: 1rem;
-      margin-bottom: 1rem;
-    }
-    label {
-      display: block;
-      margin-top: 0.5rem;
-      font-weight: bold;
-    }
-    input, select, textarea {
-      width: 100%;
-      padding: 0.5rem;
-      margin-top: 0.25rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    button {
-      background: #00bcd4;
-      color: white;
-      padding: 0.5rem 1rem;
-      border: none;
-      margin-top: 1rem;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .orders-list, .riders-list {
-      display: grid;
-      gap: 1rem;
-    }
-    .status {
-      font-weight: bold;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-    }
-    .status.pending { background: orange; color: white; }
-    .status.assigned { background: teal; color: white; }
-    .status.delivered { background: green; color: white; }
-    .status.failed { background: red; color: white; }
-    .status.returned { background: gray; color: white; }
+    body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; background: #f2f4f8; }
+    header { background: #007BFF; color: white; padding: 1rem 2rem; font-size: 1.5rem; text-align: center; }
+    .container { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; padding: 2rem; }
+    section { background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    h2 { margin-top: 0; }
+    input, select, textarea { width: 100%; margin: 0.5rem 0 1rem; padding: 0.6rem; border-radius: 5px; border: 1px solid #ccc; }
+    button { background: #007BFF; color: white; padding: 0.6rem 1.2rem; border: none; border-radius: 5px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    .order, .rider { padding: 1rem; border-bottom: 1px solid #eee; }
+    .order:last-child, .rider:last-child { border-bottom: none; }
+    .status-btns button { margin-right: 0.5rem; margin-bottom: 0.5rem; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>BizMAX Delivery Dashboard</h1>
-    <p>Manage orders, assign riders, and track delivery status</p>
-  </header>
-  <main>
-    <section class="card">
+  <header>BizMAX Dispatch Dashboard</header>
+  <div class="container">
+    <!-- Rider Registration -->
+    <section>
       <h2>Register New Rider</h2>
-      <form id="riderForm">
-        <label>Full Name</label>
-        <input required name="name" type="text" />
-        <label>Phone</label>
-        <input required name="phone" type="tel" />
-        <label>Email</label>
-        <input name="email" type="email" />
-        <label>Vehicle Type</label>
-        <select name="vehicle">
-          <option value="bike">Bike</option>
-          <option value="car">Car</option>
-          <option value="van">Van</option>
-        </select>
-        <label>License Plate</label>
-        <input name="plate" type="text" />
-        <button type="submit">Add Rider</button>
-      </form>
-    </section><section class="card">
-  <h2>Create Delivery Order</h2>
-  <form id="orderForm">
-    <label>Customer Name</label>
-    <input required name="customer" type="text" />
-    <label>Contact Number</label>
-    <input required name="contact" type="tel" />
-    <label>Email</label>
-    <input name="email" type="email" />
-    <label>Delivery Address</label>
-    <textarea required name="address"></textarea>
-    <label>Package Description</label>
-    <textarea name="package"></textarea>
-    <label>Delivery Time</label>
-    <input name="time" type="datetime-local" />
-    <label>Payment Type</label>
-    <select name="payment">
-      <option>Prepaid</option>
-      <option>Cash on Delivery</option>
-    </select>
-    <label>Delivery Priority</label>
-    <select name="priority">
-      <option>Normal</option>
-      <option>High</option>
-    </select>
-    <label>Special Notes</label>
-    <textarea name="notes"></textarea>
-    <button type="submit">Add Order</button>
-  </form>
+      <input type="text" id="riderName" placeholder="Full Name" />
+      <input type="text" id="riderPhone" placeholder="Phone Number" />
+      <input type="email" id="riderEmail" placeholder="Email" />
+      <select id="riderVehicle">
+        <option value="Bike">Bike</option>
+        <option value="Car">Car</option>
+        <option value="Van">Van</option>
+      </select>
+      <button onclick="registerRider()">Register Rider</button>
+      <div id="riderList"></div>
+    </section><!-- Orders Dashboard -->
+<section>
+  <h2>Incoming Orders</h2>
+  <div id="orders"></div>
 </section>
 
-<section class="card">
-  <h2>Orders List</h2>
-  <div class="orders-list" id="orders"></div>
-</section>
+  </div>  <script>
+    // Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+  authDomain: "bixmax-6c24c.firebaseapp.com",
+  projectId: "bixmax-6c24c",
+  storageBucket: "bixmax-6c24c.appspot.com",
+  messagingSenderId: "37740442541",
+  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+};
 
-<section class="card">
-  <h2>Registered Riders</h2>
-  <div class="riders-list" id="riders"></div>
-</section>
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-  </main>  <script>
-    const riders = [];
-    const orders = [];
+    // Register Rider
+    function registerRider() {
+      const name = document.getElementById('riderName').value;
+      const phone = document.getElementById('riderPhone').value;
+      const email = document.getElementById('riderEmail').value;
+      const vehicle = document.getElementById('riderVehicle').value;
 
-    document.getElementById('riderForm').onsubmit = e => {
-      e.preventDefault();
-      const data = Object.fromEntries(new FormData(e.target));
-      data.id = Date.now();
-      riders.push(data);
-      e.target.reset();
-      renderRiders();
-    };
-
-    document.getElementById('orderForm').onsubmit = e => {
-      e.preventDefault();
-      const data = Object.fromEntries(new FormData(e.target));
-      data.id = Date.now();
-      data.status = 'pending';
-      orders.push(data);
-      e.target.reset();
-      renderOrders();
-    };
-
-    function renderRiders() {
-      const container = document.getElementById('riders');
-      container.innerHTML = '';
-      riders.forEach(r => {
-        const div = document.createElement('div');
-        div.className = 'card';
-        div.innerHTML = `<strong>${r.name}</strong><br>📞 ${r.phone}<br>🚘 ${r.vehicle} - ${r.plate}`;
-        container.appendChild(div);
+      if (!name || !phone) return alert("Name and phone are required");
+      const riderId = db.ref("riders").push().key;
+      db.ref("riders/" + riderId).set({
+        name, phone, email, vehicle, available: true, currentOrder: ""
       });
     }
 
-    function renderOrders() {
-      const container = document.getElementById('orders');
-      container.innerHTML = '';
-      orders.forEach(o => {
-        const div = document.createElement('div');
-        div.className = 'card';
-        div.innerHTML = `
-          <strong>${o.customer}</strong> - ${o.contact}<br>
-          📍 ${o.address}<br>
-          🕒 ${o.time || 'ASAP'}<br>
-          💬 ${o.notes || 'None'}<br>
-          💰 ${o.payment} - ${o.priority} Priority<br>
-          <span class="status ${o.status}">${o.status}</span><br>
-          <button onclick="updateStatus(${o.id}, 'assigned')">Assign</button>
-          <button onclick="updateStatus(${o.id}, 'delivered')">Delivered</button>
-          <button onclick="updateStatus(${o.id}, 'failed')">Failed</button>
-          <button onclick="updateStatus(${o.id}, 'returned')">Returned</button>
-        `;
-        container.appendChild(div);
+    // Auto Assign Rider
+    function assignRiderToOrder(orderId, orderData) {
+      db.ref("riders").once('value', snapshot => {
+        const riders = snapshot.val();
+        let selectedRiderId = null;
+
+        for (let id in riders) {
+          if (riders[id].available) {
+            selectedRiderId = id;
+            break;
+          }
+        }
+
+        if (selectedRiderId) {
+          db.ref("orders/" + orderId + "/assignedRider").set(selectedRiderId);
+          db.ref("riders/" + selectedRiderId).update({ available: false, currentOrder: orderId });
+        }
       });
     }
 
-    function updateStatus(id, status) {
-      const order = orders.find(o => o.id === id);
-      if (order) {
-        order.status = status;
-        renderOrders();
+    // Fetch Orders
+    db.ref("orders").on('child_added', snapshot => {
+      const data = snapshot.val();
+      const id = snapshot.key;
+      const div = document.createElement("div");
+      div.className = "order";
+      div.innerHTML = `
+        <strong>Customer:</strong> ${data.customerName}<br>
+        <strong>Phone:</strong> ${data.customerPhone}<br>
+        <strong>Address:</strong> ${data.customerAddress}<br>
+        <strong>Items:</strong> ${data.items}<br>
+        <strong>Total:</strong> ${data.total}<br>
+        <strong>Status:</strong> ${data.status || 'Pending'}<br>
+        <strong>Rider:</strong> ${data.assignedRider || 'Unassigned'}<br>
+        <div class="status-btns">
+          <button onclick="updateStatus('${id}', 'Picked')">Picked</button>
+          <button onclick="updateStatus('${id}', 'On the Way')">On the Way</button>
+          <button onclick="updateStatus('${id}', 'Delivered')">Delivered</button>
+        </div>
+      `;
+      document.getElementById("orders").prepend(div);
+
+      if (!data.assignedRider) assignRiderToOrder(id, data);
+    });
+
+    function updateStatus(orderId, status) {
+      db.ref("orders/" + orderId + "/status").set(status);
+    }
+
+    // Show Riders
+    db.ref("riders").on('value', snapshot => {
+      const riders = snapshot.val();
+      const list = document.getElementById('riderList');
+      list.innerHTML = '<h3>Registered Riders</h3>';
+      for (let id in riders) {
+        const r = riders[id];
+        list.innerHTML += `<div class="rider">
+          <strong>${r.name}</strong> - ${r.vehicle} <br>
+          ${r.phone} | ${r.email} <br>
+          Status: ${r.available ? 'Available' : 'Busy'}
+        </div>`;
       }
-    }
+    });
   </script></body>
 </html>
