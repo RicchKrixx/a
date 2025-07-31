@@ -333,26 +333,29 @@
  
 </script>
 <script> 
+let gTotal = 0; // make it global so Paystack can use it
+
 document.getElementById("grandTotal").textContent = "GH¢" + total;
 
-  // Wait until location is used to calculate delivery fee
-  function updateGTotalWithFee() {
-    const feeText = document.getElementById("deliveryFee").textContent;
-    const feeMatch = feeText.match(/[\d.]+/);
-    const fee = feeMatch ? parseFloat(feeMatch[0]) : 0;
-    const grandTotal = parseFloat(total) + fee;
-    document.getElementById("gTotal").textContent = "GH¢" + grandTotal.toFixed(2);
-  }
+// Wait until delivery fee is loaded
+function updateGTotalWithFee() {
+  const feeText = document.getElementById("deliveryFee").textContent;
+  const feeMatch = feeText.match(/[\d.]+/);
+  const fee = feeMatch ? parseFloat(feeMatch[0]) : 0;
+  
+  gTotal = parseFloat(total) + fee;
 
-  // Re-run this once the delivery fee is set
-  const observer = new MutationObserver(updateGTotalWithFee);
-  const targetNode = document.getElementById("deliveryFee");
+  document.getElementById("gTotal").textContent = "GH¢" + gTotal.toFixed(2);
+}
 
-  observer.observe(targetNode, { childList: true });
+// Listen for delivery fee changes
+const observer = new MutationObserver(updateGTotalWithFee);
+const targetNode = document.getElementById("deliveryFee");
+observer.observe(targetNode, { childList: true });
 
-  // Run it once in case it's already there
-  updateGTotalWithFee();
-</script> 
+// Run once initially
+updateGTotalWithFee();
+</script>
 <script>  
   function switchStyle() {  
     const style2 = document.getElementById("style2");  
