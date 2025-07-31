@@ -1,46 +1,84 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html><html>
 <head>
-  <title>Notification Test | BixMAX</title>
+  <title>Admin Dashboard | BizMAX Dispatch</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #f4f4f4; }
+    h2 { margin-bottom: 10px; }
+    .order, .rider { background: #fff; padding: 15px; margin-bottom: 10px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    select, button { margin-top: 8px; padding: 6px; }
+  </style>
 </head>
-<body style="background:#e8f4ff; font-family:sans-serif; text-align:center; padding:50px;">
+<body>
+  <h2>Admin Dashboard</h2>  <div>
+    <h3>Register Rider</h3>
+    <input id="rider-name" placeholder="Rider Name" />
+    <input id="rider-email" placeholder="Rider Email" type="email" />
+    <input id="rider-password" placeholder="Password" type="password" />
+    <button onclick="registerRider()">Register Rider</button>
+  </div>  <hr>  <div>
+    <h3>Pending Orders</h3>
+    <div id="orders"></div>
+  </div>  <script>
+    const db = firebase.firestore();
+    const auth = firebase.auth();
 
-  <h2>🔔 BixMAX Notification Test</h2>
-  <button id="notifyBtn" style="padding:15px 25px; font-size:16px;">Test Notification</button>
+    // Fetch riders
+    let ridersList = [];
+    db.collection("riders").onSnapshot(snapshot => {
+      ridersList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    });
 
-  <script>
-    // Register service worker
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js')
-        .then(function(reg) {
-          console.log("Service Worker registered:", reg.scope);
-        })
-        .catch(function(err) {
-          console.error("Service Worker registration failed:", err);
-        });
+    // Register new rider
+    function registerRider() {
+      const name = document.getElementById("rider-name").value;
+      const email = document.getElementById("rider-email").value;
+      const password = document.getElementById("rider-password").value;
+
+      auth.createUserWithEmailAndPassword(email, password).then(cred => {
+        return db.collection("riders").doc(cred.user.uid).set({ name, email, available: true });
+      }).then(() => {
+        alert("Rider Registered!");
+      }).catch(err => alert(err.message));
     }
 
-    // Ask permission on load
-    Notification.requestPermission().then(function(permission) {
-      console.log("Permission:", permission);
-    });
-
-    // Trigger test notification
-    document.getElementById('notifyBtn').addEventListener('click', function () {
-      if (Notification.permission === 'granted') {
-        navigator.serviceWorker.getRegistration().then(function(reg) {
-          if (reg) {
-            reg.showNotification("Hello from BixMAX 👋", {
-              body: "You’re now subscribed to updates!",
-              icon: 'https://bixmax.store/logo.png',
-              badge: 'https://bixmax.store/icon.png'
-            });
-          }
+    // Fetch pending orders
+    db.collection("orders").where("status", "==", "pending")
+      .onSnapshot(snapshot => {
+        const ordersDiv = document.getElementById("orders");
+        ordersDiv.innerHTML = "";
+        snapshot.forEach(doc => {
+          const order = doc.data();
+          const el = document.createElement("div");
+          el.className = "order";
+          el.innerHTML = `
+            <strong>Order ID:</strong> ${doc.id}<br>
+            <strong>Customer:</strong> ${order.customerName}<br>
+            <strong>Location:</strong> ${order.deliveryAddress}<br>
+            <select id="rider-select-${doc.id}">
+              <option>Select Rider</option>
+              ${ridersList.map(r => `<option value="${r.id}">${r.name}</option>`).join('')}
+            </select>
+            <button onclick="assignRider('${doc.id}')">Assign</button>
+          `;
+          ordersDiv.appendChild(el);
         });
-      } else {
-        alert("Please allow notifications first.");
-      }
-    });
-  </script>
-</body>
+      });
+
+    function assignRider(orderId) {
+      const riderId = document.getElementById(`rider-select-${orderId}`).value;
+      if (!riderId || riderId === "Select Rider") return alert("Select a rider");
+
+      db.collection("orders").doc(orderId).update({
+        riderId: riderId,
+        status: "assigned"
+      }).then(() => {
+        alert("Rider assigned.");
+      });
+    }
+  </script></body>
 </html>
