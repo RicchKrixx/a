@@ -369,8 +369,7 @@ let deliveryFee = 0;
     document.getElementById("grandTotal").textContent = "GH₵" + fullTotal;
   }
 
-  window.addEventListener("DOMContentLoaded", () => {
-    setTimeout(updateTotalDisplay, 1500); // Delay to ensure deliveryFee is loaded
+  window.addEventListener("DOMContentLoaded", displayDeliveryFee);
   });
 </script>
 <script>
