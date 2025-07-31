@@ -141,32 +141,7 @@ const firebaseConfig = {
         const toast = document.getElementById('toast');
         const toastMessage = document.getElementById('toast-message');
 
-        // Authentication
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                authSection.classList.add('hidden');
-                dashboard.classList.remove('hidden');
-                initDashboard();
-            } else {
-                authSection.classList.remove('hidden');
-                dashboard.classList.add('hidden');
-            }
-        });
-
-        loginBtn.addEventListener('click', () => {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const authError = document.getElementById('auth-error');
-            auth.signInWithEmailAndPassword(email, password)
-                .catch(error => {
-                    authError.classList.remove('hidden');
-                    authError.textContent = error.message;
-                });
-        });
-
-        logoutBtn.addEventListener('click', () => {
-            auth.signOut();
-        });
+        
 
         // Show Toast Notification
         function showToast(message) {
