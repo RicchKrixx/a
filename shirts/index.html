@@ -292,6 +292,10 @@ function renderShirts(items) {
   function closeSizePopup() {
     document.getElementById("sizePopup").style.display = "none";
   }
+window.openSizePopup = openSizePopup;
+window.closeSizePopup = closeSizePopup;
+window.selectSize = selectSize;
+window.confirmAddToCart = confirmAddToCart;
   </script>
 <script>
   const searchInput = document.getElementById("searchInput");
