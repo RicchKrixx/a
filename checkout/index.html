@@ -324,12 +324,35 @@
       }  
     );  
   }  
-</script>  <script>  
+</script>  
+<script>  
   const saved = localStorage.getItem("grandTotal") || "0";  
   const total = parseFloat(saved).toFixed(2);  
   document.getElementById("grandTotal").textContent = "GH¢" + total;  
-document.getElementById("gTotal").textContent = "GH¢" + total + fee;  
-</script>  <script>  
+ 
+</script>
+<script> 
+document.getElementById("grandTotal").textContent = "GH¢" + total;
+
+  // Wait until location is used to calculate delivery fee
+  function updateGTotalWithFee() {
+    const feeText = document.getElementById("deliveryFee").textContent;
+    const feeMatch = feeText.match(/[\d.]+/);
+    const fee = feeMatch ? parseFloat(feeMatch[0]) : 0;
+    const grandTotal = parseFloat(total) + fee;
+    document.getElementById("gTotal").textContent = "GH¢" + grandTotal.toFixed(2);
+  }
+
+  // Re-run this once the delivery fee is set
+  const observer = new MutationObserver(updateGTotalWithFee);
+  const targetNode = document.getElementById("deliveryFee");
+
+  observer.observe(targetNode, { childList: true });
+
+  // Run it once in case it's already there
+  updateGTotalWithFee();
+</script> 
+<script>  
   function switchStyle() {  
     const style2 = document.getElementById("style2");  
     const style1 = document.getElementById("style1");  
