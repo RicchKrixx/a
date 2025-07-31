@@ -363,14 +363,11 @@ let deliveryFee = 0;
     const saved = localStorage.getItem("grandTotal") || "0";
     const rawTotal = parseFloat(saved);
     const fullTotal = (rawTotal + deliveryFee).toFixed(2);
-    
+
     document.getElementById("subtotal").textContent = "GH₵" + rawTotal.toFixed(2);
     document.getElementById("deliveryFee").textContent = "GH₵" + deliveryFee.toFixed(2);
     document.getElementById("grandTotal").textContent = "GH₵" + fullTotal;
   }
-
-  window.addEventListener("DOMContentLoaded", displayDeliveryFee);
-  });
 </script>
 <script>
   function switchStyle() {
