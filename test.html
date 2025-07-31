@@ -1,84 +1,127 @@
 <!DOCTYPE html><html>
 <head>
-  <title>Admin Dashboard | BizMAX Dispatch</title>
+  <meta charset="UTF-8">
+  <title>BixMAX Dispatch Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <script src="firebase-config.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
   <style>
-    body { font-family: Arial; padding: 20px; background: #f4f4f4; }
-    h2 { margin-bottom: 10px; }
-    .order, .rider { background: #fff; padding: 15px; margin-bottom: 10px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-    select, button { margin-top: 8px; padding: 6px; }
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f9f9f9; }
+    h1, h2, h3 { color: #333; }
+    .card { background: white; padding: 20px; margin: 15px 0; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    input, select, button { padding: 10px; margin: 8px 0; width: 100%; max-width: 400px; }
+    button { background: #007BFF; color: white; border: none; border-radius: 5px; }
+    button:hover { background: #0056b3; cursor: pointer; }
+    .stats { display: flex; gap: 20px; flex-wrap: wrap; }
+    .stat-box { background: #eee; padding: 10px 20px; border-radius: 8px; min-width: 120px; text-align: center; }
   </style>
 </head>
 <body>
-  <h2>Admin Dashboard</h2>  <div>
-    <h3>Register Rider</h3>
-    <input id="rider-name" placeholder="Rider Name" />
-    <input id="rider-email" placeholder="Rider Email" type="email" />
-    <input id="rider-password" placeholder="Password" type="password" />
+  <h1>BixMAX Dispatch Admin Panel</h1>  <div class="stats">
+    <div class="stat-box">Total Orders: <span id="total-orders">0</span></div>
+    <div class="stat-box">Assigned: <span id="assigned-orders">0</span></div>
+    <div class="stat-box">Delivered: <span id="delivered-orders">0</span></div>
+  </div>  <div class="card">
+    <h2>Register New Rider</h2>
+    <input id="rider-name" placeholder="Rider Name">
+    <input id="rider-email" type="email" placeholder="Email">
+    <input id="rider-phone" placeholder="Phone">
+    <select id="vehicle-type">
+      <option value="Bike">Bike</option>
+      <option value="Car">Car</option>
+      <option value="Van">Van</option>
+    </select>
+    <input id="rider-password" type="password" placeholder="Password">
     <button onclick="registerRider()">Register Rider</button>
-  </div>  <hr>  <div>
-    <h3>Pending Orders</h3>
+  </div>  <div class="card">
+    <h2>Pending & Assigned Orders</h2>
     <div id="orders"></div>
   </div>  <script>
-    const db = firebase.firestore();
+    // Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+  authDomain: "bixmax-6c24c.firebaseapp.com",
+  projectId: "bixmax-6c24c",
+  storageBucket: "bixmax-6c24c.appspot.com",
+  messagingSenderId: "37740442541",
+  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+};
+    firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
+    const db = firebase.firestore();
+    const storage = firebase.storage();
 
-    // Fetch riders
     let ridersList = [];
+
     db.collection("riders").onSnapshot(snapshot => {
       ridersList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     });
 
-    // Register new rider
     function registerRider() {
       const name = document.getElementById("rider-name").value;
       const email = document.getElementById("rider-email").value;
+      const phone = document.getElementById("rider-phone").value;
+      const vehicle = document.getElementById("vehicle-type").value;
       const password = document.getElementById("rider-password").value;
 
       auth.createUserWithEmailAndPassword(email, password).then(cred => {
-        return db.collection("riders").doc(cred.user.uid).set({ name, email, available: true });
+        return db.collection("riders").doc(cred.user.uid).set({
+          name, email, phone, vehicle, available: true,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
       }).then(() => {
-        alert("Rider Registered!");
+        alert("Rider registered successfully!");
       }).catch(err => alert(err.message));
     }
 
-    // Fetch pending orders
-    db.collection("orders").where("status", "==", "pending")
-      .onSnapshot(snapshot => {
-        const ordersDiv = document.getElementById("orders");
-        ordersDiv.innerHTML = "";
-        snapshot.forEach(doc => {
-          const order = doc.data();
-          const el = document.createElement("div");
-          el.className = "order";
-          el.innerHTML = `
-            <strong>Order ID:</strong> ${doc.id}<br>
-            <strong>Customer:</strong> ${order.customerName}<br>
-            <strong>Location:</strong> ${order.deliveryAddress}<br>
-            <select id="rider-select-${doc.id}">
-              <option>Select Rider</option>
-              ${ridersList.map(r => `<option value="${r.id}">${r.name}</option>`).join('')}
-            </select>
-            <button onclick="assignRider('${doc.id}')">Assign</button>
-          `;
-          ordersDiv.appendChild(el);
-        });
+    function updateStats(snapshot) {
+      const total = snapshot.size;
+      const assigned = snapshot.docs.filter(doc => doc.data().status === 'assigned').length;
+      const delivered = snapshot.docs.filter(doc => doc.data().status === 'delivered').length;
+      document.getElementById("total-orders").textContent = total;
+      document.getElementById("assigned-orders").textContent = assigned;
+      document.getElementById("delivered-orders").textContent = delivered;
+    }
+
+    db.collection("orders").onSnapshot(snapshot => {
+      updateStats(snapshot);
+      const ordersDiv = document.getElementById("orders");
+      ordersDiv.innerHTML = "";
+
+      snapshot.forEach(doc => {
+        const order = doc.data();
+        const el = document.createElement("div");
+        el.className = "card";
+        el.innerHTML = `
+          <strong>Order ID:</strong> ${doc.id}<br>
+          <strong>Customer:</strong> ${order.customerName}<br>
+          <strong>Contact:</strong> ${order.contact}<br>
+          <strong>Address:</strong> ${order.deliveryAddress}<br>
+          <strong>Package:</strong> ${order.packageSize || 'N/A'}<br>
+          <strong>Instructions:</strong> ${order.instructions || 'None'}<br>
+          <strong>Status:</strong> ${order.status}<br>
+          <label>Assign Rider:</label>
+          <select id="rider-select-${doc.id}">
+            <option value="">Select Rider</option>
+            ${ridersList.map(r => `<option value="${r.id}">${r.name} (${r.vehicle})</option>`).join('')}
+          </select>
+          <button onclick="assignRider('${doc.id}')">Assign</button>
+        `;
+        ordersDiv.appendChild(el);
       });
+    });
 
     function assignRider(orderId) {
       const riderId = document.getElementById(`rider-select-${orderId}`).value;
-      if (!riderId || riderId === "Select Rider") return alert("Select a rider");
+      if (!riderId) return alert("Please select a rider.");
 
       db.collection("orders").doc(orderId).update({
-        riderId: riderId,
-        status: "assigned"
-      }).then(() => {
-        alert("Rider assigned.");
-      });
+        riderId,
+        status: "assigned",
+        assignedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => alert("Rider assigned."));
     }
   </script></body>
 </html>
