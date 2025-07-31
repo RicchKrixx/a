@@ -199,7 +199,7 @@
     name: data.name,
     price: parseFloat(data.price),
     image: data.image,
-    category: "Shirt"
+    category: "Mobile"
   };
 
   addToCart(product);
@@ -222,7 +222,7 @@
     }  
 
     // Firestore real-time listener (only updates on data change)  
-    onSnapshot(collection(db, "category", "Mobile Accessories", "items"), snapshot => {  
+    onSnapshot(collection(db, "category", "Mobile Accessory", "items"), snapshot => {  
       const items = [];  
       snapshot.forEach(doc => {  
         items.push({ ...doc.data(), id: doc.id });  
