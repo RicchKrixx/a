@@ -126,7 +126,9 @@
 
 <div class="card">
   <h1>CHECKOUT</h1>
-  <span>Amount to pay: <p id="grandTotal">GH¢0.00</p></span>
+
+  <span>Total: <p id="gTotal">GH¢0.00</p></span>
+ <span>Amount to pay: <p id="grandTotal">GH¢0.00</p></span>
 
   <div class="delivery-section" style="padding: 10px; border: 1px solid #444; background: #0f172a; color: white; border-radius: 8px; margin-top: 15px;">
     <h3 style="margin-bottom: 5px;">Delivery Fee</h3>
@@ -173,7 +175,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
+let deliveryFee = 0;
   const firebaseConfig = {
     apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
     authDomain: "bixmax-6c24c.firebaseapp.com",
@@ -205,17 +207,18 @@
     return "BX" + Date.now().toString(36).toUpperCase();
   }
 
-  function getOrderDetails() {
-    const name = document.getElementById("custName").value.trim();
-    const email = document.getElementById("custEmail").value.trim();
-    const phone = document.getElementById("custPhone").value.trim();
-    const address = document.getElementById("custAddr").value.trim();
-    const paymentMethod = payMethod.value;
-    const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
-    const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
+ function getOrderDetails() {
+  const name = document.getElementById("custName").value.trim();
+  const email = document.getElementById("custEmail").value.trim();
+  const phone = document.getElementById("custPhone").value.trim();
+  const address = document.getElementById("custAddr").value.trim();
+  const paymentMethod = payMethod.value;
+  const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
+  const rawTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
+  const grandTotal = rawTotal + deliveryFee;
 
-    return { name, email, phone, address, paymentMethod, grandTotal, cartItems };
-  }
+  return { name, email, phone, address, paymentMethod, grandTotal, deliveryFee, cartItems };
+}
 
   function buildItemsString(cartItems) {
     return cartItems.map(i => {
@@ -288,8 +291,16 @@
 
     const orderId = generateOrderId();
     const itemsString = buildItemsString(cartItems);
-    const orderData = { name, email, phone, address, method: paymentMethod, total: grandTotal, items: itemsString };
-
+    const orderData = {
+  name,
+  email,
+  phone,
+  address,
+  method: paymentMethod,
+  total: grandTotal,
+  deliveryFee: deliveryFee,
+  items: itemsString
+};
     onAuthStateChanged(auth, (user) => {
       if (!user && paymentMethod === "payment on delivery") {
         showLoader(false);
@@ -347,12 +358,23 @@
 </script>
 
 <script>
-  const saved = localStorage.getItem("grandTotal") || "0";
+  const saved = localStorage.getItem("gTotal") || "0";
   const total = parseFloat(saved).toFixed(2);
-  document.getElementById("grandTotal").textContent = "GH¢" + total;
+  document.getElementById("gTotal").textContent = "GH¢" + total;
 </script>
 
 <script>
+<script>
+  function updateTotalDisplay() {
+    const saved = localStorage.getItem("grandTotal") || "0";
+    const rawTotal = parseFloat(saved);
+    const fullTotal = (rawTotal + deliveryFee).toFixed(2);
+    document.getElementById("grandTotal").textContent = "GH¢" + fullTotal;
+  }
+  window.addEventListener("DOMContentLoaded", () => {
+    setTimeout(updateTotalDisplay, 1500); // Wait for deliveryFee to be calculated
+  });
+</script>
   function switchStyle() {
     const style2 = document.getElementById("style2");
     const style1 = document.getElementById("style1");
@@ -391,23 +413,23 @@
   }
 
   function displayDeliveryFee() {
-    const feeLabel = document.getElementById("deliveryFee");
-    if (!navigator.geolocation) {
-      feeLabel.textContent = "Location not supported";
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(position => {
-      const userLat = position.coords.latitude;
-      const userLon = position.coords.longitude;
-      const distance = calculateDistance(storeLat, storeLon, userLat, userLon);
-      const fee = calculateDeliveryFee(distance);
-      feeLabel.textContent = `GH₵${fee.toFixed(2)}`;
-    }, error => {
-      feeLabel.textContent = "Location access denied";
-    });
+  const feeLabel = document.getElementById("deliveryFee");
+  if (!navigator.geolocation) {
+    feeLabel.textContent = "Location not supported";
+    return;
   }
 
+  navigator.geolocation.getCurrentPosition(position => {
+    const userLat = position.coords.latitude;
+    const userLon = position.coords.longitude;
+    const distance = calculateDistance(storeLat, storeLon, userLat, userLon);
+    const fee = calculateDeliveryFee(distance);
+    deliveryFee = parseFloat(fee.toFixed(2)); // 🟢 Save fee to global variable
+    feeLabel.textContent = `GH₵${deliveryFee}`;
+  }, error => {
+    feeLabel.textContent = "Location access denied";
+  });
+}
   window.addEventListener("DOMContentLoaded", displayDeliveryFee);
 </script>
 
