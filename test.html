@@ -1,127 +1,201 @@
-<!DOCTYPE html><html>
+<!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>BixMAX Dispatch Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BizMAX Delivery Admin</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background: #f9f9f9; }
-    h1, h2, h3 { color: #333; }
-    .card { background: white; padding: 20px; margin: 15px 0; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    input, select, button { padding: 10px; margin: 8px 0; width: 100%; max-width: 400px; }
-    button { background: #007BFF; color: white; border: none; border-radius: 5px; }
-    button:hover { background: #0056b3; cursor: pointer; }
-    .stats { display: flex; gap: 20px; flex-wrap: wrap; }
-    .stat-box { background: #eee; padding: 10px 20px; border-radius: 8px; min-width: 120px; text-align: center; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f4f6f8;
+      color: #333;
+    }
+    header {
+      background: #00bcd4;
+      padding: 1rem;
+      color: white;
+      text-align: center;
+    }
+    main {
+      padding: 1rem;
+      max-width: 1200px;
+      margin: auto;
+    }
+    h2 {
+      color: #00bcd4;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      margin-top: 0.5rem;
+      font-weight: bold;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.25rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      background: #00bcd4;
+      color: white;
+      padding: 0.5rem 1rem;
+      border: none;
+      margin-top: 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .orders-list, .riders-list {
+      display: grid;
+      gap: 1rem;
+    }
+    .status {
+      font-weight: bold;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+    }
+    .status.pending { background: orange; color: white; }
+    .status.assigned { background: teal; color: white; }
+    .status.delivered { background: green; color: white; }
+    .status.failed { background: red; color: white; }
+    .status.returned { background: gray; color: white; }
   </style>
 </head>
 <body>
-  <h1>BixMAX Dispatch Admin Panel</h1>  <div class="stats">
-    <div class="stat-box">Total Orders: <span id="total-orders">0</span></div>
-    <div class="stat-box">Assigned: <span id="assigned-orders">0</span></div>
-    <div class="stat-box">Delivered: <span id="delivered-orders">0</span></div>
-  </div>  <div class="card">
-    <h2>Register New Rider</h2>
-    <input id="rider-name" placeholder="Rider Name">
-    <input id="rider-email" type="email" placeholder="Email">
-    <input id="rider-phone" placeholder="Phone">
-    <select id="vehicle-type">
-      <option value="Bike">Bike</option>
-      <option value="Car">Car</option>
-      <option value="Van">Van</option>
+  <header>
+    <h1>BizMAX Delivery Dashboard</h1>
+    <p>Manage orders, assign riders, and track delivery status</p>
+  </header>
+  <main>
+    <section class="card">
+      <h2>Register New Rider</h2>
+      <form id="riderForm">
+        <label>Full Name</label>
+        <input required name="name" type="text" />
+        <label>Phone</label>
+        <input required name="phone" type="tel" />
+        <label>Email</label>
+        <input name="email" type="email" />
+        <label>Vehicle Type</label>
+        <select name="vehicle">
+          <option value="bike">Bike</option>
+          <option value="car">Car</option>
+          <option value="van">Van</option>
+        </select>
+        <label>License Plate</label>
+        <input name="plate" type="text" />
+        <button type="submit">Add Rider</button>
+      </form>
+    </section><section class="card">
+  <h2>Create Delivery Order</h2>
+  <form id="orderForm">
+    <label>Customer Name</label>
+    <input required name="customer" type="text" />
+    <label>Contact Number</label>
+    <input required name="contact" type="tel" />
+    <label>Email</label>
+    <input name="email" type="email" />
+    <label>Delivery Address</label>
+    <textarea required name="address"></textarea>
+    <label>Package Description</label>
+    <textarea name="package"></textarea>
+    <label>Delivery Time</label>
+    <input name="time" type="datetime-local" />
+    <label>Payment Type</label>
+    <select name="payment">
+      <option>Prepaid</option>
+      <option>Cash on Delivery</option>
     </select>
-    <input id="rider-password" type="password" placeholder="Password">
-    <button onclick="registerRider()">Register Rider</button>
-  </div>  <div class="card">
-    <h2>Pending & Assigned Orders</h2>
-    <div id="orders"></div>
-  </div>  <script>
-    // Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-  authDomain: "bixmax-6c24c.firebaseapp.com",
-  projectId: "bixmax-6c24c",
-  storageBucket: "bixmax-6c24c.appspot.com",
-  messagingSenderId: "37740442541",
-  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-};
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-    const storage = firebase.storage();
+    <label>Delivery Priority</label>
+    <select name="priority">
+      <option>Normal</option>
+      <option>High</option>
+    </select>
+    <label>Special Notes</label>
+    <textarea name="notes"></textarea>
+    <button type="submit">Add Order</button>
+  </form>
+</section>
 
-    let ridersList = [];
+<section class="card">
+  <h2>Orders List</h2>
+  <div class="orders-list" id="orders"></div>
+</section>
 
-    db.collection("riders").onSnapshot(snapshot => {
-      ridersList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    });
+<section class="card">
+  <h2>Registered Riders</h2>
+  <div class="riders-list" id="riders"></div>
+</section>
 
-    function registerRider() {
-      const name = document.getElementById("rider-name").value;
-      const email = document.getElementById("rider-email").value;
-      const phone = document.getElementById("rider-phone").value;
-      const vehicle = document.getElementById("vehicle-type").value;
-      const password = document.getElementById("rider-password").value;
+  </main>  <script>
+    const riders = [];
+    const orders = [];
 
-      auth.createUserWithEmailAndPassword(email, password).then(cred => {
-        return db.collection("riders").doc(cred.user.uid).set({
-          name, email, phone, vehicle, available: true,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-      }).then(() => {
-        alert("Rider registered successfully!");
-      }).catch(err => alert(err.message));
-    }
+    document.getElementById('riderForm').onsubmit = e => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(e.target));
+      data.id = Date.now();
+      riders.push(data);
+      e.target.reset();
+      renderRiders();
+    };
 
-    function updateStats(snapshot) {
-      const total = snapshot.size;
-      const assigned = snapshot.docs.filter(doc => doc.data().status === 'assigned').length;
-      const delivered = snapshot.docs.filter(doc => doc.data().status === 'delivered').length;
-      document.getElementById("total-orders").textContent = total;
-      document.getElementById("assigned-orders").textContent = assigned;
-      document.getElementById("delivered-orders").textContent = delivered;
-    }
+    document.getElementById('orderForm').onsubmit = e => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(e.target));
+      data.id = Date.now();
+      data.status = 'pending';
+      orders.push(data);
+      e.target.reset();
+      renderOrders();
+    };
 
-    db.collection("orders").onSnapshot(snapshot => {
-      updateStats(snapshot);
-      const ordersDiv = document.getElementById("orders");
-      ordersDiv.innerHTML = "";
-
-      snapshot.forEach(doc => {
-        const order = doc.data();
-        const el = document.createElement("div");
-        el.className = "card";
-        el.innerHTML = `
-          <strong>Order ID:</strong> ${doc.id}<br>
-          <strong>Customer:</strong> ${order.custName}<br>
-          <strong>Contact:</strong> ${order.contact}<br>
-          <strong>Address:</strong> ${order.deliveryAddress}<br>
-          <strong>Package:</strong> ${order.packageSize || 'N/A'}<br>
-          <strong>Instructions:</strong> ${order.instructions || 'None'}<br>
-          <strong>Status:</strong> ${order.status}<br>
-          <label>Assign Rider:</label>
-          <select id="rider-select-${doc.id}">
-            <option value="">Select Rider</option>
-            ${ridersList.map(r => `<option value="${r.id}">${r.name} (${r.vehicle})</option>`).join('')}
-          </select>
-          <button onclick="assignRider('${doc.id}')">Assign</button>
-        `;
-        ordersDiv.appendChild(el);
+    function renderRiders() {
+      const container = document.getElementById('riders');
+      container.innerHTML = '';
+      riders.forEach(r => {
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.innerHTML = `<strong>${r.name}</strong><br>📞 ${r.phone}<br>🚘 ${r.vehicle} - ${r.plate}`;
+        container.appendChild(div);
       });
-    });
+    }
 
-    function assignRider(orderId) {
-      const riderId = document.getElementById(`rider-select-${orderId}`).value;
-      if (!riderId) return alert("Please select a rider.");
+    function renderOrders() {
+      const container = document.getElementById('orders');
+      container.innerHTML = '';
+      orders.forEach(o => {
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.innerHTML = `
+          <strong>${o.customer}</strong> - ${o.contact}<br>
+          📍 ${o.address}<br>
+          🕒 ${o.time || 'ASAP'}<br>
+          💬 ${o.notes || 'None'}<br>
+          💰 ${o.payment} - ${o.priority} Priority<br>
+          <span class="status ${o.status}">${o.status}</span><br>
+          <button onclick="updateStatus(${o.id}, 'assigned')">Assign</button>
+          <button onclick="updateStatus(${o.id}, 'delivered')">Delivered</button>
+          <button onclick="updateStatus(${o.id}, 'failed')">Failed</button>
+          <button onclick="updateStatus(${o.id}, 'returned')">Returned</button>
+        `;
+        container.appendChild(div);
+      });
+    }
 
-      db.collection("orders").doc(orderId).update({
-        riderId,
-        status: "assigned",
-        assignedAt: firebase.firestore.FieldValue.serverTimestamp()
-      }).then(() => alert("Rider assigned."));
+    function updateStatus(id, status) {
+      const order = orders.find(o => o.id === id);
+      if (order) {
+        order.status = status;
+        renderOrders();
+      }
     }
   </script></body>
 </html>
