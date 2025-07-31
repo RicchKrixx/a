@@ -8,7 +8,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js"></script>
     <style>
         /* Custom styles for enhanced UI */
@@ -19,92 +18,80 @@
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen p-4">
-    <!-- Auth Section -->
-    <div id="auth-section" class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md mb-4">
-        <h2 class="text-2xl font-bold mb-4">Admin Login</h2>
-        <input id="email" type="email" placeholder="Email" class="w-full p-2 mb-2 border rounded">
-        <input id="password" type="password" placeholder="Password" class="w-full p-2 mb-2 border rounded">
-        <button id="login-btn" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Login</button>
-        <p id="auth-error" class="text-red-500 mt-2 hidden"></p>
-    </div>
+    <!-- Main Dashboard -->
+    <div id="dashboard" class="container mx-auto">
+        <h1 class="text-3xl font-bold mb-6 text-center">Delivery Dispatch Dashboard</h1>
 
-    <!-- Main Dashboard (Hidden until logged in) -->
-    <div id="dashboard" class="hidden">
-        <div class="container mx-auto">
-            <h1 class="text-3xl font-bold mb-6 text-center">Delivery Dispatch Dashboard</h1>
-            <button id="logout-btn" class="bg-red-600 text-white p-2 rounded mb-4 hover:bg-red-700">Logout</button>
-
-            <!-- Rider Registration Panel -->
-            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-                <h2 class="text-2xl font-bold mb-4">Register New Rider</h2>
-                <form id="rider-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input id="rider-name" type="text" placeholder="Rider Name" class="p-2 border rounded" required>
-                    <input id="rider-id" type="text" placeholder="Rider ID (Auto-generated if empty)" class="p-2 border rounded">
-                    <input id="rider-phone" type="tel" placeholder="Phone Number" class="p-2 border rounded" required>
-                    <input id="rider-email" type="email" placeholder="Email" class="p-2 border rounded" required>
-                    <select id="rider-vehicle" class="p-2 border rounded" required>
-                        <option value="">Select Vehicle Type</option>
-                        <option value="bike">Bike</option>
-                        <option value="car">Car</option>
-                        <option value="van">Van</option>
-                    </select>
-                    <input id="rider-zone" type="text" placeholder="Zone (Optional)" class="p-2 border rounded">
-                    <div class="flex items-center">
-                        <label class="mr-2">Available:</label>
-                        <input id="rider-availability" type="checkbox" checked class="h-5 w-5">
-                    </div>
-                    <button type="submit" class="col-span-2 bg-green-600 text-white p-2 rounded hover:bg-green-700">Register Rider</button>
-                </form>
-                <p id="rider-error" class="text-red-500 mt-2 hidden"></p>
-            </div>
-
-            <!-- Order Dashboard Panel -->
-            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-                <h2 class="text-2xl font-bold mb-4">Orders Dashboard</h2>
-                <table id="orders-table" class="w-full border-collapse">
-                    <thead>
-                        <tr class="bg-gray-200">
-                            <th class="p-2 border">Order ID</th>
-                            <th class="p-2 border">Customer</th>
-                            <th class="p-2 border">Address</th>
-                            <th class="p-2 border">Items</th>
-                            <th class="p-2 border">Total</th>
-                            <th class="p-2 border">Rider</th>
-                            <th class="p-2 border">Rider Contact</th>
-                            <th class="p-2 border">Status</th>
-                            <th class="p-2 border">Timestamp</th>
-                            <th class="p-2 border">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="orders-tbody"></tbody>
-                </table>
-            </div>
-
-            <!-- Rider Dashboard Panel -->
-            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-                <h2 class="text-2xl font-bold mb-4">Riders Dashboard</h2>
-                <table id="riders-table" class="w-full border-collapse">
-                    <thead>
-                        <tr class="bg-gray-200">
-                            <th class="p-2 border">Rider ID</th>
-                            <th class="p-2 border">Name</th>
-                            <th class="p-2 border">Phone</th>
-                            <th class="p-2 border">Vehicle</th>
-                            <th class="p-2 border">Status</th>
-                            <th class="p-2 border">Assigned Order</th>
-                            <th class="p-2 border">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="riders-tbody"></tbody>
-                </table>
-            </div>
-
-            <!-- Google Maps Placeholder -->
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <h2 class="text-2xl font-bold mb-4">Rider Tracking (Placeholder)</h2>
-                <div id="map" class="h-64 bg-gray-300 flex items-center justify-center">
-                    <p>Google Maps Integration Placeholder (Add API Key to Enable)</p>
+        <!-- Rider Registration Panel -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h2 class="text-2xl font-bold mb-4">Register New Rider</h2>
+            <form id="rider-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input id="rider-name" type="text" placeholder="Rider Name" class="p-2 border rounded" required>
+                <input id="rider-id" type="text" placeholder="Rider ID (Auto-generated if empty)" class="p-2 border rounded">
+                <input id="rider-phone" type="tel" placeholder="Phone Number" class="p-2 border rounded" required>
+                <input id="rider-email" type="email" placeholder="Email" class="p-2 border rounded" required>
+                <select id="rider-vehicle" class="p-2 border rounded" required>
+                    <option value="">Select Vehicle Type</option>
+                    <option value="bike">Bike</option>
+                    <option value="car">Car</option>
+                    <option value="van">Van</option>
+                </select>
+                <input id="rider-zone" type="text" placeholder="Zone (Optional)" class="p-2 border rounded">
+                <div class="flex items-center">
+                    <label class="mr-2">Available:</label>
+                    <input id="rider-availability" type="checkbox" checked class="h-5 w-5">
                 </div>
+                <button type="submit" class="col-span-2 bg-green-600 text-white p-2 rounded hover:bg-green-700">Register Rider</button>
+            </form>
+            <p id="rider-error" class="text-red-500 mt-2 hidden"></p>
+        </div>
+
+        <!-- Order Dashboard Panel -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h2 class="text-2xl font-bold mb-4">Orders Dashboard</h2>
+            <table id="orders-table" class="w-full border-collapse">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="p-2 border">Order ID</th>
+                        <th class="p-2 border">Customer</th>
+                        <th class="p-2 border">Address</th>
+                        <th class="p-2 border">Items</th>
+                        <th class="p-2 border">Total</th>
+                        <th class="p-2 border">Rider</th>
+                        <th class="p-2 border">Rider Contact</th>
+                        <th class="p-2 border">Status</th>
+                        <th class="p-2 border">Timestamp</th>
+                        <th class="p-2 border">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="orders-tbody"></tbody>
+            </table>
+        </div>
+
+        <!-- Rider Dashboard Panel -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h2 class="text-2xl font-bold mb-4">Riders Dashboard</h2>
+            <table id="riders-table" class="w-full border-collapse">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="p-2 border">Rider ID</th>
+                        <th class="p-2 border">Name</th>
+                        <th class="p-2 border">Phone</th>
+                        <th class="p-2 border">Vehicle</th>
+                        <th class="p-2 border">Status</th>
+                        <th class="p-2 border">Assigned Order</th>
+                        <th class="p-2 border">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="riders-tbody"></tbody>
+            </table>
+        </div>
+
+        <!-- Google Maps Placeholder -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-2xl font-bold mb-4">Rider Tracking (Placeholder)</h2>
+            <div id="map" class="h-64 bg-gray-300 flex items-center justify-center">
+                <p>Google Maps Integration Placeholder (Add API Key to Enable)</p>
             </div>
         </div>
     </div>
@@ -115,7 +102,7 @@
     </div>
 
     <script>
-    // Firebase configuration
+      // Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
   authDomain: "bixmax-6c24c.firebaseapp.com",
@@ -127,21 +114,14 @@ const firebaseConfig = {
 
         // Initialize Firebase
         const app = firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
         const db = firebase.firestore();
 
         // DOM Elements
-        const authSection = document.getElementById('auth-section');
-        const dashboard = document.getElementById('dashboard');
-        const loginBtn = document.getElementById('login-btn');
-        const logoutBtn = document.getElementById('logout-btn');
         const riderForm = document.getElementById('rider-form');
         const ordersTbody = document.getElementById('orders-tbody');
         const ridersTbody = document.getElementById('riders-tbody');
         const toast = document.getElementById('toast');
         const toastMessage = document.getElementById('toast-message');
-
-        
 
         // Show Toast Notification
         function showToast(message) {
@@ -344,6 +324,9 @@ const firebaseConfig = {
                 available: !rider.available
             });
         }
+
+        // Initialize Dashboard on Load
+        initDashboard();
 
         // Google Maps Placeholder (Uncomment and add API key to enable)
         /*
