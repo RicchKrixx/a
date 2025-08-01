@@ -199,12 +199,12 @@
     return { name, email, phone, address, paymentMethod, grandTotal, cartItems };  
   }  
   
-  function buildItemsString(cartItems) {  
-    return cartItems.map(i => {  
-      const variationText = i.variation ? ` (${i.variation})` : "";  
-      return `${i.name}${variationText} × ${i.qty}`;  
-    }).join(", ");  
-  }  
+  function buildItemsString(cartItems) {
+  return cartItems.map(i => {
+    const sizeText = i.size ? ` (Size: ${i.size})` : "";
+    return `${i.name}${sizeText} × ${i.qty}`;
+  }).join(", ");
+} 
   
   async function sendOrderToFirebase(orderId, data) {  
     try {  
