@@ -402,11 +402,35 @@ font-size: 16px;
                 text-align: center;
             }}
 
+ #intro-video-container {
+      position: fixed;
+      inset: 0;
+      background: black;
+      z-index: 9999;
+    }
+
+    #intro-video {
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+    }
+
+    #main-content {
+      display: none;
     </style>
 
 </head>
 <body id="pageBody">
-<section id="home"></section>
+ <!-- Video Preloader -->
+  <div id="intro-video-container">
+    <video id="intro-video" autoplay muted playsinline>
+      <source src="intro.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+  </div>
+<section id="home">
+ 
+
 <div class="container">
 
   <div class="menu-toggle" onclick="toggleMenu()">☰</div>
@@ -710,7 +734,16 @@ font-size: 16px;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 </script>
+  <script>
+    const introVideo = document.getElementById('intro-video');
 
+    introVideo.addEventListener('ended', () => {
+      document.getElementById('intro-video-container').style.display = 'none';
+      document.getElementById('home').style.display = 'block';
+      document.body.style.overflow = 'auto'; // allow scrolling again
+    });
+  </script>
 </div>
+</section>
 </body>
 </html>
