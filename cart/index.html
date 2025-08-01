@@ -144,121 +144,134 @@
     <img src="" id="previewImage" alt="Preview" />
   </div>
   <script>
-    const cartContainer = document.getElementById("cartContainer");
-    const grandTotalEl = document.getElementById("grandTotal");
-    const imagePreview = document.getElementById("imagePreview");
-    const previewImage = document.getElementById("previewImage");let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  const cartContainer = document.getElementById("cartContainer");
+  const grandTotalEl = document.getElementById("grandTotal");
+  const imagePreview = document.getElementById("imagePreview");
+  const previewImage = document.getElementById("previewImage");
 
-function renderCart() {
-  cartContainer.innerHTML = "";
-  let total = 0;
+  let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
-  cart.forEach((item, index) => {
-    const div = document.createElement("div");
-    div.className = "cart-item";
+  function renderCart() {
+    cartContainer.innerHTML = "";
+    let total = 0;
 
-    let variationSection = "";
+    cart.forEach((item, index) => {
+      const div = document.createElement("div");
+      div.className = "cart-item";
 
-    if (item.variationType === "size" && item.availableSizes) {
-      variationSection = item.availableSizes.map(size => {
-        const qty = item.variations?.[size] || 0;
-        return `
-          <div style="margin: 4px 0;">
-            <span>${size}</span>
-            <div class="qty-controls">
-              <button onclick="adjustSizeQty(${index}, '${size}', -1)">−</button>
-              <span>${qty}</span>
-              <button onclick="adjustSizeQty(${index}, '${size}', 1)">+</button>
+      // fallback for variations
+      if (!item.variations) item.variations = {};
+
+      let variationSection = "";
+
+      // size-based variation (label or number)
+      if ((item.variationType === "label" || item.variationType === "number" || item.variationType === "size") && item.availableSizes) {
+        variationSection = item.availableSizes.map(size => {
+          const qty = item.variations[size] || 0;
+          return `
+            <div style="margin: 4px 0;">
+              <span>${size}</span>
+              <div class="qty-controls">
+                <button onclick="adjustSizeQty(${index}, '${size}', -1)">−</button>
+                <span>${qty}</span>
+                <button onclick="adjustSizeQty(${index}, '${size}', 1)">+</button>
+              </div>
             </div>
+          `;
+        }).join("");
+      } else {
+        // normal item
+        variationSection = `
+          <div class="qty-controls">
+            <button onclick="changeQty(${index}, -1)">−</button>
+            <span>${item.quantity || 1}</span>
+            <button onclick="changeQty(${index}, 1)">+</button>
           </div>
         `;
-      }).join("");
-    } else {
-      variationSection = `
-        <div class="qty-controls">
-          <button onclick="changeQty(${index}, -1)">−</button>
-          <span>${item.quantity || 1}</span>
-          <button onclick="changeQty(${index}, 1)">+</button>
+      }
+
+      // total per item
+      let itemTotal = 0;
+      if ((item.variationType === "label" || item.variationType === "number" || item.variationType === "size") && item.availableSizes) {
+        for (let sz of item.availableSizes) {
+          itemTotal += (item.variations[sz] || 0) * item.price;
+        }
+      } else {
+        itemTotal = item.price * (item.quantity || 1);
+      }
+
+      total += itemTotal;
+
+      div.innerHTML = `
+        <img src="${item.image}" alt="${item.name}" onclick="openPreview('${item.image}')">
+        <div class="info">
+          <h3>${item.name}</h3>
+          <p>GH¢${item.price.toFixed(2)}</p>
+          ${variationSection}
+          <button class="remove-btn" onclick="removeItem(${index})">🗑 Remove</button>
         </div>
       `;
-    }
+      cartContainer.appendChild(div);
+    });
 
-    let itemTotal = 0;
-    if (item.variationType === "size") {
-      for (let sz in item.variations) {
-        itemTotal += item.variations[sz] * item.price;
-      }
-    } else {
-      itemTotal = item.price * (item.quantity || 1);
-    }
-
-    total += itemTotal;
-
-    div.innerHTML = `
-      <img src="${item.image}" alt="${item.name}" onclick="openPreview('${item.image}')">
-      <div class="info">
-        <h3>${item.name}</h3>
-        <p>GH¢${item.price.toFixed(2)}</p>
-        ${variationSection}
-        <button class="remove-btn" onclick="removeItem(${index})">🗑 Remove</button>
-      </div>
-    `;
-    cartContainer.appendChild(div);
-  });
-
-  grandTotalEl.textContent = total.toFixed(2);
-  localStorage.setItem("grandTotal", total.toFixed(2));
-  localStorage.setItem("cart", JSON.stringify(cart));
-}
-
-function adjustSizeQty(index, size, delta) {
-  if (!cart[index].variations[size]) {
-    cart[index].variations[size] = 0;
+    grandTotalEl.textContent = total.toFixed(2);
+    localStorage.setItem("grandTotal", total.toFixed(2));
+    localStorage.setItem("cart", JSON.stringify(cart));
   }
-  cart[index].variations[size] += delta;
-  if (cart[index].variations[size] < 0) cart[index].variations[size] = 0;
-  renderCart();
-}
 
-function changeQty(index, delta) {
-  if (!cart[index].quantity) cart[index].quantity = 1;
-  cart[index].quantity += delta;
-  if (cart[index].quantity <= 0) cart.splice(index, 1);
-  renderCart();
-}
+  function adjustSizeQty(index, size, delta) {
+    const item = cart[index];
+    if (!item.variations) item.variations = {};
+    if (!item.variations[size]) item.variations[size] = 0;
 
-function removeItem(index) {
-  cart.splice(index, 1);
-  renderCart();
-}
+    item.variations[size] += delta;
+    if (item.variations[size] < 0) item.variations[size] = 0;
 
-function clearCart() {
-  if (confirm("Clear all items?")) {
-    cart = [];
+    // Remove item if all variations are zero
+    const allZero = Object.values(item.variations).every(qty => qty <= 0);
+    if (allZero) cart.splice(index, 1);
+
     renderCart();
   }
-}
 
-function goToCheckout() {
-  if (cart.length === 0) {
-    alert("Your cart is empty!");
-    return;
+  function changeQty(index, delta) {
+    if (!cart[index].quantity) cart[index].quantity = 1;
+    cart[index].quantity += delta;
+    if (cart[index].quantity <= 0) cart.splice(index, 1);
+    renderCart();
   }
-  window.location.href = "/checkout/";
-}
 
-function openPreview(imgUrl) {
-  previewImage.src = imgUrl;
-  imagePreview.classList.add("active");
-}
+  function removeItem(index) {
+    cart.splice(index, 1);
+    renderCart();
+  }
 
-function closePreview() {
-  imagePreview.classList.remove("active");
-  previewImage.src = "";
-}
+  function clearCart() {
+    if (confirm("Clear all items?")) {
+      cart = [];
+      renderCart();
+    }
+  }
 
-renderCart();
+  function goToCheckout() {
+    if (cart.length === 0) {
+      alert("Your cart is empty!");
+      return;
+    }
+    window.location.href = "/checkout/";
+  }
 
-  </script>
+  function openPreview(imgUrl) {
+    previewImage.src = imgUrl;
+    imagePreview.classList.add("active");
+  }
+
+  function closePreview() {
+    imagePreview.classList.remove("active");
+    previewImage.src = "";
+  }
+
+  renderCart();
+</script>
 </body>
 </html>
