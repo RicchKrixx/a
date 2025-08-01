@@ -220,28 +220,28 @@
     © 2025 BixMAX. All rights reserved.
   </p>
 </footer>
- <script type="module">  
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";  
-    import {  
-      getFirestore,  
-      collection,  
-      onSnapshot  
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";  
+  <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  onSnapshot
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    const firebaseConfig = {  
-      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",  
-      authDomain: "bixmax-6c24c.firebaseapp.com",  
-      projectId: "bixmax-6c24c",  
-      storageBucket: "bixmax-6c24c.appspot.com",  
-      messagingSenderId: "37740442541",  
-      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"  
-    };  
+const firebaseConfig = {
+  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+  authDomain: "bixmax-6c24c.firebaseapp.com",
+  projectId: "bixmax-6c24c",
+  storageBucket: "bixmax-6c24c.appspot.com",
+  messagingSenderId: "37740442541",
+  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+};
 
-    const app = initializeApp(firebaseConfig);  
-    const db = getFirestore(app);  
-    const container = document.getElementById("sneakerContainer");  
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const container = document.getElementById("sneakerContainer");
 
-    function renderSneaker(items) {
+function renderSneaker(items) {
   container.innerHTML = "";
   items.forEach(data => {
     const div = document.createElement("div");
@@ -255,13 +255,14 @@
         data-name="${data.name}"
         data-price="${data.price}"
         data-image="${data.image}"
-        data-category="Sneaker">
+        data-category="Sneaker"
+        data-variation="${data.variation || 'none'}"
+        data-sizes='${JSON.stringify(data.sizes || [])}'>
         Add to Cart
       </button>
     `;
     const img = div.querySelector(".product-image");
-    img.addEventListener("click", () => handleImageClick(data)); // ✅ proper handler
-
+    img.addEventListener("click", () => handleImageClick(data));
     container.appendChild(div);
   });
 
@@ -272,77 +273,86 @@
         name: btn.dataset.name,
         price: parseFloat(btn.dataset.price),
         image: btn.dataset.image,
-        category: btn.dataset.category
+        category: btn.dataset.category,
+        variation: btn.dataset.variation || "none",
+        sizes: JSON.parse(btn.dataset.sizes || "[]")
       };
       addToCart(product);
     });
   });
 }
 
-  function handleImageClick(data) {
+function handleImageClick(data) {
   const product = {
     id: data.id,
     name: data.name,
     price: parseFloat(data.price),
     image: data.image,
-    category: "Shirt"
+    category: "Sneaker",
+    variation: data.variation || "none",
+    sizes: data.sizes || []
   };
 
   addToCart(product);
-
-  // Optional: Redirect after short delay
   setTimeout(() => {
     window.location.href = "/cart/";
   }, 300);
-}  
-    // Load from cache first  
-    const cached = localStorage.getItem("Sneaker");  
-    if (cached) {  
-      try {  
-        const items = JSON.parse(cached);  
-        renderSneaker(items);  
-      } catch (e) {  
-        console.error("Error parsing cached Sneakers:", e);  
-      }  
-    }  
+}
 
-    // Firestore real-time listener (only updates on data change)  
-    onSnapshot(collection(db, "category", "Sneaker", "items"), snapshot => {  
-      const items = [];  
-      snapshot.forEach(doc => {  
-        items.push({ ...doc.data(), id: doc.id });  
-      });  
-      localStorage.setItem("Sneaker", JSON.stringify(items));  
-      renderSneaker(items);  
-    });  
+// Load from cache first
+const cached = localStorage.getItem("Sneaker");
+if (cached) {
+  try {
+    const items = JSON.parse(cached);
+    renderSneaker(items);
+  } catch (e) {
+    console.error("Error parsing cached Sneakers:", e);
+  }
+}
 
-    function addToCart(product) {  
-      let cart = JSON.parse(localStorage.getItem("cart")) || [];  
-      const index = cart.findIndex(item => item.id === product.id);  
-      if (index >= 0) {  
-        cart[index].qty += 1;  
-      } else {  
-        cart.push({ ...product, qty: 1 });  
-      }  
-      localStorage.setItem("cart", JSON.stringify(cart));  
-      updateCartCount();  
-      animateCart();  
-    }  
+// Firestore real-time listener
+onSnapshot(collection(db, "category", "Sneaker", "items"), snapshot => {
+  const items = [];
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    items.push({
+      ...data,
+      id: doc.id,
+      variation: data.variation || "none",
+      sizes: data.sizes || []
+    });
+  });
+  localStorage.setItem("Sneaker", JSON.stringify(items));
+  renderSneaker(items);
+});
 
-    function updateCartCount() {  
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];  
-      const count = cart.reduce((sum, item) => sum + item.qty, 0);  
-      document.getElementById("cartCount").textContent = count;  
-    }  
+function addToCart(product) {
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const index = cart.findIndex(item => item.id === product.id);
+  if (index >= 0) {
+    cart[index].qty += 1;
+  } else {
+    cart.push({ ...product, qty: 1 });
+  }
+  localStorage.setItem("cart", JSON.stringify(cart));
+  updateCartCount();
+  animateCart();
+}
 
-    function animateCart() {  
-      const cartIcon = document.querySelector(".cart-icon");  
-      cartIcon.classList.add("shake");  
-      setTimeout(() => cartIcon.classList.remove("shake"), 500);  
-    }  
+function updateCartCount() {
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const count = cart.reduce((sum, item) => sum + item.qty, 0);
+  document.getElementById("cartCount").textContent = count;
+}
 
-    updateCartCount();  
-  </script>
+function animateCart() {
+  const cartIcon = document.querySelector(".cart-icon");
+  cartIcon.classList.add("shake");
+  setTimeout(() => cartIcon.classList.remove("shake"), 500);
+}
+
+updateCartCount();
+</script>  
 <script>
   const searchInput = document.getElementById("searchInput");
   const container = document.getElementById("sneakerContainer");
