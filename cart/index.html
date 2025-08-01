@@ -1,154 +1,264 @@
 <!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BixMAX Cart</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BixMAX | Cart</title>
   <style>
     body {
-      margin: 0;
-      padding: 20px;
       font-family: Arial, sans-serif;
-      background-color: #0f172a;
-      color: white;
+      background: #e0f7fa;
+      color: #222;
+      padding: 20px;
+      margin: 0;
+    }
+    h1 {
+      text-align: center;
+      color: #0a4f5c;
+      font-weight: bold;
     }
     .cart-item {
-      background: #1e293b;
-      margin-bottom: 16px;
-      padding: 16px;
-      border-radius: 12px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-    }
-    .cart-item h3 {
-      margin-top: 0;
-    }
-    .variation-controls {
       display: flex;
+      gap: 16px;
+      background: #fff;
+      padding: 16px;
+      border-radius: 20px;
+      box-shadow: 0 0 6px rgba(0,0,0,0.1);
+      margin-bottom: 16px;
       flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 12px;
+      position: relative;
+    }
+    .cart-item img {
+      width: 90px;
+      height: 90px;
+      border-radius: 10px;
+      object-fit: cover;
+      cursor: pointer;
+    }
+    .info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .info h3 {
+      margin: 0;
+      color: #0a4f5c;
     }
     .variation {
+      font-size: 14px;
+      color: #333;
+    }
+    .qty-controls {
       display: flex;
       align-items: center;
-      gap: 6px;
-      background: #334155;
+      gap: 10px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+    .qty-controls button {
       padding: 6px 12px;
-      border-radius: 8px;
-    }
-    .variation span {
-      font-size: 14px;
-    }
-    .variation button {
-      background: #38bdf8;
-      color: #0f172a;
+      background: #0a4f5c;
+      color: white;
       border: none;
-      border-radius: 6px;
-      padding: 4px 8px;
+      border-radius: 8px;
       cursor: pointer;
     }
-    .totals {
-      margin-top: 24px;
-      font-size: 18px;
+    .qty-controls span {
       font-weight: bold;
+    }
+    .remove-btn {
+      background: none;
+      border: none;
+      color: red;
+      font-weight: bold;
+      cursor: pointer;
+      margin-left: auto;
+    }
+    .total {
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      color: #0a4f5c;
+      margin-top: 20px;
+    }
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 25px;
+    }
+    .buttons button {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .empty-btn {
+      background: gray;
+      color: white;
     }
     .checkout-btn {
-      display: block;
-      margin-top: 16px;
-      padding: 12px;
-      width: 100%;
-      background: #06b6d4;
+      background: #0a4f5c;
       color: white;
-      font-weight: bold;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
+    }
+    .preview-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    .preview-overlay img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 16px;
+      box-shadow: 0 0 20px #000;
+    }
+    .preview-overlay.active {
+      display: flex;
+    }
+    @media (max-width: 600px) {
+      .cart-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .buttons {
+        flex-direction: column;
+        gap: 12px;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Your Cart</h1>
-  <div id="cart-container"></div>
-  <div class="totals" id="totals"></div>
-  <button class="checkout-btn">Proceed to Checkout</button>  <script>
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const container = document.getElementById("cart-container");
-    const totalsDiv = document.getElementById("totals");
+  <h1>🛍️ My Cart</h1>
+  <div id="cartContainer"></div>
+  <div class="total">Total: GH¢<span id="grandTotal">0.00</span></div>
+  <div class="buttons">
+    <button class="empty-btn" onclick="clearCart()">Empty Cart</button>
+    <button class="checkout-btn" onclick="goToCheckout()">Checkout</button>
+  </div>
+  <div id="imagePreview" class="preview-overlay" onclick="closePreview()">
+    <img src="" id="previewImage" alt="Preview" />
+  </div>
+  <script>
+    const cartContainer = document.getElementById("cartContainer");
+    const grandTotalEl = document.getElementById("grandTotal");
+    const imagePreview = document.getElementById("imagePreview");
+    const previewImage = document.getElementById("previewImage");let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
-    const SIZES = ["S", "M", "L", "XL", "38", "39", "40", "41", "42", "43", "44", "45"];
+function renderCart() {
+  cartContainer.innerHTML = "";
+  let total = 0;
 
-    function renderCart() {
-      container.innerHTML = "";
-      let totalItems = 0;
-      let totalPrice = 0;
+  cart.forEach((item, index) => {
+    const div = document.createElement("div");
+    div.className = "cart-item";
 
-      cart.forEach((item, index) => {
-        let itemDiv = document.createElement("div");
-        itemDiv.className = "cart-item";
+    let variationSection = "";
 
-        let title = document.createElement("h3");
-        title.textContent = item.name + " - GH₵" + item.price;
-        itemDiv.appendChild(title);
-
-        if (item.variations) {
-          let varWrap = document.createElement("div");
-          varWrap.className = "variation-controls";
-
-          SIZES.forEach(size => {
-            if (item.variations[size] !== undefined) {
-              let varBox = document.createElement("div");
-              varBox.className = "variation";
-
-              let label = document.createElement("span");
-              label.textContent = size + ": ";
-
-              let qty = document.createElement("span");
-              qty.id = `qty-${index}-${size}`;
-              qty.textContent = item.variations[size];
-
-              let minus = document.createElement("button");
-              minus.textContent = "-";
-              minus.onclick = () => updateQty(index, size, -1);
-
-              let plus = document.createElement("button");
-              plus.textContent = "+";
-              plus.onclick = () => updateQty(index, size, 1);
-
-              varBox.append(label, minus, qty, plus);
-              varWrap.appendChild(varBox);
-            }
-          });
-
-          itemDiv.appendChild(varWrap);
-        } else {
-          totalItems += item.quantity;
-          totalPrice += item.quantity * item.price;
-          let info = document.createElement("p");
-          info.textContent = `Qty: ${item.quantity}`;
-          itemDiv.appendChild(info);
-        }
-
-        if (item.variations) {
-          for (let size in item.variations) {
-            totalItems += item.variations[size];
-            totalPrice += item.variations[size] * item.price;
-          }
-        }
-
-        container.appendChild(itemDiv);
-      });
-
-      totalsDiv.textContent = `Total Items: ${totalItems} | Grand Total: GH₵${totalPrice}`;
+    if (item.variationType === "size" && item.availableSizes) {
+      variationSection = item.availableSizes.map(size => {
+        const qty = item.variations?.[size] || 0;
+        return `
+          <div style="margin: 4px 0;">
+            <span>${size}</span>
+            <div class="qty-controls">
+              <button onclick="adjustSizeQty(${index}, '${size}', -1)">−</button>
+              <span>${qty}</span>
+              <button onclick="adjustSizeQty(${index}, '${size}', 1)">+</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    } else {
+      variationSection = `
+        <div class="qty-controls">
+          <button onclick="changeQty(${index}, -1)">−</button>
+          <span>${item.quantity || 1}</span>
+          <button onclick="changeQty(${index}, 1)">+</button>
+        </div>
+      `;
     }
 
-    function updateQty(index, size, change) {
-      let item = cart[index];
-      if (!item.variations[size]) item.variations[size] = 0;
-      item.variations[size] += change;
-      if (item.variations[size] < 0) item.variations[size] = 0;
-      localStorage.setItem("cart", JSON.stringify(cart));
-      renderCart();
+    let itemTotal = 0;
+    if (item.variationType === "size") {
+      for (let sz in item.variations) {
+        itemTotal += item.variations[sz] * item.price;
+      }
+    } else {
+      itemTotal = item.price * (item.quantity || 1);
     }
 
+    total += itemTotal;
+
+    div.innerHTML = `
+      <img src="${item.image}" alt="${item.name}" onclick="openPreview('${item.image}')">
+      <div class="info">
+        <h3>${item.name}</h3>
+        <p>GH¢${item.price.toFixed(2)}</p>
+        ${variationSection}
+        <button class="remove-btn" onclick="removeItem(${index})">🗑 Remove</button>
+      </div>
+    `;
+    cartContainer.appendChild(div);
+  });
+
+  grandTotalEl.textContent = total.toFixed(2);
+  localStorage.setItem("grandTotal", total.toFixed(2));
+  localStorage.setItem("cart", JSON.stringify(cart));
+}
+
+function adjustSizeQty(index, size, delta) {
+  if (!cart[index].variations[size]) {
+    cart[index].variations[size] = 0;
+  }
+  cart[index].variations[size] += delta;
+  if (cart[index].variations[size] < 0) cart[index].variations[size] = 0;
+  renderCart();
+}
+
+function changeQty(index, delta) {
+  if (!cart[index].quantity) cart[index].quantity = 1;
+  cart[index].quantity += delta;
+  if (cart[index].quantity <= 0) cart.splice(index, 1);
+  renderCart();
+}
+
+function removeItem(index) {
+  cart.splice(index, 1);
+  renderCart();
+}
+
+function clearCart() {
+  if (confirm("Clear all items?")) {
+    cart = [];
     renderCart();
-  </script></body>
+  }
+}
+
+function goToCheckout() {
+  if (cart.length === 0) {
+    alert("Your cart is empty!");
+    return;
+  }
+  window.location.href = "/checkout/";
+}
+
+function openPreview(imgUrl) {
+  previewImage.src = imgUrl;
+  imagePreview.classList.add("active");
+}
+
+function closePreview() {
+  imagePreview.classList.remove("active");
+  previewImage.src = "";
+}
+
+renderCart();
+
+  </script>
+</body>
 </html>
