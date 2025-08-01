@@ -719,21 +719,9 @@ font-size: 16px;
     current = (current + 1) % cards.length;
   }, 2000);
 </script>
-<script>
-  const scrollTopBtn = document.getElementById("scrollTopBtn");
 
-  window.onscroll = () => {
-    if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
-      scrollTopBtn.style.display = "block";
-    } else {
-      scrollTopBtn.style.display = "none";
-    }
-  };
-
-  scrollTopBtn.onclick = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-</script>
+</div>
+</section>
   <script>
     const introVideo = document.getElementById('intro-video');
 
@@ -743,7 +731,5 @@ font-size: 16px;
       document.body.style.overflow = 'auto'; // allow scrolling again
     });
   </script>
-</div>
-</section>
 </body>
 </html>
