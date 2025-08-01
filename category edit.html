@@ -114,13 +114,18 @@ const firebaseConfig = {
         const itemDiv = document.createElement("div");
         itemDiv.className = "product";
         itemDiv.innerHTML = `
-          <img src="${data.image}" alt="${data.name}">
-          <input type="text" value="${data.name}" placeholder="Name" />
-          <input type="number" value="${data.price}" placeholder="Price" />
-          <input type="text" value="${data.image}" placeholder="Image URL" />
-          <button onclick="updateItem('${cat}', '${docSnap.id}', this)">Update</button>
-          <button onclick="deleteItem('${cat}', '${docSnap.id}', this)">Delete</button>
-        `;
+  <img src="${data.image}" alt="${data.name}">
+  <input type="text" value="${data.name}" placeholder="Name" />
+  <input type="number" value="${data.price}" placeholder="Price" />
+  <input type="text" value="${data.image}" placeholder="Image URL" />
+  <select>
+    <option value="none" ${data.variation === "none" ? "selected" : ""}>No Variation</option>
+    <option value="number" ${data.variation === "number" ? "selected" : ""}>Number Sizes</option>
+    <option value="label" ${data.variation === "label" ? "selected" : ""}>S/M/L</option>
+  </select>
+  <button onclick="updateItem('${cat}', '${docSnap.id}', this)">Update</button>
+  <button onclick="deleteItem('${cat}', '${docSnap.id}', this)">Delete</button>
+`;
         productsContainer.appendChild(itemDiv);
       });
     }
@@ -130,10 +135,10 @@ const firebaseConfig = {
       const name = box.children[1].value;
       const price = parseFloat(box.children[2].value);
       const image = box.children[3].value;
-
-      await updateDoc(doc(db, "category", cat, "items", id), {
-        name, price, image
-      });
+const variation = box.children[4].value;
+await updateDoc(doc(db, "category", cat, "items", id), {
+  name, price, image, variation
+});
       alert("Updated successfully");
     };
 
