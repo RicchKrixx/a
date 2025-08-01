@@ -235,7 +235,7 @@ function renderShirts(items) {
 
   const index = cart.findIndex(item => item.id === product.id);
 
-  const isSizeVariant = product.variationType === "size";
+  const isSizeVariant = product.variationType === "label" || product.variationType === "number";
 
   if (index >= 0) {
     if (isSizeVariant) {
