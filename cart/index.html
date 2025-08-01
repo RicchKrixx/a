@@ -118,21 +118,33 @@
       color: white;
     }
 
-    .size-dropdown {
-      display: none;
-      margin-top: 6px;
-    }
-
-    .cart-item.active .size-dropdown {
-      display: block;
-    }
-
     .size-dropdown select {
       padding: 6px 10px;
       border-radius: 8px;
       border: 1px solid #ccc;
       font-size: 14px;
       margin-top: 6px;
+    }
+
+    .preview-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .preview-overlay img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 16px;
+      box-shadow: 0 0 20px #000;
+    }
+
+    .preview-overlay.active {
+      display: flex;
     }
 
     @media (max-width: 600px) {
@@ -161,9 +173,16 @@
     <button class="checkout-btn" onclick="goToCheckout()">Checkout</button>
   </div>
 
+  <div id="imagePreview" class="preview-overlay" onclick="closePreview()">
+    <img src="" id="previewImage" alt="Preview" />
+  </div>
+
   <script>
     const cartContainer = document.getElementById("cartContainer");
     const grandTotalEl = document.getElementById("grandTotal");
+    const imagePreview = document.getElementById("imagePreview");
+    const previewImage = document.getElementById("previewImage");
+
     let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
     function renderCart() {
@@ -174,25 +193,26 @@
         const div = document.createElement("div");
         div.className = "cart-item";
         div.innerHTML = `
-          <img src="${item.image}" alt="${item.name}" onclick="toggleSizeDropdown(this)">
+          <img src="${item.image}" alt="${item.name}" onclick="openPreview('${item.image}')">
           <div class="info">
             <h3>${item.name}</h3>
             <p>GH¢${item.price.toFixed(2)}</p>
-            <p class="variation">
-              ${item.color ? `Color: ${item.color}` : ""}
-              ${item.size ? ` | Size: ${item.size}` : ""}
-            </p>
+            ${item.color || item.size ? `
+              <p class="variation">
+                ${item.color ? `Color: ${item.color}` : ""}
+                ${item.size ? ` | Size: ${item.size}` : ""}
+              </p>` : ""}
 
-            <div class="size-dropdown">
-              ${item.variation === "number" || item.variation === "label" ? `
-              <select onchange="changeSize(${i}, this.value)">
-                <option value="">Select Size</option>
-                ${(item.sizes || []).map(size => `
-                  <option value="${size}" ${item.size === size ? "selected" : ""}>${size}</option>
-                `).join("")}
-              </select>
-              ` : ""}
-            </div>
+            ${(item.variation !== "none" && item.sizes?.length > 0) ? `
+              <div class="size-dropdown">
+                <select onchange="changeSize(${i}, this.value)">
+                  <option value="">Select Size</option>
+                  ${item.sizes.map(size => `
+                    <option value="${size}" ${item.size === size ? "selected" : ""}>${size}</option>
+                  `).join("")}
+                </select>
+              </div>
+            ` : ""}
 
             <div class="qty-controls">
               <button onclick="changeQty(${i}, -1)">−</button>
@@ -211,20 +231,15 @@
       localStorage.setItem("cart", JSON.stringify(cart));
     }
 
-    function toggleSizeDropdown(img) {
-      const itemDiv = img.closest(".cart-item");
-      itemDiv.classList.toggle("active");
+    function changeQty(index, delta) {
+      cart[index].qty += delta;
+      if (cart[index].qty <= 0) cart.splice(index, 1);
+      renderCart();
     }
 
     function changeSize(index, newSize) {
       cart[index].size = newSize;
       localStorage.setItem("cart", JSON.stringify(cart));
-      renderCart();
-    }
-
-    function changeQty(index, delta) {
-      cart[index].qty += delta;
-      if (cart[index].qty <= 0) cart.splice(index, 1);
       renderCart();
     }
 
@@ -246,6 +261,16 @@
         return;
       }
       window.location.href = "/checkout/";
+    }
+
+    function openPreview(imgUrl) {
+      previewImage.src = imgUrl;
+      imagePreview.classList.add("active");
+    }
+
+    function closePreview() {
+      imagePreview.classList.remove("active");
+      previewImage.src = "";
     }
 
     renderCart();
