@@ -90,75 +90,75 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <script>
- // Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-  authDomain: "bixmax-6c24c.firebaseapp.com",
-  projectId: "bixmax-6c24c",
-  storageBucket: "bixmax-6c24c.appspot.com",
-  messagingSenderId: "37740442541",
-  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-};
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+      authDomain: "bixmax-6c24c.firebaseapp.com",
+      projectId: "bixmax-6c24c",
+      storageBucket: "bixmax-6c24c.appspot.com",
+      messagingSenderId: "37740442541",
+      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+    };
     firebase.initializeApp(firebaseConfig);
 
-    // URL param check
     const urlParams = new URLSearchParams(window.location.search);
-    let orderIdFromURL = urlParams.get('orderId');
+    const orderIdFromURL = urlParams.get('orderId');
+    const orders = JSON.parse(localStorage.getItem('orders') || "{}");
 
-    const orders = JSON.parse(localStorage.getItem('orders')) || {};
-
-    // Helper to render order
     function renderReceipt(orderId, order) {
       document.getElementById("orderId").textContent = orderId;
-      document.getElementById("customerName").textContent = order.name;
-      document.getElementById("customerPhone").textContent = order.phone;
-      document.getElementById("orderDate").textContent = order.date;
-      document.getElementById("totalAmount").textContent = order.total;
+      document.getElementById("customerName").textContent = order.name || "";
+      document.getElementById("customerPhone").textContent = order.phone || "";
+      document.getElementById("orderDate").textContent = order.date || "";
+      document.getElementById("totalAmount").textContent = order.total || "0.00";
 
       const itemsTable = document.getElementById("itemsTable");
-      itemsTable.innerHTML = ""; // Clear previous
-      order.items.forEach(item => {
-        const row = document.createElement("tr");
-        row.innerHTML = `<td>${item.name} ${item.variation || ""}</td><td>${item.qty}</td><td>GH₵${item.price}</td>`;
-        itemsTable.appendChild(row);
-      });
+      itemsTable.innerHTML = "";
+      if (Array.isArray(order.items)) {
+        order.items.forEach(item => {
+          const row = document.createElement("tr");
+          row.innerHTML = `<td>${item.name || "Item"} ${item.variation || ""}</td><td>${item.qty || 1}</td><td>GH₵${item.price || "0.00"}</td>`;
+          itemsTable.appendChild(row);
+        });
+      }
     }
 
-    // PDF download
     function downloadPDF() {
       const element = document.getElementById("receipt-content");
       const filename = document.getElementById("orderId").textContent || "BizMAX_Receipt";
       html2pdf().from(element).save(`${filename}.pdf`);
     }
 
-    // 🔍 Load receipt
     firebase.auth().onAuthStateChanged(user => {
+      const receiptBox = document.getElementById("receipt-content");
+
       if (user) {
-        const email = user.email;
+        const userEmail = user.email;
+        let matchedOrder = null;
+        let matchedId = null;
 
-        let matchedOrder;
-        let matchedId;
-
-        if (orderIdFromURL && orders[orderIdFromURL]) {
+        // Priority 1: Use orderId from URL
+        if (orderIdFromURL && orders[orderIdFromURL] && orders[orderIdFromURL].email === userEmail) {
           matchedOrder = orders[orderIdFromURL];
           matchedId = orderIdFromURL;
         } else {
+          // Priority 2: Find latest matching order
           const userOrders = Object.entries(orders)
-            .filter(([id, order]) => order.email === email)
+            .filter(([id, order]) => order.email === userEmail)
             .sort((a, b) => new Date(b[1].date) - new Date(a[1].date));
-
           if (userOrders.length > 0) {
             [matchedId, matchedOrder] = userOrders[0];
           }
         }
 
-        if (matchedOrder) {
+        if (matchedOrder && matchedId) {
           renderReceipt(matchedId, matchedOrder);
         } else {
-          document.getElementById("receipt-content").innerHTML = "<p>No orders found for your account.</p>";
+          receiptBox.innerHTML = "<p>No orders found for your account.</p>";
         }
+
       } else {
-        document.getElementById("receipt-content").innerHTML = "<p>Please sign in to view your receipt.</p>";
+        receiptBox.innerHTML = "<p>Please sign in to view your receipt.</p>";
       }
     });
   </script>
