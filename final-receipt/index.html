@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BixMAX Order Receipt</title>
+  <title>BixMAX | Search Receipt</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -11,6 +11,33 @@
       color: #222;
       padding: 20px;
     }
+
+    .search-box {
+      max-width: 500px;
+      margin: 0 auto 30px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .search-box input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    .search-box button {
+      padding: 10px 20px;
+      background: #00bcd4;
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
     .receipt {
       max-width: 600px;
       margin: auto;
@@ -18,27 +45,34 @@
       padding: 30px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       border-radius: 12px;
+      display: none;
     }
+
     h2 {
       color: #00bcd4;
       text-align: center;
     }
+
     .info, .items, .total, .status {
       margin: 20px 0;
     }
+
     .items table {
       width: 100%;
       border-collapse: collapse;
     }
+
     .items th, .items td {
       border-bottom: 1px solid #ccc;
       padding: 10px;
       text-align: left;
     }
+
     .status {
       font-weight: bold;
       color: green;
     }
+
     .download-btn {
       display: block;
       margin: 30px auto 0;
@@ -50,9 +84,23 @@
       font-size: 16px;
       cursor: pointer;
     }
+
+    .message {
+      text-align: center;
+      color: red;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
+
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Enter Order ID (e.g. ORD1234)">
+    <button onclick="searchReceipt()">Search</button>
+  </div>
+
+  <div id="message" class="message"></div>
+
   <div class="receipt" id="receipt-content">
     <h2>🧾 BixMAX Order Receipt</h2>
     <div class="info">
@@ -83,29 +131,16 @@
     <button class="download-btn" onclick="downloadPDF()">Download Receipt</button>
   </div>
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
   <!-- html2pdf -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <script>
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-      authDomain: "bixmax-6c24c.firebaseapp.com",
-      projectId: "bixmax-6c24c",
-      storageBucket: "bixmax-6c24c.appspot.com",
-      messagingSenderId: "37740442541",
-      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-    };
-    firebase.initializeApp(firebaseConfig);
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const orderIdFromURL = urlParams.get('orderId');
-    const orders = JSON.parse(localStorage.getItem('orders') || "{}");
+    const orders = JSON.parse(localStorage.getItem('orders') || '{}');
 
     function renderReceipt(orderId, order) {
+      document.getElementById("receipt-content").style.display = "block";
+      document.getElementById("message").textContent = "";
+
       document.getElementById("orderId").textContent = orderId;
       document.getElementById("customerName").textContent = order.name || "";
       document.getElementById("customerPhone").textContent = order.phone || "";
@@ -123,44 +158,31 @@
       }
     }
 
-    function downloadPDF() {
-      const element = document.getElementById("receipt-content");
-      const filename = document.getElementById("orderId").textContent || "BizMAX_Receipt";
-      html2pdf().from(element).save(`${filename}.pdf`);
+    function searchReceipt() {
+      const input = document.getElementById("searchInput").value.trim();
+      const receiptBox = document.getElementById("receipt-content");
+      const messageBox = document.getElementById("message");
+
+      receiptBox.style.display = "none";
+      messageBox.textContent = "";
+
+      if (!input) {
+        messageBox.textContent = "Please enter an Order ID.";
+        return;
+      }
+
+      if (orders[input]) {
+        renderReceipt(input, orders[input]);
+      } else {
+        messageBox.textContent = "No receipt found for Order ID: " + input;
+      }
     }
 
-    firebase.auth().onAuthStateChanged(user => {
-      const receiptBox = document.getElementById("receipt-content");
-
-      if (user) {
-        const userEmail = user.email;
-        let matchedOrder = null;
-        let matchedId = null;
-
-        // Priority 1: Use orderId from URL
-        if (orderIdFromURL && orders[orderIdFromURL] && orders[orderIdFromURL].email === userEmail) {
-          matchedOrder = orders[orderIdFromURL];
-          matchedId = orderIdFromURL;
-        } else {
-          // Priority 2: Find latest matching order
-          const userOrders = Object.entries(orders)
-            .filter(([id, order]) => order.email === userEmail)
-            .sort((a, b) => new Date(b[1].date) - new Date(a[1].date));
-          if (userOrders.length > 0) {
-            [matchedId, matchedOrder] = userOrders[0];
-          }
-        }
-
-        if (matchedOrder && matchedId) {
-          renderReceipt(matchedId, matchedOrder);
-        } else {
-          receiptBox.innerHTML = "<p>No orders found for your account.</p>";
-        }
-
-      } else {
-        receiptBox.innerHTML = "<p>Please sign in to view your receipt.</p>";
-      }
-    });
+    function downloadPDF() {
+      const element = document.getElementById("receipt-content");
+      const filename = document.getElementById("orderId").textContent || "BixMAX_Receipt";
+      html2pdf().from(element).save(`${filename}.pdf`);
+    }
   </script>
 </body>
 </html>
