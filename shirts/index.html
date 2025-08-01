@@ -233,30 +233,26 @@ function renderShirts(items) {
     function addToCart(product) {
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
+  const isSizeVariant = (product.variationType === "label" || product.variationType === "number") 
+                        && product.availableSizes?.length > 0;
+
   const index = cart.findIndex(item => item.id === product.id);
 
-  const isSizeVariant = product.variationType === "label" || product.variationType === "number";
+  if (isSizeVariant) {
+    const size = product.availableSizes?.[0] || "M";
 
-  if (index >= 0) {
-    if (isSizeVariant) {
-      // Initialize variations if not present
-      if (!cart[index].variations) {
-        const defaultSize = product.availableSizes?.[0] || "M";
-        cart[index].variations = { [defaultSize]: 1 };
-      } else {
-        const size = product.availableSizes?.[0] || "M";
-        cart[index].variations[size] = (cart[index].variations[size] || 0) + 1;
-      }
+    if (index >= 0) {
+      cart[index].variations = cart[index].variations || {};
+      cart[index].variations[size] = (cart[index].variations[size] || 0) + 1;
     } else {
-      cart[index].qty += 1;
-    }
-  } else {
-    if (isSizeVariant) {
-      const defaultSize = product.availableSizes?.[0] || "M";
       cart.push({
         ...product,
-        variations: { [defaultSize]: 1 }
+        variations: { [size]: 1 }
       });
+    }
+  } else {
+    if (index >= 0) {
+      cart[index].qty += 1;
     } else {
       cart.push({
         ...product,
@@ -268,13 +264,23 @@ function renderShirts(items) {
   localStorage.setItem("cart", JSON.stringify(cart));
   updateCartCount();
   animateCart();
-}    
+}  
   
-    function updateCartCount() {    
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];    
-      const count = cart.reduce((sum, item) => sum + item.qty, 0);    
-      document.getElementById("cartCount").textContent = count;    
-    }    
+    function updateCartCount() {
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  let count = 0;
+
+  for (const item of cart) {
+    if (item.variations) {
+      count += Object.values(item.variations).reduce((sum, qty) => sum + qty, 0);
+    } else {
+      count += item.qty || 0;
+    }
+  }
+
+  document.getElementById("cartCount").textContent = count;
+}
   
     function animateCart() {    
       const cartIcon = document.querySelector(".cart-icon");    
