@@ -15,28 +15,28 @@
 
     h1 {
       text-align: center;
-      color: darkcyan;
+      color: #0a4f5c;
       font-weight: bold;
-      text-shadow: 0 0 8px cyan;
     }
 
     .cart-item {
       display: flex;
       gap: 16px;
-      background: rgba(255,255,255,0.9);
+      background: #fff;
       padding: 16px;
       border-radius: 20px;
-      box-shadow: 0 0 10px cyan;
+      box-shadow: 0 0 6px rgba(0,0,0,0.1);
       margin-bottom: 16px;
       flex-wrap: wrap;
+      position: relative;
     }
 
     .cart-item img {
       width: 90px;
       height: 90px;
-      border-radius: 50%;
+      border-radius: 10px;
       object-fit: cover;
-      box-shadow: 0 0 6px cyan;
+      cursor: pointer;
     }
 
     .info {
@@ -48,12 +48,12 @@
 
     .info h3 {
       margin: 0;
-      color: darkblue;
+      color: #0a4f5c;
     }
 
     .variation {
       font-size: 14px;
-      color: #555;
+      color: #333;
     }
 
     .qty-controls {
@@ -65,7 +65,7 @@
 
     .qty-controls button {
       padding: 6px 12px;
-      background: darkcyan;
+      background: #0a4f5c;
       color: white;
       border: none;
       border-radius: 8px;
@@ -91,7 +91,6 @@
       font-weight: bold;
       color: #0a4f5c;
       margin-top: 20px;
-      text-shadow: 0 0 8px cyan;
     }
 
     .buttons {
@@ -107,7 +106,6 @@
       font-weight: bold;
       cursor: pointer;
       font-size: 16px;
-      box-shadow: 0 0 5px cyan;
     }
 
     .empty-btn {
@@ -116,8 +114,25 @@
     }
 
     .checkout-btn {
-      background: darkcyan;
+      background: #0a4f5c;
       color: white;
+    }
+
+    .size-dropdown {
+      display: none;
+      margin-top: 6px;
+    }
+
+    .cart-item.active .size-dropdown {
+      display: block;
+    }
+
+    .size-dropdown select {
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      margin-top: 6px;
     }
 
     @media (max-width: 600px) {
@@ -145,77 +160,95 @@
     <button class="empty-btn" onclick="clearCart()">Empty Cart</button>
     <button class="checkout-btn" onclick="goToCheckout()">Checkout</button>
   </div>
- <script>
-  const cartContainer = document.getElementById("cartContainer");
-  const grandTotalEl = document.getElementById("grandTotal");
-  let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
-  function renderCart() {
-    cartContainer.innerHTML = "";
-    let total = 0;
+  <script>
+    const cartContainer = document.getElementById("cartContainer");
+    const grandTotalEl = document.getElementById("grandTotal");
+    let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
-    cart.forEach((item, i) => {
-      const div = document.createElement("div");
-      div.className = "cart-item";
-      div.innerHTML = `
-        <img src="${item.image}" alt="${item.name}">
-        <div class="info">
-          <h3>${item.name}</h3>
-          <p>GH¢${item.price.toFixed(2)}</p>
-          ${item.color || item.size ? `
+    function renderCart() {
+      cartContainer.innerHTML = "";
+      let total = 0;
+
+      cart.forEach((item, i) => {
+        const div = document.createElement("div");
+        div.className = "cart-item";
+        div.innerHTML = `
+          <img src="${item.image}" alt="${item.name}" onclick="toggleSizeDropdown(this)">
+          <div class="info">
+            <h3>${item.name}</h3>
+            <p>GH¢${item.price.toFixed(2)}</p>
             <p class="variation">
               ${item.color ? `Color: ${item.color}` : ""}
-              ${item.size ? `Size: ${item.size}` : ""}
-            </p>` : ""}
-          <div class="qty-controls">
-            <button onclick="changeQty(${i}, -1)">−</button>
-            <span>${item.qty}</span>
-            <button onclick="changeQty(${i}, 1)">+</button>
-            <button class="remove-btn" onclick="removeItem(${i})">🗑 Remove</button>
+              ${item.size ? ` | Size: ${item.size}` : ""}
+            </p>
+
+            <div class="size-dropdown">
+              ${item.variation === "number" || item.variation === "label" ? `
+              <select onchange="changeSize(${i}, this.value)">
+                <option value="">Select Size</option>
+                ${(item.sizes || []).map(size => `
+                  <option value="${size}" ${item.size === size ? "selected" : ""}>${size}</option>
+                `).join("")}
+              </select>
+              ` : ""}
+            </div>
+
+            <div class="qty-controls">
+              <button onclick="changeQty(${i}, -1)">−</button>
+              <span>${item.qty}</span>
+              <button onclick="changeQty(${i}, 1)">+</button>
+              <button class="remove-btn" onclick="removeItem(${i})">🗑 Remove</button>
+            </div>
           </div>
-        </div>
-      `;
-      cartContainer.appendChild(div);
-      total += item.price * item.qty;
-    });
+        `;
+        cartContainer.appendChild(div);
+        total += item.price * item.qty;
+      });
 
-    grandTotalEl.textContent = total.toFixed(2);
+      grandTotalEl.textContent = total.toFixed(2);
+      localStorage.setItem("grandTotal", total.toFixed(2));
+      localStorage.setItem("cart", JSON.stringify(cart));
+    }
 
-    // ✅ Save grand total to localStorage
-    localStorage.setItem("grandTotal", total.toFixed(2));
+    function toggleSizeDropdown(img) {
+      const itemDiv = img.closest(".cart-item");
+      itemDiv.classList.toggle("active");
+    }
 
-    // ✅ Save updated cart to localStorage
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }
-
-  function changeQty(index, delta) {
-    cart[index].qty += delta;
-    if (cart[index].qty <= 0) cart.splice(index, 1);
-    renderCart();
-  }
-
-  function removeItem(index) {
-    cart.splice(index, 1);
-    renderCart();
-  }
-
-  function clearCart() {
-    if (confirm("Clear all items?")) {
-      cart = [];
+    function changeSize(index, newSize) {
+      cart[index].size = newSize;
+      localStorage.setItem("cart", JSON.stringify(cart));
       renderCart();
     }
-  }
 
-  function goToCheckout() {
-    if (cart.length === 0) {
-      alert("Your cart is empty!");
-      return;
+    function changeQty(index, delta) {
+      cart[index].qty += delta;
+      if (cart[index].qty <= 0) cart.splice(index, 1);
+      renderCart();
     }
-    window.location.href = "/checkout/";
-  }
 
-  // ✅ Initial render
-  renderCart();
-</script>
+    function removeItem(index) {
+      cart.splice(index, 1);
+      renderCart();
+    }
+
+    function clearCart() {
+      if (confirm("Clear all items?")) {
+        cart = [];
+        renderCart();
+      }
+    }
+
+    function goToCheckout() {
+      if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+      }
+      window.location.href = "/checkout/";
+    }
+
+    renderCart();
+  </script>
 </body>
 </html>
