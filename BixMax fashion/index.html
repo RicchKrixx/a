@@ -208,7 +208,7 @@ border-radius: 10px;
   <!-- Fashion Sections -->    
 <div class="category">  
   <div class="cat-header">  
-    <h2>Shirts</h2>  
+    <h2>Men's Collection</h2>  
     <a href="/shirts/">View All</a>
   </div>  
   <div class="products" id="shirtsContainer">
@@ -219,7 +219,7 @@ border-radius: 10px;
   <!-- Fashion Sections -->  
 <div class="category">  
   <div class="cat-header">  
-    <h2>Dresses</h2>  
+    <h2>Women's Collection</h2>  
     <a href="/dresses/">View All</a>
   </div>  
   <div class="products" id="dressesContainer">
@@ -254,6 +254,25 @@ border-radius: 10px;
     <a href="/glasses/">View All</a>
   </div>  
   <div class="products" id="glassesContainer">
+    <!-- Firebase will load .product elements here -->
+  </div>  
+</div>
+
+<div class="category">  
+  <div class="cat-header">  
+    <h2>Bags</h2>  
+    <a href="/bags/">View All</a>
+  </div>  
+  <div class="products" id="bagsContainer">
+    <!-- Firebase will load .product elements here -->
+  </div>  
+</div>
+<div class="category">  
+  <div class="cat-header">  
+    <h2>Kid's Collection</h2>  
+    <a href="/kids/">View All</a>
+  </div>  
+  <div class="products" id="kidsContainer">
     <!-- Firebase will load .product elements here -->
   </div>  
 </div>
@@ -438,11 +457,13 @@ updateCartCount();
 
   // List of categories and their container IDs  
   const categories = [  
-    { name: "Shirts", id: "shirtsContainer" },  
-    { name: "Dresses", id: "dressesContainer" },  
+    { name: "Men's Collection", id: "shirtsContainer" },  
+    { name: "Women's Collection", id: "dressesContainer" },  
     { name: "Sneakers", id: "sneakersContainer" },  
     { name: "Jewelries", id: "jewelriesContainer" },  
-    { name: "Glasses", id: "glassesContainer" },  
+    { name: "Glasses", id: "glassesContainer" },
+    { name: "Bags", id: "bagsContainer" },  
+    { name: "Kid's Collection", id: "kidsContainer" },
   ];  
 
   // Listen to all categories  
