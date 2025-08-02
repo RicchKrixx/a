@@ -208,7 +208,7 @@ border-radius: 10px;
   <!-- Fashion Sections -->    
 <div class="category">  
   <div class="cat-header">  
-    <h2>Men's Collection</h2>  
+    <h2>Men</h2>  
     <a href="/shirts/">View All</a>
   </div>  
   <div class="products" id="shirtsContainer">
@@ -219,7 +219,7 @@ border-radius: 10px;
   <!-- Fashion Sections -->  
 <div class="category">  
   <div class="cat-header">  
-    <h2>Women's Collection</h2>  
+    <h2>Women</h2>  
     <a href="/dresses/">View All</a>
   </div>  
   <div class="products" id="dressesContainer">
@@ -269,7 +269,7 @@ border-radius: 10px;
 </div>
 <div class="category">  
   <div class="cat-header">  
-    <h2>Kid's Collection</h2>  
+    <h2>Kids</h2>  
     <a href="/kids/">View All</a>
   </div>  
   <div class="products" id="kidsContainer">
@@ -302,7 +302,7 @@ function listenToCategory(categoryName, containerId) { const cached = localStora
 
 db.collection("fashion") .doc(categoryName) .collection("items") .onSnapshot((snapshot) => { const items = []; snapshot.forEach(doc => items.push(doc.data())); localStorage.setItem(fashion-${categoryName}, JSON.stringify(items)); renderCategoryItems(categoryName, containerId, items); }, (error) => { console.error(Error fetching ${categoryName}:, error); document.getElementById(containerId).innerHTML = <p>Error loading ${categoryName}</p>; }); }
 
-const categories = [ { name: "Men's Collection", id: "shirtsContainer" }, { name: "Women's Collection", id: "dressesContainer" }, { name: "Sneakers", id: "sneakersContainer" }, { name: "Jewelries", id: "jewelriesContainer" }, { name: "Glasses", id: "glassesContainer" }, { name: "Bags", id: "bagsContainer" }, { name: "Kid's Collection", id: "kidsContainer" }, ];
+const categories = [ { name: "Men", id: "shirtsContainer" }, { name: "Women", id: "dressesContainer" }, { name: "Sneakers", id: "sneakersContainer" }, { name: "Jewelries", id: "jewelriesContainer" }, { name: "Glasses", id: "glassesContainer" }, { name: "Bags", id: "bagsContainer" }, { name: "Kids", id: "kidsContainer" }, ];
 
 categories.forEach(cat => listenToCategory(cat.name, cat.id));
 
