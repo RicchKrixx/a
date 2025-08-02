@@ -277,7 +277,11 @@ border-radius: 10px;
   </div>  
 </div>
  </div>    
-<!-- Firebase SDKs -->  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>  <script>  
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
   const firebaseConfig = {
     apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
     authDomain: "bixmax-6c24c.firebaseapp.com",
@@ -291,6 +295,7 @@ border-radius: 10px;
   const db = firebase.firestore();
 
   const cartCountEl = document.getElementById("cartCount");
+
   function updateCartCount() {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
     const count = cart.reduce((sum, item) => sum + item.qty, 0);
@@ -299,12 +304,18 @@ border-radius: 10px;
 
   function saveToCart(item) {
     const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-    const existing = cart.find(i => i.name === item.name && (!i.color || i.color === item.color) && (!i.size || i.size === item.size));
+    const existing = cart.find(i =>
+      i.name === item.name &&
+      (!i.color || i.color === item.color) &&
+      (!i.size || i.size === item.size)
+    );
+
     if (existing) {
       existing.qty += 1;
     } else {
       cart.push(item);
     }
+
     localStorage.setItem("cart", JSON.stringify(cart));
     updateCartCount();
     animateCartIcon();
@@ -320,8 +331,13 @@ border-radius: 10px;
     }, { once: true });
   }
 
-  function addToCart(name, img, price) {
-    saveToCart({ name, image: img, price, qty: 1, size: "" });
+  function addToCart(name, img, price, variation = "none", sizes = []) {
+    let size = "";
+    if (variation === "label" && Array.isArray(sizes) && sizes.length > 0) {
+      size = sizes[0]; // Default to first label size
+    }
+
+    saveToCart({ name, image: img, price, qty: 1, size });
   }
 
   function renderCategoryItems(categoryName, containerId, items) {
@@ -340,7 +356,7 @@ border-radius: 10px;
         <img src="${data.image}" alt="${data.name}" />
         <h3>${data.name}</h3>
         <p>GH¢${data.price}</p>
-        <button class="add-btn" onclick="addToCart('${data.name}', '${data.image}', ${data.price})">Add to Cart</button>
+        <button class="add-btn" onclick="addToCart('${data.name}', '${data.image}', ${data.price}, '${data.variation || 'none'}', ${JSON.stringify(data.sizes || [])})">Add to Cart</button>
       `;
       container.appendChild(productEl);
     });
@@ -360,12 +376,12 @@ border-radius: 10px;
     db.collection("fashion")
       .doc(categoryName)
       .collection("items")
-      .onSnapshot((snapshot) => {
+      .onSnapshot(snapshot => {
         const items = [];
         snapshot.forEach(doc => items.push(doc.data()));
         localStorage.setItem(`fashion-${categoryName}`, JSON.stringify(items));
         renderCategoryItems(categoryName, containerId, items);
-      }, (error) => {
+      }, error => {
         console.error(`Error fetching ${categoryName}:`, error);
         document.getElementById(containerId).innerHTML = `<p>Error loading ${categoryName}</p>`;
       });
