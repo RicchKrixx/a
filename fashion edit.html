@@ -106,51 +106,100 @@ const firebaseConfig = {
     }
 
     async function loadCategory(cat) {
-      const productsContainer = document.getElementById(`${cat}Container`);
-      const snapshot = await getDocs(collection(db, "fashion", cat, "items"));
-      productsContainer.innerHTML = "";
-      snapshot.forEach(docSnap => {
-        const data = docSnap.data();
-        const itemDiv = document.createElement("div");
-        itemDiv.className = "product";
-        itemDiv.innerHTML = `
-          <img src="${data.image}" alt="${data.name}">
-          <input type="text" value="${data.name}" placeholder="Name" />
-          <input type="number" value="${data.price}" placeholder="Price" />
-          <input type="text" value="${data.image}" placeholder="Image URL" />
-          <button onclick="updateItem('${cat}', '${docSnap.id}', this)">Update</button>
-          <button onclick="deleteItem('${cat}', '${docSnap.id}', this)">Delete</button>
-        `;
-        productsContainer.appendChild(itemDiv);
-      });
+  const productsContainer = document.getElementById(`${cat}Container`);
+  const snapshot = await getDocs(collection(db, "fashion", cat, "items"));
+  productsContainer.innerHTML = "";
+  snapshot.forEach(docSnap => {
+    const data = docSnap.data();
+    const itemDiv = document.createElement("div");
+    itemDiv.className = "product";
+
+    const selectedVariation = data.variation || "none";
+    const selectedSizes = data.sizes || [];
+
+    itemDiv.innerHTML = `
+      <img src="${data.image}" alt="${data.name}">
+      <input type="text" value="${data.name}" placeholder="Name" />
+      <input type="number" value="${data.price}" placeholder="Price" />
+      <input type="text" value="${data.image}" placeholder="Image URL" />
+      <select class="variation-type">
+        <option value="none" ${selectedVariation === "none" ? "selected" : ""}>No Variation</option>
+        <option value="number" ${selectedVariation === "number" ? "selected" : ""}>Number Sizes</option>
+        <option value="label" ${selectedVariation === "label" ? "selected" : ""}>S/M/L</option>
+      </select>
+
+      <div class="size-options" style="margin-top:8px;"></div>
+
+      <button onclick="updateItem('${cat}', '${docSnap.id}', this)">Update</button>
+      <button onclick="deleteItem('${cat}', '${docSnap.id}', this)">Delete</button>
+    `;
+
+    const sizeDiv = itemDiv.querySelector(".size-options");
+    const varSelect = itemDiv.querySelector(".variation-type");
+
+    function renderSizes(type) {
+      let sizes = type === "number" ? [38, 39, 40, 41, 42, 43, 44, 45] : ["S", "M", "L", "XL"];
+      sizeDiv.innerHTML = sizes.map(size => `
+        <label style="margin-right:6px;">
+          <input type="checkbox" value="${size}" ${selectedSizes.includes(size) ? "checked" : ""} />
+          ${size}
+        </label>
+      `).join("");
     }
 
-    window.updateItem = async (cat, id, btn) => {
-      const box = btn.parentElement;
-      const name = box.children[1].value;
-      const price = parseFloat(box.children[2].value);
-      const image = box.children[3].value;
+    if (selectedVariation !== "none") renderSizes(selectedVariation);
 
-      await updateDoc(doc(db, "fashion", cat, "items", id), {
-        name, price, image
-      });
-      alert("Updated successfully");
-    };
+    varSelect.addEventListener("change", () => {
+      const newType = varSelect.value;
+      if (newType === "none") sizeDiv.innerHTML = "";
+      else renderSizes(newType);
+    });
 
-    window.deleteItem = async (cat, id, btn) => {
-      await deleteDoc(doc(db, "fashion", cat, "items", id));
-      btn.parentElement.remove();
-    };
+    productsContainer.appendChild(itemDiv);
+  });
+}
 
-    window.addNewItem = async (cat) => {
-      const name = prompt("Enter product name:");
-      const price = parseFloat(prompt("Enter price:"));
-      const image = prompt("Enter image URL:");
-      if (!name || !price || !image) return alert("All fields required");
-      const newId = Date.now().toString();
-      await setDoc(doc(db, "fashion", cat, "items", newId), { name, price, image });
-      loadCategory(cat);
-    };
+window.updateItem = async (cat, id, btn) => {
+  const box = btn.parentElement;
+  const name = box.children[1].value;
+  const price = parseFloat(box.children[2].value);
+  const image = box.children[3].value;
+  const variation = box.children[4].value;
+
+  let sizes = [];
+  if (variation !== "none") {
+    sizes = Array.from(box.querySelectorAll(".size-options input:checked")).map(input => input.value);
+  }
+
+  await updateDoc(doc(db, "fashion", cat, "items", id), {
+    name, price, image, variation, sizes
+  });
+
+  alert("Updated successfully");
+};
+
+window.deleteItem = async (cat, id, btn) => {
+  await deleteDoc(doc(db, "fashion", cat, "items", id));
+  btn.parentElement.remove();
+};
+
+window.addNewItem = async (cat) => {
+  const name = prompt("Enter product name:");
+  const price = parseFloat(prompt("Enter price:"));
+  const image = prompt("Enter image URL:");
+  if (!name || !price || !image) return alert("All fields required");
+
+  const newId = Date.now().toString();
+  await setDoc(doc(db, "fashion", cat, "items", newId), {
+    name,
+    price,
+    image,
+    variation: "none",
+    sizes: []
+  });
+
+  loadCategory(cat);
+};
   </script>
 </body>
 </html>
