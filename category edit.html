@@ -152,7 +152,7 @@ itemDiv.innerHTML = `
 
 const sizeDiv = itemDiv.querySelector(".size-options");
 const varSelect = itemDiv.querySelector(".variation-type");
-
+/*
 function renderSizes(type) {
   let sizes = type === "number" ? [38, 39, 40, 41, 42, 43, 44, 45] : ["S", "M", "L", "XL"];
   sizeDiv.innerHTML = sizes.map(size => `
@@ -162,6 +162,24 @@ function renderSizes(type) {
     </label>
   `).join("");
 }
+*/
+
+
+
+function renderSizes(type) {
+  let sizes = type === "number" ? [38, 39, 40, 41, 42, 43, 44, 45] : ["S", "M", "L", "XL"];
+  sizeDiv.innerHTML = sizes.map(size => `
+    <label style="margin-right:6px;">
+      <input type="checkbox" value="${size}" ${selectedSizes.includes(String(size)) ? "checked" : ""} />
+      ${size}
+    </label>
+  `).join("");
+}
+
+
+
+
+
 
 if (selectedVariation !== "none") renderSizes(selectedVariation);
 
@@ -183,8 +201,18 @@ varSelect.addEventListener("change", () => {
 
   let sizes = [];
   if (variation !== "none") {
+/*
     sizes = Array.from(box.querySelectorAll(".size-options input:checked")).map(input => input.value);
   }
+*/
+
+
+
+sizes = Array.from(box.querySelectorAll(".size-options input:checked")).map(input => String(input.value));
+}
+
+
+
 
   await updateDoc(doc(db, "category", cat, "items", id), {
     name, price, image, variation, sizes
