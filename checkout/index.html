@@ -238,6 +238,19 @@
   }  
 
 
+  payMethod.addEventListener("change", () => {  
+    const selected = payMethod.value;  
+    onAuthStateChanged(auth, (user) => {  
+      if (!user && selected === "payment on delivery") {  
+        alert("⚠️ Only signed-in users can use 'Pay on Delivery'. Switching to 'Paid'.");  
+        payMethod.value = "Paid";  
+        actionBtn.textContent = "Pay Now";  
+      } else {  
+        actionBtn.textContent = selected === "Paid" ? "Pay Now" : "Place Order";  
+      }  
+    });  
+  });  
+  
 
 
 
@@ -259,19 +272,6 @@
 
 
 
-  payMethod.addEventListener("change", () => {  
-    const selected = payMethod.value;  
-    onAuthStateChanged(auth, (user) => {  
-      if (!user && selected === "payment on delivery") {  
-        alert("⚠️ Only signed-in users can use 'Pay on Delivery'. Switching to 'Paid'.");  
-        payMethod.value = "Paid";  
-        actionBtn.textContent = "Pay Now";  
-      } else {  
-        actionBtn.textContent = selected === "Paid" ? "Pay Now" : "Place Order";  
-      }  
-    });  
-  });  
-  
   actionBtn.addEventListener("click", async (e) => {  
     e.preventDefault();  
     showLoader(true);  
