@@ -236,7 +236,29 @@
       alert("Failed to save order. Please try again.");  
     }  
   }  
-  
+
+
+
+
+
+  actionBtn.addEventListener("click", async (e) => {
+  e.preventDefault();
+
+  // TEMPORARY "COMING SOON" BLOCKER
+  alert("🚧 Coming Soon...");
+  return;
+
+  // (Your real logic continues below here, untouched)
+  showLoader(true);
+
+  const { name, email, phone, address, paymentMethod, grandTotal, cartItems } = getOrderDetails();
+  ...
+
+
+
+
+
+
   payMethod.addEventListener("change", () => {  
     const selected = payMethod.value;  
     onAuthStateChanged(auth, (user) => {  
