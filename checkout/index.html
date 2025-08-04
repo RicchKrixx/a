@@ -270,7 +270,7 @@
   
     const orderId = generateOrderId();  
     const itemsString = buildItemsString(cartItems);  
-    const orderData = { name, email, phone, address, method: paymentMethod, total: grandTotal, items: itemsString };  
+    const orderData = { name, email, phone, address, method: paymentMethod, total: grandTotal, items: itemsString, cartItems };  
   
     onAuthStateChanged(auth, (user) => {  
       if (!user && paymentMethod === "payment on delivery") {  
