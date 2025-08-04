@@ -249,28 +249,7 @@
         actionBtn.textContent = selected === "Paid" ? "Pay Now" : "Place Order";  
       }  
     });  
-  });  
-  
-
-
-
-  actionBtn.addEventListener("click", async (e) => {
-  e.preventDefault();
-
-  // TEMPORARY "COMING SOON" BLOCKER
-  alert("🚧 Coming Soon...");
-  return;
-
-  // (Your real logic continues below here, untouched)
-  showLoader(true);
-
-  const { name, email, phone, address, paymentMethod, grandTotal, cartItems } = getOrderDetails();
-  ...
-
-
-
-
-
+  }); 
 
   actionBtn.addEventListener("click", async (e) => {  
     e.preventDefault();  
