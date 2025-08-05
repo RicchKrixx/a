@@ -31,8 +31,9 @@ position: fixed;
 font-size: 35px;
 text-decoration: none;
 color: white;
-margin-top: 5px;
+margin-top: 50px;
 right: 17px;
+z-index: 999;
 }
 
 #cartCount {
@@ -195,10 +196,12 @@ border-radius: 10px;
 }
 
 </style>  </head>    
-<body>    
+<body> 
+<a href="/cart/" class="cart-icon glow" id="cartIcon">🛒<span id="cartCount">0</span></a>   
     <header>    
             <h1>BixMAX | Home Essentials</h1>    
-        <h3>All-in-One Online Shop</h3>  <a href="/cart/" class="cart-icon glow" id="cartIcon">🛒<span id="cartCount">0</span></a>  </header>  <div class="container">    
+        <h3>All-in-One Online Shop</h3>    </header>
+  <div class="container">    
   <!-- Fashion Sections -->    
 <div class="category">    
   <div class="cat-header">    
