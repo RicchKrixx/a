@@ -1,128 +1,344 @@
-<!DOCTYPE html><html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rider Dispatch & Delivery Dashboard</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
-    header { background: #00bcd4; color: white; padding: 1rem; text-align: center; }
-    main { padding: 1rem; max-width: 1200px; margin: auto; }
-    section { margin-bottom: 2rem; background: white; border-radius: 8px; padding: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-    h2 { margin-top: 0; }
-    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-    table, th, td { border: 1px solid #ccc; }
-    th, td { padding: 0.5rem; text-align: left; }
-    .status-badge { padding: 0.3rem 0.6rem; border-radius: 4px; color: white; font-size: 0.8rem; }
-    .available { background: #4caf50; }
-    .busy { background: #ff9800; }
-    .inactive { background: #9e9e9e; }
-    .assigned { background: #2196f3; }
-    .delivered { background: #4caf50; }
-    .pending { background: #ffc107; }
-    form input, form select { margin-bottom: 0.5rem; width: 100%; padding: 0.5rem; }
-    form button { padding: 0.5rem 1rem; background: #00bcd4; color: white; border: none; border-radius: 4px; cursor: pointer; }
-  </style>
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
- // Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-  authDomain: "bixmax-6c24c.firebaseapp.com",
-  projectId: "bixmax-6c24c",
-  storageBucket: "bixmax-6c24c.appspot.com",
-  messagingSenderId: "37740442541",
-  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-};
+<!DOCTYPE html>  <html lang="en">  
+<head>  
+  <meta charset="UTF-8" />  
+  <title>BixMAX | All Orders</title>  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>  
+  <style>  
+    :root {  
+      font-size: 16px;  
+    }  
+    * {  
+      box-sizing: border-box;  
+      margin: 0;  
+      padding: 0;  
+    }  
+    body {  
+      font-family: 'Segoe UI', sans-serif;  
+      background: #f0f8ff;  
+      padding: 20px;  
+      color: #222;  
+    }  
+    h1 {  
+      text-align: center;  
+      margin-bottom: 20px;  
+      color: #0a4d7a;  
+      text-shadow: 0 0 2px #cce6ff;  
+    }  
+    #searchInput {  
+      display: block;  
+      margin: 0 auto 30px auto;  
+      padding: 14px 20px;  
+      font-size: 1rem;  
+      border-radius: 12px;  
+      width: 90%;  
+      max-width: 400px;  
+      border: 1px solid #ccc;  
+      box-shadow: 0 0 5px #b3e0ff;  
+      background: #fff;  
+    }  
+    .order {  
+      background: #ffffff;  
+      border-radius: 14px;  
+      padding: 18px 20px;  
+      margin: 15px auto;  
+      max-width: 720px;  
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);  
+      transition: all 0.3s ease;  
+      border-left: 6px solid #0a4d7a;  
+    }  
+    .order:hover {  
+      transform: translateY(-2px);  
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);  
+    }  
+    .order p {  
+      margin: 5px 0;  
+      font-size: 0.95rem;  
+      color: #444;  
+    }  
+    .order ul {  
+      margin-top: 10px;  
+      padding-left: 18px;  
+    }  
+    .order ul li {  
+      font-size: 0.95rem;  
+      color: #555;  
+      list-style-type: disc;  
+    }  
+    @media (max-width: 500px) {  
+      :root {  
+        font-size: 15px;  
+      }  
+      .order {  
+        padding: 16px 14px;  
+      }  
+    }  
+.notify-card {  
+  background: #fefefe;  
+  border-left: 4px solid green;  
+  padding: 10px 15px;  
+  margin: 10px;  
+  border-radius: 8px;  
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);  
+}  
+.notify-card button {  
+  margin-top: 6px;  
+  background: #007bff;  
+  color: white;  
+  padding: 5px 12px;  
+  border: none;  
+  border-radius: 5px;  
+  cursor: pointer;  
+}  
+.thumb-row {  
+  display: flex;  
+  gap: 8px;  
+  overflow-x: auto;  
+  margin-top: 8px;  
+  padding-bottom: 4px;  
+}  
+.thumb-row img {  
+  width: 50px;  
+  height: 50px;  
+  border-radius: 50%;  
+  object-fit: cover;  
+  cursor: pointer;  
+  box-shadow: 0 0 2px rgba(0,0,0,0.2);  
+  transition: transform 0.2s;  
+}  
+.thumb-row img:hover {  
+  transform: scale(1.1);  
+}  
+.preview-overlay {  
+  display: none;  
+  position: fixed;  
+  inset: 0;  
+  background: rgba(0,0,0,0.8);  
+  z-index: 9999;  
+  align-items: center;  
+  justify-content: center;  
+}  
+.preview-overlay img {  
+  max-width: 90%;  
+  max-height: 90%;  
+  border-radius: 14px;  
+  box-shadow: 0 0 15px #000;  
+}  
+.preview-overlay.active {  
+  display: flex;  
+}  
+  </style>  
+</head>  
+<body>  
+  <h1>📦 BixMAX Orders 📥</h1>  
+  <input type="text" id="searchInput" placeholder="Search Order ID..." />  
+<div id="notificationsContainer"></div>  
+  <div id="ordersContainer">Loading orders...</div>  
+  <audio id="notifySound" src="https://www.soundjay.com/buttons/beep-01a.mp3"></audio>  
+<div class="preview-overlay" id="previewOverlay" onclick="closePreview()">  
+  <img src="" id="previewImage" />  
+</div>  
+  <script type="module">  
+    import {   
+  initializeApp   
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";  import {
+getFirestore,
+collection,
+getDocs,
+updateDoc,
+doc,
+onSnapshot,
+query,         // ✅ added
+orderBy        // ✅ added
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+// Firebase config  
+const firebaseConfig = {  
+  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",  
+  authDomain: "bixmax-6c24c.firebaseapp.com",  
+  projectId: "bixmax-6c24c",  
+  storageBucket: "bixmax-6c24c.appspot.com",  
+  messagingSenderId: "37740442541",  
+  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"  
+};  
 
-const riderTable = document.getElementById("riderTable");
-const orderTable = document.getElementById("orderTable");
+const app = initializeApp(firebaseConfig);  
+const db = getFirestore(app);  
+const ordersContainer = document.getElementById("ordersContainer");  
+const searchInput = document.getElementById("searchInput");  
+let lastOrderCount = 0;  
 
-onSnapshot(collection(db, "riders"), (snapshot) => {
-  riderTable.innerHTML = '';
-  snapshot.forEach(doc => {
-    const r = doc.data();
-    const row = `<tr><td>${r.name}</td><td>${r.phone}</td><td><span class="status-badge ${r.status}">${r.status}</span></td></tr>`;
-    riderTable.innerHTML += row;
-  });
+function displayOrders(snapshot) {  
+  if (snapshot.empty) {  
+    ordersContainer.innerHTML = "<p>No orders found.</p>";  
+    return;  
+  }  
+
+  const docsArray = [];  
+  snapshot.forEach(docSnap => docsArray.push(docSnap));  
+  docsArray.sort((a, b) => b.data().timestamp - a.data().timestamp); // Newest first  
+
+  // Check for new orders  
+  const currentOrderCount = docsArray.length;  
+  if (currentOrderCount > lastOrderCount && lastOrderCount > 0) {  
+    const newOrder = docsArray[0].data();  
+    showNotification(newOrder.id);  
+  }  
+  lastOrderCount = currentOrderCount;  
+
+  let html = "";  
+  docsArray.forEach(docSnap => {  
+    const order = docSnap.data();  
+    const docRef = docSnap.ref;  
+    const orderId = order.id;  
+    const status = order.status || "Pending";  
+    const isCompleted = status === "Completed";  
+    const buttonDisabled = isCompleted ? "disabled" : "";  
+    const buttonStyle = isCompleted ? "background:gray;cursor:not-allowed;" : "background:green;cursor:pointer;";  
+
+    html += `  
+      <div class="order" data-id="${docRef.path}">  
+        <p><strong>Order ID:</strong> ${orderId}</p>  
+        <p><strong>Name:</strong> ${order.name}</p>  
+        <p><strong>Email:</strong> ${order.email}</p>  
+        <p><strong>Phone:</strong> ${order.phone}</p>  
+        <p><strong>Address:</strong> ${order.address}</p>  
+        <p><strong>Payment:</strong> ${order.method}</p>  
+        <p><strong>Total:</strong> GH¢${parseFloat(order.total).toFixed(2)}</p>
+
+<p><strong>Items:</strong> ${order.items}</p>  
+       <p><strong>Images:</strong></p>  
+<div class="thumb-row">  
+  ${order.cartItems?.map(item => `  
+    <img src="${item.image}" alt="${item.name}" onclick="previewImage('${item.image}')" />  
+  `).join("")}  
+</div>  
+            <p><strong>Date:</strong> ${new Date(order.timestamp).toLocaleString()}</p>  
+            <p><strong>Status:</strong> <span class="status">${status}</span></p>  
+            <button class="completeBtn" style="${buttonStyle}" ${buttonDisabled}>Mark as Complete</button>  
+            <hr/>  
+          </div>  
+        `;  
+      });  ordersContainer.innerHTML = html;  
+
+  // Attach complete buttons  
+  document.querySelectorAll(".completeBtn").forEach(btn => {  
+    btn.addEventListener("click", async () => {  
+      const orderDiv = btn.closest(".order");  
+      const docPath = orderDiv.dataset.id;  
+      const statusSpan = orderDiv.querySelector(".status");  
+
+      const ref = doc(db, docPath);  
+      await updateDoc(ref, { status: "Completed" });  
+
+      btn.textContent = "Completed";  
+      btn.disabled = true;  
+      btn.style.background = "gray";  
+      btn.style.cursor = "not-allowed";  
+      statusSpan.textContent = "Completed";  
+    });  
+  });  
+}  
+
+function showNotification(orderId) {  
+  const notifySound = document.getElementById("notifySound");  
+  notifySound.play().catch(err => console.error("Audio play error:", err));  
+
+  const alertBox = document.createElement("div");  
+  alertBox.textContent = `🆕 New Order: ${orderId}`;  
+  alertBox.style = `  
+    position: fixed; top: 20px; right: 20px;  
+    background: #00b894; color: white;  
+    padding: 14px 20px;  
+    border-radius: 12px;  
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);  
+    z-index: 9999;  
+    font-size: 1rem;  
+  `;  
+  document.body.appendChild(alertBox);  
+  setTimeout(() => alertBox.remove(), 3000);  
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });  
+}  
+
+// Real-time listener for orders  
+const ordersQuery = query(collection(db, "orders"), orderBy("timestamp", "desc"));
+
+const unsubscribe = onSnapshot(ordersQuery, (snapshot) => {
+try {
+displayOrders(snapshot);
+} catch (err) {
+console.error("Error displaying orders:", err);
+ordersContainer.innerHTML = "<p>Error loading orders. Please try again.</p>";
+}
+}, (err) => {
+console.error("Snapshot error:", err);
+ordersContainer.innerHTML = "<p>Error loading orders. Please try again.</p>";
+
+const deliveredNotifications = JSON.parse(localStorage.getItem('deliveredNotifications') || '{}');
+
+if (orderData.status === 'Delivered' && !deliveredNotifications[orderId]) {
+showDeliveryNotification(orderId);
+deliveredNotifications[orderId] = true;
+localStorage.setItem('deliveredNotifications', JSON.stringify(deliveredNotifications));
+}
+});
+function showDeliveryNotification(orderId) {
+const container = document.getElementById("notificationsContainer"); // create this div in HTML
+const card = document.createElement("div");
+card.className = "notify-card";
+card.innerHTML =   <p><strong>Order ${orderId}</strong> has been <span style="color:green">delivered</span>.</p>   <button onclick="markAsComplete('${orderId}', this)">Mark as Complete</button>  ;
+container.appendChild(card);
+}
+async function markAsComplete(orderId, btn) {
+try {
+const orderRef = doc(db, "orders", orderId);
+await updateDoc(orderRef, { status: "Completed" });
+
+// Remove notification from DOM  
+btn.parentElement.remove();  
+
+// Remove from localStorage  
+const deliveredNotifications = JSON.parse(localStorage.getItem('deliveredNotifications') || '{}');  
+delete deliveredNotifications[orderId];  
+localStorage.setItem('deliveredNotifications', JSON.stringify(deliveredNotifications));
+
+} catch (error) {
+alert("Error updating order: " + error);
+}
+}
+
+// Search functionality  
+searchInput.addEventListener("input", () => {  
+  const term = searchInput.value.trim().toLowerCase();  
+  const orders = document.querySelectorAll(".order");  
+
+  orders.forEach(order => {  
+    const idText = order.querySelector("p:nth-of-type(1)")?.textContent?.toLowerCase() || "";  
+    const nameText = order.querySelector("p:nth-of-type(2)")?.textContent?.toLowerCase() || "";  
+    const emailText = order.querySelector("p:nth-of-type(3)")?.textContent?.toLowerCase() || "";  
+    const phoneText = order.querySelector("p:nth-of-type(4)")?.textContent?.toLowerCase() || "";  
+
+    const matches =  
+      idText.includes(term) ||  
+      nameText.includes(term) ||  
+      emailText.includes(term) ||  
+      phoneText.includes(term);  
+
+    order.style.display = matches ? "block" : "none";  
+  });  
 });
 
-onSnapshot(collection(db, "orders"), (snapshot) => {
-  orderTable.innerHTML = '';
-  snapshot.forEach(async docSnap => {
-    const o = docSnap.data();
-    if (o.status === 'pending') {
-      const riderQuery = query(collection(db, "riders"), where("status", "==", "available"));
-      const ridersSnap = await getDocs(riderQuery);
-      if (!o.assignedRiderId && !ridersSnap.empty) {
-        const firstRider = ridersSnap.docs[0];
-        await updateDoc(doc(db, "orders", docSnap.id), {
-          assignedRiderId: firstRider.id,
-          status: "assigned"
-        });
-        await updateDoc(doc(db, "riders", firstRider.id), {
-          status: "busy",
-          currentOrderId: docSnap.id
-        });
-      }
-    }
-    const row = `<tr><td>${o.customerName}</td><td>${o.phone}</td><td>${o.address}</td><td>${o.orderTotal}</td><td><span class="status-badge ${o.status}">${o.status}</span></td></tr>`;
-    orderTable.innerHTML += row;
-  });
-});
-
-document.getElementById("riderForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const name = e.target.name.value;
-  const phone = e.target.phone.value;
-  const vehicle = e.target.vehicle.value;
-  await addDoc(collection(db, "riders"), {
-    name,
-    phone,
-    vehicle,
-    status: "available"
-  });
-  e.target.reset();
-});
-
-  </script>
-</head>
-<body>
-  <header>
-    <h1>Rider Dispatch & Delivery Dashboard</h1>
-  </header>
-  <main>
-    <section>
-      <h2>Register New Rider</h2>
-      <form id="riderForm">
-        <input type="text" name="name" placeholder="Rider Name" required />
-        <input type="text" name="phone" placeholder="Phone Number" required />
-        <input type="text" name="vehicle" placeholder="Vehicle Type (e.g., Motorbike)" required />
-        <button type="submit">Add Rider</button>
-      </form>
-    </section><section>
-  <h2>Rider List</h2>
-  <table>
-    <thead>
-      <tr><th>Name</th><th>Phone</th><th>Status</th></tr>
-    </thead>
-    <tbody id="riderTable"></tbody>
-  </table>
-</section>
-
-<section>
-  <h2>Orders</h2>
-  <table>
-    <thead>
-      <tr><th>Customer</th><th>Phone</th><th>Address</th><th>Total</th><th>Status</th></tr>
-    </thead>
-    <tbody id="orderTable"></tbody>
-  </table>
-</section>
-
-  </main>
-</body>
+  </script>  
+<script>  
+function previewImage(url) {  
+  const overlay = document.getElementById("previewOverlay");  
+  const img = document.getElementById("previewImage");  
+  img.src = url;  
+  overlay.classList.add("active");  
+}  
+function closePreview() {  
+  document.getElementById("previewOverlay").classList.remove("active");  
+}  
+</script>  
+</body>  
 </html>
