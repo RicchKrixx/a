@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>BixMAX | Custom Frame</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: lightblue;
+    }
+    header {
+      padding: 24px;
+      border-radius: 16px;
+      background: darkcyan;
+      color: white;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 16px;
+      padding: 16px;
+    }
+    .product {
+      background: darkcyan;
+      border-radius: 20px;
+      padding: 10px;
+      text-align: center;
+      color: white;
+    }
+    .product img {
+      width: 100%;
+      height: 160px;
+      border-radius: 12px;
+      object-fit: cover;
+      cursor: pointer;
+    }
+    .product-name {
+      margin: 10px 0 5px;
+      color: black;
+      font-weight: bold;
+    }
+    .product-price {
+      font-size: 14px;
+      color: #fff;
+    }
+
+    /* Customization popup */
+    .editor {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      background: #fff;
+      border-radius: 15px;
+      margin: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    .frame-preview {
+      width: 300px;
+      height: 300px;
+      position: relative;
+      margin-bottom: 20px;
+    }
+    .frame-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 15px;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    .checkout-btn {
+      background: #00b489;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Customize Your Frame</h1>
+    <h3>Select a frame and upload your image</h3>
+  </header>
+
+  <div class="products" id="frameContainer">Loading frames...</div>
+
+  <div class="editor" id="editorSection">
+    <h2 id="selectedName"></h2>
+    <p id="selectedPrice"></p>
+    <div class="frame-preview">
+      <img id="templateImage" src="" alt="Frame Template">
+      <img id="userImage" src="" style="display: none;" />
+    </div>
+    <input type="file" accept="image/*" id="uploadInput" />
+    <button class="checkout-btn" onclick="checkoutCustomFrame()">Checkout</button>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+      authDomain: "bixmax-6c24c.firebaseapp.com",
+      projectId: "bixmax-6c24c",
+      storageBucket: "bixmax-6c24c.appspot.com",
+      messagingSenderId: "37740442541",
+      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const container = document.getElementById("frameContainer");
+
+    let selectedFrame = null;
+
+    function renderFrames(items) {
+      container.innerHTML = "";
+      items.forEach(data => {
+        const div = document.createElement("div");
+        div.className = "product";
+        div.innerHTML = `
+          <img src="${data.image}" alt="${data.name}" />
+          <div class="product-name">${data.name}</div>
+          <div class="product-price">GH₵${data.price}</div>
+        `;
+        div.querySelector("img").addEventListener("click", () => showEditor(data));
+        container.appendChild(div);
+      });
+    }
+
+    function showEditor(frame) {
+      selectedFrame = frame;
+      document.getElementById("templateImage").src = frame.image;
+      document.getElementById("selectedName").textContent = frame.name;
+      document.getElementById("selectedPrice").textContent = "GH₵" + frame.price;
+      document.getElementById("editorSection").style.display = "flex";
+    }
+
+    document.getElementById("uploadInput").addEventListener("change", function () {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const userImage = document.getElementById("userImage");
+          userImage.src = e.target.result;
+          userImage.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    function checkoutCustomFrame() {
+      const userImageSrc = document.getElementById("userImage").src;
+      if (!userImageSrc || !selectedFrame) {
+        alert("Please upload your photo before checkout.");
+        return;
+      }
+
+      const order = {
+        id: "CF" + Date.now(),
+        name: selectedFrame.name,
+        price: selectedFrame.price,
+        templateImage: selectedFrame.image,
+        userImage: userImageSrc,
+        qty: 1,
+        category: "Custom Frame"
+      };
+
+      localStorage.setItem("cart", JSON.stringify([order]));
+      localStorage.setItem("lastOrderId", order.id);
+
+      window.location.href = "/checkout/";
+    }
+
+    // Load frames
+    onSnapshot(collection(db, "category", "Frames", "items"), snapshot => {
+      const frames = [];
+      snapshot.forEach(doc => {
+        frames.push({ ...doc.data(), id: doc.id });
+      });
+      localStorage.setItem("Frames", JSON.stringify(frames));
+      renderFrames(frames);
+    });
+
+    // Load from cache first
+    const cached = localStorage.getItem("Frames");
+    if (cached) {
+      try {
+        renderFrames(JSON.parse(cached));
+      } catch (e) {
+        console.error("Error parsing cached frames:", e);
+      }
+    }
+  </script>
+
+</body>
+</html>
