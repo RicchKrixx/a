@@ -1,143 +1,142 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>BixMAX | All Orders</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <style>
-    :root {
-      font-size: 16px;
-    }
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f0f8ff;
-      padding: 20px;
-      color: #222;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #0a4d7a;
-      text-shadow: 0 0 2px #cce6ff;
-    }
-    #searchInput {
-      display: block;
-      margin: 0 auto 30px auto;
-      padding: 14px 20px;
-      font-size: 1rem;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 400px;
-      border: 1px solid #ccc;
-      box-shadow: 0 0 5px #b3e0ff;
-      background: #fff;
-    }
-    .order {
-      background: #ffffff;
-      border-radius: 14px;
-      padding: 18px 20px;
-      margin: 15px auto;
-      max-width: 720px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-      transition: all 0.3s ease;
-      border-left: 6px solid #0a4d7a;
-    }
-    .order:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
-    }
-    .order p {
-      margin: 5px 0;
-      font-size: 0.95rem;
-      color: #444;
-    }
-    .order ul {
-      margin-top: 10px;
-      padding-left: 18px;
-    }
-    .order ul li {
-      font-size: 0.95rem;
-      color: #555;
-      list-style-type: disc;
-    }
-    @media (max-width: 500px) {
-      :root {
-        font-size: 15px;
-      }
-      .order {
-        padding: 16px 14px;
-      }
-    }
-.notify-card {
-  background: #fefefe;
-  border-left: 4px solid green;
-  padding: 10px 15px;
-  margin: 10px;
-  border-radius: 8px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-}
-.notify-card button {
-  margin-top: 6px;
-  background: #007bff;
-  color: white;
-  padding: 5px 12px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-.thumb-row {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  margin-top: 8px;
-  padding-bottom: 4px;
-}
-.thumb-row img {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  object-fit: cover;
-  cursor: pointer;
-  box-shadow: 0 0 2px rgba(0,0,0,0.2);
-  transition: transform 0.2s;
-}
-.thumb-row img:hover {
-  transform: scale(1.1);
-}
-.preview-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.8);
-  z-index: 9999;
-  align-items: center;
-  justify-content: center;
-}
-.preview-overlay img {
-  max-width: 90%;
-  max-height: 90%;
-  border-radius: 14px;
-  box-shadow: 0 0 15px #000;
-}
-.preview-overlay.active {
-  display: flex;
-}
-  </style>
-</head>
-<body>
-  <h1>📦 BixMAX Orders 📥</h1>
-  <input type="text" id="searchInput" placeholder="Search Order ID..." />
-<div id="notificationsContainer"></div>
-  <div id="ordersContainer">Loading orders...</div>
-  <audio id="notifySound" src="https://www.soundjay.com/buttons/beep-01a.mp3"></audio>
-<div class="preview-overlay" id="previewOverlay" onclick="closePreview()">
-  <img src="" id="previewImage" />
-</div>
+<!DOCTYPE html>  <html lang="en">  
+<head>  
+  <meta charset="UTF-8" />  
+  <title>BixMAX | All Orders</title>  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>  
+  <style>  
+    :root {  
+      font-size: 16px;  
+    }  
+    * {  
+      box-sizing: border-box;  
+      margin: 0;  
+      padding: 0;  
+    }  
+    body {  
+      font-family: 'Segoe UI', sans-serif;  
+      background: #f0f8ff;  
+      padding: 20px;  
+      color: #222;  
+    }  
+    h1 {  
+      text-align: center;  
+      margin-bottom: 20px;  
+      color: #0a4d7a;  
+      text-shadow: 0 0 2px #cce6ff;  
+    }  
+    #searchInput {  
+      display: block;  
+      margin: 0 auto 30px auto;  
+      padding: 14px 20px;  
+      font-size: 1rem;  
+      border-radius: 12px;  
+      width: 90%;  
+      max-width: 400px;  
+      border: 1px solid #ccc;  
+      box-shadow: 0 0 5px #b3e0ff;  
+      background: #fff;  
+    }  
+    .order {  
+      background: #ffffff;  
+      border-radius: 14px;  
+      padding: 18px 20px;  
+      margin: 15px auto;  
+      max-width: 720px;  
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);  
+      transition: all 0.3s ease;  
+      border-left: 6px solid #0a4d7a;  
+    }  
+    .order:hover {  
+      transform: translateY(-2px);  
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);  
+    }  
+    .order p {  
+      margin: 5px 0;  
+      font-size: 0.95rem;  
+      color: #444;  
+    }  
+    .order ul {  
+      margin-top: 10px;  
+      padding-left: 18px;  
+    }  
+    .order ul li {  
+      font-size: 0.95rem;  
+      color: #555;  
+      list-style-type: disc;  
+    }  
+    @media (max-width: 500px) {  
+      :root {  
+        font-size: 15px;  
+      }  
+      .order {  
+        padding: 16px 14px;  
+      }  
+    }  
+.notify-card {  
+  background: #fefefe;  
+  border-left: 4px solid green;  
+  padding: 10px 15px;  
+  margin: 10px;  
+  border-radius: 8px;  
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);  
+}  
+.notify-card button {  
+  margin-top: 6px;  
+  background: #007bff;  
+  color: white;  
+  padding: 5px 12px;  
+  border: none;  
+  border-radius: 5px;  
+  cursor: pointer;  
+}  
+.thumb-row {  
+  display: flex;  
+  gap: 8px;  
+  overflow-x: auto;  
+  margin-top: 8px;  
+  padding-bottom: 4px;  
+}  
+.thumb-row img {  
+  width: 50px;  
+  height: 50px;  
+  border-radius: 50%;  
+  object-fit: cover;  
+  cursor: pointer;  
+  box-shadow: 0 0 2px rgba(0,0,0,0.2);  
+  transition: transform 0.2s;  
+}  
+.thumb-row img:hover {  
+  transform: scale(1.1);  
+}  
+.preview-overlay {  
+  display: none;  
+  position: fixed;  
+  inset: 0;  
+  background: rgba(0,0,0,0.8);  
+  z-index: 9999;  
+  align-items: center;  
+  justify-content: center;  
+}  
+.preview-overlay img {  
+  max-width: 90%;  
+  max-height: 90%;  
+  border-radius: 14px;  
+  box-shadow: 0 0 15px #000;  
+}  
+.preview-overlay.active {  
+  display: flex;  
+}  
+  </style>  
+</head>  
+<body>  
+  <h1>📦 BixMAX Orders 📥</h1>  
+  <input type="text" id="searchInput" placeholder="Search Order ID..." />  
+<div id="notificationsContainer"></div>  
+  <div id="ordersContainer">Loading orders...</div>  
+  <audio id="notifySound" src="https://www.soundjay.com/buttons/beep-01a.mp3"></audio>  
+<div class="preview-overlay" id="previewOverlay" onclick="closePreview()">  
+  <img src="" id="previewImage" />  
+</div>  
   <script type="module">  
     import {   
   initializeApp   
@@ -341,5 +340,5 @@ function closePreview() {
   document.getElementById("previewOverlay").classList.remove("active");  
 }  
 </script>  
-</body>
+</body>  
 </html>
