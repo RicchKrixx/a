@@ -193,11 +193,25 @@ import {
         const order = docSnap.data();
         const docRef = docSnap.ref;
         const orderId = order.id;
+/*
         const status = order.status || "Pending";
         const isCompleted = status === "Completed";
         const buttonDisabled = isCompleted ? "disabled" : "";
         const buttonStyle = isCompleted ? "background:gray;cursor:not-allowed;" : "background:green;cursor:pointer;";
-
+*/
+const status = order.status || "Pending";
+const statuses = [
+  "Pending",
+  "Order Approved",
+  "Preparing Order",
+  "Ready for Pickup",
+  "Out for Delivery",
+  "Delivered",
+  "Completed"
+];
+const currentIndex = statuses.indexOf(status);
+const nextStatus = statuses[currentIndex + 1] || null;
+const isCompleted = status === "Completed";
         html += `
           <div class="order" data-id="${docRef.path}">
             <p><strong>Order ID:</strong> ${orderId}</p>
@@ -215,8 +229,19 @@ import {
   `).join("")}
 </div>
             <p><strong>Date:</strong> ${new Date(order.timestamp).toLocaleString()}</p>
-            <p><strong>Status:</strong> <span class="status">${status}</span></p>
+           /* <p><strong>Status:</strong> <span class="status">${status}</span></p>
             <button class="completeBtn" style="${buttonStyle}" ${buttonDisabled}>Mark as Complete</button>
+*/
+<p><strong>Status:</strong> <span class="status">${status}</span></p>
+${!isCompleted && nextStatus ? `
+  <button class="statusBtn" data-next="${nextStatus}" data-doc="${docRef.path}">
+    Move to "${nextStatus}"
+  </button>` : 
+  `<button class="statusBtn" disabled style="background:gray;cursor:not-allowed;">
+    ${status === "Completed" ? "Completed" : "No further steps"}
+  </button>`
+}
+
             <hr/>
           </div>
         `;
@@ -313,7 +338,20 @@ async function markAsComplete(orderId, btn) {
   }
 }
 
+// Attach status update buttons
+document.querySelectorAll(".statusBtn").forEach(btn => {
+  btn.addEventListener("click", async () => {
+    const next = btn.dataset.next;
+    const docPath = btn.dataset.doc;
+    const orderDiv = btn.closest(".order");
+    const statusSpan = orderDiv.querySelector(".status");
 
+    const ref = doc(db, docPath);
+    await updateDoc(ref, { status: next });
+
+    // Trigger re-fetch via Firestore snapshot listener
+  });
+});
 
     // Search functionality
     searchInput.addEventListener("input", () => {
