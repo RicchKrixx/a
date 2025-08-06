@@ -286,7 +286,7 @@ function showDeliveryNotification(orderId) {
 const container = document.getElementById("notificationsContainer"); // create this div in HTML
 const card = document.createElement("div");
 card.className = "notify-card";
-card.innerHTML =   <p><strong>Order ${orderId}</strong> has been <span style="color:green">delivered</span>.</p>   <button onclick="markAsComplete('${orderId}', this)">Mark as Complete</button>  ;
+card.innerHTML =  ' <p><strong>Order ${orderId}</strong> has been <span style="color:green">delivered</span>.</p>   <button onclick="markAsComplete('${orderId}', this)">Mark as Complete</button> ' ;
 container.appendChild(card);
 }
 async function markAsComplete(orderId, btn) {
