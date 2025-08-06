@@ -256,6 +256,56 @@ function closePreview() {
 
 renderCart();
 
-</script>  </body>
+</script> 
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const cartContainer = document.getElementById("cart-items");
+  const cartItems = JSON.parse(localStorage.getItem("cartItems") || "[]");
+
+  if (cartItems.length === 0) {
+    cartContainer.innerHTML = "<p>Your cart is empty.</p>";
+    return;
+  }
+
+  cartContainer.innerHTML = "";
+
+  cartItems.forEach((item, index) => {
+    const itemDiv = document.createElement("div");
+    itemDiv.className = "cart-item";
+
+    itemDiv.innerHTML = `
+      <img src="${item.image}" alt="${item.name}" class="item-image" />
+      <h4>${item.name}</h4>
+      <p>₵${item.price}</p>
+
+      ${item.type === "frame" ? `
+        <label style="display:block; margin-top:10px;">
+          Upload Image:
+          <input type="file" accept="image/*" onchange="handleFrameUpload(event, ${index})">
+        </label>
+        ${item.uploadedImage ? `<img src="${item.uploadedImage}" class="preview" style="max-width:100px;margin-top:10px;border-radius:8px;" />` : ""}
+      ` : ""}
+    `;
+
+    cartContainer.appendChild(itemDiv);
+  });
+});
+
+// Handle image upload only for frame items
+function handleFrameUpload(event, index) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    let cart = JSON.parse(localStorage.getItem("cartItems") || "[]");
+    cart[index].uploadedImage = e.target.result;
+    localStorage.setItem("cartItems", JSON.stringify(cart));
+    location.reload(); // Refresh to show uploaded preview
+  };
+  reader.readAsDataURL(file);
+}
+</script>
+ </body>
 
 </html>
