@@ -1,204 +1,113 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>BixMAX | Custom Frame</title>
+  <title>BixMAX | Frame Preview</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f0f4f8;
+      background: #f0f8ff;
       padding: 20px;
     }
-
-    h1 {
+    .frame-box {
+      max-width: 400px;
+      margin: auto;
       text-align: center;
-      margin-bottom: 30px;
-    }
-
-    .frames-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 16px;
-    }
-
-    .frame-item {
       background: white;
-      border-radius: 12px;
-      padding: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      text-align: center;
-      cursor: pointer;
-    }
-
-    .frame-item img {
-      width: 100%;
-      border-radius: 10px;
-      height: 140px;
-      object-fit: cover;
-    }
-
-    .frame-name {
-      font-weight: bold;
-      margin-top: 8px;
-    }
-
-    .frame-price {
-      color: #555;
-      font-size: 14px;
-    }
-
-    .preview-section {
-      display: none;
-      margin-top: 30px;
-      background: white;
-      border-radius: 16px;
-      padding: 20px;
+      border-radius: 20px;
       box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      padding: 20px;
     }
-
-    .preview-img {
-      width: 100%;
-      max-width: 320px;
-      height: auto;
-      border-radius: 12px;
-      margin-bottom: 20px;
-    }
-
-    .preview-name {
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 6px;
-    }
-
-    .preview-price {
-      font-size: 16px;
-      color: #666;
-      margin-bottom: 16px;
-    }
-
-    .upload-btn {
-      margin-bottom: 20px;
-    }
-
-    .checkout-btn {
-      background: #14b8a6;
-      color: white;
-      padding: 12px 24px;
-      font-size: 16px;
-      border: none;
-      border-radius: 8px;
+    .frame-box img {
+      max-width: 100%;
+      border-radius: 16px;
       cursor: pointer;
     }
-
-    input[type="file"] {
-      padding: 6px;
+    .name, .price {
+      font-weight: bold;
+      margin: 10px 0;
+    }
+    .upload-btn {
+      margin: 10px 0;
+    }
+    .checkout-btn {
+      background: darkcyan;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    #enlargedImage {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    #enlargedImage img {
+      max-width: 90vw;
+      max-height: 90vh;
     }
   </style>
 </head>
 <body>
-  <h1>Select Your Frame</h1>
+  <div class="frame-box">
+    <img id="templateImage" src="" alt="Frame Template" />
+    <div class="name" id="templateName">Template Name</div>
+    <div class="price" id="templatePrice">GH₵60.00</div>
+    <input type="file" id="uploadImage" class="upload-btn" accept="image/*" />
+    <button class="checkout-btn" onclick="handleCheckout()">Checkout</button>
+  </div>  <div id="enlargedImage" onclick="this.style.display='none'">
+    <img id="enlargedPreview" src="" alt="Large View" />
+  </div>  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const name = urlParams.get("name");
+    const price = urlParams.get("price");
+    const image = urlParams.get("image");
 
-  <div class="frames-grid" id="framesContainer">Loading...</div>
+    document.getElementById("templateImage").src = image;
+    document.getElementById("templateName").textContent = name;
+    document.getElementById("templatePrice").textContent = `GH₵${parseFloat(price).toFixed(2)}`;
 
-  <div class="preview-section" id="previewSection">
-    <img id="previewImage" class="preview-img" src="" alt="Preview Frame" />
-    <div class="preview-name" id="previewName"></div>
-    <div class="preview-price" id="previewPrice"></div>
-
-    <input type="file" id="uploadInput" accept="image/*" class="upload-btn" />
-    <br />
-    <button class="checkout-btn" onclick="checkoutFrame()">Checkout</button>
-  </div>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import {
-      getFirestore,
-      collection,
-      onSnapshot
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-      authDomain: "bixmax-6c24c.firebaseapp.com",
-      projectId: "bixmax-6c24c",
-      storageBucket: "bixmax-6c24c.appspot.com",
-      messagingSenderId: "37740442541",
-      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    const framesContainer = document.getElementById("framesContainer");
-    const previewSection = document.getElementById("previewSection");
-    const previewImage = document.getElementById("previewImage");
-    const previewName = document.getElementById("previewName");
-    const previewPrice = document.getElementById("previewPrice");
-    const uploadInput = document.getElementById("uploadInput");
-
-    let selectedFrame = null;
-    let customerImageBase64 = null;
-
-    onSnapshot(collection(db, "category", "Frames", "items"), (snapshot) => {
-      framesContainer.innerHTML = "";
-      snapshot.forEach(doc => {
-        const frame = doc.data();
-        const frameDiv = document.createElement("div");
-        frameDiv.className = "frame-item";
-        frameDiv.innerHTML = `
-          <img src="${frame.image}" alt="${frame.name}" />
-          <div class="frame-name">${frame.name}</div>
-          <div class="frame-price">GH₵${frame.price}</div>
-        `;
-        frameDiv.addEventListener("click", () => {
-          showPreview(frame);
-        });
-        framesContainer.appendChild(frameDiv);
-      });
+    // Enlarge image on click
+    document.getElementById("templateImage").addEventListener("click", () => {
+      document.getElementById("enlargedPreview").src = image;
+      document.getElementById("enlargedImage").style.display = "flex";
     });
 
-    function showPreview(frame) {
-      selectedFrame = frame;
-      previewImage.src = frame.image;
-      previewName.textContent = frame.name;
-      previewPrice.textContent = "GH₵" + frame.price;
-      previewSection.style.display = "block";
-      customerImageBase64 = null;
-      uploadInput.value = "";
-    }
+    function handleCheckout() {
+      const uploadInput = document.getElementById("uploadImage");
+      const file = uploadInput.files[0];
 
-    uploadInput.addEventListener("change", function () {
-      const file = this.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          customerImageBase64 = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-
-    function checkoutFrame() {
-      if (!selectedFrame || !customerImageBase64) {
-        alert("Please select a frame and upload your image.");
+      if (!file) {
+        alert("Please upload an image.");
         return;
       }
 
-      const cartItem = {
-        id: "CF" + Date.now(),
-        name: selectedFrame.name,
-        price: selectedFrame.price,
-        customerImage: customerImageBase64,
-        qty: 1,
-        category: "Custom Frame"
-      };
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const order = {
+          id: "CF" + Date.now(),
+          name,
+          price: parseFloat(price),
+          image,
+          upload: e.target.result,
+          qty: 1,
+          category: "Custom Frame"
+        };
 
-      localStorage.setItem("cart", JSON.stringify([cartItem]));
-      localStorage.setItem("lastOrderId", cartItem.id);
-      window.location.href = "/checkout/";
+        localStorage.setItem("cart", JSON.stringify([order]));
+        window.location.href = "/checkout/";
+      };
+      reader.readAsDataURL(file);
     }
-  </script>
-</body>
+  </script></body>
 </html>
