@@ -393,7 +393,7 @@ border-radius: 10px;
 
   // Initial load + real-time updates
   categories.forEach(({ name, id }) => {
-    const cached = localStorage.getItem(`fashion-${name}`);
+    const cached = localStorage.getItem(`electronics-${name}`);
     if (cached) {
       try {
         const items = JSON.parse(cached);
@@ -403,7 +403,7 @@ border-radius: 10px;
       }
     }
 
-    const colRef = collection(db, "fashion", name, "items");
+    const colRef = collection(db, "electronics", name, "items");
     onSnapshot(colRef, snapshot => {
       const items = [];
       snapshot.forEach(doc => {
@@ -415,7 +415,7 @@ border-radius: 10px;
           sizes: data.sizes || []
         });
       });
-      localStorage.setItem(`fashion-${name}`, JSON.stringify(items));
+      localStorage.setItem(`electronics-${name}`, JSON.stringify(items));
       renderProducts(id, items, name);
     });
   });
