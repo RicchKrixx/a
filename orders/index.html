@@ -216,8 +216,18 @@ import {
   `).join("")}
 </div>
             <p><strong>Date:</strong> ${new Date(order.timestamp).toLocaleString()}</p>  
-            <p><strong>Status:</strong> <span class="status">${status}</span></p>  
-            <button class="completeBtn" style="${buttonStyle}" ${buttonDisabled}>Mark as Complete</button>  
+            <p><strong>Status:</strong> <span class="status">${status}</span></p>
+/*  
+            <button class="completeBtn" style="${buttonStyle}" ${buttonDisabled}>Mark as Complete</button>  */
+<div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+  <button class="statusProgressBtn" data-id="${orderId}" ${status === "Delivered" || isCompleted ? "style='display:none'" : ""}>
+    ${status === "Order Approved" ? "Start Preparing" :
+      status === "Preparing" ? "Out for Delivery" :
+      status === "Out for Delivery" ? "Mark as Delivered" :
+      "Approve Order"}
+  </button>
+  <button class="completeBtn" style="${buttonStyle}" ${buttonDisabled}>Mark as Complete</button>
+</div>
             <hr/>  
           </div>  
         `;  
@@ -244,6 +254,46 @@ import {
       });  
     }  
   
+// Attach status progress buttons
+document.querySelectorAll(".statusProgressBtn").forEach(btn => {
+  btn.addEventListener("click", async () => {
+    const orderId = btn.dataset.id;
+    const orderDiv = btn.closest(".order");
+    const statusSpan = orderDiv.querySelector(".status");
+
+    let currentStatus = statusSpan.textContent.trim();
+    let nextStatus = "";
+
+    switch (currentStatus) {
+      case "Pending":
+      case "Order Approved":
+        nextStatus = "Preparing";
+        break;
+      case "Preparing":
+        nextStatus = "Out for Delivery";
+        break;
+      case "Out for Delivery":
+        nextStatus = "Delivered";
+        break;
+      default:
+        return;
+    }
+
+    const orderRef = doc(db, "orders", orderId);
+    await updateDoc(orderRef, { status: nextStatus });
+
+    statusSpan.textContent = nextStatus;
+
+    // Update button text or hide if delivered
+    if (nextStatus === "Preparing") {
+      btn.textContent = "Out for Delivery";
+    } else if (nextStatus === "Out for Delivery") {
+      btn.textContent = "Mark as Delivered";
+    } else if (nextStatus === "Delivered") {
+      btn.style.display = "none";
+    }
+  });
+});
     function showNotification(orderId) {  
       const notifySound = document.getElementById("notifySound");  
       notifySound.play().catch(err => console.error("Audio play error:", err));  
@@ -292,8 +342,10 @@ function showDeliveryNotification(orderId) {
   const card = document.createElement("div");  
   card.className = "notify-card";  
   card.innerHTML = `  
-    <p><strong>Order ${orderId}</strong> has been <span style="color:green">delivered</span>.</p>  
-    <button onclick="markAsComplete('${orderId}', this)">Mark as Complete</button>  
+    <p><strong>Order ${orderId}</strong> has been <span style="color:green">delivered</span>.</p> 
+ 
+    <button onclick="markAsComplete('${orderId}', this)">Mark as Complete</button> 
+ 
   `;  
   container.appendChild(card);  
 }  
