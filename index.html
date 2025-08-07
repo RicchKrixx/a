@@ -1,10 +1,10 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="Bixmaxlogo.png" type="image/png">
-  <title>BixMAX</title>
+  <title>BixMAX | Home</title>
   <style>   
     * { margin: 0; padding: 0; box-sizing: border-box;
  } 
@@ -750,4 +750,17 @@ font-size: 16px;
       localStorage.setItem('bixmax_has_visited', 'true'); // ✅ Save immediately on first visit
 
       if ('Notification' in window && Notification.permission !== 'denied') {
-        Noti
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            new Notification("👋 Welcome to BixMAX!", {
+              body: "Thanks for visiting us!",
+              icon: "Bixmaxlogo.png"
+            });
+          }
+        });
+      }
+    }
+  });
+</script>
+</body>
+</html>
