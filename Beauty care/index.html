@@ -128,7 +128,13 @@
 <div style="padding: 10px; text-align: center;">
   <input type="text" id="searchInput" placeholder="&#x1F50D;Search beauty & personal care..." style="width: 90%; padding: 10px; font-size: 16px; border-radius: 12px; border: none; outline: none; box-shadow: 0 0 5px cyan;">
 </div>
-  <div class="products" id="beautyContainer">Loading...</div>
+
+<div class="products" id="beautyContainer">
+  <div id="loadingMessage" style="text-align:center; width: 100%; padding: 50px 0; color: gray; font-size: 1.2rem;">
+    🔄 Loading products...
+  </div>
+</div>
+
 <p id="notFoundMessage" style="display:none; text-align:center; margin-top: 30%; margin-bottom: 50%; font-size:1.2rem; color:gray;">
   😢 No matching products found.
 </p>  
@@ -154,7 +160,8 @@
     const container = document.getElementById("beautyContainer");
 
     function renderBeauty(items) {
-  container.innerHTML = "";
+  document.getElementById("loadingMessage")?.remove();
+container.innerHTML = "";
   items.forEach(data => {
     const div = document.createElement("div");
     div.className = "product";
