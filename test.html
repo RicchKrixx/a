@@ -328,15 +328,14 @@ border-radius: 10px;
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  const categories = [
-    { name: "Men", id: "shirtsContainer" },
-    { name: "Women", id: "dressesContainer" },
-    { name: "Sneakers", id: "sneakersContainer" },
-    { name: "Jewelries", id: "jewelriesContainer" },
-    { name: "Glasses", id: "glassesContainer" },
-    { name: "Bags", id: "bagsContainer" },
-    { name: "Kids", id: "kidsContainer" }
-  ];
+    const categories = [  
+    { name: "Mobile Accessories", id: "accessoryContainer" },  
+    { name: "Home Appliances", id: "applianceContainer" },  
+    { name: "Home Security", id: "securityContainer" },  
+    { name: "Tools and Machinery", id: "toolContainer" },  
+    { name: "Electrical Materials", id: "materialContainer" },  
+  ];  
+
 
   function renderProducts(containerId, items, categoryName) {
     const container = document.getElementById(containerId);
