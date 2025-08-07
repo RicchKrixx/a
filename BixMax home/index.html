@@ -632,7 +632,7 @@ font-size: 16px;
             <p>&copy; 2025 BixMAX. All rights reserved.</p>
         </div>
 </footer>
-
+</div>
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <!-- Font Awesome for icons (you'll need to include this in your project) -->
     <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script>
@@ -745,6 +745,24 @@ font-size: 16px;
     current = (current + 1) % cards.length;
   }, 2000);
 </script>
-</div>
+
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    if (!localStorage.getItem('bixmax_has_visited')) {
+      localStorage.setItem('bixmax_has_visited', 'true'); // ✅ Save immediately on first visit
+
+      if ('Notification' in window && Notification.permission !== 'denied') {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            new Notification("👋 Welcome to BixMAX!", {
+              body: "Thanks for visiting us!",
+              icon: "Bixmaxlogo.png"
+            });
+          }
+        });
+      }
+    }
+  });
+</script>
 </body>
 </html>
