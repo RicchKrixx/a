@@ -1,4 +1,6 @@
- <!DOCTYPE html>  <html lang="en">    <head>    
+<!DOCTYPE html>  
+<html lang="en">   
+ <head>    
   <meta charset="UTF-8" />    
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>    
   <title>BixMAX | Electronics</title>    
@@ -86,22 +88,42 @@ gap: 16px;
 overflow-x: auto;
 padding-bottom: 6px;
 }
+/*
+.product {
+padding: 5px;
+border-radius: 35px;
+min-width: 150px;
+text-align: center;
+flex-shrink: 0;
+text-align: center;
+background: darkcyan;
+color: white;
+margin: 10px auto;
+font-weight: bold;
+}
 
- .product {
-      padding: 5px;
-      border-radius: 35px;
-      text-align: center;
-      background: darkcyan;
-      color: white;
+.product img {
+padding: 0;
+min-width: 160px;
+height: 160px;
+object-fit: cover;
+border-radius: 30px;
+}
+*/
+    .product {  
+      padding: 5px;  
+      border-radius: 35px;  
+      text-align: center;  
+      background: darkcyan;  
+      color: white;  
       font-weight: bold;
-    }
-    .product img {
-      width: 100%;
-      height: 160px;
-      object-fit: cover;
-      border-radius: 30px;
-    }
-
+    }  
+    .product img {  
+      width: 100%;  
+      height: 160px;  
+      object-fit: cover;  
+      border-radius: 30px;  
+    }  
 .product h3 {
 font-size: 16px;
 margin: 6px 0;
@@ -114,7 +136,7 @@ font-weight: bold;
 
 .add-btn {
 background: cyan;
-color: white;
+color: black;
 padding: 8px 12px;
 border: none;
 border-radius: 10px;
@@ -151,8 +173,6 @@ gap: 12px;
 min-width: 150px;
 }
 }
-
-
 /* Shake animation */
 @keyframes shake {
 0% { transform: translateX(0); }
@@ -207,13 +227,13 @@ border-radius: 10px;
   }
 }
 </style> 
- </head>    
-<body>  
+ </head>  
+<body> 
 <a href="/cart/" class="cart-icon glow" id="cartIcon">🛒<span id="cartCount">0</span></a>   
     <header>    
-        <h1>BixMAX | Electronics</h1>    
-        <h3>All-in-One Online Shop</h3>  
- </header>  
+            <h1>BixMAX | Electronics</h1>    
+        <h3>All-in-One Online Shop</h3>    </header> 
+
 <div class="container">    
   <!-- Fashion Sections -->    
 <div class="category">    
@@ -258,185 +278,28 @@ border-radius: 10px;
   </div>    
 </div>  
 </div>     
- <!-- 🔘 Variation Popup HTML (injects dynamically by script) -->    <script>    
-    const variationItems = {    
-      "Nike Air": { color: ["Red", "White"], size: ["42", "43", "44"] },    
-      "Summer Dress": { color: ["Blue", "Yellow"], size: ["S", "M", "L"] },    
-      "Ray-Ban": { color: ["Black", "Gold"] }    
-    };          
-   const cartCountEl = document.getElementById("cartCount");    function updateCartCount() {    
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];    
-  const count = cart.reduce((sum, item) => sum + item.qty, 0);    
-  cartCountEl.textContent = count;    
-}    
+    
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    doc,
+    onSnapshot
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-function addToCart(name, img, price) {    
-  if (variationItems[name]) {    
-    showVariationPopup(name, img, price, variationItems[name]);    
-  } else {    
-    saveToCart({ name, image: img, price, qty: 1 });    
-  }    
-}    
+  const firebaseConfig = {
+    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+    authDomain: "bixmax-6c24c.firebaseapp.com",
+    projectId: "bixmax-6c24c",
+    storageBucket: "bixmax-6c24c.appspot.com",
+    messagingSenderId: "37740442541",
+    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+  };
 
-function saveToCart(item) {    
-  const cart = JSON.parse(localStorage.getItem("cart") || "[]");    
-  const existing = cart.find(i =>    
-    i.name === item.name &&    
-    (!i.color || i.color === item.color) &&    
-    (!i.size || i.size === item.size)    
-  );    
-  if (existing) {    
-    existing.qty += 1;    
-  } else {    
-    cart.push(item);    
-  }    
-  localStorage.setItem("cart", JSON.stringify(cart));    
-  updateCartCount();    
-  animateCartIcon();    
-}    
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-function animateCartIcon() {    
-  const cartIcon = document.querySelector(".cart-icon");    
-  cartIcon.classList.remove("shake");    
-  void cartIcon.offsetWidth;    
-  cartIcon.classList.add("shake");    
-  cartIcon.addEventListener("animationend", () => {    
-    cartIcon.classList.remove("shake");    
-  }, { once: true });    
-}    
-
-function showVariationPopup(name, img, price, variations) {    
-  const overlay = document.createElement("div");    
-  overlay.style.cssText = `    
-    position:fixed;top:0;left:0;width:100%;height:100%;    
-    background:rgba(0,0,0,0.6);display:flex;justify-content:center;align-items:center;z-index:9999;    
-  `;    
-
-  const popup = document.createElement("div");    
-  popup.style.cssText = `    
-    background:white;padding:20px;border-radius:14px;width:90%;max-width:340px;text-align:center;    
-    box-shadow:0 0 20px cyan;    
-  `;    
-
-  let optionsHTML = "";    
-  if (variations.color) {    
-    optionsHTML += `    
-      <label style="font-weight:bold;">Color:    
-        <select id="popupColor">    
-          ${variations.color.map(c => `<option value="${c}">${c}</option>`).join("")}    
-        </select>    
-      </label><br><br>    
-    `;    
-  }    
-  if (variations.size) {    
-    optionsHTML += `    
-      <label style="font-weight:bold;">Size:    
-        <select id="popupSize">    
-          ${variations.size.map(s => `<option value="${s}">${s}</option>`).join("")}    
-        </select>    
-      </label><br><br>    
-    `;    
-  }    
-
-  popup.innerHTML = `    
-    <h3>Select Options</h3>    
-    <p style="margin-bottom:10px;font-weight:bold;">${name}</p>    
-    ${optionsHTML}    
-    <button onclick="confirmVariation('${name}','${img}',${price})" style="padding:10px 20px;background:#1976d2;color:white;border:none;border-radius:8px;">Confirm</button>    
-    <br><br>    
-    <button onclick="this.closest('div').parentNode.remove()" style="background:none;color:red;border:none;">Cancel</button>    
-  `;    
-
-  overlay.appendChild(popup);    
-  document.body.appendChild(overlay);    
-}    
-
-function confirmVariation(name, img, price) {    
-  const color = document.getElementById("popupColor")?.value;    
-  const size = document.getElementById("popupSize")?.value;    
-  const item = { name, image: img, price, qty: 1 };    
-  if (color) item.color = color;    
-  if (size) item.size = size;    
-  saveToCart(item);    
-  document.querySelector("body > div:last-child").remove();    
-}    
-
-updateCartCount();
-
-  </script>   
-  <!-- Firebase SDKs -->  
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>  
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>  <script>  
-  // Firebase config  
-  const firebaseConfig = {  
-    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",  
-    authDomain: "bixmax-6c24c.firebaseapp.com",  
-    projectId: "bixmax-6c24c",  
-    storageBucket: "bixmax-6c24c.appspot.com",  
-    messagingSenderId: "37740442541",  
-    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"  
-  };  
-
-  // Initialize Firebase  
-  firebase.initializeApp(firebaseConfig);  
-  const db = firebase.firestore();  
-
-  // Render category items  
-  function renderCategoryItems(categoryName, containerId, items) {  
-    const container = document.getElementById(containerId);  
-    container.innerHTML = "";  
-
-    if (items.length === 0) {  
-      container.innerHTML = `<p>No ${categoryName} available.</p>`;  
-      return;  
-    }  
-
-    items.forEach(data => {  
-      const productEl = document.createElement("div");  
-      productEl.className = "product";  
-      productEl.innerHTML = `  
-        <img src="${data.image}" alt="${data.name}" />  
-        <h3>${data.name}</h3>  
-        <p>GH¢${data.price}</p>  
-        <button class="add-btn" onclick="addToCart('${data.name}', '${data.image}', ${data.price})">Add to Cart</button>  
-      `;  
-      container.appendChild(productEl);  
-    });  
-  }  
-
-  // Fetch and listen for changes  
-  function listenToCategory(categoryName, containerId) {  
-    // Load cached items first  
-    const cached = localStorage.getItem(`electronics-${categoryName}`);  
-    if (cached) {  
-      try {  
-        const items = JSON.parse(cached);  
-        renderCategoryItems(categoryName, containerId, items);  
-      } catch (e) {  
-        console.warn(`Cache error for ${categoryName}:`, e);  
-      }  
-    }  
-
-    // Realtime Firestore listener  
-    db.collection("electronics")  
-      .doc(categoryName)  
-      .collection("items")  
-      .onSnapshot((snapshot) => {  
-        const items = [];  
-        snapshot.forEach(doc => items.push(doc.data()));  
-
-        // Save to localStorage  
-        localStorage.setItem(`electronics-${categoryName}`, JSON.stringify(items));  
-
-        // Render new data  
-        renderCategoryItems(categoryName, containerId, items);  
-      }, (error) => {  
-        console.error(`Error fetching ${categoryName}:`, error);  
-        document.getElementById(containerId).innerHTML = `<p>Error loading ${categoryName}</p>`;  
-      });  
-  }  
-
-  // List of categories and their container IDs  
   const categories = [  
     { name: "Mobile Accessories", id: "accessoryContainer" },  
     { name: "Home Appliances", id: "applianceContainer" },  
@@ -445,10 +308,122 @@ updateCartCount();
     { name: "Electrical Materials", id: "materialContainer" },  
   ];  
 
-  // Listen to all categories  
-  categories.forEach(cat => listenToCategory(cat.name, cat.id));  
-</script>  
-</body>  
+  function renderProducts(containerId, items, categoryName) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = "";
+
+    items.forEach(data => {
+      const div = document.createElement("div");
+      div.className = "product";
+      div.innerHTML = `
+        <img src="${data.image}" alt="${data.name}" class="product-image" />
+        <div class="product-name">${data.name}</div>
+        <div class="product-price">GH₵${data.price.toFixed(2)}</div>
+        <button class="add-btn"
+          data-id="${data.id}"
+          data-name="${data.name}"
+          data-price="${data.price}"
+          data-image="${data.image}"
+          data-category="${categoryName}"
+          data-variation="${data.variation || 'none'}"
+          data-sizes='${JSON.stringify(data.sizes || [])}'>
+          Add to Cart
+        </button>
+      `;
+      const img = div.querySelector(".product-image");
+      img.addEventListener("click", () => handleImageClick(data, categoryName));
+      container.appendChild(div);
+    });
+
+    container.querySelectorAll('.add-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const product = {
+          id: btn.dataset.id,
+          name: btn.dataset.name,
+          price: parseFloat(btn.dataset.price),
+          image: btn.dataset.image,
+          category: btn.dataset.category,
+          variation: btn.dataset.variation || "none",
+          sizes: JSON.parse(btn.dataset.sizes || "[]")
+        };
+        addToCart(product);
+      });
+    });
+  }
+
+  function handleImageClick(data, categoryName) {
+    const product = {
+      id: data.id,
+      name: data.name,
+      price: parseFloat(data.price),
+      image: data.image,
+      category: categoryName,
+      variation: data.variation || "none",
+      sizes: data.sizes || []
+    };
+    addToCart(product);
+    setTimeout(() => {
+      window.location.href = "/cart/";
+    }, 300);
+  }
+
+  function addToCart(product) {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const index = cart.findIndex(item => item.id === product.id);
+    if (index >= 0) {
+      cart[index].qty += 1;
+    } else {
+      cart.push({ ...product, qty: 1 });
+    }
+    localStorage.setItem("cart", JSON.stringify(cart));
+    updateCartCount();
+    animateCart();
+  }
+
+  function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const count = cart.reduce((sum, item) => sum + item.qty, 0);
+    document.getElementById("cartCount").textContent = count;
+  }
+
+  function animateCart() {
+    const cartIcon = document.querySelector(".cart-icon");
+    cartIcon.classList.add("shake");
+    setTimeout(() => cartIcon.classList.remove("shake"), 500);
+  }
+
+  // Initial load + real-time updates
+  categories.forEach(({ name, id }) => {
+    const cached = localStorage.getItem(`electronics-${name}`);
+    if (cached) {
+      try {
+        const items = JSON.parse(cached);
+        renderProducts(id, items, name);
+      } catch (e) {
+        console.warn(`Error parsing cache for ${name}:`, e);
+      }
+    }
+
+    const colRef = collection(db, "electronics", name, "items");
+    onSnapshot(colRef, snapshot => {
+      const items = [];
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        items.push({
+          ...data,
+          id: doc.id,
+          variation: data.variation || "none",
+          sizes: data.sizes || []
+        });
+      });
+      localStorage.setItem(`electronics-${name}`, JSON.stringify(items));
+      renderProducts(id, items, name);
+    });
+  });
+
+  updateCartCount();
+</script>
+</body>
 <footer style="
   position: absolute;
   background: #0f172a;
