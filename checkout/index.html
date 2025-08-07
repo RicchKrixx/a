@@ -194,10 +194,10 @@ return { name, email, phone, address, paymentMethod, grandTotal, cartItems };
 }
 
 function buildItemsString(cartItems) {
-return cartItems.map(i => {
-const sizeText = i.size ?  (Size: ${i.size}) : "";
-return ${i.name}${sizeText} × ${i.qty};
-}).join(", ");
+  return cartItems.map(i => {
+    const sizeText = i.size ? `(Size: ${i.size})` : "";
+    return `${i.name} ${sizeText} × ${i.qty}`;
+  }).join(", ");
 }
 
 async function sendOrderToFirebase(orderId, data) {
@@ -265,7 +265,12 @@ if (grandTotal <= 0 || cartItems.length === 0) {
 
 const orderId = generateOrderId();    
 const itemsString = buildItemsString(cartItems);    
-const orderData = { name, email, phone, address, method: paymentMethod, total: grandTotal, items: itemsString, cartItems };    
+const deliveryFeeText = document.getElementById("deliveryFee").textContent;
+const feeMatch = deliveryFeeText.match(/[\d.]+/);
+const deliveryFee = feeMatch ? parseFloat(feeMatch[0]) : 0;
+const gTotal = grandTotal + deliveryFee;
+
+const orderData = { name, email, phone, address, method: paymentMethod, total: gTotal, items: itemsString, cartItems };
 
 onAuthStateChanged(auth, (user) => {    
   if (!user && paymentMethod === "payment on delivery") {    
@@ -296,65 +301,7 @@ onAuthStateChanged(auth, (user) => {
 });
 
 });
-/*
-actionBtn.addEventListener("click", async (e) => {
-e.preventDefault();
 
-const { paymentMethod } = getOrderDetails();
-
-// ⛔ Show "Coming Soon" only for Pay on Delivery
-if (paymentMethod === "payment on delivery") {
-alert("🚧 Coming Soon...");
-return;
-}
-
-// ✅ Continue with full logic for Pay Online
-showLoader(true);
-
-const { name, email, phone, address, grandTotal, cartItems } = getOrderDetails();
-
-if (!(name && email && phone && address)) {
-showLoader(false);
-alert("Please fill in all customer details.");
-return;
-}
-
-if (grandTotal <= 0 || cartItems.length === 0) {
-showLoader(false);
-alert("Cart is empty or total is 0.");
-return;
-}
-
-const orderId = generateOrderId();
-const itemsString = buildItemsString(cartItems);
-const orderData = { name, email, phone, address, method: paymentMethod, total: grandTotal, items: itemsString, cartItems };
-
-onAuthStateChanged(auth, (user) => {
-if (!user && paymentMethod === "payment on delivery") {
-showLoader(false);
-alert("⚠️ Guests cannot use Pay on Delivery. Please sign in.");
-return;
-}
-
-PaystackPop.setup({  
-  key: 'pk_live_55fc4deb5da6100b52f981f9f754dc0249e7752f',  
-  email: email,  
-  amount: gTotal * 100,  
-  currency: "GHS",  
-  ref: orderId,  
-  callback: function (response) {  
-    orderData.method = "Paid";  
-    sendOrderToFirebase(orderId, orderData);  
-  },  
-  onClose: function () {  
-    showLoader(false);  
-    alert("❌ Payment cancelled.");  
-  }  
-}).openIframe();
-
-});
-});
-*/
 </script>
 
   <script>    
