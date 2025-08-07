@@ -138,205 +138,189 @@
   <img src="" id="previewImage" />  
 </div>  
  <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  updateDoc,
-  doc,
-  onSnapshot,
-  query,
-  orderBy
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import {
+    initializeApp
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    updateDoc,
+    doc,
+    onSnapshot,
+    query,
+    orderBy
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// Firebase config
-const firebaseConfig = {
-  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-  authDomain: "bixmax-6c24c.firebaseapp.com",
-  projectId: "bixmax-6c24c",
-  storageBucket: "bixmax-6c24c.appspot.com",
-  messagingSenderId: "37740442541",
-  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-};
+  const firebaseConfig = {
+    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+    authDomain: "bixmax-6c24c.firebaseapp.com",
+    projectId: "bixmax-6c24c",
+    storageBucket: "bixmax-6c24c.appspot.com",
+    messagingSenderId: "37740442541",
+    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+  };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const ordersContainer = document.getElementById("ordersContainer");
-const searchInput = document.getElementById("searchInput");
-let lastOrderCount = 0;
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const ordersContainer = document.getElementById("ordersContainer");
+  const searchInput = document.getElementById("searchInput");
+  let lastOrderCount = 0;
 
-function displayOrders(snapshot) {
-  if (snapshot.empty) {
-    ordersContainer.innerHTML = "<p>No orders found.</p>";
-    return;
-  }
+  function displayOrders(snapshot) {
+    if (snapshot.empty) {
+      ordersContainer.innerHTML = "<p>No orders found.</p>";
+      return;
+    }
 
-  const docsArray = [];
-  snapshot.forEach(docSnap => docsArray.push(docSnap));
-  docsArray.sort((a, b) => b.data().timestamp - a.data().timestamp); // Newest first
+    const docsArray = [];
+    snapshot.forEach(docSnap => docsArray.push(docSnap));
+    docsArray.sort((a, b) => b.data().timestamp - a.data().timestamp);
 
-  // New order notification
-  const currentOrderCount = docsArray.length;
-  if (currentOrderCount > lastOrderCount && lastOrderCount > 0) {
-    const newOrder = docsArray[0].data();
-    showNotification(newOrder.id);
-  }
-  lastOrderCount = currentOrderCount;
+    const currentOrderCount = docsArray.length;
+    if (currentOrderCount > lastOrderCount && lastOrderCount > 0) {
+      const newOrder = docsArray[0].data();
+      showNotification(newOrder.id);
+    }
+    lastOrderCount = currentOrderCount;
 
-  let html = "";
-  docsArray.forEach(docSnap => {
-    const order = docSnap.data();
-    const docRef = docSnap.ref;
-    const orderId = order.id;
-    const status = order.status || "Pending";
-    const statuses = [
-      "Pending",
-      "Order Approved",
-      "Preparing Order",
-      "Ready for Pickup",
-      "Out for Delivery",
-      "Delivered",
-      "Completed"
-    ];
-    const currentIndex = statuses.indexOf(status);
-    const nextStatus = statuses[currentIndex + 1] || null;
-    const isCompleted = status === "Completed";
+    let html = "";
+    docsArray.forEach(docSnap => {
+      const order = docSnap.data();
+      const docRef = docSnap.ref;
+      const orderId = order.id;
+      const status = order.status || "Pending";
+      const isCompleted = status === "Completed";
+      const buttonDisabled = isCompleted ? "disabled" : "";
+      const buttonStyle = isCompleted ? "background:gray;cursor:not-allowed;" : "background:green;cursor:pointer;";
 
-    html += `
-      <div class="order" data-id="${docRef.path}">
-        <p><strong>Order ID:</strong> ${orderId}</p>
-        <p><strong>Name:</strong> ${order.name}</p>
-        <p><strong>Email:</strong> ${order.email}</p>
-        <p><strong>Phone:</strong> ${order.phone}</p>
-        <p><strong>Address:</strong> ${order.address}</p>
-        <p><strong>Payment:</strong> ${order.method}</p>
-        <p><strong>Total:</strong> GH¢${parseFloat(order.total).toFixed(2)}</p>
-        <p><strong>Items:</strong> ${order.items}</p>
-        <p><strong>Images:</strong></p>
-        <div class="thumb-row">
-          ${order.cartItems?.map(item => `
-            <img src="${item.image}" alt="${item.name}" onclick="previewImage('${item.image}')" />
-          `).join("")}
+      html += `
+        <div class="order" data-id="${docRef.path}">
+          <p><strong>Order ID:</strong> ${orderId}</p>
+          <p><strong>Name:</strong> ${order.name}</p>
+          <p><strong>Email:</strong> ${order.email}</p>
+          <p><strong>Phone:</strong> ${order.phone}</p>
+          <p><strong>Address:</strong> ${order.address}</p>
+          <p><strong>Payment:</strong> ${order.method}</p>
+          <p><strong>Total:</strong> GH¢${parseFloat(order.total).toFixed(2)}</p>
+          <p><strong>Items:</strong> ${order.items}</p>
+          <p><strong>Images:</strong></p>
+          <div class="thumb-row">
+            ${order.cartItems?.map(item => `
+              <img src="${item.image}" alt="${item.name}" onclick="previewImage('${item.image}')" />
+            `).join("")}
+          </div>
+          <p><strong>Date:</strong> ${new Date(order.timestamp).toLocaleString()}</p>
+          <p><strong>Status:</strong> <span class="status">${status}</span></p>
+          <button class="completeBtn" style="${buttonStyle}" ${buttonDisabled}>Mark as Complete</button>
+          <hr/>
         </div>
-        <p><strong>Date:</strong> ${new Date(order.timestamp).toLocaleString()}</p>
-        <p><strong>Status:</strong> <span class="status">${status}</span></p>
-        ${
-          !isCompleted && nextStatus
-            ? `<button class="statusBtn" data-next="${nextStatus}" data-doc="${docRef.path}">
-                Move to "${nextStatus}"
-              </button>`
-            : `<button class="statusBtn" disabled style="background:gray;cursor:not-allowed;">
-                ${status === "Completed" ? "Completed" : "No further steps"}
-              </button>`
-        }
-        <hr/>
-      </div>
-    `;
-  });
-
-  ordersContainer.innerHTML = html;
-
-  // Handle status change button clicks
-  document.querySelectorAll(".statusBtn").forEach(btn => {
-    btn.addEventListener("click", async () => {
-      const next = btn.dataset.next;
-      const docPath = btn.dataset.doc;
-      const ref = doc(db, docPath);
-      await updateDoc(ref, { status: next });
+      `;
     });
-  });
 
-  // Handle delivered notifications
-  const deliveredNotifications = JSON.parse(localStorage.getItem('deliveredNotifications') || '{}');
-  docsArray.forEach(docSnap => {
-    const order = docSnap.data();
-    const orderId = order.id;
-    if (order.status === 'Delivered' && !deliveredNotifications[orderId]) {
-      showDeliveryNotification(orderId);
-      deliveredNotifications[orderId] = true;
-      localStorage.setItem('deliveredNotifications', JSON.stringify(deliveredNotifications));
-    }
-  });
-}
+    ordersContainer.innerHTML = html;
 
-function showNotification(orderId) {
-  const notifySound = document.getElementById("notifySound");
-  notifySound.play().catch(err => console.error("Audio play error:", err));
+    document.querySelectorAll(".completeBtn").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const orderDiv = btn.closest(".order");
+        const docPath = orderDiv.dataset.id;
+        const statusSpan = orderDiv.querySelector(".status");
 
-  const alertBox = document.createElement("div");
-  alertBox.textContent = `🆕 New Order: ${orderId}`;
-  alertBox.style = `
-    position: fixed; top: 20px; right: 20px;
-    background: #00b894; color: white;
-    padding: 14px 20px;
-    border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    z-index: 9999;
-    font-size: 1rem;
-  `;
-  document.body.appendChild(alertBox);
-  setTimeout(() => alertBox.remove(), 3000);
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
+        const ref = doc(db, docPath);
+        await updateDoc(ref, { status: "Completed" });
 
-// Real-time Firestore listener
-const ordersQuery = query(collection(db, "orders"), orderBy("timestamp", "desc"));
+        btn.textContent = "Completed";
+        btn.disabled = true;
+        btn.style.background = "gray";
+        btn.style.cursor = "not-allowed";
+        statusSpan.textContent = "Completed";
+      });
+    });
+  }
 
-onSnapshot(ordersQuery,
-  snapshot => {
-    try {
-      displayOrders(snapshot);
-    } catch (err) {
-      console.error("Error displaying orders:", err);
-      ordersContainer.innerHTML = "<p>Error loading orders. Please try again.</p>";
-    }
-  },
-  err => {
+  function showNotification(orderId) {
+    const notifySound = document.getElementById("notifySound");
+    notifySound.play().catch(err => console.error("Audio play error:", err));
+
+    const alertBox = document.createElement("div");
+    alertBox.textContent = `🆕 New Order: ${orderId}`;
+    alertBox.style = `
+      position: fixed; top: 20px; right: 20px;
+      background: #00b894; color: white;
+      padding: 14px 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      z-index: 9999;
+      font-size: 1rem;
+    `;
+    document.body.appendChild(alertBox);
+    setTimeout(() => alertBox.remove(), 3000);
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Listen to order changes
+  const ordersQuery = query(collection(db, "orders"), orderBy("timestamp", "desc"));
+
+  onSnapshot(ordersQuery, (snapshot) => {
+    displayOrders(snapshot);
+
+    snapshot.forEach((docSnap) => {
+      const orderData = docSnap.data();
+      const orderId = orderData.id;
+
+      const deliveredNotifications = JSON.parse(localStorage.getItem('deliveredNotifications') || '{}');
+
+      if (orderData.status === 'Delivered' && !deliveredNotifications[orderId]) {
+        showDeliveryNotification(orderId);
+        deliveredNotifications[orderId] = true;
+        localStorage.setItem('deliveredNotifications', JSON.stringify(deliveredNotifications));
+      }
+    });
+  }, (err) => {
     console.error("Snapshot error:", err);
     ordersContainer.innerHTML = "<p>Error loading orders. Please try again.</p>";
-  }
-);
-
-// Delivery Notification card
-function showDeliveryNotification(orderId) {
-  const container = document.getElementById("notificationsContainer"); // make sure this div exists
-  const card = document.createElement("div");
-  card.className = "notify-card";
-  card.innerHTML = `
-    <p><strong>Order ${orderId}</strong> has been <span style="color:green">delivered</span>.</p>
-    <button onclick="markAsComplete('${orderId}', this)">Mark as Complete</button>
-  `;
-  container.appendChild(card);
-}
-
-// Mark as completed from notification card
-async function markAsComplete(orderId, btn) {
-  try {
-    const orderRef = doc(db, "orders", orderId);
-    await updateDoc(orderRef, { status: "Completed" });
-
-    // Remove card
-    btn.parentElement.remove();
-
-    // Remove from localStorage
-    const deliveredNotifications = JSON.parse(localStorage.getItem('deliveredNotifications') || '{}');
-    delete deliveredNotifications[orderId];
-    localStorage.setItem('deliveredNotifications', JSON.stringify(deliveredNotifications));
-  } catch (error) {
-    alert("Error updating order: " + error);
-  }
-}
-
-// Search orders
-searchInput.addEventListener("input", () => {
-  const term = searchInput.value.trim().toLowerCase();
-  const orders = document.querySelectorAll(".order");
-
-  orders.forEach(order => {
-    const text = order.textContent.toLowerCase();
-    order.style.display = text.includes(term) ? "block" : "none";
   });
-});
+
+  function showDeliveryNotification(orderId) {
+    const container = document.getElementById("notificationsContainer");
+    const card = document.createElement("div");
+    card.className = "notify-card";
+    card.innerHTML = `
+      <p><strong>Order ${orderId}</strong> has been <span style="color:green">delivered</span>.</p>
+      <button onclick="markAsComplete('${orderId}', this)">Mark as Complete</button>
+    `;
+    container.appendChild(card);
+  }
+
+  async function markAsComplete(orderId, btn) {
+    try {
+      const orderRef = doc(db, "orders", orderId);
+      await updateDoc(orderRef, { status: "Completed" });
+
+      btn.parentElement.remove();
+      const deliveredNotifications = JSON.parse(localStorage.getItem('deliveredNotifications') || '{}');
+      delete deliveredNotifications[orderId];
+      localStorage.setItem('deliveredNotifications', JSON.stringify(deliveredNotifications));
+    } catch (error) {
+      alert("Error updating order: " + error);
+    }
+  }
+
+  // Search
+  searchInput.addEventListener("input", () => {
+    const term = searchInput.value.trim().toLowerCase();
+    const orders = document.querySelectorAll(".order");
+
+    orders.forEach(order => {
+      const idText = order.querySelector("p:nth-of-type(1)")?.textContent?.toLowerCase() || "";
+      const nameText = order.querySelector("p:nth-of-type(2)")?.textContent?.toLowerCase() || "";
+      const emailText = order.querySelector("p:nth-of-type(3)")?.textContent?.toLowerCase() || "";
+      const phoneText = order.querySelector("p:nth-of-type(4)")?.textContent?.toLowerCase() || "";
+
+      const matches = idText.includes(term) || nameText.includes(term) || emailText.includes(term) || phoneText.includes(term);
+      order.style.display = matches ? "block" : "none";
+    });
+  });
 </script>
 </body>  
 </html>
