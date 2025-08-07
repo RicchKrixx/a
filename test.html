@@ -1,356 +1,606 @@
-<!DOCTYPE html>  <html lang="en">  
-<head>  
-  <meta charset="UTF-8" />  
-  <title>BixMAX | All Orders</title>  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>  
-  <style>  
-    :root {  
-      font-size: 16px;  
-    }  
-    * {  
-      box-sizing: border-box;  
-      margin: 0;  
-      padding: 0;  
-    }  
-    body {  
-      font-family: 'Segoe UI', sans-serif;  
-      background: #f0f8ff;  
-      padding: 20px;  
-      color: #222;  
-    }  
-    h1 {  
-      text-align: center;  
-      margin-bottom: 20px;  
-      color: #0a4d7a;  
-      text-shadow: 0 0 2px #cce6ff;  
-    }  
-    #searchInput {  
-      display: block;  
-      margin: 0 auto 30px auto;  
-      padding: 14px 20px;  
-      font-size: 1rem;  
-      border-radius: 12px;  
-      width: 90%;  
-      max-width: 400px;  
-      border: 1px solid #ccc;  
-      box-shadow: 0 0 5px #b3e0ff;  
-      background: #fff;  
-    }  
-    .order {  
-      background: #ffffff;  
-      border-radius: 14px;  
-      padding: 18px 20px;  
-      margin: 15px auto;  
-      max-width: 720px;  
-      box-shadow: 0 4px 12px rgba(0,0,0,0.06);  
-      transition: all 0.3s ease;  
-      border-left: 6px solid #0a4d7a;  
-    }  
-    .order:hover {  
-      transform: translateY(-2px);  
-      box-shadow: 0 6px 16px rgba(0,0,0,0.1);  
-    }  
-    .order p {  
-      margin: 5px 0;  
-      font-size: 0.95rem;  
-      color: #444;  
-    }  
-    .order ul {  
-      margin-top: 10px;  
-      padding-left: 18px;  
-    }  
-    .order ul li {  
-      font-size: 0.95rem;  
-      color: #555;  
-      list-style-type: disc;  
-    }  
-    @media (max-width: 500px) {  
-      :root {  
-        font-size: 15px;  
-      }  
-      .order {  
-        padding: 16px 14px;  
-      }  
-    }  
-.notify-card {  
-  background: #fefefe;  
-  border-left: 4px solid green;  
-  padding: 10px 15px;  
-  margin: 10px;  
-  border-radius: 8px;  
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);  
-}  
-.notify-card button {  
-  margin-top: 6px;  
-  background: #007bff;  
-  color: white;  
-  padding: 5px 12px;  
-  border: none;  
-  border-radius: 5px;  
-  cursor: pointer;  
-}  
-.thumb-row {
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>BixMAX | Beauty & Personal care</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+   * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: lightblue;
+  min-height: 100vh;
   display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  margin-top: 8px;
-  padding-bottom: 4px;
+  flex-direction: column;
 }
-.thumb-row img {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  object-fit: cover;
-  cursor: pointer;
-  box-shadow: 0 0 2px rgba(0,0,0,0.2);
-  transition: transform 0.2s;
+
+header {
+  width: 100%;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  backdrop-filter: blur(25px);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-weight: bold;
+  background-size: cover;
+  margin-bottom: 0.5rem;
 }
-.thumb-row img:hover {
-  transform: scale(1.1);
+
+h3 {
+  color: black;
+  font-size: clamp(1rem, 3vw, 1.2rem); /* Responsive font size */
 }
-.preview-overlay {
-  display: none;
+
+.cart-icon {
   position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.8);
-  z-index: 9999;
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  text-decoration: none;
+  color: white;
+  right: 1rem;
+  top: 1rem;
+  z-index: 999;
+}
+
+#cartCount {
+  position: absolute;
+  top: -0.5rem;
+  right: -0.75rem;
+  background: red;
+  color: white;
+  font-size: clamp(0.7rem, 2vw, 0.8rem);
+  font-weight: bold;
+  border-radius: 50%;
+  padding: 0.2rem 0.4rem;
+}
+
+.products {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.product {
+  padding: 0.5rem;
+  border-radius: 2rem;
+  text-align: center;
+  background: darkcyan;
+  color: white;
+  font-weight: bold;
+}
+
+.product img {
+  width: 100%;
+  height: 10rem;
+  object-fit: cover;
+  border-radius: 1.5rem;
+}
+
+.product-name {
+  font-size: clamp(0.9rem, 3vw, 1.1rem);
+  margin-top: 0;
+  margin-bottom: 0.3rem;
+  color: black;
+}
+
+.product-price {
+  font-size: clamp(0.8rem, 2.5vw, 1rem);
+}
+
+.add-btn {
+  background: cyan;
+  color: white;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  border-radius: 0.6rem;
+  cursor: pointer;
+  margin-top: 0.3rem;
+  font-weight: bold;
+  font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+}
+
+.add-btn:hover {
+  background: #008b8b;
+}
+
+.glow {
+  animation: brightGlow 1.5s infinite ease-in-out;
+  color: cyan;
+  text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
+}
+
+@keyframes brightGlow {
+  0%, 100% {
+    text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
+  }
+  50% {
+    text-shadow: 0 0 15px #0ff, 0 0 25px #0ff, 0 0 35px #0ff;
+  }
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+  100% { transform: translateX(0); }
+}
+
+.shake {
+  animation: shake 0.4s ease;
+}
+
+/* Search bar */
+#searchInput {
+  width: 100%;
+  max-width: 600px;
+  padding: 0.6rem;
+  font-size: clamp(0.9rem, 3vw, 1rem);
+  border-radius: 0.75rem;
+  border: none;
+  outline: none;
+  box-shadow: 0 0 5px cyan;
+  margin: 0.5rem auto;
+  display: block;
+}
+
+/* Loading and not found messages */
+#loadingMessage,
+#notFoundMessage {
+  font-size: clamp(0.9rem, 3vw, 1.1rem);
+  text-align: center;
+  color: gray;
+  padding: 2rem 0;
+}
+
+/* Footer */
+footer {
+  background: #0f172a;
+  color: #fff;
+  padding: 1rem;
+  text-align: center;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+  box-shadow: 0 -2px 6px rgba(0,0,0,0.2);
+  border-top: 1px solid #1e293b;
+  margin-top: auto; /* Pushes footer to bottom */
+  width: 100%;
+}
+
+.socials {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  justify-content: center;
+}
+
+.socials a {
+  width: clamp(2rem, 8vw, 2.5rem);
+  height: clamp(2rem, 8vw, 2.5rem);
+  border-radius: 50%;
+  color: white;
+  font-size: clamp(0.8rem, 3vw, 1rem);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+  display: inline-flex;
   align-items: center;
   justify-content: center;
 }
-.preview-overlay img {
-  max-width: 90%;
-  max-height: 90%;
-  border-radius: 14px;
-  box-shadow: 0 0 15px #000;
-}
-.preview-overlay.active {
-  display: flex;
-}
-  </style>  
-</head>  
-<body>  
-  <h1>📦 BixMAX Orders 📥</h1>  
-  <input type="text" id="searchInput" placeholder="Search Order ID..." />  
-<div id="notificationsContainer"></div>  
-  <div id="ordersContainer">Loading orders...</div>  
-  <audio id="notifySound" src="https://www.soundjay.com/buttons/beep-01a.mp3"></audio>    
 
-<div class="preview-overlay" id="previewOverlay" onclick="closePreview()">
-  <img src="" id="previewImage" />
+.socials a:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+}
+
+.socials a::after {
+  content: attr(data-label);
+  position: absolute;
+  bottom: -1.5rem;
+  background: #333;
+  color: #fff;
+  padding: 0.2rem 0.4rem;
+  font-size: clamp(0.6rem, 2vw, 0.7rem);
+  border-radius: 0.2rem;
+  opacity: 0;
+  transform: translateY(5px);
+  pointer-events: none;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.socials a:hover::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.facebook { background: #3b5998; }
+.instagram { background: #e1306c; }
+.tiktok { background: #000; }
+.x { background: #1da1f2; }
+.whatsapp { background: #00b489; }
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+  header {
+    padding: 1rem;
+  }
+
+  h2 {
+    font-size: clamp(1.2rem, 4vw, 1.5rem);
+  }
+
+  .products {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.8rem;
+  }
+
+  .product img {
+    height: 8rem;
+  }
+
+  .cart-icon {
+    font-size: clamp(1.2rem, 4vw, 1.5rem);
+    right: 0.5rem;
+    top: 0.5rem;
+  }
+
+  #cartCount {
+    font-size: clamp(0.6rem, 2vw, 0.7rem);
+    padding: 0.1rem 0.3rem;
+  }
+
+  .add-btn {
+    padding: 0.4rem 0.6rem;
+    font-size: clamp(0.7rem, 2.5vw, 0.8rem);
+  }
+
+  #searchInput {
+    padding: 0.5rem;
+  }
+
+  footer {
+    padding: 0.8rem;
+  }
+
+  .socials a {
+    width: clamp(1.8rem, 7vw, 2rem);
+    height: clamp(1.8rem, 7vw, 2rem);
+    font-size: clamp(0.7rem, 2.5vw, 0.9rem);
+  }
+}
+
+@media (max-width: 480px) {
+  header {
+    padding: 0.8rem;
+  }
+
+  h2 {
+    font-size: clamp(1rem, 4vw, 1.2rem);
+  }
+
+  .products {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 0.6rem;
+  }
+
+  .product img {
+    height: 6rem;
+  }
+
+  .product-name {
+    font-size: clamp(0.8rem, 3vw, 0.9rem);
+  }
+
+  .product-price {
+    font-size: clamp(0.7rem, 2.5vw, 0.8rem);
+  }
+
+  .add-btn {
+    padding: 0.3rem 0.5rem;
+    font-size: clamp(0.6rem, 2vw, 0.7rem);
+  }
+
+  .cart-icon {
+    font-size: clamp(1rem, 4vw, 1.2rem);
+  }
+
+  #searchInput {
+    font-size: clamp(0.8rem, 3vw, 0.9rem);
+  }
+
+  .socials {
+    gap: 0.3rem;
+  }
+
+  .socials a {
+    width: clamp(1.5rem, 6vw, 1.8rem);
+    height: clamp(1.5rem, 6vw, 1.8rem);
+    font-size: clamp(0.6rem, 2vw, 0.8rem);
+  }
+}
+  </style>
+</head>
+<body>
+   <a href="/cart/" class="cart-icon glow" id="cartIcon">🛒<span id="cartCount">0</span></a>
+
+  <header>
+    <h2>Beauty & Personal care</h2>
+    <h3>All-in-One Online Shop</h3>
+  </header>
+<div style="padding: 10px; text-align: center;">
+  <input type="text" id="searchInput" placeholder="&#x1F50D;Search beauty & personal care..." style="width: 90%; padding: 10px; font-size: 16px; border-radius: 12px; border: none; outline: none; box-shadow: 0 0 5px cyan;">
 </div>
 
-<script type="module">  
-    import {   
-  initializeApp   
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";  
-
-import {   
-  getFirestore,   
-  collection,       
-  getDocs,   
-  updateDoc,   
-  doc,   
-  onSnapshot,  
-  query,         // ✅ added  
-  orderBy        // ✅ added  
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";  
-
-    // Firebase config  
-    const firebaseConfig = {  
-      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",  
-      authDomain: "bixmax-6c24c.firebaseapp.com",  
-      projectId: "bixmax-6c24c",  
-      storageBucket: "bixmax-6c24c.appspot.com",  
-      messagingSenderId: "37740442541",  
-      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"  
-    };  
-
-    const app = initializeApp(firebaseConfig);  
-    const db = getFirestore(app);  
-    const ordersContainer = document.getElementById("ordersContainer");  
-    const searchInput = document.getElementById("searchInput");  
-    let lastOrderCount = 0;  
-
-    function displayOrders(snapshot) {  
-      if (snapshot.empty) {  
-        ordersContainer.innerHTML = "<p>No orders found.</p>";  
-        return;  
-      }  
-
-      const docsArray = [];  
-      snapshot.forEach(docSnap => docsArray.push(docSnap));  
-      docsArray.sort((a, b) => b.data().timestamp - a.data().timestamp); // Newest first  
-
-      // Check for new orders  
-      const currentOrderCount = docsArray.length;  
-      if (currentOrderCount > lastOrderCount && lastOrderCount > 0) {  
-        const newOrder = docsArray[0].data();  
-        showNotification(newOrder.id);  
-      }  
-      lastOrderCount = currentOrderCount;  
-
-      let html = "";  
-      docsArray.forEach(docSnap => {  
-        const order = docSnap.data();  
-        const docRef = docSnap.ref;  
-        const orderId = order.id;  
-        const status = order.status || "Pending";  
-        const isCompleted = status === "Completed";  
-        const buttonDisabled = isCompleted ? "disabled" : "";  
-        const buttonStyle = isCompleted ? "background:gray;cursor:not-allowed;" : "background:green;cursor:pointer;";  
-
-        html += `  
-          <div class="order" data-id="${docRef.path}">  
-            <p><strong>Order ID:</strong> ${orderId}</p>  
-            <p><strong>Name:</strong> ${order.name}</p>  
-            <p><strong>Email:</strong> ${order.email}</p>  
-            <p><strong>Phone:</strong> ${order.phone}</p>  
-            <p><strong>Address:</strong> ${order.address}</p>  
-            <p><strong>Payment:</strong> ${order.method}</p>  
-            <p><strong>Total:</strong> GH¢${parseFloat(order.total).toFixed(2)}</p>  
-            <p><strong>Items:</strong> ${order.items}</p>  
-<p><strong>Images:</strong></p>
-<div class="thumb-row">
-  ${order.cartItems?.map(item => `
-    <img src="${item.image}" alt="${item.name}" onclick="previewImage('${item.image}')" />
-  `).join("")}
+<div class="products" id="beautyContainer">
+  <div id="loadingMessage" style="text-align:center; width: 100%; padding: 50px 0; color: gray; font-size: 1.2rem;">
+    🔄 Loading products...
+  </div>
 </div>
-            <p><strong>Date:</strong> ${new Date(order.timestamp).toLocaleString()}</p>  
-            <p><strong>Status:</strong> <span class="status">${status}</span></p>  
-            <button class="completeBtn" style="${buttonStyle}" ${buttonDisabled}>Mark as Complete</button>  
-            <hr/>  
-          </div>  
-        `;  
-      });  
 
-      ordersContainer.innerHTML = html;  
+<p id="notFoundMessage" style="display:none; text-align:center; margin-top: 30%; margin-bottom: 50%; font-size:1.2rem; color:gray;">
+  😢 No matching products found.
+</p>  
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      onSnapshot
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-      // Attach complete buttons  
-      document.querySelectorAll(".completeBtn").forEach(btn => {  
-        btn.addEventListener("click", async () => {  
-          const orderDiv = btn.closest(".order");  
-          const docPath = orderDiv.dataset.id;  
-          const statusSpan = orderDiv.querySelector(".status");  
+    const firebaseConfig = {
+      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+      authDomain: "bixmax-6c24c.firebaseapp.com",
+      projectId: "bixmax-6c24c",
+      storageBucket: "bixmax-6c24c.appspot.com",
+      messagingSenderId: "37740442541",
+      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+    };
 
-          const ref = doc(db, docPath);  
-          await updateDoc(ref, { status: "Completed" });  
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const container = document.getElementById("beautyContainer");
 
-          btn.textContent = "Completed";  
-          btn.disabled = true;  
-          btn.style.background = "gray";  
-          btn.style.cursor = "not-allowed";  
-          statusSpan.textContent = "Completed";  
-        });  
-      });  
-    }  
+    function renderBeauty(items) {
+  document.getElementById("loadingMessage")?.remove();
+container.innerHTML = "";
+  items.forEach(data => {
+    const div = document.createElement("div");
+    div.className = "product";
+    div.innerHTML = `
+      <img src="${data.image}" alt="${data.name}" class="product-image" />
+      <div class="product-name">${data.name}</div>
+      <div class="product-price">GH₵${data.price.toFixed(2)}</div>
+      <button class="add-btn"
+        data-id="${data.id}"
+        data-name="${data.name}"
+        data-price="${data.price}"
+        data-image="${data.image}"
+        data-category="Beauty">
+        Add to Cart
+      </button>
+    `;
+    const img = div.querySelector(".product-image");
+    img.addEventListener("click", () => handleImageClick(data)); // ✅ proper handler
 
-    function showNotification(orderId) {  
-      const notifySound = document.getElementById("notifySound");  
-      notifySound.play().catch(err => console.error("Audio play error:", err));  
+    container.appendChild(div);
+  });
 
-      const alertBox = document.createElement("div");  
-      alertBox.textContent = `🆕 New Order: ${orderId}`;  
-      alertBox.style = `  
-        position: fixed; top: 20px; right: 20px;  
-        background: #00b894; color: white;  
-        padding: 14px 20px;  
-        border-radius: 12px;  
-        box-shadow: 0 0 10px rgba(0,0,0,0.2);  
-        z-index: 9999;  
-        font-size: 1rem;  
-      `;  
-      document.body.appendChild(alertBox);  
-      setTimeout(() => alertBox.remove(), 3000);  
+  document.querySelectorAll('.add-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const product = {
+        id: btn.dataset.id,
+        name: btn.dataset.name,
+        price: parseFloat(btn.dataset.price),
+        image: btn.dataset.image,
+        category: btn.dataset.category
+      };
+      addToCart(product);
+    });
+  });
+}
 
-      window.scrollTo({ top: 0, behavior: 'smooth' });  
-    }  
+  function handleImageClick(data) {
+  const product = {
+    id: data.id,
+    name: data.name,
+    price: parseFloat(data.price),
+    image: data.image,
+    category: "Beauty"
+  };
 
-    // Real-time listener for orders  
-    const ordersQuery = query(collection(db, "orders"), orderBy("timestamp", "desc"));  
+  addToCart(product);
 
-const unsubscribe = onSnapshot(ordersQuery, (snapshot) => {  
-  try {  
-    displayOrders(snapshot);  
-  } catch (err) {  
-    console.error("Error displaying orders:", err);  
-    ordersContainer.innerHTML = "<p>Error loading orders. Please try again.</p>";  
-  }  
-}, (err) => {  
-  console.error("Snapshot error:", err);  
-  ordersContainer.innerHTML = "<p>Error loading orders. Please try again.</p>";  
-
-const deliveredNotifications = JSON.parse(localStorage.getItem('deliveredNotifications') || '{}');  
-
-if (orderData.status === 'Delivered' && !deliveredNotifications[orderId]) {  
-  showDeliveryNotification(orderId);  
-  deliveredNotifications[orderId] = true;  
-  localStorage.setItem('deliveredNotifications', JSON.stringify(deliveredNotifications));  
-}  
-});  
-function showDeliveryNotification(orderId) {  
-  const container = document.getElementById("notificationsContainer"); // create this div in HTML  
-  const card = document.createElement("div");  
-  card.className = "notify-card";  
-  card.innerHTML = `  
-    <p><strong>Order ${orderId}</strong> has been <span style="color:green">delivered</span>.</p>  
-    <button onclick="markAsComplete('${orderId}', this)">Mark as Complete</button>  
-  `;  
-  container.appendChild(card);  
-}  
-async function markAsComplete(orderId, btn) {  
-  try {  
-    const orderRef = doc(db, "orders", orderId);  
-    await updateDoc(orderRef, { status: "Completed" });  
-
-    // Remove notification from DOM  
-    btn.parentElement.remove();  
-
-    // Remove from localStorage  
-    const deliveredNotifications = JSON.parse(localStorage.getItem('deliveredNotifications') || '{}');  
-    delete deliveredNotifications[orderId];  
-    localStorage.setItem('deliveredNotifications', JSON.stringify(deliveredNotifications));  
-  } catch (error) {  
-    alert("Error updating order: " + error);  
-  }  
+  // Optional: Redirect after short delay
+  setTimeout(() => {
+    window.location.href = "/cart/";
+  }, 300);
 }  
 
+    // Load from cache first
+    const cached = localStorage.getItem("Beauty");
+    if (cached) {
+      try {
+        const items = JSON.parse(cached);
+        renderBeauty(items);
+      } catch (e) {
+        console.error("Error parsing cached beauty and personal care:", e);
+      }
+    }
 
+    // Firestore real-time listener (only updates on data change)
+    onSnapshot(collection(db, "category", "Beauty", "items"), snapshot => {
+      const items = [];
+      snapshot.forEach(doc => {
+        items.push({ ...doc.data(), id: doc.id });
+      });
+      localStorage.setItem("Beauty", JSON.stringify(items));
+      renderBeauty(items);
+    });
 
+    function addToCart(product) {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const index = cart.findIndex(item => item.id === product.id);
+      if (index >= 0) {
+        cart[index].qty += 1;
+      } else {
+        cart.push({ ...product, qty: 1 });
+      }
+      localStorage.setItem("cart", JSON.stringify(cart));
+      updateCartCount();
+      animateCart();
+    }
 
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const count = cart.reduce((sum, item) => sum + item.qty, 0);
+      document.getElementById("cartCount").textContent = count;
+    }
 
+    function animateCart() {
+      const cartIcon = document.querySelector(".cart-icon");
+      cartIcon.classList.add("shake");
+      setTimeout(() => cartIcon.classList.remove("shake"), 500);
+    }
 
-    // Search functionality  
-    searchInput.addEventListener("input", () => {  
-      const term = searchInput.value.trim().toLowerCase();  
-      const orders = document.querySelectorAll(".order");  
-
-      orders.forEach(order => {  
-        const idText = order.querySelector("p:nth-of-type(1)")?.textContent?.toLowerCase() || "";  
-        const nameText = order.querySelector("p:nth-of-type(2)")?.textContent?.toLowerCase() || "";  
-        const emailText = order.querySelector("p:nth-of-type(3)")?.textContent?.toLowerCase() || "";  
-        const phoneText = order.querySelector("p:nth-of-type(4)")?.textContent?.toLowerCase() || "";  
-
-        const matches =  
-          idText.includes(term) ||  
-          nameText.includes(term) ||  
-          emailText.includes(term) ||  
-          phoneText.includes(term);  
-
-        order.style.display = matches ? "block" : "none";  
-      });  
-    });  
-  </script>  
+    updateCartCount();
+  </script>
 <script>
-function previewImage(url) {
-  const overlay = document.getElementById("previewOverlay");
-  const img = document.getElementById("previewImage");
-  img.src = url;
-  overlay.classList.add("active");
-}
-function closePreview() {
-  document.getElementById("previewOverlay").classList.remove("active");
-}
-</script>
+  const searchInput = document.getElementById("searchInput");
+  const container = document.getElementById("beautyContainer");
+  const notFoundMessage = document.getElementById("notFoundMessage");
 
-</body>  
+  // Debounce function to limit search execution
+  function debounce(func, delay) {
+    let timeoutId;
+    return function (...args) {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func.apply(this, args), delay);
+    };
+  }
+
+  const handleSearch = debounce(() => {
+  const query = searchInput.value.trim().toLowerCase();
+  const items = container.querySelectorAll(".product");
+
+  let visibleCount = 0;
+
+  items.forEach(item => {
+    const name = item.querySelector(".product-name").textContent.toLowerCase();
+
+    if (name.includes(query)) {
+      item.style.display = "block";
+      visibleCount++;
+    } else {
+      item.style.display = "none";
+    }
+  });
+
+  notFoundMessage.style.display = query && visibleCount === 0 ? "block" : "none";
+
+  if (!query) {
+    items.forEach(item => (item.style.display = "block"));
+  }
+}, 300);
+
+  searchInput.addEventListener("input", handleSearch);
+</script>
+</body>
+<footer style="
+  position: absolute;
+  background: #0f172a;
+  color: #fff;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.9rem;
+  box-shadow: 0 -2px 6px rgba(0,0,0,0.2);
+  border-top: 1px solid #1e293b;
+ margin-bottom: 0;
+">
+  <nav style="margin-bottom: 0.7rem;">
+    <a href="/BixMax home/" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Home</a>
+    <a href="/BixMax fashion/" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Fashion</a>
+    <a href="/BixMax grocery/" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Grocery</a>
+    <a href="/BixMax electronics/" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Electronics</a>
+    <a href="/about us/#support" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Contact</a>
+  </nav>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  .socials {
+    display: flex;
+    gap: 8px;
+    padding: 1rem;
+    justify-content: center;
+  }
+
+  .socials a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    color: white;
+    font-size: 15px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+  }
+
+  .socials a:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+  }
+
+  .facebook { background: #3b5998; }
+  .instagram { background: #e1306c; }
+  .tiktok { background: #000; }
+  .x { background: #1da1f2; }
+  .whatsapp { background: #00b489; }
+
+  /* Optional Tooltip */
+  .socials a::after {
+    content: attr(data-label);
+    position: absolute;
+    bottom: -30px;
+    background: #333;
+    color: #fff;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    opacity: 0;
+    transform: translateY(5px);
+    pointer-events: none;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .socials a:hover::after {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+
+<div class="socials">
+  <a href="https://www.facebook.com/share/19dfn17s9G/" class="facebook" class="facebook" data-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+  <a href="https://www.instagram.com/bixmax_store?igsh=d29xMTBlcTZ4N3I3" class="instagram" data-label="Instagram"><i class="fab fa-instagram"></i></a>
+  <a href="https://www.tiktok.com/@bixmaxgh?_t=ZM-8yce1U7b0kQ&_r=1" class="tiktok" data-label="TikTok"><i class="fab fa-tiktok"></i></a>
+  <a href="#" class="x" data-label="X (Twitter)"><i class="fab fa-x-twitter"></i></a>
+ <a href="https://wa.me/233536345825?text=Hello%20BixMAX%2C%20I%20need%20assistance" class="whatsapp" data-label="Whatsapp"><i class="fab fa-whatsapp"></i></a>
+</div>
+  <p style="color: #cbd5e1; font-size: 0.85rem;">
+    © 2025 BixMAX. All rights reserved.
+  </p>
+</footer>
 </html>
