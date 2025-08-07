@@ -296,8 +296,10 @@ border-radius: 10px;
       div.className = "product";
       div.innerHTML = `
         <img src="${data.image}" alt="${data.name}" class="product-image" />
+<div style="flex-grow: 1;"
         <div class="product-name">${data.name}</div>
         <div class="product-price">GH₵${data.price.toFixed(2)}</div>
+</div>
         <button class="add-btn"
           data-id="${data.id}"
           data-name="${data.name}"
