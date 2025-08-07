@@ -115,15 +115,6 @@
     .shake {
       animation: shake 0.4s ease;
     }
-    #beautyContainer {
-  min-height: 400px; /* Adjust based on your layout */
-}
-.products{
-  text-align: center;
-  padding: 50px;
-  font-size: 18px;
-  color: #888;
-}
   </style>
 </head>
 <body>
@@ -136,7 +127,7 @@
 <div style="padding: 10px; text-align: center;">
   <input type="text" id="searchInput" placeholder="&#x1F50D;Search beauty & personal care..." style="width: 90%; padding: 10px; font-size: 16px; border-radius: 12px; border: none; outline: none; box-shadow: 0 0 5px cyan;">
 </div>
-  <div class="products" id="beautyContainer">Loading...</div>
+  <div class="products" style="display:none; text-align:center; margin-top: 30%; margin-bottom: 50%; font-size:1.2rem; color:gray;" id="beautyContainer">Loading...</div>
 <p id="notFoundMessage" style="display:none; text-align:center; margin-top: 30%; margin-bottom: 50%; font-size:1.2rem; color:gray;">
   😢 No matching products found.
 </p>  
