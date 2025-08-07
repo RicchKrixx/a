@@ -182,7 +182,12 @@ opacity: 1;
 transform: translateX(0);
 }
 }
-
+@media (max-width: 600px) {
+  .hero img {
+    max-height: 60vh;
+    object-fit: cover;
+  }
+}
 
 .menu-overlay ul li a {
 color: white;
