@@ -272,7 +272,7 @@
 
     function renderBeauty(items) {
   document.getElementById("loadingMessage")?.remove();
-container.innerHTML = "";
+  container.innerHTML = "";
   items.forEach(data => {
     const div = document.createElement("div");
     div.className = "product";
@@ -280,20 +280,13 @@ container.innerHTML = "";
       <img src="${data.image}" alt="${data.name}" class="product-image" />
       <div class="product-name">${data.name}</div>
       <div class="product-price">GH₵${data.price.toFixed(2)}</div>
-      <button class="add-btn"
-        data-id="${data.id}"
-        data-name="${data.name}"
-        data-price="${data.price}"
-        data-image="${data.image}"
-        data-category="Beauty">
-        Add to Cart
-      </button>
     `;
     const img = div.querySelector(".product-image");
-    img.addEventListener("click", () => handleImageClick(data)); // ✅ proper handler
+    img.addEventListener("click", () => handleImageClick(data)); // ✅ image click opens modal
 
     container.appendChild(div);
   });
+}
 
   document.querySelectorAll('.add-btn').forEach(btn => {
     btn.addEventListener('click', () => {
