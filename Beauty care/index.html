@@ -119,11 +119,39 @@
   </style>
 </head>
 <body>
+   <a href="cart.html" class="cart-icon glow" id="cartIcon">🛒<span id="cartCount">0</span></a>
+<!--
   <header>
     <h2>Beauty & Personal care</h2>
     <h3>All-in-One Online Shop</h3>
-    <a href="cart.html" class="cart-icon glow" id="cartIcon">🛒<span id="cartCount">0</span></a>
   </header>
+-->
+<header style="
+  background: linear-gradient(to right, #00bcd4, #00796b);
+  color: white;
+  text-align: center;
+  padding: 30px 20px;
+  border-radius: 20px;
+  margin: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(15px);
+">
+  <h1 style="font-size: 2rem; margin-bottom: 10px;">Beauty & Personal Care</h1>
+  <p style="font-size: 1.1rem; font-weight: 500;">Your All-in-One Online Shop</p>
+  <a href="cart.html" class="cart-icon glow" id="cartIcon" style="position: absolute; top: 20px; right: 20px; text-decoration: none;">
+    🛒
+    <span id="cartCount" style="
+      background: red;
+      border-radius: 50%;
+      font-size: 13px;
+      padding: 3px 7px;
+      color: white;
+      position: absolute;
+      top: -8px;
+      right: -10px;
+    ">0</span>
+  </a>
+</header>
 <div style="padding: 10px; text-align: center;">
   <input type="text" id="searchInput" placeholder="&#x1F50D;Search beauty & personal care..." style="width: 90%; padding: 10px; font-size: 16px; border-radius: 12px; border: none; outline: none; box-shadow: 0 0 5px cyan;">
 </div>
