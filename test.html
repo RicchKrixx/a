@@ -156,13 +156,13 @@
 <p id="notFoundMessage" style="display:none; text-align:center; margin-top: 30%; margin-bottom: 50%; font-size:1.2rem; color:gray;">
   😢 No matching products found.
 </p>
-<div id="previewPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center;">
-  <div id="popupContent" style="background:white; border-radius:20px; padding:20px; max-width:90%; width:300px; text-align:center; position:relative;">
-    <span id="closePopup" style="position:absolute; top:10px; right:15px; font-size:20px; cursor:pointer;">&times;</span>
-    <img id="popupImage" src="" alt="" style="width:100%; border-radius:16px;" />
-    <h3 id="popupName" style="margin:10px 0;"></h3>
-    <p id="popupPrice" style="font-size:16px; font-weight:bold;"></p>
-    <button id="popupAddBtn" class="add-btn">Add to Cart</button>
+<div id="previewModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:1000;">
+  <div style="background:white; border-radius:12px; max-width:400px; padding:20px; text-align:center; position:relative;">
+    <span id="closeModal" style="position:absolute; top:10px; right:15px; font-size:20px; cursor:pointer;">&times;</span>
+    <img id="modalImage" src="" alt="" style="max-width:100%; border-radius:10px;" />
+    <h2 id="modalName" style="margin:10px 0;"></h2>
+    <p id="modalPrice" style="font-weight:bold; font-size:18px;"></p>
+    <button id="modalAddBtn" style="background:cyan; color:white; padding:10px 20px; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Add to Cart</button>
   </div>
 </div>
 <footer style="
@@ -233,6 +233,9 @@
     opacity: 1;
     transform: translateY(0);
   }
+#previewModal {
+  transition: opacity 0.3s ease;
+}
 </style>
 
 <div class="socials">
@@ -269,24 +272,29 @@
 
     function renderBeauty(items) {
   document.getElementById("loadingMessage")?.remove();
-  container.innerHTML = "";
-
+container.innerHTML = "";
   items.forEach(data => {
     const div = document.createElement("div");
     div.className = "product";
     div.innerHTML = `
-  <img src="${data.image}" alt="${data.name}" class="product-image" />
-  <div class="product-name">${data.name}</div>
-  <div class="product-price">GH₵${data.price.toFixed(2)}</div>
-  <button class="add-btn">Add to Cart</button>
-`;
-
+      <img src="${data.image}" alt="${data.name}" class="product-image" />
+      <div class="product-name">${data.name}</div>
+      <div class="product-price">GH₵${data.price.toFixed(2)}</div>
+      <button class="add-btn"
+        data-id="${data.id}"
+        data-name="${data.name}"
+        data-price="${data.price}"
+        data-image="${data.image}"
+        data-category="Beauty">
+        Add to Cart
+      </button>
+    `;
     const img = div.querySelector(".product-image");
-    img.addEventListener("click", () => openPopup(data));
+    img.addEventListener("click", () => handleImageClick(data)); // ✅ proper handler
 
     container.appendChild(div);
   });
-}
+
   document.querySelectorAll('.add-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const product = {
@@ -302,13 +310,19 @@
 }
 
   function handleImageClick(data) {
-  const product = {
-    id: data.id,
-    name: data.name,
-    price: parseFloat(data.price),
-    image: data.image,
-    category: "Beauty"
-  };
+  document.getElementById("modalImage").src = data.image;
+  document.getElementById("modalName").textContent = data.name;
+  document.getElementById("modalPrice").textContent = "GH₵" + parseFloat(data.price).toFixed(2);
+
+  // Store product temporarily for add to cart
+  document.getElementById("modalAddBtn").dataset.id = data.id;
+  document.getElementById("modalAddBtn").dataset.name = data.name;
+  document.getElementById("modalAddBtn").dataset.price = data.price;
+  document.getElementById("modalAddBtn").dataset.image = data.image;
+  document.getElementById("modalAddBtn").dataset.category = "Beauty";
+
+  document.getElementById("previewModal").style.display = "flex";
+}
 
   addToCart(product);
 
@@ -365,38 +379,24 @@
     }
 
     updateCartCount();
-// Popup logic
-function openPopup(product) {
-  document.getElementById("popupImage").src = product.image;
-  document.getElementById("popupName").textContent = product.name;
-  document.getElementById("popupPrice").textContent = "GH₵" + product.price.toFixed(2);
+// Close modal
+document.getElementById("closeModal").addEventListener("click", () => {
+  document.getElementById("previewModal").style.display = "none";
+});
 
-  const addBtn = document.getElementById("popupAddBtn");
-  addBtn.onclick = () => {
-    addToCart({
-      id: product.id,
-      name: product.name,
-      price: parseFloat(product.price),
-      image: product.image,
-      category: "Beauty"
-    });
-    document.getElementById("previewPopup").style.display = "none";
+// Add to cart from modal
+document.getElementById("modalAddBtn").addEventListener("click", (e) => {
+  const btn = e.target;
+  const product = {
+    id: btn.dataset.id,
+    name: btn.dataset.name,
+    price: parseFloat(btn.dataset.price),
+    image: btn.dataset.image,
+    category: btn.dataset.category
   };
-
-  document.getElementById("previewPopup").style.display = "flex";
-}
-
-// Close popup
-document.getElementById("closePopup").onclick = () => {
-  document.getElementById("previewPopup").style.display = "none";
-};
-
-// Close popup when clicking outside
-document.getElementById("previewPopup").onclick = (e) => {
-  if (e.target.id === "previewPopup") {
-    document.getElementById("previewPopup").style.display = "none";
-  }
-};
+  addToCart(product);
+  document.getElementById("previewModal").style.display = "none";
+});
   </script>
 <script>
   const searchInput = document.getElementById("searchInput");
