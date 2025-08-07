@@ -402,7 +402,35 @@ font-size: 16px;
                 text-align: center;
             }}
 
- 
+ /* Categories */
+.categories {
+    background: #efc  blur(25px);
+        width:100%;
+         max-width: 1100px;
+        padding: 5px;
+        border-radius: 30px;
+        border: solid 5px rgb(255, 255, 255, 0.1);
+        box-shadow: 0px 0px 30px 20px rgb(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        align-items:center;
+        color: black;
+}
+
+.category-grid {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    flex-wrap: wrap;
+    margin-top: 5px;
+}
+
+.category {
+    background-color: #eee;
+    padding: 15px 20px;
+    border-radius: 10px;
+    font-weight: bold;
+}
     </style>
 
 </head>
@@ -446,7 +474,23 @@ font-size: 16px;
     <h1>BixMAX</h1>
     <h3>All-in-One Online Shop</h3>
   </header>
-
+    <section class="categories">
+        <h3>Shop by Category</h3>
+        <div class="category-grid">
+ <a class="food-menu" href="/BixMax electronics/" style="text-decoration">
+            <div class="category">📱 Electronics</div></a>
+ <a class="food-menu" href="/BixMax fashion/" style="text-decoration">
+            <div class="category">Fashion</div></a>
+ <a class="food-menu" href="BixMax grocery/" style="text-decoration">
+            <div class="category">Groceries</div></a>
+ <a class="food-menu" href="BixMax home essentials/" style="text-decoration">
+            <div class="category">Home Essentials</div> </a>
+ <a class="food-menu" href="health/" style="text-decoration">
+            <div class="category">Health</div></a>
+ <a class="food-menu" href="beauty/" style="text-decoration">
+            <div class="category">Beauty & Personal care</div></a>
+        </div>
+    </section>
   <p id="flashDeal" class="flash-deal">🔥 Get 20% off on all sneakers!</p>
 
 <div class="product-container" id="productArea">
