@@ -1,344 +1,487 @@
-<!DOCTYPE html>  <html lang="en">  
-<head>  
-  <meta charset="UTF-8" />  
-  <title>BixMAX | All Orders</title>  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>  
-  <style>  
-    :root {  
-      font-size: 16px;  
-    }  
-    * {  
-      box-sizing: border-box;  
-      margin: 0;  
-      padding: 0;  
-    }  
-    body {  
-      font-family: 'Segoe UI', sans-serif;  
-      background: #f0f8ff;  
-      padding: 20px;  
-      color: #222;  
-    }  
-    h1 {  
-      text-align: center;  
-      margin-bottom: 20px;  
-      color: #0a4d7a;  
-      text-shadow: 0 0 2px #cce6ff;  
-    }  
-    #searchInput {  
-      display: block;  
-      margin: 0 auto 30px auto;  
-      padding: 14px 20px;  
-      font-size: 1rem;  
-      border-radius: 12px;  
-      width: 90%;  
-      max-width: 400px;  
-      border: 1px solid #ccc;  
-      box-shadow: 0 0 5px #b3e0ff;  
-      background: #fff;  
-    }  
-    .order {  
-      background: #ffffff;  
-      border-radius: 14px;  
-      padding: 18px 20px;  
-      margin: 15px auto;  
-      max-width: 720px;  
-      box-shadow: 0 4px 12px rgba(0,0,0,0.06);  
-      transition: all 0.3s ease;  
-      border-left: 6px solid #0a4d7a;  
-    }  
-    .order:hover {  
-      transform: translateY(-2px);  
-      box-shadow: 0 6px 16px rgba(0,0,0,0.1);  
-    }  
-    .order p {  
-      margin: 5px 0;  
-      font-size: 0.95rem;  
-      color: #444;  
-    }  
-    .order ul {  
-      margin-top: 10px;  
-      padding-left: 18px;  
-    }  
-    .order ul li {  
-      font-size: 0.95rem;  
-      color: #555;  
-      list-style-type: disc;  
-    }  
-    @media (max-width: 500px) {  
-      :root {  
-        font-size: 15px;  
-      }  
-      .order {  
-        padding: 16px 14px;  
-      }  
-    }  
-.notify-card {  
-  background: #fefefe;  
-  border-left: 4px solid green;  
-  padding: 10px 15px;  
-  margin: 10px;  
-  border-radius: 8px;  
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);  
-}  
-.notify-card button {  
-  margin-top: 6px;  
-  background: #007bff;  
-  color: white;  
-  padding: 5px 12px;  
-  border: none;  
-  border-radius: 5px;  
-  cursor: pointer;  
-}  
-.thumb-row {  
-  display: flex;  
-  gap: 8px;  
-  overflow-x: auto;  
-  margin-top: 8px;  
-  padding-bottom: 4px;  
-}  
-.thumb-row img {  
-  width: 50px;  
-  height: 50px;  
-  border-radius: 50%;  
-  object-fit: cover;  
-  cursor: pointer;  
-  box-shadow: 0 0 2px rgba(0,0,0,0.2);  
-  transition: transform 0.2s;  
-}  
-.thumb-row img:hover {  
-  transform: scale(1.1);  
-}  
-.preview-overlay {  
-  display: none;  
-  position: fixed;  
-  inset: 0;  
-  background: rgba(0,0,0,0.8);  
-  z-index: 9999;  
-  align-items: center;  
-  justify-content: center;  
-}  
-.preview-overlay img {  
-  max-width: 90%;  
-  max-height: 90%;  
-  border-radius: 14px;  
-  box-shadow: 0 0 15px #000;  
-}  
-.preview-overlay.active {  
-  display: flex;  
-}  
-  </style>  
-</head>  
-<body>  
-  <h1>📦 BixMAX Orders 📥</h1>  
-  <input type="text" id="searchInput" placeholder="Search Order ID..." />  
-<div id="notificationsContainer"></div>  
-  <div id="ordersContainer">Loading orders...</div>  
-  <audio id="notifySound" src="https://www.soundjay.com/buttons/beep-01a.mp3"></audio>  
-<div class="preview-overlay" id="previewOverlay" onclick="closePreview()">  
-  <img src="" id="previewImage" />  
-</div>  
-  <script type="module">  
-    import {   
-  initializeApp   
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";  import {
-getFirestore,
-collection,
-getDocs,
-updateDoc,
-doc,
-onSnapshot,
-query,         // ✅ added
-orderBy        // ✅ added
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+<!DOCTYPE html>  <html lang="en">    <head>    
+  <meta charset="UTF-8" />    
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>    
+  <title>Checkout</title>    
+  <style id="style1">    
+    html, body {    
+      height: 100%;    
+      overflow-x: hidden;    
+      font-family: Arial, sans-serif;    
+      align-content: center;    
+      padding: 10px;    
+      border-radius: 16px;    
+      box-shadow: 0 0 15px black;    
+      background: lightblue;    
+    }    
+    .card h1 {    
+      font-size: 32px;    
+      margin-bottom: 15px;    
+      font-weight: bold;    
+      color: #fff;    
+      text-shadow: 0 0 5px #fff;    
+    }    
+    .card span {    
+      font-size: 20px;    
+      font-weight: bold;    
+      color: #fff;    
+    }    
+    label {    
+      display: block;    
+      margin-top: 6px;    
+      font-weight: bold;    
+    }    
+    input::placeholder, textarea::placeholder {    
+      color: black;    
+      opacity: 0.5;    
+    }    
+  </style>    <style id="style2" disabled>    
+    html, body {    
+      height: 100%;    
+      overflow-x: hidden;    
+      font-family: Arial, sans-serif;    
+      align-content: center;    
+      background: #111928;    
+      padding: 10px;    
+      border-radius: 16px;    
+      box-shadow: 0 0 15px cyan;    
+    }    
+    .card h1 {    
+      font-size: 32px;    
+      margin-bottom: 15px;    
+      font-weight: bold;    
+      color: #00ffff;    
+      text-shadow: 0 0 5px #00ffff;    
+    }    
+    .card span {    
+      font-size: 20px;    
+      font-weight: bold;    
+      color: #00ffff;    
+      text-shadow: 0 0 5px #00ffff;    
+    }    
+    label {    
+      display: block;    
+      margin-top: 6px;    
+      font-weight: bold;    
+      color: white;    
+    }    
+    input::placeholder, textarea::placeholder {    
+      color: #eee;    
+      opacity: 0.6;    
+    }    
+  </style>    <style>    
+    * { margin: 0; padding: 0; box-sizing: border-box; }    
+    h1, h2 { text-align: center; margin-bottom: 18px; }    
+    input, textarea, select {    
+      width: 100%;    
+      padding: 12px;    
+      border-radius: 12px;    
+      border: none;    
+      background: rgba(255, 255, 255, .15);    
+      color: #fff;    
+      font-size: 16px;    
+    }    
+    .card button {    
+      width: 100%;    
+      padding: 16px;    
+      border: none;    
+      border-radius: 14px;    
+      font-size: 18px;    
+      font-weight: bold;    
+      cursor: pointer;    
+      background: blue;    
+      color: #fff;    
+    }    
+    #loader {    
+      position: fixed;    
+      inset: 0;    
+      display: none;    
+      align-items: center;    
+      justify-content: center;    
+      background: rgba(0, 0, 0, .6);    
+      z-index: 1000;    
+    }    
+    .spin {    
+      width: 60px;    
+      height: 60px;    
+      border: 7px solid #eee;    
+      border-top: 7px solid var(--blue);    
+      border-radius: 50%;    
+      animation: spin 1s linear infinite;    
+    }    
+    @keyframes spin {    
+      0% { transform: rotate(0); }    
+      100% { transform: rotate(360deg); }    
+    }    
+  </style>  </head>  <body>    
+<button onclick="switchStyle()" style="position:fixed;top:15px;right:15px;padding:0;border:none; background:none;font-size:24px;">🎨</button>  <div class="card">    
+  <h1>CHECKOUT</h1>    
+   <div class="delivery-section" style="padding: 10px; border: 1px solid #444; background: #0f172a; color: white; border-radius: 8px; margin-top: 15px;">  
+ <p><strong>Subtotal: </strong><span id="grandTotal">GH¢0.00</span> </p>      
+    <p><strong>Delivery Fee:</strong> <span id="deliveryFee">Calculating...</span></p>    
+<p><strong>Amount To Pay: </strong><span id="gTotal">Almost ready...</span> </p>   
+  </div>    <form id="checkoutForm">    
+    <div id="custInfo">    
+      <label>Full Name</label>    
+      <input id="custName" placeholder="John Doe" required>  <label>Email</label>    
+  <input id="custEmail" type="email" placeholder="john@example.com" required>    <label>Phone Number</label>
+<input id="custPhone" type="tel" placeholder="055 123 4567" required>
 
-// Firebase config  
-const firebaseConfig = {  
-  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",  
-  authDomain: "bixmax-6c24c.firebaseapp.com",  
-  projectId: "bixmax-6c24c",  
-  storageBucket: "bixmax-6c24c.appspot.com",  
-  messagingSenderId: "37740442541",  
-  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"  
-};  
+<label>Delivery Address</label>
 
-const app = initializeApp(firebaseConfig);  
-const db = getFirestore(app);  
-const ordersContainer = document.getElementById("ordersContainer");  
-const searchInput = document.getElementById("searchInput");  
-let lastOrderCount = 0;  
+  <textarea id="custAddr" rows="3" placeholder="Street • City" required></textarea>      <button onclick="getLocation()" style="margin-top:10px;margin-bottom:14px;padding:10px;font-size:14px;border:none;border-radius:10px;background:darkcyan;color:white;" type="button">    
+    📍 Use My Location    
+  </button>    <label>Payment Method</label>
+<select id="payMethod">
+<option value="payment on delivery">Pay on Delivery</option>
+<option value="Paid">Pay Online</option>
+</select>
 
-function displayOrders(snapshot) {  
-  if (snapshot.empty) {  
-    ordersContainer.innerHTML = "<p>No orders found.</p>";  
-    return;  
-  }  
+<br><br>
+<button id="actionBtn" type="button">Place Order</button>
 
-  const docsArray = [];  
-  snapshot.forEach(docSnap => docsArray.push(docSnap));  
-  docsArray.sort((a, b) => b.data().timestamp - a.data().timestamp); // Newest first  
+</div>    </form>    
+</div>  <div id="loader">    
+  <div style="text-align:center;color:#fff">    
+    <div class="spin"></div>    
+  </div>    
+</div>  <script src="https://js.paystack.co/v1/inline.js"></script>  <script type="module">    
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";    
+  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";    
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";    const firebaseConfig = {
+apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+authDomain: "bixmax-6c24c.firebaseapp.com",
+projectId: "bixmax-6c24c",
+storageBucket: "bixmax-6c24c.appspot.com",
+messagingSenderId: "37740442541",
+appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+};
 
-  // Check for new orders  
-  const currentOrderCount = docsArray.length;  
-  if (currentOrderCount > lastOrderCount && lastOrderCount > 0) {  
-    const newOrder = docsArray[0].data();  
-    showNotification(newOrder.id);  
-  }  
-  lastOrderCount = currentOrderCount;  
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
 
-  let html = "";  
-  docsArray.forEach(docSnap => {  
-    const order = docSnap.data();  
-    const docRef = docSnap.ref;  
-    const orderId = order.id;  
-    const status = order.status || "Pending";  
-    const isCompleted = status === "Completed";  
-    const buttonDisabled = isCompleted ? "disabled" : "";  
-    const buttonStyle = isCompleted ? "background:gray;cursor:not-allowed;" : "background:green;cursor:pointer;";  
-
-    html += `  
-      <div class="order" data-id="${docRef.path}">  
-        <p><strong>Order ID:</strong> ${orderId}</p>  
-        <p><strong>Name:</strong> ${order.name}</p>  
-        <p><strong>Email:</strong> ${order.email}</p>  
-        <p><strong>Phone:</strong> ${order.phone}</p>  
-        <p><strong>Address:</strong> ${order.address}</p>  
-        <p><strong>Payment:</strong> ${order.method}</p>  
-        <p><strong>Total:</strong> GH¢${parseFloat(order.total).toFixed(2)}</p>
-
-<p><strong>Items:</strong> ${order.items}</p>  
-       <p><strong>Images:</strong></p>  
-<div class="thumb-row">  
-  ${order.cartItems?.map(item => `  
-    <img src="${item.image}" alt="${item.name}" onclick="previewImage('${item.image}')" />  
-  `).join("")}  
-</div>  
-            <p><strong>Date:</strong> ${new Date(order.timestamp).toLocaleString()}</p>  
-            <p><strong>Status:</strong> <span class="status">${status}</span></p>  
-            <button class="completeBtn" style="${buttonStyle}" ${buttonDisabled}>Mark as Complete</button>  
-            <hr/>  
-          </div>  
-        `;  
-      });  ordersContainer.innerHTML = html;  
-
-  // Attach complete buttons  
-  document.querySelectorAll(".completeBtn").forEach(btn => {  
-    btn.addEventListener("click", async () => {  
-      const orderDiv = btn.closest(".order");  
-      const docPath = orderDiv.dataset.id;  
-      const statusSpan = orderDiv.querySelector(".status");  
-
-      const ref = doc(db, docPath);  
-      await updateDoc(ref, { status: "Completed" });  
-
-      btn.textContent = "Completed";  
-      btn.disabled = true;  
-      btn.style.background = "gray";  
-      btn.style.cursor = "not-allowed";  
-      statusSpan.textContent = "Completed";  
-    });  
-  });  
-}  
-
-function showNotification(orderId) {  
-  const notifySound = document.getElementById("notifySound");  
-  notifySound.play().catch(err => console.error("Audio play error:", err));  
-
-  const alertBox = document.createElement("div");  
-  alertBox.textContent = `🆕 New Order: ${orderId}`;  
-  alertBox.style = `  
-    position: fixed; top: 20px; right: 20px;  
-    background: #00b894; color: white;  
-    padding: 14px 20px;  
-    border-radius: 12px;  
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);  
-    z-index: 9999;  
-    font-size: 1rem;  
-  `;  
-  document.body.appendChild(alertBox);  
-  setTimeout(() => alertBox.remove(), 3000);  
-
-  window.scrollTo({ top: 0, behavior: 'smooth' });  
-}  
-
-// Real-time listener for orders  
-const ordersQuery = query(collection(db, "orders"), orderBy("timestamp", "desc"));
-
-const unsubscribe = onSnapshot(ordersQuery, (snapshot) => {
-try {
-displayOrders(snapshot);
-} catch (err) {
-console.error("Error displaying orders:", err);
-ordersContainer.innerHTML = "<p>Error loading orders. Please try again.</p>";
-}
-}, (err) => {
-console.error("Snapshot error:", err);
-ordersContainer.innerHTML = "<p>Error loading orders. Please try again.</p>";
-
-const deliveredNotifications = JSON.parse(localStorage.getItem('deliveredNotifications') || '{}');
-
-if (orderData.status === 'Delivered' && !deliveredNotifications[orderId]) {
-showDeliveryNotification(orderId);
-deliveredNotifications[orderId] = true;
-localStorage.setItem('deliveredNotifications', JSON.stringify(deliveredNotifications));
+// Auto-fill signed-in user email
+onAuthStateChanged(auth, (user) => {
+if (user) {
+document.getElementById("custEmail").value = user.email;
 }
 });
-function showDeliveryNotification(orderId) {
-const container = document.getElementById("notificationsContainer"); // create this div in HTML
-const card = document.createElement("div");
-card.className = "notify-card";
-card.innerHTML =  ' <p><strong>Order ${orderId}</strong> has been <span style="color:green">delivered</span>.</p>   <button onclick="markAsComplete('${orderId}', this)">Mark as Complete</button> ' ;
-container.appendChild(card);
+
+const payMethod = document.getElementById("payMethod");
+const actionBtn = document.getElementById("actionBtn");
+
+function showLoader(show) {
+document.getElementById("loader").style.display = show ? "flex" : "none";
 }
-async function markAsComplete(orderId, btn) {
+
+function generateOrderId() {
+return "BX" + Date.now().toString(36).toUpperCase();
+}
+
+function getOrderDetails() {
+const name = document.getElementById("custName").value.trim();
+const email = document.getElementById("custEmail").value.trim();
+const phone = document.getElementById("custPhone").value.trim();
+const address = document.getElementById("custAddr").value.trim();
+const paymentMethod = payMethod.value;
+const grandTotal = parseFloat(localStorage.getItem("grandTotal") || "0");
+const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
+
+return { name, email, phone, address, paymentMethod, grandTotal, cartItems };
+
+}
+
+function buildItemsString(cartItems) {
+return cartItems.map(i => {
+const sizeText = i.size ?  (Size: ${i.size}) : "";
+return ${i.name}${sizeText} × ${i.qty};
+}).join(", ");
+}
+
+async function sendOrderToFirebase(orderId, data) {
 try {
 const orderRef = doc(db, "orders", orderId);
-await updateDoc(orderRef, { status: "Completed" });
+await setDoc(orderRef, {
+id: orderId,
+...data,
+timestamp: new Date().toISOString()
+});
+localStorage.setItem("latestOrderId", orderId);
+console.log("✅ Order saved:", orderId);
 
-// Remove notification from DOM  
-btn.parentElement.remove();  
-
-// Remove from localStorage  
-const deliveredNotifications = JSON.parse(localStorage.getItem('deliveredNotifications') || '{}');  
-delete deliveredNotifications[orderId];  
-localStorage.setItem('deliveredNotifications', JSON.stringify(deliveredNotifications));
-
-} catch (error) {
-alert("Error updating order: " + error);
+if ('Notification' in window && Notification.permission === 'granted') {    
+    navigator.serviceWorker.ready.then(function(registration) {    
+      registration.showNotification("🛍️ Order Placed!", {    
+        body: "Thank you for shopping with BixMAX.",    
+        icon: "https://bixmax.store/logo.png"    
+      });    
+      setTimeout(() => {    
+        window.location.href = "/thankyou/?orderId=" + orderId;    
+      }, 1000);    
+    });    
+  } else {    
+    window.location.href = "/thankyou/?orderId=" + orderId;    
+  }    
+} catch (error) {    
+  console.error("❌ Error saving order:", error);    
+  showLoader(false);    
+  alert("Failed to save order. Please try again.");    
 }
+
 }
 
-// Search functionality  
-searchInput.addEventListener("input", () => {  
-  const term = searchInput.value.trim().toLowerCase();  
-  const orders = document.querySelectorAll(".order");  
-
-  orders.forEach(order => {  
-    const idText = order.querySelector("p:nth-of-type(1)")?.textContent?.toLowerCase() || "";  
-    const nameText = order.querySelector("p:nth-of-type(2)")?.textContent?.toLowerCase() || "";  
-    const emailText = order.querySelector("p:nth-of-type(3)")?.textContent?.toLowerCase() || "";  
-    const phoneText = order.querySelector("p:nth-of-type(4)")?.textContent?.toLowerCase() || "";  
-
-    const matches =  
-      idText.includes(term) ||  
-      nameText.includes(term) ||  
-      emailText.includes(term) ||  
-      phoneText.includes(term);  
-
-    order.style.display = matches ? "block" : "none";  
-  });  
+payMethod.addEventListener("change", () => {
+const selected = payMethod.value;
+onAuthStateChanged(auth, (user) => {
+if (!user && selected === "payment on delivery") {
+alert("⚠️ Only signed-in users can use 'Pay on Delivery'. Switching to 'Paid'.");
+payMethod.value = "Paid";
+actionBtn.textContent = "Pay Now";
+} else {
+actionBtn.textContent = selected === "Paid" ? "Pay Now" : "Place Order";
+}
+});
 });
 
-  </script>  
-<script>  
-function previewImage(url) {  
-  const overlay = document.getElementById("previewOverlay");  
-  const img = document.getElementById("previewImage");  
-  img.src = url;  
-  overlay.classList.add("active");  
+actionBtn.addEventListener("click", async (e) => {
+e.preventDefault();
+showLoader(true);
+
+const { name, email, phone, address, paymentMethod, grandTotal, cartItems } = getOrderDetails();    
+
+if (!(name && email && phone && address)) {    
+  showLoader(false);    
+  alert("Please fill in all customer details.");    
+  return;    
+}    
+
+if (grandTotal <= 0 || cartItems.length === 0) {    
+  showLoader(false);    
+  alert("Cart is empty or total is 0.");    
+  return;    
+}    
+
+const orderId = generateOrderId();    
+const itemsString = buildItemsString(cartItems);    
+const orderData = { name, email, phone, address, method: paymentMethod, total: grandTotal, items: itemsString, cartItems };    
+
+onAuthStateChanged(auth, (user) => {    
+  if (!user && paymentMethod === "payment on delivery") {    
+    showLoader(false);    
+    alert("⚠️ Guests cannot use Pay on Delivery. Please sign in.");    
+    return;    
+  }    
+
+  if (paymentMethod === "Paid") {    
+    PaystackPop.setup({    
+      key: 'pk_live_55fc4deb5da6100b52f981f9f754dc0249e7752f',    
+      email: email,    
+      amount: gTotal * 100,    
+      currency: "GHS",    
+      ref: orderId,    
+      callback: function (response) {    
+        orderData.method = "Paid";    
+        sendOrderToFirebase(orderId, orderData);    
+      },    
+      onClose: function () {    
+        showLoader(false);    
+        alert("❌ Payment cancelled.");    
+      }    
+    }).openIframe();    
+  } else {    
+    sendOrderToFirebase(orderId, orderData);    
+  }    
+});
+
+});
+/*
+actionBtn.addEventListener("click", async (e) => {
+e.preventDefault();
+
+const { paymentMethod } = getOrderDetails();
+
+// ⛔ Show "Coming Soon" only for Pay on Delivery
+if (paymentMethod === "payment on delivery") {
+alert("🚧 Coming Soon...");
+return;
+}
+
+// ✅ Continue with full logic for Pay Online
+showLoader(true);
+
+const { name, email, phone, address, grandTotal, cartItems } = getOrderDetails();
+
+if (!(name && email && phone && address)) {
+showLoader(false);
+alert("Please fill in all customer details.");
+return;
+}
+
+if (grandTotal <= 0 || cartItems.length === 0) {
+showLoader(false);
+alert("Cart is empty or total is 0.");
+return;
+}
+
+const orderId = generateOrderId();
+const itemsString = buildItemsString(cartItems);
+const orderData = { name, email, phone, address, method: paymentMethod, total: grandTotal, items: itemsString, cartItems };
+
+onAuthStateChanged(auth, (user) => {
+if (!user && paymentMethod === "payment on delivery") {
+showLoader(false);
+alert("⚠️ Guests cannot use Pay on Delivery. Please sign in.");
+return;
+}
+
+PaystackPop.setup({  
+  key: 'pk_live_55fc4deb5da6100b52f981f9f754dc0249e7752f',  
+  email: email,  
+  amount: gTotal * 100,  
+  currency: "GHS",  
+  ref: orderId,  
+  callback: function (response) {  
+    orderData.method = "Paid";  
+    sendOrderToFirebase(orderId, orderData);  
+  },  
+  onClose: function () {  
+    showLoader(false);  
+    alert("❌ Payment cancelled.");  
+  }  
+}).openIframe();
+
+});
+});
+*/
+</script>
+
+  <script>    
+  function getLocation() {    
+    if (!navigator.geolocation) {    
+      alert("Geolocation not supported.");    
+      return;    
+    }    
+    navigator.geolocation.getCurrentPosition(    
+      (pos) => {    
+        const lat = pos.coords.latitude.toFixed(6);    
+        const lng = pos.coords.longitude.toFixed(6);    
+        const link = `https://www.google.com/maps?q=${lat},${lng}`;    
+        document.getElementById("custAddr").value = link;    
+      },    
+      (err) => {    
+        alert("Unable to retrieve your location.");    
+        console.error(err);    
+      },    
+      {    
+        enableHighAccuracy: true,    
+        timeout: 10000,    
+        maximumAge: 0    
+      }    
+    );    
+  }    
+</script>    <script>    
+  const saved = localStorage.getItem("grandTotal") || "0";    
+  const total = parseFloat(saved).toFixed(2);    
+  document.getElementById("grandTotal").textContent = "GH¢" + total;    
+  
+</script>  <script>   
+let gTotal = 0;  
+  
+function updateGTotalWithFee() {  
+  const feeText = document.getElementById("deliveryFee").textContent;  
+  const feeMatch = feeText.match(/[\d.]+/);  
+  const fee = feeMatch ? parseFloat(feeMatch[0]) : 0;  
+  
+  if (!isNaN(total) && !isNaN(fee)) {  
+    gTotal = parseFloat(total) + fee;  
+    document.getElementById("gTotal").textContent = "GH¢" + gTotal.toFixed(2);  
+  } else {  
+    document.getElementById("gTotal").textContent = "Almost ready...";  
+  }  
 }  
-function closePreview() {  
-  document.getElementById("previewOverlay").classList.remove("active");  
-}  
-</script>  
-</body>  
+  
+// Listen for delivery fee changes  
+const observer = new MutationObserver(updateGTotalWithFee);  
+const targetNode = document.getElementById("deliveryFee");  
+observer.observe(targetNode, { childList: true });  
+  
+// Run once initially  
+updateGTotalWithFee();  
+</script>  <script>    
+  function switchStyle() {    
+    const style2 = document.getElementById("style2");    
+    const style1 = document.getElementById("style1");    
+  
+    if (style2.disabled) {    
+      style2.disabled = false;    
+      style1.disabled = true;    
+    } else {    
+      style2.disabled = true;    
+      style1.disabled = false;    
+    }    
+  }    
+</script>  <script>    const storeLat = 5.647749;
+const storeLon = -0.083236;
+
+function toRad(value) {
+return value * Math.PI / 180;
+}
+
+function calculateDistance(lat1, lon1, lat2, lon2) {
+const R = 6371;
+const dLat = toRad(lat2 - lat1);
+const dLon = toRad(lon2 - lon1);
+const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+return R * c;
+}
+
+function calculateDeliveryFee(distanceKm) {
+const baseFee = 5;
+const extraRate = 1;
+return distanceKm <= 5 ? baseFee : baseFee + (distanceKm - 5) * extraRate;
+}
+
+function displayDeliveryFee() {
+const feeLabel = document.getElementById("deliveryFee");
+if (!navigator.geolocation) {
+feeLabel.textContent = "Location not supported";
+return;
+}
+
+navigator.geolocation.getCurrentPosition(position => {    
+  const userLat = position.coords.latitude;    
+  const userLon = position.coords.longitude;    
+  const distance = calculateDistance(storeLat, storeLon, userLat, userLon);    
+  const fee = calculateDeliveryFee(distance);    
+  feeLabel.textContent = `GH₵${fee.toFixed(2)}`;    
+}, error => {    
+  feeLabel.textContent = "Location access denied";    
+});
+
+}
+
+window.addEventListener("DOMContentLoaded", displayDeliveryFee);
+</script>  <script>
+if ('serviceWorker' in navigator) {
+navigator.serviceWorker.register('/service-worker.js').then(function(reg) {
+console.log('✅ Service Worker registered.', reg);
+return reg.pushManager.getSubscription().then(async function(sub) {
+if (!sub) {
+const permission = await Notification.requestPermission();
+if (permission === 'granted') {
+console.log("✅ Notification permission granted.");
+} else {
+console.warn("❌ Notification permission denied.");
+}
+}
+});
+}).catch(function(err) {
+console.error('❌ Service Worker registration failed:', err);
+});
+} else {
+console.warn("⚠️ Service workers are not supported in this browser.");
+}
+</script>  </body>
+
 </html>
