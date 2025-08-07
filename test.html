@@ -275,10 +275,11 @@
     const div = document.createElement("div");
     div.className = "product";
     div.innerHTML = `
-      <img src="${data.image}" alt="${data.name}" class="product-image" />
-      <div class="product-name">${data.name}</div>
-      <div class="product-price">GH₵${data.price.toFixed(2)}</div>
-    `;
+  <img src="${data.image}" alt="${data.name}" class="product-image" />
+  <div class="product-name">${data.name}</div>
+  <div class="product-price">GH₵${data.price.toFixed(2)}</div>
+  <button class="add-btn">Add to Cart</button>
+`;
 
     const img = div.querySelector(".product-image");
     img.addEventListener("click", () => openPopup(data));
