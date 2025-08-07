@@ -116,72 +116,7 @@
     .shake {
       animation: shake 0.4s ease;
     }
-/* Responsive typography */
-h2 {
-  font-size: 1.8rem;
-  text-align: center;
-}
 
-h3 {
-  font-size: 1.1rem;
-  text-align: center;
-}
-
-/* Adjust header padding on smaller screens */
-@media (max-width: 600px) {
-  header {
-    padding: 16px;
-  }
-  .product img {
-    height: 130px;
-  }
-  .product-name {
-    font-size: 16px;
-  }
-  .product-price {
-    font-size: 14px;
-  }
-  .add-btn {
-    font-size: 14px;
-    padding: 6px 10px;
-  }
-  .cart-icon {
-    font-size: 28px;
-    top: 20px;
-    right: 12px;
-  }
-  #searchInput {
-    font-size: 14px;
-    padding: 8px;
-  }
-}
-
-/* Ensure product cards adjust spacing for tablets/desktops */
-@media (min-width: 768px) {
-  .products {
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    padding: 24px;
-    gap: 20px;
-  }
-}
-
-/* Prevent footer overlap on long pages */
-body {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-footer {
-  margin-top: auto;
-  position: relative; /* changed from absolute to prevent overlap on small screens */
-}
-
-/* Optional: Add subtle hover scale on product cards */
-.product:hover {
-  transform: scale(1.03);
-  transition: transform 0.3s ease;
-}
   </style>
 </head>
 <body>
