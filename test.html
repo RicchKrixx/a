@@ -1,262 +1,247 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>BixMAX | Beauty & Personal care</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BixMAX — Track Order</title>
+
+  <!-- Firebase SDK (compat, easy to use in single-file pages) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    :root{
+      --bg: #0f1724;          /* deep background (dark) */
+      --card: #0b1220;
+      --accent: #59c5ff;      /* light cyan */
+      --accent-2: #9be7ff;    /* lighter cyan */
+      --muted: #9aa4b2;
+      --glass: rgba(255,255,255,0.03);
+      --radius: 16px;
+      --shadow: 0 6px 18px rgba(2,6,23,0.6);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     }
-    body {
-      font-family: Arial, sans-serif;
-      background: lightblue;
+    html,body{ height:100%; margin:0; background: linear-gradient(180deg,#07101b 0%, #0a1624 100%); color:#e6eef6; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+    .container{ max-width:980px; margin:28px auto; padding:22px; }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:18px;
+      border: 1px solid rgba(255,255,255,0.03);
     }
-    header {
-      width: 100%;
-      padding: 24px;
-      border-radius: 16px;
-      backdrop-filter: blur(25px);
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      font-weight: bold;
-      background-size: cover;
-      margin-bottom: 10px;
-    }
-    h3 {
-      color: black;
-    }
-    .cart-icon {
-      position: fixed;
-      font-size: 35px;
-      text-decoration: none;
-      color: white;
-      right: 17px;
-      top: 50px;
-      z-index: 999;
-    }
-    #cartCount {
-      position: absolute;
-      top: -8px;
-      right: -12px;
-      background: red;
-      color: white;
-      font-size: 14px;
-      font-weight: bold;
-      border-radius: 50%;
-      padding: 2px 6px;
-    }
-    .products {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 16px;
-      padding: 16px;
-    }
-    .product {
-      padding: 5px;
-      border-radius: 35px;
-      text-align: center;
-      background: darkcyan;
-      color: white;
-      font-weight: bold;
-    }
-    .product img {
-      width: 100%;
-      height: 160px;
-      object-fit: cover;
-      border-radius: 30px;
-    }
-    .product-name {
-      font-size: 18px;
-      margin-top: 0;
-      margin-bottom: 5px;
-      color: black;
-    }
-    .product-price {
-      font-size: 15px;
-    }
-    .add-btn {
-      background: cyan;
-      color: white;
-      padding: 8px 12px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      margin-top: 5px;
-      font-weight: bold;
-    }
-    .add-btn:hover {
-      background: #008b8b;
-    }
-    .glow {
-      animation: brightGlow 1.5s infinite ease-in-out;
-      color: cyan;
-      text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
-    }
-    @keyframes brightGlow {
-      0%, 100% {
-        text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
-      }
-      50% {
-        text-shadow: 0 0 15px #0ff, 0 0 25px #0ff, 0 0 35px #0ff;
-      }
-    }
-    @keyframes shake {
-      0% { transform: translateX(0); }
-      20% { transform: translateX(-4px); }
-      40% { transform: translateX(4px); }
-      60% { transform: translateX(-4px); }
-      80% { transform: translateX(4px); }
-      100% { transform: translateX(0); }
-    }
-    .shake {
-      animation: shake 0.4s ease;
-    }
-@media (max-width: 480px) {
-  body {
-    font-size: 14px;
-  }
 
-  .product-name {
-    font-size: 14px;
-  }
+    header.app-header{ display:flex; gap:16px; align-items:center; margin-bottom:18px; }
+    .brand { display:flex; gap:12px; align-items:center; }
+    .logo {
+      width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+      background: linear-gradient(145deg,var(--accent), var(--accent-2));
+      font-weight:700; color:#05202b; font-size:18px;
+      box-shadow: 0 6px 20px rgba(17,140,190,0.12);
+    }
+    h1 { font-size:20px; margin:0; letter-spacing: -0.2px; }
+    p.lead { margin:0; color:var(--muted); font-size:13px; }
 
-  .product-price {
-    font-size: 12px;
-  }
+    .search-row { display:flex; gap:12px; margin-top:14px; }
+    input#orderId {
+      flex:1; padding:12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,0.04); background:var(--card);
+      color:inherit; outline:none; font-size:15px;
+      box-shadow: inset 0 -6px 12px rgba(0,0,0,0.35);
+    }
+    button#trackBtn {
+      padding:12px 16px; border-radius:12px; border:none; cursor:pointer; font-weight:600;
+      background: linear-gradient(180deg,var(--accent), #39b3e6); color:#021722;
+      box-shadow: 0 8px 20px rgba(7,128,171,0.14);
+    }
 
-  .add-btn {
-    padding: 6px 10px;
-    font-size: 13px;
-  }
-}
+    .main-body{ display:grid; grid-template-columns: 1fr 360px; gap:18px; margin-top:18px; }
+    .left, .right { min-height:220px; }
+
+    /* Tracker */
+    .tracker {
+      background: var(--glass);
+      padding:18px; border-radius:12px; border:1px solid rgba(255,255,255,0.02);
+    }
+    .steps {
+      display:flex; gap:6px; align-items:center; justify-content:space-between; position:relative;
+      margin-bottom:14px;
+    }
+    .step {
+      display:flex; flex-direction:column; align-items:center; gap:8px; width:23%;
+      transition: transform .4s cubic-bezier(.2,.9,.25,1), opacity .35s;
+    }
+    .step .dot {
+      width:46px; height:46px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+      background: rgba(255,255,255,0.02); color:var(--muted); font-weight:700; font-size:13px;
+      border: 2px solid rgba(255,255,255,0.03);
+      transition: transform .4s, background .35s, color .35s, box-shadow .35s, border-color .35s;
+    }
+    .step .label { font-size:13px; color:var(--muted); text-align:center; }
+    .progress-line {
+      position:absolute; left:3%; right:3%; top:26px; height:6px; background: rgba(255,255,255,0.03); border-radius:6px;
+      overflow:hidden;
+    }
+    .progress-fill {
+      height:100%; width:0%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width .8s cubic-bezier(.2,.9,.25,1);
+      border-radius:6px;
+    }
+
+    .step.active .dot {
+      transform: scale(1.08);
+      background: linear-gradient(135deg,var(--accent), var(--accent-2));
+      color:#021722; border-color: rgba(255,255,255,0.06);
+      box-shadow: 0 10px 24px rgba(19,156,200,0.16);
+    }
+    .step.done .dot { transform: scale(0.95); filter: saturate(1.1); }
+
+    /* Order info */
+    .info { margin-top:8px; display:flex; gap:12px; align-items:center; justify-content:space-between; }
+    .meta { color:var(--muted); font-size:13px; }
+    .items { margin-top:12px; border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,0.03); background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005)); }
+    table { width:100%; border-collapse:collapse; font-size:13px; color:#dfeefb; }
+    th, td { padding:10px 12px; text-align:left; border-bottom:1px solid rgba(255,255,255,0.02); }
+    th { color:var(--muted); font-weight:600; font-size:12px; }
+    tfoot td { font-weight:700; }
+
+    /* Right column */
+    .summary { padding:14px; border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005)); }
+    .small { font-size:13px; color:var(--muted); }
+
+    /* Status badges */
+    .badge { display:inline-block; padding:8px 10px; border-radius:10px; font-weight:700; font-size:12px; color:#022; background:linear-gradient(90deg,var(--accent),var(--accent-2)); }
+
+    /* Helpers and messages */
+    .msg { margin-top:12px; padding:12px; border-radius:10px; background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.02); color:var(--muted); }
+    .error { color:#ffdddd; background: linear-gradient(180deg, rgba(255,30,30,0.04), rgba(255,30,30,0.02)); border:1px solid rgba(255,30,30,0.08); }
+
+    .loading { display:inline-block; width:18px; height:18px; border-radius:50%; border:3px solid rgba(255,255,255,0.06); border-top-color:var(--accent); animation:spin 1s linear infinite; vertical-align:middle; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    @media (max-width:880px){
+      .main-body{ grid-template-columns: 1fr; }
+      .right { order:2; }
+      .left { order:1; }
+      .steps { gap:8px; }
+      .step .dot { width:40px; height:40px; }
+    }
   </style>
 </head>
 <body>
-   <a href="/cart/" class="cart-icon glow" id="cartIcon">🛒<span id="cartCount">0</span></a>
+  <div class="container">
+    <div class="card">
+      <header class="app-header">
+        <div class="brand">
+          <div class="logo">B</div>
+          <div>
+            <h1>BixMAX — Track Order</h1>
+            <p class="lead">Enter your Order ID to see live status & details</p>
+          </div>
+        </div>
+      </header>
 
-  <header>
-    <h2>Beauty & Personal care</h2>
-    <h3>All-in-One Online Shop</h3>
-  </header>
-<div style="padding: 10px; text-align: center;">
-  <input type="text" id="searchInput" placeholder="&#x1F50D;Search beauty & personal care..." style="width: 90%; padding: 10px; font-size: 16px; border-radius: 12px; border: none; outline: none; box-shadow: 0 0 5px cyan;">
-</div>
+      <div class="search-row">
+        <input id="orderId" placeholder="Enter Order ID (e.g., ORD-12345)" />
+        <button id="trackBtn">Track Order</button>
+        <button id="demoBtn" title="Demo order" style="background:#0b1720;color:var(--accent);border-radius:12px;border:1px solid rgba(255,255,255,0.03);">Demo</button>
+      </div>
 
-<div class="products" id="beautyContainer">
-  <div id="loadingMessage" style="text-align:center; width: 100%; padding: 50px 0; color: gray; font-size: 1.2rem;">
-    🔄 Loading products...
+      <div class="main-body">
+        <div class="left">
+          <section class="tracker card">
+            <div class="steps" aria-hidden="true">
+              <div class="step" data-step="processing">
+                <div class="dot">1</div>
+                <div class="label">Processing</div>
+              </div>
+              <div class="step" data-step="preparing">
+                <div class="dot">2</div>
+                <div class="label">Preparing</div>
+              </div>
+              <div class="step" data-step="on_the_way">
+                <div class="dot">3</div>
+                <div class="label">On the way</div>
+              </div>
+              <div class="step" data-step="delivered">
+                <div class="dot">4</div>
+                <div class="label">Delivered</div>
+              </div>
+
+              <div class="progress-line"><div class="progress-fill" id="progressFill"></div></div>
+            </div>
+
+            <div id="statusBox" class="info">
+              <div>
+                <div style="font-weight:700" id="currentStatusLabel">—</div>
+                <div class="meta" id="statusWhen">—</div>
+              </div>
+              <div style="text-align:right">
+                <div class="small meta">Order ID</div>
+                <div style="margin-top:6px;display:flex;gap:8px;align-items:center;">
+                  <div id="showOrderId" style="font-weight:700;color:var(--accent);">—</div>
+                  <button id="copyBtn" title="Copy order id" style="padding:6px 8px;border-radius:8px;border:none;background:transparent;color:var(--muted);cursor:pointer;">Copy</button>
+                </div>
+              </div>
+            </div>
+
+            <div id="orderDetailsArea" style="margin-top:8px; display:none;">
+              <div class="items">
+                <table id="itemsTable" aria-hidden="true">
+                  <thead><tr><th>Item</th><th>Qty</th><th>Price</th><th style="text-align:right">Subtotal</th></tr></thead>
+                  <tbody id="itemsBody"></tbody>
+                  <tfoot>
+                    <tr><td colspan="3">Shipping</td><td id="shippingCell" style="text-align:right">—</td></tr>
+                    <tr><td colspan="3">Total</td><td id="totalCell" style="text-align:right">—</td></tr>
+                  </tfoot>
+                </table>
+              </div>
+
+              <div style="margin-top:12px; display:flex; gap:12px; align-items:center;">
+                <div class="small meta">Customer</div><div id="customerName" style="font-weight:700">—</div>
+                <div style="flex:1"></div>
+                <div class="small meta">Order Date</div><div id="orderDate">—</div>
+              </div>
+            </div>
+
+            <div id="message" class="msg" style="display:none;"></div>
+          </section>
+        </div>
+
+        <aside class="right">
+          <div class="summary card">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div>
+                <div class="small meta">Quick Summary</div>
+                <div style="font-weight:800;font-size:20px;margin-top:6px;" id="summaryTotal">—</div>
+              </div>
+              <div style="text-align:right">
+                <div class="small meta">Status</div>
+                <div style="margin-top:6px;" id="summaryBadge"><span class="badge">—</span></div>
+              </div>
+            </div>
+
+            <div style="margin-top:14px;">
+              <div class="small meta">Delivery Address</div>
+              <div id="deliveryAddress" style="font-weight:600;margin-top:6px;">—</div>
+            </div>
+
+            <div style="margin-top:14px; display:flex; gap:8px; align-items:center;">
+              <button id="refreshBtn" style="flex:1;padding:10px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#021722;font-weight:700;cursor:pointer;">Refresh</button>
+            </div>
+
+            <div style="margin-top:12px;">
+              <div class="small meta">Firebase</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:6px;">Connected to: <span id="projectIdLabel">—</span></div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <p style="color:var(--muted);font-size:13px;margin-top:8px;text-align:center;">Make sure your Firestore collection is named <code>orders</code> and order documents use the Order ID as their document ID.</p>
   </div>
-</div>
 
-<p id="notFoundMessage" style="display:none; text-align:center; margin-top: 30%; margin-bottom: 50%; font-size:1.2rem; color:gray;">
-  😢 No matching products found.
-</p>
-<div id="previewModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:1000;">
-  <div style="background:white; border-radius:12px; max-width:400px; padding:20px; text-align:center; position:relative;">
-    <span id="closeModal" style="position:absolute; top:10px; right:15px; font-size:20px; cursor:pointer;">&times;</span>
-    <img id="modalImage" src="" alt="" style="max-width:100%; border-radius:10px;" />
-    <h2 id="modalName" style="margin:10px 0;"></h2>
-    <p id="modalPrice" style="font-weight:bold; font-size:18px;"></p>
-    <button id="modalAddBtn" style="background:cyan; color:white; padding:10px 20px; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Add to Cart</button>
-  </div>
-</div>
-<footer style="
-  background: black;
-  color: #fff;
-  padding: 1.5rem 1rem;
-  text-align: center;
-  font-family: 'Segoe UI', sans-serif;
-  font-size: 0.9rem;
-  box-shadow: 0 -2px 6px rgba(0,0,0,0.2);
-  border-top: 1px solid #1e293b;
-  margin-bottom: 0;
-">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<style>
-  .socials {
-    display: flex;
-    gap: 8px;
-    padding: 1rem;
-    justify-content: center;
-    }
-
-  .socials a {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    color: white;
-    font-size: 20px;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    position: relative;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
-  }
-
-  .socials a:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.25);
-  }
-
-  .facebook { background: #3b5998; }
-  .instagram { background: #e1306c; }
-  .tiktok { background: #000; }
-  .x { background: #1da1f2; }
-  .whatsapp { background: #00b489; }
-
-  /* Optional Tooltip */
-  .socials a::after {
-    content: attr(data-label);
-    position: absolute;
-    bottom: -30px;
-    background: #333;
-    color: #fff;
-    padding: 4px 8px;
-    font-size: 12px;
-    border-radius: 4px;
-    opacity: 0;
-    transform: translateY(5px);
-    pointer-events: none;
-    transition: all 0.3s ease;
-    white-space: nowrap;
-  }
-
-  .socials a:hover::after {
-    opacity: 1;
-    transform: translateY(0);
-  }
-#previewModal {
-  transition: opacity 0.3s ease;
-}
-</style>
-
-<div class="socials">
-  <a href="https://www.facebook.com/share/19dfn17s9G/" class="facebook" class="facebook" data-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-  <a href="https://www.instagram.com/bixmax_store?igsh=d29xMTBlcTZ4N3I3" class="instagram" data-label="Instagram"><i class="fab fa-instagram"></i></a>
-  <a href="https://www.tiktok.com/@bixmaxgh?_t=ZM-8yce1U7b0kQ&_r=1" class="tiktok" data-label="TikTok"><i class="fab fa-tiktok"></i></a>
-  <a href="#" class="x" data-label="X (Twitter)"><i class="fab fa-x-twitter"></i></a>
- <a href="https://wa.me/233536345825?text=Hello%20BixMAX%2C%20I%20need%20assistance" class="whatsapp" data-label="Whatsapp"><i class="fab fa-whatsapp"></i></a>
-</div>
-  <p style="color: #cbd5e1; font-size: 0.85rem;">
-    © 2025 BixMAX. All rights reserved.
-  </p>
-</footer>  
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import {
-      getFirestore,
-      collection,
-      onSnapshot
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
+  <script>
+    // ========== Paste your Firebase config here ==========
     const firebaseConfig = {
       apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
       authDomain: "bixmax-6c24c.firebaseapp.com",
@@ -265,164 +250,262 @@
       messagingSenderId: "37740442541",
       appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
     };
+    // =====================================================
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const container = document.getElementById("beautyContainer");
+    // Initialize Firebase & Firestore (compat)
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-    function renderBeauty(items) {
-  document.getElementById("loadingMessage")?.remove();
-  container.innerHTML = "";
-  items.forEach(data => {
-    const div = document.createElement("div");
-    div.className = "product";
-    div.innerHTML = `
-      <img src="${data.image}" alt="${data.name}" class="product-image" />
-      <div class="product-name">${data.name}</div>
-      <div class="product-price">GH₵${data.price.toFixed(2)}</div>
-    `;
-    const img = div.querySelector(".product-image");
-    img.addEventListener("click", () => handleImageClick(data)); // ✅ image click opens modal
+    // UI refs
+    const orderIdInput = document.getElementById('orderId');
+    const trackBtn = document.getElementById('trackBtn');
+    const demoBtn = document.getElementById('demoBtn');
+    const messageBox = document.getElementById('message');
+    const orderDetailsArea = document.getElementById('orderDetailsArea');
+    const itemsBody = document.getElementById('itemsBody');
+    const totalCell = document.getElementById('totalCell');
+    const shippingCell = document.getElementById('shippingCell');
+    const customerName = document.getElementById('customerName');
+    const orderDate = document.getElementById('orderDate');
+    const showOrderId = document.getElementById('showOrderId');
+    const copyBtn = document.getElementById('copyBtn');
+    const progressFill = document.getElementById('progressFill');
+    const stepsEls = Array.from(document.querySelectorAll('.step'));
+    const currentStatusLabel = document.getElementById('currentStatusLabel');
+    const statusWhen = document.getElementById('statusWhen');
+    const summaryTotal = document.getElementById('summaryTotal');
+    const summaryBadge = document.getElementById('summaryBadge');
+    const deliveryAddress = document.getElementById('deliveryAddress');
+    const projectIdLabel = document.getElementById('projectIdLabel');
+    const refreshBtn = document.getElementById('refreshBtn');
 
-    container.appendChild(div);
-  });
-}
+    projectIdLabel.textContent = firebaseConfig.projectId || '—';
 
-  document.querySelectorAll('.add-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const product = {
-        id: btn.dataset.id,
-        name: btn.dataset.name,
-        price: parseFloat(btn.dataset.price),
-        image: btn.dataset.image,
-        category: btn.dataset.category
-      };
-      addToCart(product);
-    });
-  });
-}
-
-  function handleImageClick(data) {
-  document.getElementById("modalImage").src = data.image;
-  document.getElementById("modalName").textContent = data.name;
-  document.getElementById("modalPrice").textContent = "GH₵" + parseFloat(data.price).toFixed(2);
-
-  // Store product temporarily for add to cart
-  document.getElementById("modalAddBtn").dataset.id = data.id;
-  document.getElementById("modalAddBtn").dataset.name = data.name;
-  document.getElementById("modalAddBtn").dataset.price = data.price;
-  document.getElementById("modalAddBtn").dataset.image = data.image;
-  document.getElementById("modalAddBtn").dataset.category = "Beauty";
-
-  document.getElementById("previewModal").style.display = "flex";
-}
-
-
-    // Load from cache first
-    const cached = localStorage.getItem("Beauty");
-    if (cached) {
-      try {
-        const items = JSON.parse(cached);
-        renderBeauty(items);
-      } catch (e) {
-        console.error("Error parsing cached beauty and personal care:", e);
-      }
-    }
-
-    // Firestore real-time listener (only updates on data change)
-    onSnapshot(collection(db, "category", "Beauty", "items"), snapshot => {
-      const items = [];
-      snapshot.forEach(doc => {
-        items.push({ ...doc.data(), id: doc.id });
-      });
-      localStorage.setItem("Beauty", JSON.stringify(items));
-      renderBeauty(items);
-    });
-
-    function addToCart(product) {
-      let cart = JSON.parse(localStorage.getItem("cart")) || [];
-      const index = cart.findIndex(item => item.id === product.id);
-      if (index >= 0) {
-        cart[index].qty += 1;
-      } else {
-        cart.push({ ...product, qty: 1 });
-      }
-      localStorage.setItem("cart", JSON.stringify(cart));
-      updateCartCount();
-      animateCart();
-    }
-
-    function updateCartCount() {
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      const count = cart.reduce((sum, item) => sum + item.qty, 0);
-      document.getElementById("cartCount").textContent = count;
-    }
-
-    function animateCart() {
-      const cartIcon = document.querySelector(".cart-icon");
-      cartIcon.classList.add("shake");
-      setTimeout(() => cartIcon.classList.remove("shake"), 500);
-    }
-
-    updateCartCount();
-// Close modal
-document.getElementById("closeModal").addEventListener("click", () => {
-  document.getElementById("previewModal").style.display = "none";
-});
-
-// Add to cart from modal
-document.getElementById("modalAddBtn").addEventListener("click", (e) => {
-  const btn = e.target;
-  const product = {
-    id: btn.dataset.id,
-    name: btn.dataset.name,
-    price: parseFloat(btn.dataset.price),
-    image: btn.dataset.image,
-    category: btn.dataset.category
-  };
-  addToCart(product);
-  document.getElementById("previewModal").style.display = "none";
-});
-  </script>
-<script>
-  const searchInput = document.getElementById("searchInput");
-  const container = document.getElementById("beautyContainer");
-  const notFoundMessage = document.getElementById("notFoundMessage");
-
-  // Debounce function to limit search execution
-  function debounce(func, delay) {
-    let timeoutId;
-    return function (...args) {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => func.apply(this, args), delay);
+    // Step order mapping
+    const ORDER_STEPS = ['processing', 'preparing', 'on_the_way', 'delivered'];
+    const STATUS_LABELS = {
+      processing: 'Processing',
+      preparing: 'Preparing',
+      on_the_way: 'On the way',
+      delivered: 'Delivered'
     };
-  }
 
-  const handleSearch = debounce(() => {
-  const query = searchInput.value.trim().toLowerCase();
-  const items = container.querySelectorAll(".product");
-
-  let visibleCount = 0;
-
-  items.forEach(item => {
-    const name = item.querySelector(".product-name").textContent.toLowerCase();
-
-    if (name.includes(query)) {
-      item.style.display = "block";
-      visibleCount++;
-    } else {
-      item.style.display = "none";
+    // Helper: format money
+    function fmt(n) {
+      if (n === undefined || n === null) return '—';
+      return 'GHS ' + Number(n).toFixed(2);
     }
-  });
 
-  notFoundMessage.style.display = query && visibleCount === 0 ? "block" : "none";
+    function clearUI(){
+      messageBox.style.display = 'none';
+      orderDetailsArea.style.display = 'none';
+      itemsBody.innerHTML = '';
+      totalCell.textContent = '—';
+      shippingCell.textContent = '—';
+      customerName.textContent = '—';
+      orderDate.textContent = '—';
+      showOrderId.textContent = '—';
+      currentStatusLabel.textContent = '—';
+      statusWhen.textContent = '—';
+      summaryTotal.textContent = '—';
+      summaryBadge.innerHTML = '<span class="badge">—</span>';
+      deliveryAddress.textContent = '—';
+      progressFill.style.width = '0%';
+      stepsEls.forEach(s => s.classList.remove('active','done'));
+    }
 
-  if (!query) {
-    items.forEach(item => (item.style.display = "block"));
-  }
-}, 300);
+    // Set UI status visual based on a string status
+    function setStatusVisual(status, whenText){
+      // normalize
+      let s = (status || '').toString().toLowerCase().replace(/\s+/g,'_');
+      if (!ORDER_STEPS.includes(s)) s = 'processing';
 
-  searchInput.addEventListener("input", handleSearch);
-</script>
+      const idx = ORDER_STEPS.indexOf(s);
+      const pct = (idx) / (ORDER_STEPS.length - 1) * 100;
+      progressFill.style.width = pct + '%';
+
+      stepsEls.forEach((el, i) => {
+        el.classList.remove('active','done');
+        const stepKey = el.getAttribute('data-step');
+        if (i < idx) el.classList.add('done');
+        if (i === idx) el.classList.add('active');
+      });
+
+      currentStatusLabel.textContent = STATUS_LABELS[s] || status || '—';
+      statusWhen.textContent = whenText ? whenText : '';
+      summaryBadge.innerHTML = '<span class="badge">' + (STATUS_LABELS[s] || status) + '</span>';
+    }
+
+    // Render items and totals
+    function renderOrder(orderId, data){
+      orderDetailsArea.style.display = 'block';
+      showOrderId.textContent = orderId;
+      customerName.textContent = data.customerName || data.name || '—';
+      deliveryAddress.textContent = data.address || '—';
+      orderDate.textContent = data.orderDate || (data.orderDateISO ? new Date(data.orderDateISO).toLocaleString() : '—');
+
+      // items: expected array of {name, qty, price}
+      itemsBody.innerHTML = '';
+      let total = 0;
+      if (Array.isArray(data.items)){
+        for (const it of data.items){
+          const qty = Number(it.qty || it.quantity || 1);
+          const price = Number(it.price || it.unitPrice || it.amount || 0);
+          const subtotal = qty * price;
+          total += subtotal;
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td>${escapeHtml(it.name || it.title || 'Item')}</td>
+                          <td>${qty}</td>
+                          <td>${fmt(price)}</td>
+                          <td style="text-align:right">${fmt(subtotal)}</td>`;
+          itemsBody.appendChild(tr);
+        }
+      } else if (data.items && typeof data.items === 'object') {
+        // if items stored as object map
+        for (const k in data.items){
+          const it = data.items[k];
+          const qty = Number(it.qty || it.quantity || 1);
+          const price = Number(it.price || it.unitPrice || it.amount || 0);
+          const subtotal = qty * price;
+          total += subtotal;
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td>${escapeHtml(it.name || it.title || k)}</td>
+                          <td>${qty}</td>
+                          <td>${fmt(price)}</td>
+                          <td style="text-align:right">${fmt(subtotal)}</td>`;
+          itemsBody.appendChild(tr);
+        }
+      } else {
+        // no items present
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td colspan="4" style="text-align:center;color:var(--muted)">No items listed in this order</td>`;
+        itemsBody.appendChild(tr);
+      }
+
+      // shipping and totals
+      const shipping = Number(data.shipping || data.shippingFee || 0);
+      const grand = total + (isNaN(shipping) ? 0 : shipping);
+      totalCell.textContent = fmt(grand);
+      shippingCell.textContent = fmt(shipping);
+      summaryTotal.textContent = fmt(grand);
+
+      // status
+      setStatusVisual(data.status || 'processing', data.statusUpdatedAt ? data.statusUpdatedAt : (data.updatedAt ? data.updatedAt : ''));
+    }
+
+    // Escape html for safety in display
+    function escapeHtml(str){
+      return String(str || '').replace(/[&<>"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]; });
+    }
+
+    // Fetch from Firestore by document id
+    async function fetchOrder(orderId){
+      clearUI();
+      orderDetailsArea.style.display = 'none';
+      messageBox.style.display = 'block';
+      messageBox.classList.remove('error');
+      messageBox.innerHTML = '<span class="loading" style="margin-right:8px"></span> Looking up order...';
+
+      try {
+        const docRef = db.collection('orders').doc(orderId.trim());
+        const doc = await docRef.get();
+        if (!doc.exists) {
+          messageBox.classList.add('error');
+          messageBox.innerHTML = `Order <strong>${escapeHtml(orderId)}</strong> not found. Check the ID and try again.`;
+          return;
+        }
+        messageBox.style.display = 'none';
+        const data = doc.data();
+
+        // If Firestore Timestamp objects, convert
+        if (data.orderDate && data.orderDate.toDate) {
+          data.orderDate = data.orderDate.toDate().toLocaleString();
+        }
+        if (data.statusUpdatedAt && data.statusUpdatedAt.toDate) {
+          data.statusUpdatedAt = data.statusUpdatedAt.toDate().toLocaleString();
+        }
+        if (data.updatedAt && data.updatedAt.toDate) {
+          data.updatedAt = data.updatedAt.toDate().toLocaleString();
+        }
+
+        renderOrder(doc.id, data);
+      } catch (err) {
+        console.error(err);
+        messageBox.classList.add('error');
+        messageBox.innerHTML = 'Error fetching order. Check your Firestore rules / network. ' + escapeHtml(err.message || '');
+      }
+    }
+
+    // UI events
+    trackBtn.addEventListener('click', () => {
+      const id = orderIdInput.value.trim();
+      if (!id) {
+        messageBox.style.display = 'block';
+        messageBox.classList.add('error');
+        messageBox.textContent = 'Please enter an Order ID.';
+        return;
+      }
+      fetchOrder(id);
+    });
+
+    // demo: create a fake object in UI (doesn't write to Firebase)
+    demoBtn.addEventListener('click', () => {
+      const demoId = 'DEMO-ORDER-001';
+      const demoData = {
+        customerName: 'Jane Mensah',
+        address: 'No. 12 Independence Ave, Accra',
+        items: [
+          { name: 'Nike Air', qty: 1, price: 320.00 },
+          { name: 'Summer Dress', qty: 2, price: 89.50 }
+        ],
+        shipping: 25,
+        status: 'on_the_way',
+        orderDate: new Date().toLocaleString(),
+        statusUpdatedAt: new Date().toLocaleString()
+      };
+      clearUI();
+      renderOrder(demoId, demoData);
+      messageBox.style.display = 'none';
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      const idText = showOrderId.textContent || '';
+      if (!idText || idText === '—') return;
+      try {
+        await navigator.clipboard.writeText(idText);
+        messageBox.style.display = 'block';
+        messageBox.classList.remove('error');
+        messageBox.textContent = 'Order ID copied to clipboard.';
+        setTimeout(()=> messageBox.style.display = 'none', 2200);
+      } catch (e) {
+        messageBox.style.display = 'block';
+        messageBox.classList.add('error');
+        messageBox.textContent = 'Could not copy (permission denied).';
+      }
+    });
+
+    // Allow enter to submit
+    orderIdInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') trackBtn.click();
+    });
+
+    refreshBtn.addEventListener('click', () => {
+      const id = showOrderId.textContent;
+      if (id && id !== '—') fetchOrder(id);
+    });
+
+    // init
+    clearUI();
+    // Optionally, prefill orderId from query param ?orderId=ORD...
+    (function(){
+      const params = new URLSearchParams(location.search);
+      const id = params.get('orderId') || params.get('order');
+      if (id) {
+        orderIdInput.value = id;
+        // auto-trigger fetch
+        setTimeout(()=> trackBtn.click(), 300);
+      }
+    })();
+  </script>
 </body>
 </html>
