@@ -149,21 +149,34 @@
         <div class="left">
           <section class="tracker card">
             <div class="steps" aria-hidden="true">
-              <div class="step" data-step="processing">
+              <div class="step" data-step="pending">
                 <div class="dot">1</div>
+                <div class="label">Pending</div>
+              </div>
+              <div class="step" data-step="orderconfirm">
+                <div class="dot">2</div>
+                <div class="label">Order Confirm</div>
+              </div>
+              <div class="step" data-step="processing">
+                <div class="dot">3</div>
                 <div class="label">Processing</div>
               </div>
               <div class="step" data-step="preparing">
-                <div class="dot">2</div>
+                <div class="dot">4</div>
                 <div class="label">Preparing</div>
               </div>
-              <div class="step" data-step="on_the_way">
-                <div class="dot">3</div>
+             <div class="step" data-step="ontheway">
+                <div class="dot">4</div>
                 <div class="label">On the way</div>
               </div>
-              <div class="step" data-step="delivered">
+
+             <div class="step" data-step="delivered">
                 <div class="dot">4</div>
                 <div class="label">Delivered</div>
+              </div>
+             <div class="step" data-step="complete">
+                <div class="dot">4</div>
+                <div class="label">Complete</div>
               </div>
 
               <div class="progress-line"><div class="progress-fill" id="progressFill"></div></div>
