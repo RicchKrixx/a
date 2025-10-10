@@ -528,7 +528,6 @@ font-size: 16px;
             <div class="category">Beauty & Personal care</div></a>
         </div>
     </section>
-  <p id="flashDeal" class="flash-deal">🔥 Get 20% off on all sneakers!</p>
 
 <div class="product-container" id="productArea">
     <h2>🔥Popular Products</h2>
@@ -707,17 +706,6 @@ font-size: 16px;
       }
     }
 
-    const flashMessages = [
-      "🔥 Get 20% off on all sneakers!",
-      "🎁 Free delivery on orders over GH¢50!",
-      "🧢 New arrivals every week!",
-      "💳 Pay on delivery now available!",
-    ];
-    let dealIndex = 0;
-    setInterval(() => {
-      dealIndex = (dealIndex + 1) % flashMessages.length;
-      document.getElementById("flashDeal").textContent = flashMessages[dealIndex];
-    }, 4000);
   </script>
 
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
