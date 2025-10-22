@@ -264,7 +264,7 @@
         });
 
         alert("Signup successful!");
-        window.location.href = "/dashboard/";
+        window.location.href = "/";
       } catch (error) {
         alert(error.message);
       }
@@ -272,7 +272,7 @@
       try {
         await signInWithEmailAndPassword(auth, email, password);
         alert("Login successful!");
-        window.location.href = "/BixMax home/";
+        window.location.href = "/";
       } catch (error) {
         alert(error.message);
       }
@@ -283,7 +283,7 @@
     signInWithPopup(auth, provider)
       .then(() => {
         alert("Google Sign-In successful!");
-        window.location.href = "/BixMax home/";
+        window.location.href = "/";
       })
       .catch(error => {
         alert(error.message);
