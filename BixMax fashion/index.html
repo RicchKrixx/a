@@ -4,18 +4,41 @@
   <meta charset="UTF-8" />    
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>    
   <title>Fashion</title>    
-  <style>    
-    * { margin: 0;     
-padding: 0;     
-box-sizing:     
-border-box;     
-}    
-      body {    
-      font-family: Arial, sans-serif;    
-      background: lightblue;    
-      margin: 0;    
-      padding: 0;    
-}  header {  width:100%;
+  <style>   
+:root {
+  --brand: #b8860b;
+  --brand-dark: #8b6508;
+  --ink: #1f1f1f;
+  --bg: #f7f7f9;
+  --card: #ffffff;
+}  
+* { box-sizing: border-box; }
+body { margin:0; font-family:systemx-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:var(--bg); 
+color:var(--ink); } 
+.container {
+padding-top: 5px;
+padding-bottom: 0;
+text-align: center;
+background: #adadaf;
+border-radius:24px;
+}
+  .gridd {
+padding: 30px;
+padding-bottom: 30;
+text-align: center;
+background: #adf;
+border-radius:24px;
+}
+.category{
+padding: 30px;
+padding-bottom: 30;
+text-align: center;
+background: #ffe;
+border-radius:24px;
+}
+header {
+
+width:100%;
 padding:24px;
 border-radius:16px;
 backdrop-filter: blur(25px);
@@ -88,36 +111,18 @@ gap: 16px;
 overflow-x: auto;
 padding-bottom: 6px;
 }
-/*
 .product {
-padding: 5px;
-border-radius: 35px;
-min-width: 150px;
-text-align: center;
-flex-shrink: 0;
-text-align: center;
-background: darkcyan;
-color: white;
-margin: 10px auto;
-font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 5px;
+  border-radius: 35px;
+  text-align: center;
+  color: white;
+  font-weight: bold;
 }
 
-.product img {
-padding: 0;
-min-width: 160px;
-height: 160px;
-object-fit: cover;
-border-radius: 30px;
-}
-*/
-    .product {  
-      padding: 5px;  
-      border-radius: 35px;  
-      text-align: center;  
-      background: darkcyan;  
-      color: white;  
-      font-weight: bold;
-    }  
+
     .product img {  
       width: 100%;  
       height: 160px;  
@@ -133,17 +138,18 @@ margin: 6px 0;
 font-size: 15px;
 font-weight: bold;
 }
-
 .add-btn {
-background: cyan;
-color: black;
-padding: 8px 12px;
-border: none;
-border-radius: 10px;
-cursor: pointer;
-margin-top: 8px;
-font-weight: bold;
+  background: cyan;
+  color: black;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: auto; /* Pushes button to bottom */
 }
+
+
 
 .add-btn:hover {
 background: #008b8b;
@@ -169,9 +175,10 @@ text-shadow: 0 0 15px #0ff, 0 0 25px #0ff, 0 0 35px #0ff;
 .products {
 gap: 12px;
 }
-.product {
+.product footer {
 min-width: 150px;
 }
+
 }
 /* Shake animation */
 @keyframes shake {
@@ -226,23 +233,91 @@ border-radius: 10px;
     font-size: 13px;
   }
 }
-.tt {
-background: #008b8b
+.shop-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background: linear-gradient(90deg, #6a11cb, #2575fc);
+  color: white;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  height: 240px;
 }
+
+.shop-header {
+  background-image: url('https://i.postimg.cc/ZRc3dgq5/th-2.webp');
+  background-size: cover;
+  background-position: center;
+  filter: blur(2px);
+  z-index:9999;
+}
+  .socials {
+    display: flex;
+    gap: 8px;
+    padding: 1rem;
+    justify-content: center;
+  }
+
+  .socials a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    color: white;
+    font-size: 15px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+  }
+
+  .socials a:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+  }
+
+  .facebook { background: #3b5998; }
+  .instagram { background: #e1306c; }
+  .tiktok { background: #000; }
+  .x { background: #1da1f2; }
+  .whatsapp { background: #00b489; }
+
+  /* Optional Tooltip */
+  .socials a::after {
+    content: attr(data-label);
+    position: absolute;
+    bottom: -30px;
+    background: #333;
+    color: #fff;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    opacity: 0;
+    transform: translateY(5px);
+    pointer-events: none;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .socials a:hover::after {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
 </style> 
  </head>  
 <body> 
-<div class="tt">
-<a href="/cart/" class="cart-icon glow" id="cartIcon">🛒<span id="cartCount">0</span></a>   
-    <header>    
-            <h1>BixMAX | Fashion</h1>    
-        <h3>All-in-One Online Shop</h3> 
 
-</div>
+<a href="/cart/" class="cart-icon glow" id="cartIcon">🛒<span id="cartCount">0</span></a>   
+    <header class="shop-header">    
+  
    </header> 
 
- <div class="container">    
-  <!-- Fashion Sections -->    
+ <div class="container">    	
+  <!-- Fashion Sections --> 
+<div class="gridd">  
 <div class="category">  
   <div class="cat-header">  
     <h2>Men</h2>  
@@ -308,12 +383,45 @@ background: #008b8b
   <div class="cat-header">  
     <h2>Kids</h2>  
     <a href="/kids/">View All</a>
-  </div>  
+  </div>   
   <div class="products" id="kidsContainer">
     <!-- Firebase will load .product elements here -->
   </div>  
 </div>
- </div>    
+ </div> 
+</div>
+<footer style="
+  position: absolute;
+  background: #0f172a;
+  color: #fff;
+
+  text-align: center;
+min-width: 100%;
+  box-shadow: 0 -2px 6px rgba(0,0,0,0.2);
+  border-top: 1px solid #1e293b;
+ margin-bottom: 0;
+}
+
+">
+  <nav style="margin-bottom: 0.7rem;">
+    <a href="/BixMax home/" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Home</a>
+    <a href="/BixMax fashion/" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Fashion</a>
+    <a href="/BixMax grocery/" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Grocery</a>
+    <a href="/BixMax electronics/" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Electronics</a>
+    <a href="/about us/#support" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Contact</a>
+  </nav>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<div class="socials">
+  <a href="https://www.facebook.com/share/19dfn17s9G/" class="facebook" class="facebook" data-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+  <a href="https://www.instagram.com/bixmax_store?igsh=d29xMTBlcTZ4N3I3" class="instagram" data-label="Instagram"><i class="fab fa-instagram"></i></a>
+  <a href="https://www.tiktok.com/@bixmaxgh?_t=ZM-8yce1U7b0kQ&_r=1" class="tiktok" data-label="TikTok"><i class="fab fa-tiktok"></i></a>
+  <a href="#" class="x" data-label="X (Twitter)"><i class="fab fa-x-twitter"></i></a>
+ <a href="https://wa.me/233536345825?text=Hello%20BixMAX%2C%20I%20need%20assistance" class="whatsapp" data-label="Whatsapp"><i class="fab fa-whatsapp"></i></a>
+</div>
+  <p style="color: #cbd5e1; font-size: 0.85rem;">
+    © 2025 BixMAX. All rights reserved.
+  </p>
+</footer> 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
@@ -460,93 +568,7 @@ background: #008b8b
 
   updateCartCount();
 </script>
+
+
 </body>
-<footer style="
-  position: absolute;
-  background: #0f172a;
-  color: #fff;
-  padding: 1.5rem 1rem;
-  text-align: center;
-  font-family: 'Segoe UI', sans-serif;
-  font-size: 0.9rem;
-  box-shadow: 0 -2px 6px rgba(0,0,0,0.2);
-  border-top: 1px solid #1e293b;
- margin-bottom: 0;
-">
-  <nav style="margin-bottom: 0.7rem;">
-    <a href="/BixMax home/" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Home</a>
-    <a href="/BixMax fashion/" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Fashion</a>
-    <a href="/BixMax grocery/" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Grocery</a>
-    <a href="/BixMax electronics/" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Electronics</a>
-    <a href="/about us/#support" style="color: #38bdf8; margin: 0 10px; text-decoration: none;">Contact</a>
-  </nav>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<style>
-  .socials {
-    display: flex;
-    gap: 8px;
-    padding: 1rem;
-    justify-content: center;
-  }
-
-  .socials a {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    color: white;
-    font-size: 15px;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    position: relative;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
-  }
-
-  .socials a:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.25);
-  }
-
-  .facebook { background: #3b5998; }
-  .instagram { background: #e1306c; }
-  .tiktok { background: #000; }
-  .x { background: #1da1f2; }
-  .whatsapp { background: #00b489; }
-
-  /* Optional Tooltip */
-  .socials a::after {
-    content: attr(data-label);
-    position: absolute;
-    bottom: -30px;
-    background: #333;
-    color: #fff;
-    padding: 4px 8px;
-    font-size: 12px;
-    border-radius: 4px;
-    opacity: 0;
-    transform: translateY(5px);
-    pointer-events: none;
-    transition: all 0.3s ease;
-    white-space: nowrap;
-  }
-
-  .socials a:hover::after {
-    opacity: 1;
-    transform: translateY(0);
-  }
-</style>
-
-<div class="socials">
-  <a href="https://www.facebook.com/share/19dfn17s9G/" class="facebook" class="facebook" data-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-  <a href="https://www.instagram.com/bixmax_store?igsh=d29xMTBlcTZ4N3I3" class="instagram" data-label="Instagram"><i class="fab fa-instagram"></i></a>
-  <a href="https://www.tiktok.com/@bixmaxgh?_t=ZM-8yce1U7b0kQ&_r=1" class="tiktok" data-label="TikTok"><i class="fab fa-tiktok"></i></a>
-  <a href="#" class="x" data-label="X (Twitter)"><i class="fab fa-x-twitter"></i></a>
- <a href="https://wa.me/233536345825?text=Hello%20BixMAX%2C%20I%20need%20assistance" class="whatsapp" data-label="Whatsapp"><i class="fab fa-whatsapp"></i></a>
-</div>
-  <p style="color: #cbd5e1; font-size: 0.85rem;">
-    © 2025 BixMAX. All rights reserved.
-  </p>
-</footer>
 </html>
