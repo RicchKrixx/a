@@ -20,18 +20,17 @@
 </script>
 <link rel="icon" href="Bixmaxlogo.png" type="image/png">
   <title>BixMAX</title>
-  <style>   
-    * { margin: 0; padding: 0; box-sizing: border-box;
- } 
-   
-    html, body { 
-height: 100%;
-font-size: 16px;
-align-content: center;
- overflow-x: hidden; 
-font-family: Arial, sans-serif; 
-background: #ababab;
+  <style>
+:root {
+  --brand: #b8860b;
+  --brand-dark: #8b6508;
+  --ink: #1f1f1f;
+  --bg: #f7f7f9;
+  --card: #ffffff;
 }  
+* { box-sizing: border-box; }
+body { margin:0; font-family:systemx-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:var(--bg); 
+color:var(--ink); }
 
 body.noscroll {    
   position: fixed !important;    
@@ -41,9 +40,19 @@ body.noscroll {
 }  
 
   .container {
-padding-top: 0px;
+padding-top: 5px;
 padding-bottom: 0;
 text-align: center;
+background: #adadaf;
+border-radius:24px;
+}
+
+  .gridd {
+padding: 30px;
+padding-bottom: 30;
+text-align: center;
+background: #adf;
+border-radius:24px;
 }
 
 /* Menu Toggle Icon */
@@ -153,12 +162,13 @@ margin-top: 5px;
 }
 
 .testimonial-grid blockquote {
+background-color: #eee;
 max-width: 200px;
 font-size: 14px;
 font-style: italic;
 padding: 15px;
 border-left: 4px solid #ffcc00;
-border-radius: 5px;
+border-radius: 20px;
 }
 
 /* Responsive */
@@ -410,15 +420,23 @@ font-size: 16px;
         display: flex;
         flex-direction: column;
         align-items:center;
-        color: black;
+        color: white;
+		opacity: 0.8;
+		
 }
-
+.categories h2 {
+opacity: 0.7;
+}
+.category-grid img {
+border-radius: 24px;
+}
 .category-grid {
     display: flex;
     justify-content: center;
-    gap: 5px;
+    gap: 10px;
     flex-wrap: wrap;
     margin-top: 5px;
+	
 }
 
 .category {
@@ -432,17 +450,35 @@ font-size: 16px;
         cursor: pointer;
         text-decoration: none;
 }
-.tt {
-  background: #2f93d0;
+
+.shop-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background: linear-gradient(90deg, #6a11cb, #2575fc);
+  color: white;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  height: 240px;
 }
-      .brand { display:flex; align-items:center; gap:10px; }
-.brand img { height:90px; border-radius:6px; }
+
+.shop-header {
+  background-image: url('https://i.postimg.cc/xdDHJfy0/grok-image-47idy2-2.jpg');
+  background-size: cover;
+  background-position: center;
+  filter: blur(3px);
+  z-index:9999;
+}
+
+.shop-header h2 {
+color: white;
+filter: blur(1px) !mportant;
+}
+
     </style>
 </head>
  
 <body id="pageBody">
-<div class="container">
-<div class="tt">
   <div class="menu-toggle" onclick="toggleMenu()">☰</div>
 
   <div id="fullMenu" class="menu-overlay">
@@ -475,42 +511,38 @@ font-size: 16px;
       <button id="authBtn">🔐 Sign In</button>
     </div>
   </div>
+  
+  
+ <header class="shop-header">
+</header>
 
-  <header>
-    <div class="brand">
-      <img src="file_00000000de6c623094ee6a132b1788e1%20(1).png">
-      </div>
-    <h3>All-in-One Online Shop</h3>
-  </header>
-</div>
+
+  <div class="container">
+  <div  class="gridd">
     <section class="categories">
         <h2>Shop by Category</h2>
         <div class="category-grid">
  <a class="food-menu" href="/BixMax electronics/" style="text-decoration">
+ <img src="https://i.postimg.cc/1XrW4Mkt/th.webp">
             <div class="category">Electronics</div></a>
  <a class="food-menu" href="/BixMax fashion/" style="text-decoration">
+ <img src="https://i.postimg.cc/ZRc3dgq5/th-2.webp">
             <div class="category">Fashion</div></a>
  <a class="food-menu" href="/BixMax grocery/" style="text-decoration">
+ <img src="https://i.postimg.cc/15gnm4Dm/th-3.webp">
             <div class="category">Groceries</div></a>
  <a class="food-menu" href="/BixMax home essentials/" style="text-decoration">
-            <div class="category">Home Essentials</div> </a>
+           <img src="https://i.postimg.cc/zfhFV0Wr/th-1.webp">
+		   <div class="category">Home Essentials</div> </a>
  <a class="food-menu" href="/health/" style="text-decoration">
+ <img src="https://i.postimg.cc/gJSjdPJr/OIP.webp">
             <div class="category">Health</div></a>
  <a class="food-menu" href="/Beauty care/" style="text-decoration">
+ <img src="https://i.postimg.cc/8zQ5T41W/download.webp">
             <div class="category">Beauty & Personal care</div></a>
         </div>
     </section>
 
-<div class="product-container" id="productArea">
-    <h2>🔥Popular Products</h2>
-  </div>
-
-<!-- From Uiverse.io by joe-watson-sbf --> 
-<div class="card">
-    <p><span> <img src="https://i.postimg.cc/PrXpPJ7z/Screenshot-20250801-114142-1.jpg"></span></p>
-    <p><span><img src="https://i.postimg.cc/qq9j1rqb/Screenshot-20250731-180621-1.jpg"></span></p>
-    <p><span><img src="https://i.postimg.cc/5tyXCXpz/Screenshot-20250731-223444-1.jpg"></span></p>
-</div>
 <section class="testimonials">
 <h2>What Our Customers Say</h2>
 <div class="testimonial-grid">
@@ -519,6 +551,8 @@ font-size: 16px;
 <blockquote>"Highly Recommend this store" - Amina R</blockquote>
 </div>
 </section>
+</div>
+</div>
 <br>
    <footer style="text-decoration: none;">
         <div class="footer-container">
@@ -535,7 +569,7 @@ font-size: 16px;
                     <li><a href="#home">Home</a></li>
                     <li><a href="/about us/">About Us</a></li>
                     <li><a href="/about us/#services">Services</a></li>
-                    <li><a href="/about us/#blog">Blog</a></li>
+								<li><a href="/about us/#blog">Blog</a></li>
                 </ul>
             </div>
 
@@ -557,7 +591,7 @@ font-size: 16px;
              
                               <p><i class="fas fa-phone"></i><a href="tel:+233536345825"> +233 (53) 634-5825</a></p>
              <p><i class="fas fa-envelope"></i><a href="mailto: support@bixmax.store"> support@bixmax.store</a></p>
- <p><i class="fas fa-envelope"></i><a href="mailto:info@bixmax.store">info@bixmax.store</a></p>
+ <p><i class="fas fa-envelope"></i><a href="mailto:info@bixmax.store"> info@bixmax.store</a></p>
  <p><i class="fas fa-map-marker-alt"></i> Accra Ghana</p>
             </div>
         </div>
@@ -634,7 +668,6 @@ font-size: 16px;
             <p>&copy; 2025 BixMAX. All rights reserved.</p>
         </div>
 </footer>
-</div>
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <!-- Font Awesome for icons (you'll need to include this in your project) -->
     <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script>
