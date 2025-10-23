@@ -12,7 +12,13 @@
     body {  
       font-family: Arial, sans-serif;  
       background: lightblue;  
-    }  
+    } 
+     .gridd {
+padding: 5px;
+text-align: center;
+background: #adf;
+border-radius:24px;
+}
     header {  
       width: 100%;  
       padding: 24px;  
@@ -132,15 +138,33 @@
     padding: 6px 10px;
     font-size: 13px;
   }
-}  
+} 
+   .shop-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background: linear-gradient(90deg, #6a11cb, #2575fc);
+  color: white;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  height: 240px;
+}
+
+.shop-header {
+  background-image: url('https://i.postimg.cc/ZRc3dgq5/th-2.webp');
+  background-size: cover;
+  background-position: center;
+  filter: blur(2px);
+  z-index:9999;
+}
   </style>  
 </head>  
-<body>  
+<body class="container">  
 <a href="/cart/" class="cart-icon glow" id="cartIcon">🛒<span id="cartCount">0</span></a>  
-  <header>  
-    <h1>Men's collection</h1>  
-    <h3>All-in-One Online Shop</h3>  
+  <header class="shop-header">  
+ 
   </header>  
+ <div class="gridd">
 <div style="padding: 10px; text-align: center;">  
   <input type="text" id="searchInput" placeholder="&#x1F50D;Search shirts..." style="width: 90%; padding: 10px; font-size: 16px; border-radius: 12px; border: none; outline: none; box-shadow: 0 0 5px cyan;">  
 </div>  
@@ -148,7 +172,7 @@
 <p id="notFoundMessage" style="display:none; text-align:center; margin-top: 30%; margin-bottom: 50%; font-size:1.2rem; color:gray;">  
   😢 No matching products found.  
 </p>    
-
+ </div>
 
 <footer style="
   background: black;
