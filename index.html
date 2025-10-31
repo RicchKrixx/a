@@ -409,46 +409,64 @@ font-size: 16px;
                 text-align: center;
             }}
 
- /* Categories */
+/* Categories */
 .categories {
-    background: #efc  blur(25px);
-        width:100%;
-         max-width: 1100px;
-        padding: 0;
-        border-radius: 30px;
-        display: flex;
-        flex-direction: column;
-        align-items:center;
-        color: white;
-		
+  background: #efc;
+  width: 100%;
+  max-width: 1100px;
+  margin: auto;
+  padding: 20px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #333;
 }
+
 .categories h2 {
-color: white;
+  color: #333;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
 }
-.category-grid img {
-border-radius: 24px;
-}
+
 .category-grid {
-    display: flex;
-    justify-content: center;
-    gap: 3px;
-    flex-wrap: wrap;
-    margin-top: 5px;
-	
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  width: 100%;
+  padding: 10px;
+}
+
+.cat-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+  color: #333;
+}
+
+.cat-menu:hover {
+  transform: scale(1.03);
+}
+
+.cat-menu img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 8px;
 }
 
 .category {
-    background-color: #eee;
-    padding: 15px 20px;
-    border-radius: 10px;
-    font-weight: bold;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
 }
-.food-menu {
-        color: black;
-        cursor: pointer;
-        text-decoration: none;
-}
-
 .shop-header {
   display: flex;
   justify-content: space-between;
@@ -688,29 +706,35 @@ filter: blur(1px) !mportant;
 
   <div class="container">
   <div  class="gridd">
-    <section class="categories">
-        <h2>Shop by Category</h2>
-        <div class="category-grid">
- <a class="food-menu" href="#electronics" style="text-decoration">
- <img src="https://i.postimg.cc/1XrW4Mkt/th.webp">
-            <div class="category">Electronics</div></a>
- <a class="food-menu" href="#fashion" style="text-decoration">
- <img src="https://i.postimg.cc/ZRc3dgq5/th-2.webp">
-            <div class="category">Fashion</div></a>
- <a class="food-menu" href="#groceries" style="text-decoration">
- <img src="https://i.postimg.cc/15gnm4Dm/th-3.webp">
-            <div class="category">Groceries</div></a>
- <a class="food-menu" href="#home-essentials" style="text-decoration">
-           <img src="https://i.postimg.cc/zfhFV0Wr/th-1.webp">
-		   <div class="category">Home Essentials</div> </a>
- <a class="food-menu" href="#health" style="text-decoration">
- <img src="https://i.postimg.cc/gJSjdPJr/OIP.webp">
-            <div class="category">Health</div></a>
- <a class="food-menu" href="#care" style="text-decoration">
- <img src="https://i.postimg.cc/8zQ5T41W/download.webp">
-            <div class="category">Beauty & Personal care</div></a>
-        </div>
-    </section>
+  <section class="categories">
+  <h2>Shop by Category</h2>
+  <div class="category-grid">
+    <a class="cat-menu" href="#electronics">
+      <img src="https://i.postimg.cc/1XrW4Mkt/th.webp" alt="Electronics">
+      <div class="category">Electronics</div>
+    </a>
+    <a class="cat-menu" href="#fashion">
+      <img src="https://i.postimg.cc/ZRc3dgq5/th-2.webp" alt="Fashion">
+      <div class="category">Fashion</div>
+    </a>
+    <a class="cat-menu" href="#groceries">
+      <img src="https://i.postimg.cc/15gnm4Dm/th-3.webp" alt="Groceries">
+      <div class="category">Groceries</div>
+    </a>
+    <a class="cat-menu" href="#home-essentials">
+      <img src="https://i.postimg.cc/zfhFV0Wr/th-1.webp" alt="Home Essentials">
+      <div class="category">Home Essentials</div>
+    </a>
+    <a class="cat-menu" href="#health">
+      <img src="https://i.postimg.cc/gJSjdPJr/OIP.webp" alt="Health">
+      <div class="category">Health</div>
+    </a>
+    <a class="cat-menu" href="#care">
+      <img src="https://i.postimg.cc/8zQ5T41W/download.webp" alt="Beauty & Personal Care">
+      <div class="category">Beauty & Personal Care</div>
+    </a>
+  </div>
+</section>
 	<div class="sections" id="products">
   <section class="section" id="electronics">
     <h2>ELECTRONICS</h2>
