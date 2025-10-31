@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .accordion {
+      background: #fff;
+      color: #333;
+      cursor: pointer;
+      padding: 15px;
+      width: 100%;
+      border: none;
+      outline: none;
+      transition: 0.3s;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .accordion.active {
+      background: #0077ff;
+      color: #fff;
+    }
+    .panel {
+      padding: 15px;
+      background: #fff;
+      display: none;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .product {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f9f9f9;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    .product img {
+      width: 50px;
+      height: 50px;
+      border-radius: 6px;
+      margin-right: 10px;
+      object-fit: cover;
+    }
+    .product-info {
+      flex: 1;
+    }
+    .product-actions button {
+      margin-left: 5px;
+      padding: 6px 10px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .edit-btn { background: #0077ff; color: #fff; }
+    .delete-btn { background: #ff3b3b; color: #fff; }
+    .add-form {
+      margin-top: 15px;
+      padding: 10px;
+      border-top: 1px solid #ddd;
+    }
+    .add-form input {
+      padding: 6px;
+      margin: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .add-form button {
+      padding: 6px 12px;
+      background: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .upload-preview {
+      margin: 10px 5px;
+    }
+    .upload-preview img {
+      max-width: 120px;
+      border-radius: 6px;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Products Editor</h1>
+
+  <button class="accordion"> ELECTRONICS</button>
+  <div class="panel" id="electronics"></div>
+
+  <button class="accordion"> FASHION</button>
+  <div class="panel" id="fashion"></div>
+
+  <button class="accordion"> GROCERIES</button>
+  <div class="panel" id="groceries"></div>
+
+  <button class="accordion"> HOME ESSENTIALS</button>
+  <div class="panel" id="essentials"></div>
+  
+    <button class="accordion"> HEALTH</button>
+  <div class="panel" id="health"></div>
+  
+    <button class="accordion"> BEAUTY & PERSONAL CARE</button>
+  <div class="panel" id="care"></div>
+
+  <!-- Firebase + Imgbb -->
+<script type="module">
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+  import { getFirestore, collection, query, where, getDocs, addDoc, updateDoc, deleteDoc, doc } 
+    from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+
+  const firebaseConfig = {
+      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+      authDomain: "bixmax-6c24c.firebaseapp.com",
+      projectId: "bixmax-6c24c",
+      storageBucket: "bixmax-6c24c.appspot.com",
+      messagingSenderId: "37740442541",
+      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+    };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+const auth = getAuth(app);
+const ADMIN_EMAILS = ["ydrill47@gmail.com"];
+const ADMIN_PHONES = ["+233536345825"]; // E.164 format
+
+onAuthStateChanged(auth, user => {
+  if (!user) {
+    window.location.href = "/admin-dashboard/";
+    return;
+  }
+
+  const emailAllowed = ADMIN_EMAILS.includes(user.email);
+  const phoneAllowed = user.phoneNumber && ADMIN_PHONES.includes(user.phoneNumber);
+
+  if (!emailAllowed && !phoneAllowed) {
+    window.location.href = "/admin-dashboard/";
+  }
+});
+
+  const IMGBB_API_KEY = "4778722b6cb7fffaf637e09bde8407ea"; // replace with your real key
+
+  // Accordion toggle
+  document.querySelectorAll(".accordion").forEach(btn => {
+    btn.addEventListener("click", function() {
+      this.classList.toggle("active");
+      const panel = this.nextElementSibling;
+      panel.style.display = panel.style.display === "block" ? "none" : "block";
+    });
+  });
+
+  // Upload image to Imgbb
+  async function uploadToImgbb(file) {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      return data.data.url;
+    } else {
+      throw new Error(data.error.message);
+    }
+  }
+
+  // Render products by category
+  async function loadProducts(category, containerId) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = "<p>Loading...</p>";
+
+    const q = query(collection(db, "products"), where("category", "==", category));
+    const snapshot = await getDocs(q);
+
+    container.innerHTML = "";
+    snapshot.forEach(docSnap => {
+      const product = docSnap.data();
+      const div = document.createElement("div");
+      div.className = "product";
+      div.innerHTML = `
+        <img src="${product.image || 'https://via.placeholder.com/50'}" />
+        <div class="product-info">
+          <strong>${product.name}</strong><br>
+          ${product.originalPrice ? `<span style="text-decoration: line-through; color: gray;">GH₵${product.originalPrice}</span> ` : ""}
+          GH₵${product.price}
+        </div>
+        <div class="product-actions">
+          <button class="edit-btn">Edit</button>
+          <button class="delete-btn">Delete</button>
+        </div>
+      `;
+
+      // Delete
+      div.querySelector(".delete-btn").addEventListener("click", async () => {
+        await deleteDoc(doc(db, "products", docSnap.id));
+        loadProducts(category, containerId);
+      });
+
+      // Edit
+      div.querySelector(".edit-btn").addEventListener("click", async () => {
+        const newName = prompt("Enter item name", product.name);
+        const newPrice = prompt("Enter new price", product.price);
+        const newOriginal = prompt("Enter original price (optional)", product.originalPrice || "");
+        await updateDoc(doc(db, "products", docSnap.id), {
+          name: newName,
+          price: Number(newPrice),
+          originalPrice: newOriginal ? Number(newOriginal) : null
+        });
+        loadProducts(category, containerId);
+      });
+
+      container.appendChild(div);
+    });
+
+    // Add new product form
+    const form = document.createElement("div");
+    form.className = "add-form";
+    form.innerHTML = `
+      <h4>Add New ${category}</h4>
+      <input type="text" placeholder="Name" id="${containerId}-name" />
+      <input type="number" placeholder="Price" id="${containerId}-price" />
+      <input type="number" placeholder="Original Price (optional)" id="${containerId}-original" />
+      <input type="file" id="${containerId}-file" accept="image/*" />
+      <div class="upload-preview" id="${containerId}-preview"></div>
+      <input type="hidden" id="${containerId}-image" />
+      <button>Add</button>
+    `;
+
+    // Handle image upload
+    const fileInput = form.querySelector(`#${containerId}-file`);
+    const preview = form.querySelector(`#${containerId}-preview`);
+    fileInput.addEventListener("change", async () => {
+      const file = fileInput.files[0];
+      if (!file) return;
+      preview.innerHTML = "<p>Uploading...</p>";
+      try {
+        const url = await uploadToImgbb(file);
+        document.getElementById(`${containerId}-image`).value = url;
+        preview.innerHTML = `<img src="${url}" alt="Preview">`;
+      } catch (err) {
+        preview.innerHTML = `<p style="color:red;">Upload failed: ${err.message}</p>`;
+      }
+    });
+
+    // Add new product
+    form.querySelector("button").addEventListener("click", async () => {
+      const name = document.getElementById(`${containerId}-name`).value;
+      const price = document.getElementById(`${containerId}-price`).value;
+      const original = document.getElementById(`${containerId}-original`).value;
+      const image = document.getElementById(`${containerId}-image`).value;
+      if(!name || !price || !image) return alert("Please fill all required fields and upload an image");
+      await addDoc(collection(db, "products"), {
+        name,
+        price: Number(price),
+        originalPrice: original ? Number(original) : null,
+        image,
+        category
+      });
+      loadProducts(category, containerId);
+    });
+
+    container.appendChild(form);
+  }
+
+  // Load all categories
+  loadProducts("ELECTRONICS", "electronics");
+  loadProducts("FASHION", "fashion");
+loadProducts("GROCERIES", "groceries");
+  loadProducts("HOME ESSENTIALS", "home-essentials");
+  loadProducts("HEALTH", "health");
+  loadProducts("BEAUTY & PERSONAL CARE", "care");
+</script>
+</body>
+</html>
