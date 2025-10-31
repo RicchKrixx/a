@@ -413,55 +413,56 @@ font-size: 16px;
 .categories {
   width: 100%;
   max-width: 1100px;
-  margin: auto;
-  padding: 10px 0;
+  padding: 0;
+  border-radius: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  color: white;
 }
 
 .categories h2 {
-  color: #333;
-  font-size: 1.4rem;
-  margin-bottom: 10px;
+  color: white;
+  font-size: 1.2rem;
+  margin-bottom: 8px;
 }
 
 .category-grid {
   display: flex;
   justify-content: center;
-  gap: 2px;
+  gap: 6px;
   flex-wrap: wrap;
   margin-top: 5px;
 }
 
-.cat-menu {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-decoration: none;
-  padding: 6px;
-  border-radius: 10px;
-  transition: transform 0.2s ease;
-  color: #333;
-}
-
-.cat-menu:hover {
-  transform: scale(1.03);
-}
-
-.cat-menu img {
-  width: 55px;
-  height: 55px;
+.category-grid img {
+  width: 50px;
+  height: 50px;
+  border-radius: 16px;
   object-fit: cover;
-  border-radius: 12px;
-  margin-bottom: 6px;
 }
 
 .category {
-  font-size: 0.85rem;
-  font-weight: 600;
+  background-color: #eee;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 0.8rem;
   text-align: center;
+  margin-top: 4px;
 }
+
+.cat-menu {
+  color: black;
+  cursor: pointer;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+	  
 .shop-header {
   display: flex;
   justify-content: space-between;
