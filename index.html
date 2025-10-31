@@ -907,10 +907,30 @@ filter: blur(1px) !mportant;
 
   </script>
 
+
+<script>
+  // Get button
+  const backToTopBtn = document.getElementById("backToTop");
+
+  // Show when scroll down 200px
+  window.onscroll = function() {
+    if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+      backToTopBtn.style.display = "block";
+    } else {
+      backToTopBtn.style.display = "none";
+    }
+  };
+
+  // Scroll to top smoothly
+  backToTopBtn.onclick = function() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+</script>
   <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-  import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
 
   const firebaseConfig = {
     apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
@@ -921,130 +941,450 @@ filter: blur(1px) !mportant;
     appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
   };
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-  function getSkeletons(count = 2) {
-    let skeletons = "";
-    for (let i = 0; i < count; i++) {
-      skeletons += `
-        <div class="skeleton-card">
-          <div class="skeleton skeleton-img"></div>
-          <div class="skeleton skeleton-text"></div>
-          <div class="skeleton skeleton-price"></div>
-          <div class="skeleton skeleton-btn"></div>
-        </div>
-      `;
-    }
-    return skeletons;
-  }
-
-  function saveProductsToCache(category, products) {
-    localStorage.setItem("products_" + category, JSON.stringify({
-      products,
-      timestamp: Date.now()
-    }));
-  }
-
-  function getProductsFromCache(category, maxAge = 7 * 24 * 60 * 60 * 1000) {
-    const cache = localStorage.getItem("products_" + category);
-    if (!cache) return null;
-    const parsed = JSON.parse(cache);
-    return (Date.now() - parsed.timestamp > maxAge) ? null : parsed.products;
-  }
-
-  function renderProducts(products, container) {
-    container.innerHTML = "";
-    products.forEach(product => {
-      const div = document.createElement("div");
-      div.className = "card";
-
-      const discount = product.originalPrice
-        ? Math.round(100 - (product.price / product.originalPrice) * 100)
-        : null;
-
-      const priceHTML = product.originalPrice
-        ? `<span style="text-decoration: line-through; color: gray; font-size:11px; margin-right:3px;">GH₵${product.originalPrice.toFixed(2)}</span>
-           <span style="font-weight:600; color:#222;font-size:14px;">GH₵${product.price.toFixed(2)}</span>`
-        : `<span style="font-weight:700; color:#222;font-size:14px;">GH₵${product.price.toFixed(2)}</span>`;
-
-      const imgSrc = product.image?.startsWith("http") ? product.image : "https://via.placeholder.com/150";
-
-      div.innerHTML = `
-        ${discount ? `<span class="badge">${discount}% OFF</span>` : ""}
-        <div class="image-wrapper">
-          <div class="skeleton skeleton-img"></div>
-          <img src="${imgSrc}" alt="${product.name}" style="opacity:0;" loading="lazy"/>
-        </div>
-        <h3>${product.name}</h3>
-        <div class="price">${priceHTML}</div>
-        <button class="add" onclick="addToCart('${product.name}', ${product.price}, '${imgSrc}')">Add to Cart</button>
-      `;
-
-      const img = div.querySelector("img");
-      const skeleton = div.querySelector(".skeleton-img");
-
-      img.onload = () => {
-        skeleton.remove();
-        img.style.transition = "opacity 0.4s ease";
-        img.style.opacity = "1";
-      };
-
-      img.onerror = () => {
-        skeleton.remove();
-        img.style.opacity = "1";
-        img.src = "https://via.placeholder.com/150";
-      };
-
-      container.appendChild(div);
-    });
-  }
-
-  async function loadProducts(category, containerId) {
-    const container = document.getElementById(containerId);
-    const cached = getProductsFromCache(category);
-    if (cached) {
-      renderProducts(cached, container);
-    } else {
-      container.innerHTML = getSkeletons(10);
+    // Reusable skeleton template
+    function getSkeletons(count = 2) {
+      let skeletons = "";
+      for (let i = 0; i < count; i++) {
+        skeletons += `
+          <div class="skeleton-card">
+            <div class="skeleton skeleton-img"></div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-price"></div>
+            <div class="skeleton skeleton-btn"></div>
+          </div>
+        `;
+      }
+      return skeletons;
     }
 
-    const q = query(collection(db, "products"), where("category", "==", category));
-    const snapshot = await getDocs(q);
-    const products = snapshot.docs.map(doc => doc.data());
+// --- Cache helpers ---
+function saveProductsToCache(category, products) {
+  localStorage.setItem("products_" + category, JSON.stringify({
+    products,
+    timestamp: Date.now()
+  }));
+}
 
-    saveProductsToCache(category, products);
-    renderProducts(products, container);
-    return products;
+function getProductsFromCache(category, maxAge = 7 * 24 * 60 * 60 * 1000) { // 7 days default
+  const cache = localStorage.getItem("products_" + category);
+  if (!cache) return null;
+
+  const parsed = JSON.parse(cache);
+  if (Date.now() - parsed.timestamp > maxAge) {
+    return null; // expired
+  }
+  return parsed.products;
+}
+
+// --- Renderer helper ---
+function renderProducts(products, container) {
+  container.innerHTML = "";
+  products.forEach(product => {
+    const div = document.createElement("div");
+    div.className = "card";
+
+    const priceHTML = product.originalPrice
+      ? `<span style="text-decoration: line-through; color: gray; font-size:11px; margin-right:3px;">GH₵${product.originalPrice.toFixed(2)}</span>
+         <span style="font-weight:600; color:#222;font-size:14px;">GH₵${product.price.toFixed(2)}</span>`
+      : `<span style="font-weight:700; color:#222;font-size:14px;">GH₵${product.price.toFixed(2)}</span>`;
+
+   const imgSrc = product.image && product.image.startsWith("http")
+  ? product.image
+  : "https://via.placeholder.com/150";
+
+div.innerHTML = `
+  <span class="badge">10% OFF</span>
+  <div class="image-wrapper">
+    <div class="skeleton skeleton-img"></div>
+    <img src="${imgSrc}"
+         alt="${product.name}"
+         style="opacity:0;" loading="lazy"/>
+  </div>
+  <h3>${product.name}</h3>
+  <div class="price">${priceHTML}</div>
+  <button class="add" onclick="addToCart('${product.name}', ${product.price}, '${imgSrc}')">
+    Add to Cart
+  </button>
+`;
+
+
+    const img = div.querySelector("img");
+const skeleton = div.querySelector(".skeleton-img");
+
+img.onload = () => {
+  skeleton.remove();
+  img.style.transition = "opacity 0.4s ease";
+  img.style.opacity = "1"; // fade in smoothly
+};
+
+img.onerror = () => {
+  skeleton.remove();
+  img.style.opacity = "1";
+  img.src = "https://via.placeholder.com/150"; // fallback
+};
+    container.appendChild(div);
+  });
+}
+
+// --- Main loader with caching ---
+async function loadProducts(category, containerId) {
+  const container = document.getElementById(containerId);
+
+  // 1️⃣ Try cache first
+  const cached = getProductsFromCache(category);
+  if (cached) {
+    renderProducts(cached, container);
+  } else {
+    container.innerHTML = getSkeletons(10);
   }
 
-  function showAllSkeletons() {
-    const categories = ["Electronics", "Fashion", "Groceries", "Essentials", "Health"];
-    categories.forEach(section => {
-      const container = document.getElementById(`grid-${section.toLowerCase()}`);
-      if (container) container.innerHTML = getSkeletons(4);
-    });
-  }
+  // 2️⃣ Fetch fresh from Firestore in background
+  const q = query(collection(db, "products"), where("category", "==", category));
+  const snapshot = await getDocs(q);
 
-  async function loadAllProducts() {
-    showAllSkeletons();
+  const products = [];
+  snapshot.forEach(docSnap => {
+    products.push(docSnap.data());
+  });
+
+  // Save to cache + render fresh
+  saveProductsToCache(category, products);
+  renderProducts(products, container);
+
+  return products; // still returns for search
+}
+
+
+// Show skeletons for all sections at once
+function showAllSkeletons() {
+  const categories = ["Electronics", "Fashion", "Groceries", "Essentials", "Health", "Care"];
+  categories.forEach(section => {
+    const container = document.getElementById(`grid-${section}`);
+    container.innerHTML = getSkeletons(4); // uniform skeletons everywhere
+  });
+}
+
+// Load all products in parallel
+async function loadAllProducts() {
+  showAllSkeletons(); // put skeletons first
+
     const categories = [
       { name: "Electronics", id: "grid-electronics" },
       { name: "Fashion", id: "grid-fashion" },
       { name: "Groceries", id: "grid-groceries" },
       { name: "Essentials", id: "grid-essentials" },
-      { name: "Health", id: "grid-health" }
+      { name: "Health", id: "grid-health" },
+	  { name: "Care", id: "grid-care" }
     ];
+  let allProducts = [];
+
+  await Promise.all(categories.map(async cat => {
+    const products = await loadProducts(cat.name, cat.id);
+    allProducts = allProducts.concat(products);
+  }));
+
+  return allProducts;
+}
+
+    // Search functionality
     let allProducts = [];
-    await Promise.all(categories.map(async cat => {
-      const products = await loadProducts(cat.name, cat.id);
-      allProducts = allProducts.concat(products);
+    document.addEventListener("DOMContentLoaded", async () => {
+      // Load all products and store them for search
+      allProducts = await loadAllProducts();
+
+      // Update year
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      // Search input handler
+      const searchInput = document.getElementById('searchInput');
+const sections = document.querySelectorAll('.sections .section');
+const noResults = document.getElementById('noResults');
+
+searchInput.addEventListener('input', () => {
+const query = searchInput.value.toLowerCase().trim();
+let anyVisible = false;
+
+sections.forEach(section => {
+const sectionTitle = section.querySelector('h2')?.textContent.toLowerCase() || '';
+const products = section.querySelectorAll('.card');
+let sectionMatch = sectionTitle.includes(query);
+let productVisible = false;
+
+products.forEach(product => {    
+  const productName = product.querySelector('h3')?.textContent.toLowerCase() || '';    
+  if(productName.includes(query) || sectionMatch) {    
+    product.classList.remove('hidden');    
+    productVisible = true;    
+  } else {    
+    product.classList.add('hidden');    
+  }    
+});    
+
+if(sectionMatch || productVisible) {    
+  section.classList.remove('hidden');    
+  anyVisible = true;    
+} else {    
+  section.classList.add('hidden');    
+}
+
+});
+
+if(!anyVisible && query !== "") {
+noResults.style.display = 'block';
+} else {
+noResults.style.display = 'none';
+}
+});
+
+    });
+
+    // Cart functions
+    function getCart() {
+      return JSON.parse(localStorage.getItem("cart")) || [];
+    }
+
+    function saveCart(cart) {
+      localStorage.setItem("cart", JSON.stringify(cart));
+      updateBadge();
+    }
+
+    function updateBadge() {
+      const cart = getCart();
+      const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+      document.getElementById("cartCount").textContent = totalQty;
+    }
+
+    window.addToCart = function(name, price, image) {
+      let cart = getCart();
+      let existing = cart.find(i => i.name === name);
+      if (existing) {
+        existing.qty++;
+      } else {
+        cart.push({ name, price, qty: 1, image });
+      }
+      saveCart(cart);
+    
+showToast(name);
+};
+    updateBadge();
+
+// Auth and dropdown
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    localStorage.setItem("user", JSON.stringify({
+      email: user.email,
+      displayName: user.displayName || user.email.split("@")[0]
     }));
-    return allProducts;
+  } else {
+    localStorage.removeItem("user");
+  }
+  renderDropdown();
+});
+
+window.signOutUser = async function() {
+  await signOut(auth);
+  alert("Logged out!");
+};
+
+function renderDropdown() {
+  const dropdown = document.getElementById("userDropdown");
+  dropdown.innerHTML = "";
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user) {
+    dropdown.innerHTML = `
+      <a href="#">Hello, ${user.displayName}</a>
+      <a href="/dashboard/">Dashboard</a>
+      <a href="#" onclick="signOutUser()">Logout</a>
+    `;
+  } else {
+    dropdown.innerHTML = `<a href="/auth/">Login/Register</a>`;
+  }
+}
+
+// Hamburger menu
+const hamburger = document.getElementById('hamburger');
+const menu = document.getElementById('menu');
+hamburger.addEventListener('click', (e) => {
+  e.stopPropagation();
+  hamburger.classList.toggle('active');
+  menu.classList.toggle('active');
+});
+document.addEventListener('click', (e) => {
+  if (!menu.contains(e.target) && !hamburger.contains(e.target)) {
+    menu.classList.remove('active');
+    hamburger.classList.remove('active');
+  }
+});
+
+// Open preview when any product image is clicked
+document.addEventListener("click", function(e) {
+  if (e.target.tagName === "IMG" && e.target.closest(".card")) {
+    const modal = document.getElementById("imgPreview");
+    const modalImg = document.getElementById("previewImg");
+    modal.style.display = "flex";
+    modalImg.src = e.target.src;
+  }
+});
+
+// Close preview
+document.querySelector("#imgPreview .close").onclick = function() {
+  document.getElementById("imgPreview").style.display = "none";
+};
+
+// Close if clicked outside image
+document.getElementById("imgPreview").onclick = function(e) {
+  if (e.target === this) this.style.display = "none";
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+  const profilePic = localStorage.getItem("profilePic");
+  const avatar = document.getElementById("userAvatar");
+  const icon = document.getElementById("userIcon");
+  const dropdown = document.getElementById("userDropdown"); 
+  const trigger = document.getElementById("userTrigger"); 
+
+  if (profilePic) {  
+    avatar.src = profilePic;  
+    avatar.style.display = "block";  
+    icon.style.display = "none";  
+  } else {  
+    avatar.style.display = "none";  
+    icon.style.display = "block";  
   }
 
-  onAuthStateChanged(auth, user => {
+  // Toggle dropdown
+  trigger.addEventListener("click", (e) => {
+    e.stopPropagation();
+    dropdown.classList.toggle("show");
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener("click", (e) => {
+    if (!trigger.contains(e.target) && !dropdown.contains(e.target)) {
+      dropdown.classList.remove("show");
+    }
+  });
+});
+
+
+// 🔍 Check user orders on homepage load
+window.addEventListener("load", async () => {
+  const userId = localStorage.getItem("userId");
+  if (!userId) return;
+
+  try {
+    const q = query(
+      collection(db, "orders"),
+      where("userId", "==", userId) // 👈 use same field as dashboard
+    );
+    const snap = await getDocs(q);
+
+    snap.forEach(docSnap => {
+      const order = docSnap.data();
+      const orderId = docSnap.id;
+
+      if (order.status === "Complete" && !order.reviewGiven) {
+        showReviewPopup(orderId);
+      }
+    });
+  } catch (err) {
+    console.error("Error fetching orders for review:", err);
+  }
+});
+
+// ⭐ Review popup
+async function showReviewPopup(orderId) {
+  const overlay = document.createElement("div");
+  overlay.id = "review-overlay";
+  overlay.innerHTML = `
+    <div class="review-popup">
+      <h2>How was your order?</h2>
+      <div class="stars">
+        <span data-star="1">⭐</span>
+        <span data-star="2">⭐</span>
+        <span data-star="3">⭐</span>
+        <span data-star="4">⭐</span>
+        <span data-star="5">⭐</span>
+      </div>
+      <textarea placeholder="Leave your feedback..."></textarea>
+      <button id="submit-review">Submit</button>
+      <button id="close-review">Close</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  let rating = 0;
+  const stars = overlay.querySelectorAll(".stars span");
+  stars.forEach(star => {
+    star.addEventListener("click", () => {
+      rating = star.dataset.star;
+      stars.forEach(s => s.classList.toggle("active", s.dataset.star <= rating));
+    });
+  });
+
+  // Submit review
+  overlay.querySelector("#submit-review").addEventListener("click", async () => {
+    const feedback = overlay.querySelector("textarea").value;
+    await updateDoc(doc(db, "orders", orderId), {
+      reviewGiven: true,
+      review: { rating, feedback, timestamp: Date.now() }
+    });
+    alert("Thank you for your review!");
+    document.body.removeChild(overlay);
+  });
+
+  // Close without review
+  overlay.querySelector("#close-review").addEventListener("click", async () => {
+    await updateDoc(doc(db, "orders", orderId), { reviewGiven: true });
+    document.body.removeChild(overlay);
+  });
+}
+</script>
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/68b6bcdedd3a541924dc5801/1j44t3hn0';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
+<script>  
+if ('serviceWorker' in navigator) {  
+  window.addEventListener('load', () => {  
+    navigator.serviceWorker.register('/service-worker.js')  
+      .then(reg => {  
+        console.log('SW registered:', reg);  
+  
+        // Optional: listen for updates to SW and notify user  
+        reg.addEventListener('updatefound', () => {  
+          const newSW = reg.installing;  
+          newSW.addEventListener('statechange', () => {  
+            if (newSW.state === 'installed' && navigator.serviceWorker.controller) {  
+              // new content available  
+              const toast = document.createElement('div');  
+              toast.style = 'position:fixed;bottom:12px;left:12px;padding:10px 14px;background:#222;color:#fff;border-radius:8px;z-index:9999';  
+              toast.innerHTML = 'New version available <button id="reload-btn" style="margin-left:8px">Refresh</button>';  
+              document.body.appendChild(toast);  
+              document.getElementById('reload-btn').addEventListener('click', () => location.reload());  
+            }  
+          });  
+        });  
+      })  
+      .catch(err => console.error('SW register failed', err));  
+  });  
+}
+
+
+	  onAuthStateChanged(auth, user => {
     const profileImg = document.getElementById('menuProfileImg');
     const userName = document.getElementById('menuUserName');
     const userEmail = document.getElementById('menuUserEmail');
@@ -1089,6 +1429,10 @@ filter: blur(1px) !mportant;
     }
   });
 </script>
+</script>
 
+
+
+	
 </body>
 </html>
