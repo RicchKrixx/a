@@ -925,6 +925,21 @@ filter: blur(1px) !mportant;
   const auth = getAuth(app);
   const db = getFirestore(app);
 
+  function getSkeletons(count = 2) {
+    let skeletons = "";
+    for (let i = 0; i < count; i++) {
+      skeletons += `
+        <div class="skeleton-card">
+          <div class="skeleton skeleton-img"></div>
+          <div class="skeleton skeleton-text"></div>
+          <div class="skeleton skeleton-price"></div>
+          <div class="skeleton skeleton-btn"></div>
+        </div>
+      `;
+    }
+    return skeletons;
+  }
+
   function saveProductsToCache(category, products) {
     localStorage.setItem("products_" + category, JSON.stringify({
       products,
@@ -959,7 +974,8 @@ filter: blur(1px) !mportant;
       div.innerHTML = `
         ${discount ? `<span class="badge">${discount}% OFF</span>` : ""}
         <div class="image-wrapper">
-          <img src="${imgSrc}" alt="${product.name}" loading="lazy"/>
+          <div class="skeleton skeleton-img"></div>
+          <img src="${imgSrc}" alt="${product.name}" style="opacity:0;" loading="lazy"/>
         </div>
         <h3>${product.name}</h3>
         <div class="price">${priceHTML}</div>
@@ -967,7 +983,17 @@ filter: blur(1px) !mportant;
       `;
 
       const img = div.querySelector("img");
+      const skeleton = div.querySelector(".skeleton-img");
+
+      img.onload = () => {
+        skeleton.remove();
+        img.style.transition = "opacity 0.4s ease";
+        img.style.opacity = "1";
+      };
+
       img.onerror = () => {
+        skeleton.remove();
+        img.style.opacity = "1";
         img.src = "https://via.placeholder.com/150";
       };
 
@@ -977,11 +1003,11 @@ filter: blur(1px) !mportant;
 
   async function loadProducts(category, containerId) {
     const container = document.getElementById(containerId);
-    container.innerHTML = ""; // No skeletons or loading message
-
     const cached = getProductsFromCache(category);
     if (cached) {
       renderProducts(cached, container);
+    } else {
+      container.innerHTML = getSkeletons(10);
     }
 
     const q = query(collection(db, "products"), where("category", "==", category));
@@ -993,14 +1019,22 @@ filter: blur(1px) !mportant;
     return products;
   }
 
+  function showAllSkeletons() {
+    const categories = ["Electronics", "Fashion", "Groceries", "Essentials", "Health"];
+    categories.forEach(section => {
+      const container = document.getElementById(`grid-${section.toLowerCase()}`);
+      if (container) container.innerHTML = getSkeletons(4);
+    });
+  }
+
   async function loadAllProducts() {
+    showAllSkeletons();
     const categories = [
       { name: "Electronics", id: "grid-electronics" },
       { name: "Fashion", id: "grid-fashion" },
       { name: "Groceries", id: "grid-groceries" },
       { name: "Essentials", id: "grid-essentials" },
-      { name: "Health", id: "grid-health" },
-      { name: "Care", id: "grid-care" }
+      { name: "Health", id: "grid-health" }
     ];
     let allProducts = [];
     await Promise.all(categories.map(async cat => {
@@ -1053,9 +1087,6 @@ filter: blur(1px) !mportant;
         });
       }
     }
-
-    // Load products on page ready
-    loadAllProducts();
   });
 </script>
 
