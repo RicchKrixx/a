@@ -411,12 +411,26 @@ font-size: 16px;
 
 .category-grid {
   display: flex;
-  justify-content: center; /* ✅ center items inside the grid */
-  gap: 1px;
-  flex-wrap: wrap;
-  margin-top: 5px;
+  gap: 8px;
+  flex-wrap: nowrap;              /* 👈 disables wrapping */
+  overflow-x: auto;               /* 👈 enables horizontal scroll */
+  padding: 10px 0;
+  scroll-snap-type: x mandatory;  /* 👈 enables snap effect */
+  -webkit-overflow-scrolling: touch;
 }
 
+.category-grid::-webkit-scrollbar {
+  height: 6px;
+}
+
+.category-grid::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.category-grid {
+  scroll-behavior: smooth;
+}
 
 .cat-menu {
   position: relative;
@@ -426,7 +440,9 @@ font-size: 16px;
   overflow: hidden;
   text-decoration: none;
   cursor: pointer;
+  scroll-snap-align: start; /* 👈 makes each item snap into view */
 }
+
 
 .cat-menu img {
   width: 100%;
@@ -710,7 +726,10 @@ filter: blur(1px) !mportant;
       <img src="https://i.postimg.cc/zfhFV0Wr/th-1.webp" alt="Home Essentials">
       <div class="category">Home Essentials</div>
     </a>
-
+    <a class="cat-menu" href="#health">
+      <img src="https://i.postimg.cc/gJSjdPJr/OIP.webp" alt="Health">
+      <div class="category">Health</div>
+    </a>
     <a class="cat-menu" href="#care">
       <img src="https://i.postimg.cc/8zQ5T41W/download.webp" alt="Beauty & Personal Care">
       <div class="category">Beauty Care</div>
