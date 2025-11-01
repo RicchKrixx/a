@@ -439,6 +439,9 @@ font-size: 16px;
 .sections {
   padding: 50px 0;
 }
+.sections {
+  padding: 50px 0;
+}
 
 .section {
   margin-bottom: 50px;
@@ -452,23 +455,23 @@ font-size: 16px;
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Always 2 columns */
-  gap: 10px;
+  grid-template-columns: repeat(2, 1fr); /* Two columns */
+  gap: 20px;
   justify-items: center;
 }
 
 .card {
-  background: #fff;
   border: 1px solid #ccc;
-  padding: 5px;
+  padding: 15px;
   width: 100%;
-  max-width: 300px; /* optional, keeps card from getting too wide */
+  max-width: 250px;
   text-align: center;
   border-radius: 10px;
   transition: transform 0.2s;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  will-change: transform;
 }
 
 .card:hover {
@@ -479,7 +482,6 @@ font-size: 16px;
   max-width: 100%;
   height: auto;
   margin-bottom: 10px;
-  border-radius: 10px;
 }
 
 .card h3 {
@@ -492,6 +494,17 @@ font-size: 16px;
   font-size: 16px;
   color: #666;
 }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr; /* One column on smaller screens */
+  }
+  .sections {
+    padding: 30px 0;
+  }
+}
+
 	  .add { margin-top:8px; border:0; background:var(--brand); color:#fff; padding:8px 10px; border-radius:10px; cursor:pointer; } .add:hover { opacity:0.9; }
    .card,
 .image-wrapper {
