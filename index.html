@@ -169,17 +169,16 @@ padding: 15px;
 border-left: 4px solid #ffcc00;
 border-radius: 20px;
 }
-.testimonial img {
-  width: 80px;          /* Set size for user image */
-  height: 80px;
+.testimonial-grid img {
+  width: 50px;          /* Set size for user image */
+  height: 50px;
   border-radius: 50%;   /* Make it circular */
   object-fit: cover;     /* Ensure image fills the circle nicely */
-  margin-bottom: 10px;  /* Space below image */
   border: 2px solid #ffcc00; /* Optional border for style */
 }
 
-.testimonial span {
-  display: block;        /* Make it appear below blockquote */
+.testimonial-grid span {
+  display: flex;        /* Make it appear below blockquote */
   margin-top: 8px;
   font-weight: bold;
   font-size: 13px;
@@ -470,70 +469,6 @@ font-size: 16px;
   align-items: stretch; /* makes all cards same height in row */
 }
 
-
-	  .skeleton {
-  background: linear-gradient(90deg, #eee, #ddd, #eee);
-  height: 200px;
-  width: 100%;
-  border-radius: 10px;
-  animation: shimmer 1.5s infinite;
-}
-@keyframes shimmer {
-  0% { background-position: -200px 0; }
-  100% { background-position: 200px 0; }
-}
-#newsletter-form {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 20px;
-  flex-wrap: wrap; /* Allows wrapping on smaller screens */
-}
-
-#newsletter-form input[type="email"] {
-  padding: 10px 15px;
-  font-size: 16px;
-  border: 2px solid #ccc;
-  border-radius: 5px;
-  outline: none;
-  flex: 1 1 200px; /* Grows/shrinks, min width 200px */
-  min-width: 200px;
-  max-width: 400px;
-  transition: border-color 0.3s;
-}
-
-#newsletter-form input[type="email"]:focus {
-  border-color: #ffcc00;
-}
-
-#newsletter-form button {
-  padding: 10px 20px;
-  font-size: 14px;
-  background-color: #ffcc00;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s;
-  flex: 0 0 auto; /* Prevent shrinking */
-}
-
-#newsletter-form button:hover {
-  background-color: #e6b800;
-}
-
-/* Optional: stack input and button vertically on very small screens */
-@media (max-width: 500px) {
-  #newsletter-form {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  #newsletter-form button {
-    width: 100%;
-  }
-}
     </style>
 </head>
  
@@ -650,10 +585,7 @@ font-size: 16px;
 <section class="testimonials">
 <h2>What Our Customers Say</h2>
 <div class="testimonial-grid">
-<div class="testimonial">
-  <img src="user1.jpg" alt="Sarah">
-  <blockquote>“Great selection and fast delivery”</blockquote>
-  <span>- Sarah T ⭐⭐⭐⭐⭐</span>
+  <blockquote> <span><img src="user1.jpg" alt="Sarah"></span>“Great selection and fast delivery”<span>- Sarah T ⭐⭐⭐⭐⭐</span></blockquote>
 </div>
 
 <blockquote>"Best price I've found online" - James K</blockquote>
@@ -763,10 +695,6 @@ font-size: 16px;
     transform: translateY(0);
   }
 </style>
-<form id="newsletter-form">
-  <input type="email" name="email" placeholder="Enter your email" required>
-  <button type="submit">Subscribe</button>
-</form>
 
 <div class="socials">
   <a href="https://www.facebook.com/share/19dfn17s9G/" class="facebook" data-label="Facebook"><i class="fab fa-facebook-f"></i></a>
@@ -784,26 +712,6 @@ font-size: 16px;
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <!-- Font Awesome for icons (you'll need to include this in your project) -->
     <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script>
-<script>
-  document.getElementById("newsletter-form").addEventListener("submit", function(e) {
-    e.preventDefault();
-
-    const email = this.email.value;
-
-    fetch("https://script.google.com/macros/s/AKfycbw5p9ZheBPp0xYlvBJtA47S8yzouLBjbzNbj8NBmpXR-UnzENfoX6JjEpi72e8VTycY/exec", {
-      method: "POST",
-      body: new URLSearchParams({ email })
-    })
-    .then(res => res.text())
-    .then(response => {
-      alert(response); // Example: "Subscribed"
-      this.reset();    // Clear form
-    })
-    .catch(() => {
-      alert("Something went wrong. Please try again.");
-    });
-  });
-</script>
   <script>
     function toggleMenu() {
       const menu = document.getElementById('fullMenu');
