@@ -451,25 +451,30 @@ font-size: 16px;
 
 .shop-header {
   position: relative;
-  background-image: url('https://i.postimg.cc/xdDHJfy0/grok-image-47idy2-2.jpg');
-  background-size: cover;
-  background-position: center;
   height: 240px;
   color: white;
   text-align: center;
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
+  border-radius: 16px;
 }
-.shop-header::after {
-  content: "";
+
+.shop-header::before {
+  content: '';
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.4);
+  background-image: url('https://i.postimg.cc/xdDHJfy0/grok-image-47idy2-2.jpg');
+  background-size: cover;
+  background-position: center;
+  filter: blur(8px); /* Adjust blur strength */
+  z-index: 0;
 }
+
 .header-content {
   position: relative;
-  z-index: 2;
+  z-index: 1;
 }
 .cta-btn {
   display: inline-block;
