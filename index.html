@@ -411,16 +411,17 @@ font-size: 16px;
 
 .category-grid {
   display: flex;
-  justify-content: flex-start;
-  gap: 2px;
+  justify-content: center; /* ✅ center items inside the grid */
+  gap: 1px;
   flex-wrap: wrap;
-  margin-bottom: 0;
+  margin-top: 5px;
 }
+
 
 .cat-menu {
   position: relative;
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   border-radius: 12px;
   overflow: hidden;
   text-decoration: none;
@@ -449,20 +450,21 @@ font-size: 16px;
   border-bottom-right-radius: 12px;
 }
 
-	  
 .shop-header {
   display: flex;
-  align-items: flex-end; /* aligns content to bottom */
-  justify-content: flex-start; /* aligns content to left */
+  justify-content: center; /* ✅ center horizontally */
+  align-items: flex-end;    /* ✅ align to bottom of header */
   padding: 15px 30px;
+  height: 240px;
   background-image: url('https://i.postimg.cc/xdDHJfy0/grok-image-47idy2-2.jpg');
   background-size: cover;
   background-position: center;
   color: white;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  height: 240px;
   z-index: 9999;
+  position: relative;
 }
+
 
 
 .shop-header h2 {
