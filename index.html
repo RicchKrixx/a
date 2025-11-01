@@ -445,7 +445,7 @@ font-size: 16px;
   text-align: center;
 }
 
-/* ✅ Always 2 columns minimum, grows on larger screens */
+/* ✅ Always at least 2 cards per row */
 .grid {
   display: grid;
   gap: 14px;
@@ -453,14 +453,14 @@ font-size: 16px;
   justify-items: center;
 }
 
-/* ✅ Limit shrinking so it never becomes 1 per row */
+/* ✅ Force 2 per row on all phones */
 @media (max-width: 480px) {
   .grid {
-    grid-template-columns: repeat(2, 1fr); /* Force 2 columns even on small phones */
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* ✅ Optional: Add more columns automatically for big screens */
+/* ✅ Add more columns automatically on larger screens */
 @media (min-width: 900px) {
   .grid {
     grid-template-columns: repeat(3, 1fr);
@@ -476,39 +476,49 @@ font-size: 16px;
 .card {
   background: #fff;
   border: 1px solid #ccc;
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 10px;
   text-align: center;
   transition: transform 0.2s;
   width: 100%;
+  height: 380px; /* ✅ Fixed consistent height */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   position: relative;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
 }
 
 .card:hover {
-  transform: scale(1.03);
+  transform: translateY(-5px);
+}
+
+.image-wrapper {
+  width: 100%;
+  height: 180px; /* ✅ Keeps image area same size */
+  overflow: hidden;
+  border-radius: 10px;
 }
 
 .card img {
   width: 100%;
-  height: auto;
-  border-radius: 10px;
-  margin-bottom: 10px;
+  height: 100%;
   object-fit: cover;
+  border-radius: 10px;
 }
 
 .card h3 {
   font-size: 16px;
-  margin: 8px 0 5px;
+  margin: 8px 0 4px;
   word-wrap: break-word;
   color: #222;
+  flex-shrink: 0;
 }
 
-.card p {
+.card .price {
   font-size: 14px;
-  color: #666;
+  color: #555;
+  margin-bottom: 6px;
 }
 
 .add {
@@ -537,6 +547,7 @@ font-size: 16px;
   font-weight: bold;
   z-index: 2;
 }
+
 
   </style>
 </head>
