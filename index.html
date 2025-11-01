@@ -449,23 +449,38 @@ font-size: 16px;
   border-bottom-right-radius: 12px;
 }
 
-.shop-header { 
-	display: flex;
-	justify-content: space-between; 
-	align-items: center; 
-	padding: 15px 30px; 
-	background: linear-gradient(90deg, #6a11cb, #2575fc); 
-	color: white; 
-	box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
-	height: 240px; 
-} 
-	  .shop-header { 
-		  background-image: url('https://i.postimg.cc/xdDHJfy0/grok-image-47idy2-2.jpg'); 
-		  background-size: cover; 
-		  background-position: center; 
-		  filter: blur(3px); 
-		  z-index:9999; 
-	  }
+.shop-header {
+  position: relative;
+  background-image: url('https://i.postimg.cc/xdDHJfy0/grok-image-47idy2-2.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 240px;
+  color: white;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.shop-header::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+}
+.header-content {
+  position: relative;
+  z-index: 2;
+}
+.cta-btn {
+  display: inline-block;
+  background: var(--brand);
+  padding: 10px 20px;
+  border-radius: 8px;
+  color: #fff;
+  text-decoration: none;
+  margin-top: 10px;
+}
+
 																																																						}
 /* Sections */
 .section { 
@@ -486,6 +501,20 @@ font-size: 16px;
   gap: 15px;
   align-items: stretch; /* makes all cards same height in row */
 }
+
+
+	  .skeleton {
+  background: linear-gradient(90deg, #eee, #ddd, #eee);
+  height: 200px;
+  width: 100%;
+  border-radius: 10px;
+  animation: shimmer 1.5s infinite;
+}
+@keyframes shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: 200px 0; }
+}
+
     </style>
 </head>
  
@@ -523,8 +552,13 @@ font-size: 16px;
     </div>
   </div>
   
-  <header class="shop-header">
-	  </header>
+<header class="shop-header">
+  <div class="header-content">
+    <h1>Welcome to BixMAX</h1>
+    <p>Your one-stop shop for everything you love</p>
+    <a href="#products" class="cta-btn">🛍️ Shop Now</a>
+  </div>
+</header>
   
 
 
@@ -705,6 +739,10 @@ font-size: 16px;
     transform: translateY(0);
   }
 </style>
+<form id="newsletter-form">
+  <input type="email" name="email" placeholder="Enter your email" required>
+  <button type="submit">Subscribe</button>
+</form>
 
 <div class="socials">
   <a href="https://www.facebook.com/share/19dfn17s9G/" class="facebook" data-label="Facebook"><i class="fab fa-facebook-f"></i></a>
@@ -763,6 +801,14 @@ font-size: 16px;
     }
 
   </script>
+<button id="scrollTop">↑</button>
+<script>
+const scrollBtn = document.getElementById('scrollTop');
+window.addEventListener('scroll', () => {
+  scrollBtn.style.display = window.scrollY > 300 ? 'block' : 'none';
+});
+scrollBtn.onclick = () => window.scrollTo({top:0, behavior:'smooth'});
+</script>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
