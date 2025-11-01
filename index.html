@@ -460,31 +460,40 @@ font-size: 16px;
   padding: 8px 12px;
   align-items: center;
 }
-
-.cat-menu {
-  position: relative;
-  flex: 0 0 auto;
-  width: 70px;
-  height: 70px;
-  border-radius: 12px;
-  overflow: hidden;
-  scroll-snap-align: start;
-  cursor: pointer;
-  text-decoration: none;
-  transition: transform 0.3s ease;
+.category-grid {
+  display: flex;
+  gap: 12px;
+  overflow-x: scroll;
+  scroll-behavior: smooth;
+  padding: 15px 0;
+  scroll-snap-type: none;
+  -webkit-overflow-scrolling: touch;
+  align-items: center;
 }
 
-.cat-menu:hover {
-  transform: scale(1.08);
+.cat-menu {
+  flex: 0 0 auto;
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  transition: transform 0.3s ease;
 }
 
 .cat-menu img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
   border-radius: 12px;
-  display: block;
+  object-fit: cover;
 }
+
+
+.cat-menu:hover {
+  transform: scale(1.08);
+}
+
+
 
 .category {
   position: absolute;
@@ -1100,27 +1109,54 @@ font-size: 16px;
     loadAllProducts();
   });
 </script>
-
 <script>
-  const grid = document.querySelector('.category-grid');
-  const items = document.querySelectorAll('.cat-menu');
+const grid = document.querySelector('.category-grid');
+const items = Array.from(document.querySelectorAll('.cat-menu'));
 
-  function scaleItems() {
-    const gridRect = grid.getBoundingClientRect();
-    items.forEach(item => {
-      const itemRect = item.getBoundingClientRect();
-      const itemCenter = itemRect.left + itemRect.width / 2;
-      const gridCenter = gridRect.left + gridRect.width / 2;
-      const distance = Math.abs(gridCenter - itemCenter);
-      const scale = Math.max(1, 1.5 - distance / 200); // adjust 200 for sensitivity
-      item.style.transform = `scale(${scale})`;
-      item.style.transition = 'transform 0.2s ease';
-    });
+// Clone items for infinite scroll illusion
+items.forEach(item => grid.appendChild(item.cloneNode(true)));
+items.forEach(item => grid.appendChild(item.cloneNode(true)));
+
+let scrollPos = grid.scrollWidth / 3; // start in the middle
+grid.scrollLeft = scrollPos;
+
+// Adjust item sizes dynamically
+function updateScales() {
+  const gridRect = grid.getBoundingClientRect();
+  const center = gridRect.left + gridRect.width / 2;
+
+  document.querySelectorAll('.cat-menu').forEach(item => {
+    const rect = item.getBoundingClientRect();
+    const itemCenter = rect.left + rect.width / 2;
+    const distance = Math.abs(center - itemCenter);
+
+    // Scale formula — closer to center = bigger
+    const scale = Math.max(0.7, 1.4 - distance / 300);
+    item.style.transform = `scale(${scale})`;
+    item.style.transition = 'transform 0.3s ease';
+    item.style.zIndex = Math.round(scale * 100);
+  });
+}
+
+// Infinite scroll handling
+function checkLoop() {
+  if (grid.scrollLeft < grid.scrollWidth / 3.5) {
+    grid.scrollLeft += grid.scrollWidth / 3;
+  } else if (grid.scrollLeft > grid.scrollWidth / 1.5) {
+    grid.scrollLeft -= grid.scrollWidth / 3;
   }
+}
 
-  grid.addEventListener('scroll', scaleItems);
-  window.addEventListener('load', scaleItems);
-  window.addEventListener('resize', scaleItems);
+// Update scales on scroll and resize
+grid.addEventListener('scroll', () => {
+  updateScales();
+  checkLoop();
+});
+window.addEventListener('resize', updateScales);
+window.addEventListener('load', () => {
+  updateScales();
+  checkLoop();
+});
 </script>
 
 	
