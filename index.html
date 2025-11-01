@@ -411,11 +411,12 @@ font-size: 16px;
 
 .category-grid {
   display: flex;
-  justify-content: flex-start;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 5px;
+  gap: 5px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding: 10px 0;
 }
+
 
 .cat-menu {
   position: relative;
@@ -456,19 +457,15 @@ font-size: 16px;
   justify-content: space-between;
   align-items: center;
   padding: 15px 30px;
-  background: linear-gradient(90deg, #6a11cb, #2575fc);
-  color: white;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  height: 240px;
-}
-
-.shop-header {
   background-image: url('https://i.postimg.cc/xdDHJfy0/grok-image-47idy2-2.jpg');
   background-size: cover;
   background-position: center;
-  filter: blur(3px);
-  z-index:9999;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  height: 240px;
+  z-index: 9999;
 }
+
 
 .shop-header h2 {
 color: white;
@@ -685,13 +682,7 @@ filter: blur(1px) !mportant;
   
   
  <header class="shop-header">
-</header>
-
-
-  <div class="container">
-  <div  class="gridd">
-  <section class="categories">
-  <h2>Shop by Category</h2>
+	  <section class="categories">
   <div class="category-grid">
     <a class="cat-menu" href="#electronics">
       <img src="https://i.postimg.cc/1XrW4Mkt/th.webp" alt="Electronics">
@@ -719,7 +710,13 @@ filter: blur(1px) !mportant;
     </a>
   </div>
 </section>
-	<div class="sections" id="products">
+
+</header>
+
+
+  <div class="container">
+  <div  class="gridd">
+ 	<div class="sections" id="products">
   <section class="section" id="electronics">
     <h2>ELECTRONICS</h2>
     <div class="grid" id="grid-electronics"></div>
