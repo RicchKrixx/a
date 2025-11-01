@@ -438,20 +438,20 @@ font-size: 16px;
   margin-top: 10px;
 }
 
-																																																						}
-/* Sections */
-.section { 
-	padding:26px 16px; 
-	max-width:1100px; 
-	margin:0 auto; 
+/* Main Products Sections */
+.sections {
+  padding: 26px 16px;
+  max-width: 1100px;
+  margin: 0 auto;
 }
-.section h2 { 
-	margin:0 0 14px; 
-	color:#333; 
+
+.section h2 {
+  margin-bottom: 14px;
+  color: #333;
+  font-size: 24px;
+  text-align: left;
 }
-.grid { display:grid; gap:14px; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); }
-.card { position: relative; background:var(--card); border-radius:14px; padding:12px; box-shadow:0 6px 18px rgba(0,0,0,.06); display:flex; flex-direction:column; align-items:center; text-align:center; }
-.card img { width:100%; height:auto; object-fit:cover; border-radius:10px; }
+
 .sections .section .products {
   display: flex;
   flex-wrap: wrap;
@@ -459,6 +459,79 @@ font-size: 16px;
   align-items: stretch; /* makes all cards same height in row */
 }
 
+.grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+}
+
+.card {
+  position: relative;
+  background: #fff; /* or use var(--card) if you want theme color */
+  border-radius: 14px;
+  padding: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+}
+
+.card img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+
+.card h3 {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 6px;
+  color: #1f1f1f;
+}
+
+.card p {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.cta-btn {
+  display: inline-block;
+  background: #b8860b; /* brand color */
+  padding: 10px 20px;
+  border-radius: 8px;
+  color: #fff;
+  text-decoration: none;
+  margin-top: 10px;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+.cta-btn:hover {
+  background: #8b6508; /* darker brand on hover */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+}
     </style>
 </head>
  
