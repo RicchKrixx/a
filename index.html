@@ -445,7 +445,7 @@ font-size: 16px;
   text-align: center;
 }
 
-/* ✅ Always at least 2 cards per row */
+/* ✅ Always 2 columns minimum, grows on larger screens */
 .grid {
   display: grid;
   gap: 14px;
@@ -453,14 +453,14 @@ font-size: 16px;
   justify-items: center;
 }
 
-/* ✅ Force 2 per row on all phones */
+/* ✅ Limit shrinking so it never becomes 1 per row */
 @media (max-width: 480px) {
   .grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr); /* Force 2 columns even on small phones */
   }
 }
 
-/* ✅ Add more columns automatically on larger screens */
+/* ✅ Optional: Add more columns automatically for big screens */
 @media (min-width: 900px) {
   .grid {
     grid-template-columns: repeat(3, 1fr);
@@ -472,53 +472,42 @@ font-size: 16px;
   }
 }
 
-/* --- Card styles --- */
 .card {
   background: #fff;
   border: 1px solid #ccc;
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 10px;
   text-align: center;
   transition: transform 0.2s;
   width: 100%;
-  height: 380px; /* ✅ Fixed consistent height */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   position: relative;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
 }
 
 .card:hover {
-  transform: translateY(-5px);
-}
-
-.image-wrapper {
-  width: 100%;
-  height: 180px; /* ✅ Keeps image area same size */
-  overflow: hidden;
-  border-radius: 10px;
+  transform: scale(1.03);
 }
 
 .card img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
   border-radius: 10px;
+  margin-bottom: 10px;
+  object-fit: cover;
 }
 
 .card h3 {
   font-size: 16px;
-  margin: 8px 0 4px;
+  margin: 8px 0 5px;
   word-wrap: break-word;
   color: #222;
-  flex-shrink: 0;
 }
 
-.card .price {
+.card p {
   font-size: 14px;
-  color: #555;
-  margin-bottom: 6px;
+  color: #666;
 }
 
 .add {
@@ -534,20 +523,19 @@ font-size: 16px;
   opacity: 0.9;
 }
 
-/* Badge */
 .badge {
   position: absolute;
   top: 10px;
   left: 10px;
-  background: var(--brand);
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px) saturate(180%);
   color: white;
   font-size: 14px;
   padding: 4px 6px;
   border-radius: 6px;
-  font-weight: bold;
+  font-style: italic;
   z-index: 2;
 }
-
 
   </style>
 </head>
@@ -882,7 +870,7 @@ scrollBtn.onclick = () => window.scrollTo({top:0, behavior:'smooth'});
       const imgSrc = product.image?.startsWith("http") ? product.image : "https://via.placeholder.com/150";
 
       div.innerHTML = `
-        ${discount ? `<span class="badge">${discount}% OFF</span>` : ""}
+        ${discount ? `<span class="badge">🔥${discount}% OFF</span>` : ""}
         <div class="image-wrapper">
           <img src="${imgSrc}" alt="${product.name}" loading="lazy"/>
         </div>
