@@ -413,11 +413,13 @@ font-size: 16px;
   display: flex;
   gap: 8px;
   flex-wrap: nowrap;
-  overflow-x: auto;
+  overflow-x: scroll;
   padding: 10px 0;
   scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
 }
+
 
 .cat-menu {
   position: relative;
@@ -451,13 +453,7 @@ font-size: 16px;
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
 }
-.category-grid::-webkit-scrollbar {
-  height: 6px;
-}
-.category-grid::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 3px;
-}
+
 
 .shop-header {
   position: relative;
@@ -1083,6 +1079,27 @@ filter: blur(1px) !mportant;
   });
 </script>
 
+<script>
+  const grid = document.querySelector('.category-grid');
+  const items = document.querySelectorAll('.cat-menu');
+
+  function scaleItems() {
+    const gridRect = grid.getBoundingClientRect();
+    items.forEach(item => {
+      const itemRect = item.getBoundingClientRect();
+      const itemCenter = itemRect.left + itemRect.width / 2;
+      const gridCenter = gridRect.left + gridRect.width / 2;
+      const distance = Math.abs(gridCenter - itemCenter);
+      const scale = Math.max(1, 1.5 - distance / 200); // adjust 200 for sensitivity
+      item.style.transform = `scale(${scale})`;
+      item.style.transition = 'transform 0.2s ease';
+    });
+  }
+
+  grid.addEventListener('scroll', scaleItems);
+  window.addEventListener('load', scaleItems);
+  window.addEventListener('resize', scaleItems);
+</script>
 
 	
 </body>
