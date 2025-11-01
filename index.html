@@ -409,27 +409,73 @@ font-size: 16px;
                 text-align: center;
             }}
 
-.category-grid {
+.shop-header {
+  position: relative;
   display: flex;
-  gap: 8px;
-  flex-wrap: nowrap;
-  overflow-x: scroll;
-  padding: 10px 0;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  height: 240px;
+  padding: 15px 30px;
+  color: white;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
+/* Background image with blur */
+.shop-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url('https://i.postimg.cc/xdDHJfy0/grok-image-47idy2-2.jpg');
+  background-size: cover;
+  background-position: center;
+  filter: blur(6px);
+  z-index: -1;
+}
+
+.shop-header h2 {
+  margin-bottom: 10px;
+  color: white;
+  filter: blur(0px) !important;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+/* Category section */
+.categories {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+  padding: 8px 0;
+  backdrop-filter: blur(3px);
+}
+
+/* Scrollable category bar */
+.category-grid {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding: 8px 12px;
+  align-items: center;
+}
 
 .cat-menu {
   position: relative;
-  width: 60px;
-  height: 60px;
+  flex: 0 0 auto;
+  width: 70px;
+  height: 70px;
   border-radius: 12px;
   overflow: hidden;
-  text-decoration: none;
-  cursor: pointer;
   scroll-snap-align: start;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.3s ease;
+}
+
+.cat-menu:hover {
+  transform: scale(1.08);
 }
 
 .cat-menu img {
@@ -447,39 +493,12 @@ font-size: 16px;
   padding: 4px 0;
   background: rgba(0, 0, 0, 0.6);
   color: white;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: bold;
   text-align: center;
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
 }
-
-
-.shop-header {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  padding: 15px 30px;
-  height: 240px;
-  color: white;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  overflow: hidden;
-  z-index: 1;
-}
-
-/* Blurred background layer */
-.shop-header::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: url('https://i.postimg.cc/xdDHJfy0/grok-image-47idy2-2.jpg');
-  background-size: cover;
-  background-position: center;
-  filter: blur(6px);
-  z-index: -1;
-}
-
 
 
 /* Sections */
@@ -691,36 +710,43 @@ font-size: 16px;
     </div>
   </div>
   
-  
- <header class="shop-header">
-	  <section class="categories">
-  <div class="category-grid">
-    <a class="cat-menu" href="#electronics">
-      <img src="https://i.postimg.cc/1XrW4Mkt/th.webp" alt="Electronics">
-      <div class="category">Electronics</div>
-    </a>
-    <a class="cat-menu" href="#fashion">
-      <img src="https://i.postimg.cc/ZRc3dgq5/th-2.webp" alt="Fashion">
-      <div class="category">Fashion</div>
-    </a>
-    <a class="cat-menu" href="#groceries">
-      <img src="https://i.postimg.cc/15gnm4Dm/th-3.webp" alt="Groceries">
-      <div class="category">Groceries</div>
-    </a>
-    <a class="cat-menu" href="#home-essentials">
-      <img src="https://i.postimg.cc/zfhFV0Wr/th-1.webp" alt="Home Essentials">
-      <div class="category">Home Essentials</div>
-    </a>
-    <a class="cat-menu" href="#health">
-      <img src="https://i.postimg.cc/gJSjdPJr/OIP.webp" alt="Health">
-      <div class="category">Health</div>
-    </a>
-    <a class="cat-menu" href="#care">
-      <img src="https://i.postimg.cc/8zQ5T41W/download.webp" alt="Beauty & Personal Care">
-      <div class="category">Beauty Care</div>
-    </a>
-  </div>
-</section>
+  <header class="shop-header">
+  <h2>Shop by Category</h2>
+
+  <section class="categories">
+    <div class="category-grid">
+      <a class="cat-menu" href="#electronics">
+        <img src="https://i.postimg.cc/1XrW4Mkt/th.webp" alt="Electronics">
+        <div class="category">Electronics</div>
+      </a>
+
+      <a class="cat-menu" href="#fashion">
+        <img src="https://i.postimg.cc/ZRc3dgq5/th-2.webp" alt="Fashion">
+        <div class="category">Fashion</div>
+      </a>
+
+      <a class="cat-menu" href="#groceries">
+        <img src="https://i.postimg.cc/15gnm4Dm/th-3.webp" alt="Groceries">
+        <div class="category">Groceries</div>
+      </a>
+
+      <a class="cat-menu" href="#home-essentials">
+        <img src="https://i.postimg.cc/zfhFV0Wr/th-1.webp" alt="Home Essentials">
+        <div class="category">Home Essentials</div>
+      </a>
+
+      <a class="cat-menu" href="#health">
+        <img src="https://i.postimg.cc/gJSjdPJr/OIP.webp" alt="Health">
+        <div class="category">Health</div>
+      </a>
+
+      <a class="cat-menu" href="#beauty">
+        <img src="https://i.postimg.cc/8zQ5T41W/download.webp" alt="Beauty & Care">
+        <div class="category">Beauty Care</div>
+      </a>
+    </div>
+  </section>
+</header>
 
 </header>
 
