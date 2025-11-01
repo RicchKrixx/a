@@ -452,7 +452,7 @@ font-size: 16px;
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Two columns */
+  grid-template-columns: repeat(2, 1fr); /* Always 2 columns */
   gap: 20px;
   justify-items: center;
 }
@@ -461,14 +461,13 @@ font-size: 16px;
   border: 1px solid #ccc;
   padding: 15px;
   width: 100%;
-  max-width: 250px;
+  max-width: 300px; /* optional, keeps card from getting too wide */
   text-align: center;
   border-radius: 10px;
   transition: transform 0.2s;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  will-change: transform;
 }
 
 .card:hover {
@@ -491,17 +490,6 @@ font-size: 16px;
   font-size: 16px;
   color: #666;
 }
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .grid {
-    grid-template-columns: 2fr; /* One column on smaller screens */
-  }
-  .sections {
-    padding: 30px 0;
-  }
-}
-
     </style>
 </head>
  
