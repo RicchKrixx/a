@@ -1027,6 +1027,69 @@ scrollBtn.onclick = () => window.scrollTo({top:0, behavior:'smooth'});
         });
       }
     }
+  let allProductsCache = [];
+
+  window.addEventListener('DOMContentLoaded', async () => {
+    if (!localStorage.getItem('bixmax_has_visited')) {
+      localStorage.setItem('bixmax_has_visited', 'true');
+      if ('Notification' in window && Notification.permission !== 'denied') {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            new Notification("👋 Welcome to BixMAX!", {
+              body: "Thanks for visiting us!",
+              icon: "Bixmaxlogo.png"
+            });
+          }
+        });
+      }
+    }
+
+    // ✅ Load all products into cache
+    allProductsCache = await loadAllProducts();
+    setupSearch(allProductsCache);
+  });
+
+  // ✅ SEARCH LOGIC
+  function setupSearch(products) {
+    const input = document.getElementById('searchInput');
+    const resultsContainer = document.getElementById('searchResults');
+    const sections = document.querySelector('.sections'); // All category sections
+
+    input.addEventListener('input', () => {
+      const query = input.value.trim().toLowerCase();
+
+      if (query === "") {
+        resultsContainer.style.display = "none";
+        sections.style.display = "block";
+        resultsContainer.innerHTML = "";
+        return;
+      }
+
+      // Filter products by name, description, or category
+      const results = products.filter(p =>
+        p.name?.toLowerCase().includes(query) ||
+        p.description?.toLowerCase().includes(query) ||
+        p.category?.toLowerCase().includes(query)
+      );
+
+      // Show results
+      resultsContainer.innerHTML = "";
+      if (results.length > 0) {
+        resultsContainer.style.display = "grid";
+        sections.style.display = "none";
+        renderProducts(results, resultsContainer);
+      } else {
+        resultsContainer.style.display = "grid";
+        sections.style.display = "none";
+        resultsContainer.innerHTML = `<p style="text-align:center; grid-column:1/-1;">No products found for "<b>${query}</b>"</p>`;
+      }
+    });
+  }
+let debounceTimer;
+input.addEventListener('input', () => {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => { /* filtering code here */ }, 300);
+});
 
  loadAllProducts();
 
