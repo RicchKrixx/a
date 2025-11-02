@@ -535,6 +535,112 @@ font-size: 16px;
   font-style: italic;
   z-index: 2;
 }
+.no-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fff3cd;
+  border: 1px solid #ffeeba;
+  color: #856404;
+  padding: 30px 20px;
+  border-radius: 12px;
+  text-align: center;
+  max-width: 400px;
+  margin: 20px auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  animation: fadeIn 0.5s ease;
+  height: 250px;
+}
+
+.no-results img {
+  width: 80px;
+  margin-bottom: 12px;
+}
+
+.no-results p {
+  font-weight: 600;
+  margin: 0 0 6px 0;
+}
+
+.no-results small {
+  opacity: 0.7;
+  font-size: 14px;
+}
+#backToTop {
+    display: none; /* Hidden by default */
+    position: fixed;
+    bottom: 100px;
+    right: 2px;
+    z-index: 99;
+    font-size: 20px;
+    border: none;
+    outline: none;
+    background:var(--brand);
+    color: white;
+    cursor: pointer;
+    padding: 12px 16px;
+    border-radius: 40px 20px;
+    transition: opacity 0.3s ease, transform 0.2s ease;
+  }
+  #backToTop:hover {
+    background:var(--brand);
+    transform: scale(1.1);
+  }
+	    .socials {
+    display: flex;
+    gap: 16px;
+    padding: 1rem;
+    justify-content: center;
+  }
+
+  .socials a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    color: white;
+    font-size: 30px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+  }
+
+  .socials a:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+  }
+
+  .facebook { background: #3b5998; }
+  .instagram { background: #e1306c; }
+  .tiktok { background: #000; }
+  .x { background: #1da1f2; }
+  .whatsapp { background: #00b489; }
+
+  /* Optional Tooltip */
+  .socials a::after {
+    content: attr(data-label);
+    position: absolute;
+    bottom: -30px;
+    background: #333;
+    color: #fff;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    opacity: 0;
+    transform: translateY(5px);
+    pointer-events: none;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .socials a:hover::after {
+    opacity: 1;
+    transform: translateY(0);
+  }
 
   </style>
 </head>
@@ -577,7 +683,11 @@ font-size: 16px;
   <div class="header-content">
     <h1>Welcome to BixMAX</h1>
     <p>Your one-stop shop for everything you love</p>
-    <a href="#products" class="cta-btn">🛍️ Shop Now</a>
+    <div class="section"> 
+  <input type="text" id="searchInput" placeholder="🔍 Search products..." style="width:100%;max-width:400px;padding:10px;font-size:16px;margin-bottom:5px;border-radius:8px;border:1px solid #ccc; background:#fff;">
+</div>
+
+
   </div>
 </header>
   
@@ -621,7 +731,11 @@ font-size: 16px;
     </div>
   </section>
 
-
+<div id="noResults" class="no-results hidden">
+  <img src="https://i.postimg.cc/fyBZgbnw/file-0000000085b0622fad52b0ff61c2fb58.png" alt="No results" />
+  <p>No products match your search 😕</p>
+  <small>Try checking your spelling or search for something else.</small>
+</div>
 	  
  	<div class="sections" id="products">
   <section class="section" id="electronics">
@@ -716,62 +830,6 @@ font-size: 16px;
 <!-- Font Awesome 6 -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-<style>
-  .socials {
-    display: flex;
-    gap: 16px;
-    padding: 1rem;
-    justify-content: center;
-  }
-
-  .socials a {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    color: white;
-    font-size: 30px;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    position: relative;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
-  }
-
-  .socials a:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.25);
-  }
-
-  .facebook { background: #3b5998; }
-  .instagram { background: #e1306c; }
-  .tiktok { background: #000; }
-  .x { background: #1da1f2; }
-  .whatsapp { background: #00b489; }
-
-  /* Optional Tooltip */
-  .socials a::after {
-    content: attr(data-label);
-    position: absolute;
-    bottom: -30px;
-    background: #333;
-    color: #fff;
-    padding: 4px 8px;
-    font-size: 12px;
-    border-radius: 4px;
-    opacity: 0;
-    transform: translateY(5px);
-    pointer-events: none;
-    transition: all 0.3s ease;
-    white-space: nowrap;
-  }
-
-  .socials a:hover::after {
-    opacity: 1;
-    transform: translateY(0);
-  }
-</style>
 
 <div class="socials">
   <a href="https://www.facebook.com/share/19dfn17s9G/" class="facebook" data-label="Facebook"><i class="fab fa-facebook-f"></i></a>
@@ -783,7 +841,7 @@ font-size: 16px;
         
 
 <div class="footer-bottom">
-            <p>&copy; 2025 BixMAX. All rights reserved.</p>
+            <p>&copy; <span id="year"></span> BixMAX. All rights reserved.</p>
         </div>
 </footer>
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
@@ -986,6 +1044,59 @@ setInterval(() => {
   index = (index + 1) % testimonials.length;
   showTestimonial(index);
 }, 3000);
+
+	 // Search functionality
+    let allProducts = [];
+    document.addEventListener("DOMContentLoaded", async () => {
+      // Load all products and store them for search
+      allProducts = await loadAllProducts();
+
+      // Update year
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      // Search input handler
+      const searchInput = document.getElementById('searchInput');
+const sections = document.querySelectorAll('.sections .section');
+const noResults = document.getElementById('noResults');
+
+searchInput.addEventListener('input', () => {
+const query = searchInput.value.toLowerCase().trim();
+let anyVisible = false;
+
+sections.forEach(section => {
+const sectionTitle = section.querySelector('h2')?.textContent.toLowerCase() || '';
+const products = section.querySelectorAll('.card');
+let sectionMatch = sectionTitle.includes(query);
+let productVisible = false;
+
+products.forEach(product => {    
+  const productName = product.querySelector('h3')?.textContent.toLowerCase() || '';    
+  if(productName.includes(query) || sectionMatch) {    
+    product.classList.remove('hidden');    
+    productVisible = true;    
+  } else {    
+    product.classList.add('hidden');    
+  }    
+});    
+
+if(sectionMatch || productVisible) {    
+  section.classList.remove('hidden');    
+  anyVisible = true;    
+} else {    
+  section.classList.add('hidden');    
+}
+
+});
+
+if(!anyVisible && query !== "") {
+noResults.style.display = 'block';
+} else {
+noResults.style.display = 'none';
+}
+});
+
+    });
+
 </script>
 	<!--StartofTawk.toScript-->
 	<script type="text/javascript"> 
