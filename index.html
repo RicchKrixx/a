@@ -1088,7 +1088,10 @@ let allProductsCache = [];
 
 async function initializeSearch() {
   allProductsCache = await loadAllProducts(); // load all products and render them
-  renderProducts(allProductsCache); // show them on page load
+const allContainer = document.getElementById("searchResults");
+renderProducts(allProductsCache, allContainer);
+allContainer.style.display = "grid";
+
 }
 
 
