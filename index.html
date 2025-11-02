@@ -1045,58 +1045,38 @@ setInterval(() => {
   showTestimonial(index);
 }, 3000);
 
-	 // Search functionality
-    let allProducts = [];
-    document.addEventListener("DOMContentLoaded", async () => {
-      // Load all products and store them for search
-      allProducts = await loadAllProducts();
-
       // Update year
       document.getElementById("year").textContent = new Date().getFullYear();
 
-      // Search input handler
-      const searchInput = document.getElementById('searchInput');
-const sections = document.querySelectorAll('.sections .section');
-const noResults = document.getElementById('noResults');
+document.addEventListener("DOMContentLoaded", () => {
+  const searchInput = document.getElementById("searchInput");
+  const productCards = document.querySelectorAll(".card");
+  const noResults = document.getElementById("noResults");
 
-searchInput.addEventListener('input', () => {
-const query = searchInput.value.toLowerCase().trim();
-let anyVisible = false;
+  // Hide "no results" by default
+  if (noResults) noResults.style.display = "none";
 
-sections.forEach(section => {
-const sectionTitle = section.querySelector('h2')?.textContent.toLowerCase() || '';
-const products = section.querySelectorAll('.card');
-let sectionMatch = sectionTitle.includes(query);
-let productVisible = false;
+  searchInput.addEventListener("input", () => {
+    const query = searchInput.value.toLowerCase().trim();
+    let visibleCount = 0;
 
-products.forEach(product => {    
-  const productName = product.querySelector('h3')?.textContent.toLowerCase() || '';    
-  if(productName.includes(query) || sectionMatch) {    
-    product.classList.remove('hidden');    
-    productVisible = true;    
-  } else {    
-    product.classList.add('hidden');    
-  }    
-});    
+    productCards.forEach(card => {
+      const name = card.querySelector("h3")?.textContent.toLowerCase() || "";
+      const price = card.querySelector(".price")?.textContent.toLowerCase() || "";
 
-if(sectionMatch || productVisible) {    
-  section.classList.remove('hidden');    
-  anyVisible = true;    
-} else {    
-  section.classList.add('hidden');    
-}
+      // Check if name or price matches search
+      const match = name.includes(query) || price.includes(query);
 
-});
-
-if(!anyVisible && query !== "") {
-noResults.style.display = 'block';
-} else {
-noResults.style.display = 'none';
-}
-});
-
+      card.style.display = match ? "flex" : "none";
+      if (match) visibleCount++;
     });
 
+    // Show or hide the "no results" section
+    if (noResults) {
+      noResults.style.display = visibleCount === 0 && query !== "" ? "block" : "none";
+    }
+  });
+});
 </script>
 	<!--StartofTawk.toScript-->
 	<script type="text/javascript"> 
