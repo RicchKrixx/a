@@ -684,7 +684,7 @@ font-size: 16px;
   <div class="header-content">
     <h1>Welcome to BixMAX</h1>
     <p>Your one-stop shop for everything you love</p>
- </div>
+
 	<div id="search-section" style="text-align:center; margin: 20px auto;">
   <input 
     type="text" 
@@ -702,9 +702,7 @@ font-size: 16px;
     <option value="Care">Beauty & Care</option>
   </select>
 </div>
-
-<div id="searchResults" class="grid" style="margin: 20px auto; display:none;"></div>
-
+ </div>
 </header>
   
 
@@ -747,7 +745,7 @@ font-size: 16px;
     </div>
   </section>
 
-	  
+	<div id="searchResults" class="grid" style="margin: 20px auto; display:none;"></div>  
  	<div class="sections" id="products">
   <section class="section" id="electronics">
     <h2>ELECTRONICS</h2>
@@ -1040,7 +1038,7 @@ scrollBtn.onclick = () => window.scrollTo({top:0, behavior:'smooth'});
       }
     }
 
-  initializeSearch(); // loads all and enables search
+ loadAllProducts();
 
   });
 	const testimonials = document.querySelectorAll('.testimonial-grid blockquote');
@@ -1083,62 +1081,8 @@ document.getElementById("imgPreview").onclick = function(e) {
 };
       // Update year
       document.getElementById("year").textContent = new Date().getFullYear();
-
-let allProductsCache = [];
-
-async function initializeSearch() {
-  allProductsCache = await loadAllProducts(); // load all products and render them
-const allContainer = document.getElementById("searchResults");
-renderProducts(allProductsCache, allContainer);
-allContainer.style.display = "grid";
-
-}
-
-
-function searchProducts(query, categoryFilter = "") {
-  query = query.trim().toLowerCase();
-  const results = allProductsCache.filter(p => {
-    const inCategory = categoryFilter ? p.category === categoryFilter : true;
-    const nameMatch = p.name?.toLowerCase().includes(query);
-    const tagMatch = p.tags?.some(t => t.toLowerCase().includes(query));
-    const descMatch = p.description?.toLowerCase().includes(query);
-    return inCategory && (nameMatch || tagMatch || descMatch);
-  });
-  return results;
-}
-
-function renderSearchResults(results) {
-  const section = document.getElementById("searchResults");
-  section.innerHTML = "";
-
-  if (results.length === 0) {
-    section.innerHTML = "<p style='text-align:center; color:#666;'>No matching products found 😢</p>";
-  } else {
-    renderProducts(results, section);
-  }
-  section.style.display = "grid";
-}
-
-// Debounce function for smooth searching
-function debounce(fn, delay = 300) {
-  let timer;
-  return (...args) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn(...args), delay);
-  };
-}
-
-const debouncedSearch = debounce(() => {
-  const query = document.getElementById("searchInput").value;
-  const category = document.getElementById("searchCategory").value;
-  const results = searchProducts(query, category);
-  renderSearchResults(results);
-}, 300);
-
-document.getElementById("searchInput").addEventListener("input", debouncedSearch);
-document.getElementById("searchCategory").addEventListener("change", debouncedSearch);
-
 	</script>
+
 	<!--StartofTawk.toScript-->
 	<script type="text/javascript"> 
 		var Tawk_API=Tawk_API||{},
