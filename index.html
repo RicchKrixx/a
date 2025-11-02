@@ -715,12 +715,7 @@ font-size: 16px;
   <div class="header-content">
     <h1>Welcome to BixMAX</h1>
     <p>Your one-stop shop for everything you love</p>
-    <div class="section"> 
-  <input type="text" id="searchInput" placeholder="🔍 Search products..." style="width:100%;max-width:400px;padding:10px;font-size:16px;margin-bottom:5px;border-radius:8px;border:1px solid #ccc; background:#fff;">
-</div>
-
-
-  </div>
+ </div>
 </header>
   
 
@@ -763,11 +758,6 @@ font-size: 16px;
     </div>
   </section>
 
-<div id="noResults" class="no-results hidden">
-  <img src="https://i.postimg.cc/fyBZgbnw/file-0000000085b0622fad52b0ff61c2fb58.png" alt="No results" />
-  <p>No products match your search 😕</p>
-  <small>Try checking your spelling or search for something else.</small>
-</div>
 	  
  	<div class="sections" id="products">
   <section class="section" id="electronics">
@@ -1076,6 +1066,8 @@ setInterval(() => {
   index = (index + 1) % testimonials.length;
   showTestimonial(index);
 }, 3000);
+</script>
+	<script>
 	// Open preview when any product image is clicked
 document.addEventListener("click", function(e) {
   if (e.target.tagName === "IMG" && e.target.closest(".card")) {
@@ -1097,36 +1089,6 @@ document.getElementById("imgPreview").onclick = function(e) {
 };
       // Update year
       document.getElementById("year").textContent = new Date().getFullYear();
-
-document.addEventListener("DOMContentLoaded", () => {
-  const searchInput = document.getElementById("searchInput");
-  const productCards = document.querySelectorAll(".card");
-  const noResults = document.getElementById("noResults");
-
-  // Hide "no results" by default
-  if (noResults) noResults.style.display = "none";
-
-  searchInput.addEventListener("input", () => {
-    const query = searchInput.value.toLowerCase().trim();
-    let visibleCount = 0;
-
-    productCards.forEach(card => {
-      const name = card.querySelector("h3")?.textContent.toLowerCase() || "";
-      const price = card.querySelector(".price")?.textContent.toLowerCase() || "";
-
-      // Check if name or price matches search
-      const match = name.includes(query) || price.includes(query);
-
-      card.style.display = match ? "flex" : "none";
-      if (match) visibleCount++;
-    });
-
-    // Show or hide the "no results" section
-    if (noResults) {
-      noResults.style.display = visibleCount === 0 && query !== "" ? "block" : "none";
-    }
-  });
-});
 </script>
 	<!--StartofTawk.toScript-->
 	<script type="text/javascript"> 
