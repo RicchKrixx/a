@@ -364,6 +364,7 @@ font-size: 16px;
   gap: 4px;
   flex-wrap: wrap;
   margin-top: 5px;
+   margin-bottom: 10px;
 }
 
 .cat-menu {
@@ -609,6 +610,64 @@ font-size: 16px;
     opacity: 1;
     transform: translateY(0);
   }
+ h2,
+.sections h2 {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 24px;
+  overflow: hidden;
+  z-index: 1; /* ensures text stays above blur */
+}
+
+/* The blurred background layer */
+h2::before,
+.sections h2::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url(https://i.postimg.cc/tgnrwWwy/74651E6D-1C42-46AB-A5AE-24B6CDA1DC48.jpg) center/cover no-repeat;
+  filter: blur(6px);
+  z-index: -1; /* keep it behind the text */
+  transform: scale(1.1); /* avoids edge clipping */
+}
+/* Image preview overlay */
+.img-preview {
+  display: none; 
+  position: fixed;
+  z-index: 3000;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.8);
+  justify-content: center; 
+  align-items: center;
+}
+
+.img-preview img {
+  max-width: 80%;
+  max-height: 80%;
+  border-radius: 12px;
+  animation: zoomIn 2s ease forwards; /* slow zoom */
+}
+
+/* Zoom animation */
+@keyframes zoomIn {
+  from { transform: scale(1); }
+  to { transform: scale(1.2); }
+}
+
+/* Close button */
+.img-preview .close {
+  position: absolute;
+  top: 20px; right: 30px;
+  font-size: 40px;
+  color: white;
+  cursor: pointer;
+}
+
   </style>
 </head>
  
@@ -1009,6 +1068,33 @@ setInterval(() => {
 }, 3000);
       // Update year
       document.getElementById("year").textContent = new Date().getFullYear();
+	document.addEventListener('click', (e) => {
+  if (!menu.contains(e.target) && !hamburger.contains(e.target)) {
+    menu.classList.remove('active');
+    hamburger.classList.remove('active');
+  }
+});
+
+// Open preview when any product image is clicked
+document.addEventListener("click", function(e) {
+  if (e.target.tagName === "IMG" && e.target.closest(".card")) {
+    const modal = document.getElementById("imgPreview");
+    const modalImg = document.getElementById("previewImg");
+    modal.style.display = "flex";
+    modalImg.src = e.target.src;
+  }
+});
+
+// Close preview
+document.querySelector("#imgPreview .close").onclick = function() {
+  document.getElementById("imgPreview").style.display = "none";
+};
+
+// Close if clicked outside image
+document.getElementById("imgPreview").onclick = function(e) {
+  if (e.target === this) this.style.display = "none";
+};
+
 	</script>
 
 	<!--StartofTawk.toScript-->
