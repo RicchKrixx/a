@@ -972,22 +972,6 @@ scrollBtn.onclick = () => window.scrollTo({top:0, behavior:'smooth'});
     }
   });
 
-  window.addEventListener('DOMContentLoaded', () => {
-    if (!localStorage.getItem('bixmax_has_visited')) {
-      localStorage.setItem('bixmax_has_visited', 'true');
-      if ('Notification' in window && Notification.permission !== 'denied') {
-        Notification.requestPermission().then(permission => {
-          if (permission === 'granted') {
-            new Notification("👋 Welcome to BixMAX!", {
-              body: "Thanks for visiting us!",
-              icon: "Bixmaxlogo.png"
-            });
-          }
-        });
-      }
-    }
-  let allProductsCache = [];
-
   window.addEventListener('DOMContentLoaded', async () => {
     if (!localStorage.getItem('bixmax_has_visited')) {
       localStorage.setItem('bixmax_has_visited', 'true');
