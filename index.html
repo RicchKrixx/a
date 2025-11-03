@@ -141,23 +141,23 @@ margin-bottom: 10px;
 }
 
 .testimonial-grid {
-  width: 250px; /* Adjust as needed */
+  width: 350px; 
   text-align: center;
   margin: 0 auto;
 }
 
 .testimonial-grid blockquote {
-  display: none; /* Hide all by default */
+  display: none; 
   background-color: #eee;
   font-size: 14px;
   font-style: italic;
-  padding: 15px;
+  padding: 12px;
   border-left: 4px solid #ffcc00;
   border-radius: 20px;
 }
 
 .testimonial-grid blockquote.active {
-  display: block; /* Only active testimonial shows */
+  display: block;
 }
 
 .testimonial-grid img {
@@ -369,9 +369,9 @@ font-size: 16px;
 
 .cat-menu {
   position: relative;
-  width: 80px;
-  height: 40px;
-  border-radius: 12px;
+  width: 100px;
+  height: 60px;
+  border-radius: 8px 40px;
   overflow: hidden;
   text-decoration: none;
   cursor: pointer;
@@ -440,7 +440,6 @@ font-size: 16px;
 }
 
 .section h2 {
-  font-size: 28px;
   margin-bottom: 20px;
   text-align: center;
 }
@@ -475,7 +474,7 @@ font-size: 16px;
 .card {
   background: #fff;
   border: 1px solid #ccc;
-  border-radius: 10px;
+  border-radius: 14px;
   padding: 10px;
   text-align: center;
   transition: transform 0.2s;
@@ -493,7 +492,7 @@ font-size: 16px;
 .card img {
   width: 100%;
   height: auto;
-  border-radius: 10px;
+  border-radius: 20px;
   margin-bottom: 10px;
   object-fit: cover;
 }
@@ -532,14 +531,13 @@ font-size: 16px;
   color: white;
   font-size: 14px;
   padding: 4px 6px;
-  border-radius: 6px;
+  border-radius: 16px;
   font-style: italic;
-  z-index: 2;
 }
-#backToTop {
+#scrollTop {
     display: none; /* Hidden by default */
     position: fixed;
-    bottom: 100px;
+    bottom: 130px;
     right: 2px;
     z-index: 99;
     font-size: 20px;
@@ -548,11 +546,11 @@ font-size: 16px;
     background:var(--brand);
     color: white;
     cursor: pointer;
-    padding: 12px 16px;
+    padding: 6px;
     border-radius: 40px 20px;
     transition: opacity 0.3s ease, transform 0.2s ease;
   }
-  #backToTop:hover {
+  #scrollTop:hover {
     background:var(--brand);
     transform: scale(1.1);
   }
@@ -667,6 +665,90 @@ h2::before,
   color: white;
   cursor: pointer;
 }
+#backToTop {
+    display: none; /* Hidden by default */
+    position: fixed;
+    bottom: 100px;
+    right: 2px;
+    z-index: 99;
+    font-size: 20px;
+    border: none;
+    outline: none;
+    background:var(--brand);
+    color: white;
+    cursor: pointer;
+    padding: 12px 16px;
+    border-radius: 40px 20px;
+    transition: opacity 0.3s ease, transform 0.2s ease;
+	z-index: 2002;
+  }
+  #backToTop:hover {
+    background:var(--brand);
+    transform: scale(1.1);
+  }
+  .search-container {
+  display: flex;
+  justify-content: center;
+  margin: 15px 0;
+}
+
+#searchInput {
+  width: 80%;
+  max-width: 500px;
+  padding: 10px 15px;
+  font-size: 16px;
+  border: 2px solid #b8860b;
+  border-radius: 24px;
+  outline: none;
+  transition: 0.3s;
+}
+
+#searchInput:focus {
+  border-color: #8b6508;
+  box-shadow: 0 0 6px rgba(184, 134, 11, 0.5);
+}
+/* Taller "no results" banner under the header */
+#searchNoResults {
+  display: none;
+  margin: 40px auto;
+  padding: 60px 20px;
+  min-height: 60vh; /* makes it tall enough under the header */
+  text-align: center;
+  color: #555;
+  font-size: 18px;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+#searchNoResults img {
+  width: 180px;
+  opacity: 0.75;
+}
+.cart-icon {
+      position: fixed;
+      font-size: 35px;
+      text-decoration: none;
+      color: white;
+      right: 17px;
+      top: 20px;
+      z-index: 999;
+    }
+    #cartCount {
+      position: absolute;
+      top: -8px;
+      right: -12px;
+      background: red;
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 50%;
+      padding: 2px 6px;
+    }
 
   </style>
 </head>
@@ -710,11 +792,14 @@ h2::before,
     <h1>Welcome to BixMAX</h1>
     <p>Your one-stop shop for everything you love</p>
 
+<div class="search-container">
+  <input type="text" id="searchInput" placeholder="🔍 Search for products..." />
+</div>
 
  </div>
 </header>
   
-
+<a href="/cart/" class="cart-icon glow" id="cartIcon">🛒<span id="cartCount">0</span></a>
 
   <div class="container">
   <div  class="gridd">
@@ -739,7 +824,7 @@ h2::before,
 
       <a class="cat-menu" href="#home-essentials">
         <img src="https://i.postimg.cc/zfhFV0Wr/th-1.webp" alt="Home Essentials">
-        <div class="category">Home Essentials</div>
+        <div class="category">Essentials</div>
       </a>
 
       <a class="cat-menu" href="#health">
@@ -789,17 +874,17 @@ h2::before,
   <h2>What Our Customers Say</h2>
   <div class="testimonial-grid">
     <blockquote>
-      <span><img src="user1.jpg" alt="Sarah"></span>
+      <span><img src="https://i.postimg.cc/XYNFYy52/A1BCF7DE-62DD-4F55-8613-FAA324A9AD70.jpg" alt="Sarah"></span>
       “Great selection and fast delivery” - <b>Sarah T</b>
       <span>⭐⭐⭐⭐⭐</span>
     </blockquote>
     <blockquote>
-      <span><img src="user2.jpg" alt="James"></span>
+      <span><img src="https://i.postimg.cc/XYNFYy52/A1BCF7DE-62DD-4F55-8613-FAA324A9AD70.jpg" alt="James"></span>
       "Best price I've found online" - <b>James K</b>
       <span>⭐⭐⭐⭐⭐</span>
     </blockquote>
     <blockquote>
-      <span><img src="user3.jpg" alt="Amina"></span>
+      <span><img src="https://i.postimg.cc/XYNFYy52/A1BCF7DE-62DD-4F55-8613-FAA324A9AD70.jpg" alt="Amina"></span>
       "Highly Recommend this store" - <b>Amina R</b>
       <span>⭐⭐⭐⭐</span>
     </blockquote>
@@ -890,7 +975,7 @@ h2::before,
     }
 
   </script>
-<button id="scrollTop">↑</button>
+<button id="scrollTop" title="Go to top">↑top</button>
 <script>
 const scrollBtn = document.getElementById('scrollTop');
 window.addEventListener('scroll', () => {
@@ -1048,6 +1133,166 @@ scrollBtn.onclick = () => window.scrollTo({top:0, behavior:'smooth'});
 
  loadAllProducts();
 
+
+
+  // ----- SEARCH: copy this after your product load functions -----
+  (function() {
+    // global cache of all products (filled once)
+    let allProductsGlobal = [];
+
+    // helper: normalize strings for safe comparisons
+    function norm(s) {
+      return (s || "").toString().trim().toLowerCase();
+    }
+
+    // create and inject "no results" banner inside .sections
+    function ensureNoResultsBanner() {
+      let container = document.querySelector('.sections');
+      if (!container) {
+        console.warn("No .sections element found for search banner.");
+        return null;
+      }
+      let banner = document.getElementById('searchNoResults');
+      if (!banner) {
+        banner = document.createElement('div');
+        banner.id = 'searchNoResults';
+        banner.innerHTML = `
+          <img src="https://i.postimg.cc/fyBZgbnw/file-0000000085b0622fad52b0ff61c2fb58.png" alt="No results" />
+          <div>No products found matching your search 🔍</div>
+        `;
+        container.parentNode.insertBefore(banner, container); // put banner above sections
+      }
+      return banner;
+    }
+
+    // initialize search: load products once and attach input handler
+    async function initSearch() {
+      try {
+        // loadAllProducts() is your existing function that returns an array of products
+        allProductsGlobal = await loadAllProducts() || [];
+      } catch (err) {
+        console.error("Failed to load products for search:", err);
+        allProductsGlobal = [];
+      }
+
+      // simple debug: open console and type allProductsGlobal.length to confirm load
+      console.info("Search: loaded products count =", allProductsGlobal.length);
+
+      const input = document.getElementById('searchInput');
+      if (!input) {
+        console.warn("Search input (#searchInput) not found.");
+        return;
+      }
+
+      const banner = ensureNoResultsBanner();
+      const sectionsWrapper = document.querySelector('.sections');
+
+      // on empty input we want to re-render original grids using loadAllProducts() results
+      // we keep a mapping of section title -> grid element to re-render easily
+      const sectionNodes = Array.from(document.querySelectorAll('.section','.cat-menu'));
+
+      // debounce helper
+      let timer;
+      input.addEventListener('input', () => {
+        clearTimeout(timer);
+        timer = setTimeout(() => runSearch(input.value.trim()), 150);
+      });
+
+      // run the search and update DOM
+      function runSearch(rawQuery) {
+        const q = norm(rawQuery);
+        // If empty search: show all sections and reload original cached products into each grid
+        if (!q) {
+          banner && (banner.style.display = 'none');
+          // show sections and render default products per section
+          sectionNodes.forEach(sec => {
+            sec.style.display = 'block';
+            const title = norm(sec.querySelector('h2')?.textContent || "");
+            const grid = sec.querySelector('.grid');
+            // find products whose category matches this section title
+            const hits = allProductsGlobal.filter(p => {
+              const cat = norm(p.category);
+              // exact match OR section title is contained in product category (robust)
+              return cat === title || cat.includes(title) || title.includes(cat);
+            });
+            // render original hits (or empty)
+            grid.innerHTML = "";
+            if (hits.length) renderProducts(hits, grid);
+          });
+          return;
+        }
+
+        // For a non-empty query: filter per-section and hide empty sections
+        let totalMatches = 0;
+
+        sectionNodes.forEach(sec => {
+          const h2 = sec.querySelector('h2');
+          const title = norm(h2?.textContent || "");
+          const grid = sec.querySelector('.grid');
+
+          // products that belong to this section (category matching heuristics)
+          const categoryProducts = allProductsGlobal.filter(p => {
+            const cat = norm(p.category);
+            return cat === title || cat.includes(title) || title.includes(cat);
+          });
+
+          // then filter by query across name, description, tags
+          const filtered = categoryProducts.filter(p => {
+            const name = norm(p.name);
+            const desc = norm(p.description);
+            const tags = Array.isArray(p.tags) ? p.tags.map(t => norm(t)).join(' ') : "";
+            return name.includes(q) || desc.includes(q) || tags.includes(q);
+          });
+
+          grid.innerHTML = "";
+          if (filtered.length > 0) {
+            renderProducts(filtered, grid);
+            sec.style.display = 'block';
+            totalMatches += filtered.length;
+          } else {
+            // collapse empty section
+            sec.style.display = 'none';
+          }
+        });
+
+        // show banner if nothing matched anywhere
+        if (banner) banner.style.display = totalMatches === 0 ? 'flex' : 'none';
+        // if banner area is hidden and all sections collapsed, ensure it's visible
+        if (!banner && totalMatches === 0 && sectionsWrapper) {
+          // fallback text if banner couldn't be created
+          if (sectionsWrapper) {
+            sectionsWrapper.innerHTML = "<p style='text-align:center; color:#666; margin:40px 0;'>No products found matching your search 🔍</p>";
+          }
+        }
+      }
+    } // end initSearch
+
+    // run after a microtask so loadAllProducts() (if defined earlier) is available
+    setTimeout(() => {
+      if (typeof loadAllProducts !== 'function') {
+        console.error("loadAllProducts() not found. Make sure the function exists before the search script.");
+        return;
+      }
+      initSearch();
+    }, 0);
+
+
+const categoriesSection = document.querySelector('.categories');
+
+// hide categories when searching, show when cleared
+if (query === "") {
+  categoriesSection.style.display = "block";
+} else {
+  categoriesSection.style.display = "none";
+}
+
+
+  })();
+
+
+
+
+
   });
 	const testimonials = document.querySelectorAll('.testimonial-grid blockquote');
 let index = 0;
@@ -1095,7 +1340,69 @@ document.getElementById("imgPreview").onclick = function(e) {
   if (e.target === this) this.style.display = "none";
 };
 
+
 	</script>
+<script>
+// ==========================
+// 🛒 CART LOGIC
+// ==========================
+
+// Load cart from localStorage or start fresh
+function getCart() {
+  return JSON.parse(localStorage.getItem('bixmax_cart') || '[]');
+}
+
+// Save updated cart
+function saveCart(cart) {
+  localStorage.setItem('bixmax_cart', JSON.stringify(cart));
+  updateCartCount();
+}
+
+// Update cart counter badge
+function updateCartCount() {
+  const cart = getCart();
+  document.getElementById('cartCount').textContent = cart.length;
+}
+
+// Add a product to cart
+function addToCart(name, price, image) {
+  let cart = getCart();
+
+  // Check if already in cart
+  const existing = cart.find(item => item.name === name);
+  if (existing) {
+    existing.quantity += 1;
+  } else {
+    cart.push({ name, price, image, quantity: 1 });
+  }
+
+  saveCart(cart);
+
+  // Toast message (optional)
+  showToast(`${name} added to cart!`);
+}
+
+// Optional: simple toast popup
+function showToast(msg) {
+  const toast = document.createElement('div');
+  toast.textContent = msg;
+  toast.style.position = 'fixed';
+  toast.style.bottom = '100px';
+  toast.style.right = '20px';
+  toast.style.background = '#b8860b';
+  toast.style.color = '#fff';
+  toast.style.padding = '10px 16px';
+  toast.style.borderRadius = '12px';
+  toast.style.boxShadow = '0 3px 8px rgba(0,0,0,0.3)';
+  toast.style.zIndex = 3000;
+  toast.style.transition = 'all 0.5s ease';
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2000);
+}
+
+// Initialize cart count on load
+document.addEventListener('DOMContentLoaded', updateCartCount);
+</script>
 
 	<!--StartofTawk.toScript-->
 	<script type="text/javascript"> 
