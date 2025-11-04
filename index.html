@@ -664,6 +664,7 @@ h2::before,
   font-size: 40px;
   color: white;
   cursor: pointer;
+	z-index: 2002
 }
 #backToTop {
     display: none; /* Hidden by default */
@@ -735,7 +736,7 @@ h2::before,
 	background: #adaf;
       text-decoration: none;
       color: white;
-	border-radius: 50px 0 50px 0;
+	border-radius: 50px 0 0;
       right: 17px;
       top: 20px;
       z-index: 999;
@@ -1373,7 +1374,7 @@ function addToCart(name, price, image) {
   // Check if already in cart
   const existing = cart.find(item => item.name === name);
   if (existing) {
-    existing.quantity += 1;
+    existing.quantity + 1;
   } else {
     cart.push({ name, price, image, quantity: 1 });
   }
