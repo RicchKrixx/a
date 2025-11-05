@@ -1287,12 +1287,19 @@ input.addEventListener('input', () => {
       initSearch();
     }, 0);
 
-});
 
 
+const categoriesSection = document.querySelector('.categories');
+
+// hide categories when searching, show when cleared
+if (query === "") {
+  categoriesSection.style.display = "block";
+} else {
+  categoriesSection.style.display = "none";
+}
   })();
 
-
+});
 	const testimonials = document.querySelectorAll('.testimonial-grid blockquote');
 let index = 0;
 
