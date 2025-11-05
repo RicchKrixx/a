@@ -820,7 +820,7 @@ h2::before,
  </div>
 </header>
   
-<a href="/cart/" class="cart-icon" id="cartIcon">🛒<span id="cartCount">0</span></a>
+<a href="/items-cart/" class="cart-icon" id="cartIcon">🛒<span id="cartCount">0</span></a>
 
   <div class="container">
   <div  class="gridd">
@@ -1360,6 +1360,51 @@ document.getElementById("imgPreview").onclick = function(e) {
 
 
 	</script>
+<script>
+function addToCart(name, price, image) {
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  // Check if item already exists
+  const existingItem = cart.find(item => item.name === name);
+  if (existingItem) {
+    existingItem.quantity += 1;
+  } else {
+    cart.push({ name, price, image, quantity: 1 });
+  }
+
+  // Save back to localStorage
+  localStorage.setItem("cart", JSON.stringify(cart));
+
+  // Update cart icon count
+  updateCartCount();
+
+  // Small popup notification
+  const toast = document.createElement("div");
+  toast.textContent = `${name} added to cart!`;
+  toast.style.position = "fixed";
+  toast.style.bottom = "20px";
+  toast.style.right = "20px";
+  toast.style.background = "#333";
+  toast.style.color = "#fff";
+  toast.style.padding = "10px 16px";
+  toast.style.borderRadius = "8px";
+  toast.style.zIndex = "2000";
+  toast.style.fontSize = "14px";
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2000);
+}
+
+function updateCartCount() {
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const total = cart.reduce((sum, item) => sum + item.quantity, 0);
+  document.getElementById("cartCount").textContent = total;
+}
+
+// Run when page loads
+document.addEventListener("DOMContentLoaded", updateCartCount);
+</script>
+
+	
 	<!--StartofTawk.toScript-->
 	<script type="text/javascript"> 
 		var Tawk_API=Tawk_API||{},
