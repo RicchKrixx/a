@@ -1145,7 +1145,7 @@ scrollBtn.onclick = () => window.scrollTo({top:0, behavior:'smooth'});
 
 
   // ----- SEARCH: copy this after your product load functions -----
-  (function() {
+(function() {
     // global cache of all products (filled once)
     let allProductsGlobal = [];
 
@@ -1165,10 +1165,10 @@ scrollBtn.onclick = () => window.scrollTo({top:0, behavior:'smooth'});
       if (!banner) {
         banner = document.createElement('div');
         banner.id = 'searchNoResults';
-        banner.innerHTML = `
+        banner.innerHTML = 
           <img src="https://i.postimg.cc/fyBZgbnw/file-0000000085b0622fad52b0ff61c2fb58.png" alt="No results" />
           <div>No products found matching your search 🔍</div>
-        `;
+        ;
         container.parentNode.insertBefore(banner, container); // put banner above sections
       }
       return banner;
@@ -1204,16 +1204,6 @@ scrollBtn.onclick = () => window.scrollTo({top:0, behavior:'smooth'});
       let timer;
       input.addEventListener('input', () => {
         clearTimeout(timer);
-const categoriesSection = document.querySelector('.categories');
-
-// hide/show categories dynamically
-if (input.value.trim() === "") {
-  categoriesSection.style.display = "block";
-} else {
-  categoriesSection.style.display = "none";
-}
-
-		  
         timer = setTimeout(() => runSearch(input.value.trim()), 150);
       });
 
@@ -1299,7 +1289,6 @@ if (input.value.trim() === "") {
 
 
   })();
-
 
 
 
