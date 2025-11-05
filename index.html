@@ -1202,10 +1202,20 @@ scrollBtn.onclick = () => window.scrollTo({top:0, behavior:'smooth'});
 
       // debounce helper
       let timer;
-      input.addEventListener('input', () => {
-        clearTimeout(timer);
-        timer = setTimeout(() => runSearch(input.value.trim()), 150);
-      });
+input.addEventListener('input', () => {
+  clearTimeout(timer);
+
+  // 🟨 hide categories while typing
+  const categoriesSection = document.querySelector('.categories');
+  if (input.value.trim() === "") {
+    categoriesSection.style.display = "block";
+  } else {
+    categoriesSection.style.display = "none";
+  }
+
+  timer = setTimeout(() => runSearch(input.value.trim()), 150);
+});
+
 
       // run the search and update DOM
       function runSearch(rawQuery) {
@@ -1344,7 +1354,7 @@ document.getElementById("imgPreview").onclick = function(e) {
 	</script>
 <script>
 // ==========================
-// 🛒 CART LOGIC (FIXED)
+// 🛒 CART LOGIC
 // ==========================
 
 // Load cart from localStorage or start fresh
@@ -1361,8 +1371,7 @@ function saveCart(cart) {
 // Update cart counter badge
 function updateCartCount() {
   const cart = getCart();
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-  document.getElementById('cartCount').textContent = totalItems;
+  document.getElementById('cartCount').textContent = cart.length;
 }
 
 // Add a product to cart
@@ -1372,7 +1381,7 @@ function addToCart(name, price, image) {
   // Check if already in cart
   const existing = cart.find(item => item.name === name);
   if (existing) {
-    existing.quantity += 1; // ✅ increment quantity correctly
+    existing.quantity + 1;
   } else {
     cart.push({ name, price, image, quantity: 1 });
   }
