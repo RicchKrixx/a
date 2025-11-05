@@ -1213,10 +1213,23 @@ scrollBtn.onclick = () => window.scrollTo({top:0, behavior:'smooth'});
 
       // debounce helper
       let timer;
-      input.addEventListener('input', () => {
-        clearTimeout(timer);
-        timer = setTimeout(() => runSearch(input.value.trim()), 150);
-      });
+input.addEventListener('input', () => {
+  clearTimeout(timer);
+  const categoriesSection = document.querySelector('.categories');
+  const value = input.value.trim();
+
+  // hide categories when searching, show when cleared
+  if (categoriesSection) {
+    if (value === "") {
+      categoriesSection.style.display = "block";
+    } else {
+      categoriesSection.style.display = "none";
+    }
+  }
+
+  timer = setTimeout(() => runSearch(value), 150);
+});
+
 
       // run the search and update DOM
       function runSearch(rawQuery) {
