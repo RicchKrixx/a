@@ -1205,14 +1205,6 @@ scrollBtn.onclick = () => window.scrollTo({top:0, behavior:'smooth'});
 input.addEventListener('input', () => {
   clearTimeout(timer);
 
-  // 🟨 hide categories while typing
-  const categoriesSection = document.querySelector('.categories');
-  if (input.value.trim() === "") {
-    categoriesSection.style.display = "block";
-  } else {
-    categoriesSection.style.display = "none";
-  }
-
   timer = setTimeout(() => runSearch(input.value.trim()), 150);
 });
 
