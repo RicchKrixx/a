@@ -733,32 +733,49 @@ h2::before,
 .cart-icon {
       position: fixed;
       font-size: 35px;
-	background: #adaf;
       text-decoration: none;
       color: white;
-	border-radius: 24px 0;
       right: 17px;
       top: 20px;
       z-index: 999;
-	padding:  24px;
     }
-    #cartCount {
-      position: absolute;
-      top: -8px;
-      right: -12px;
-      background: red;
-      color: white;
-      font-size: 14px;
-      font-weight: bold;
-      border-radius: 50%;
-      padding: 2px 6px;
-    }
-iframe {
-  width: 80%;
-  height: 500px;
-  border-radius: 15px;
-  filter: invert(100%);
+.cart-icon-glow {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  font-size: 28px;
+  text-decoration: none;
+  color: white;
+
+  /* background style */
+  background: linear-gradient(135deg, #ff7b00, #ffb300);
+  padding: 12px 16px;
+  border-radius: 50px; /* round pill shape */
+  box-shadow: 0 4px 15px rgba(255, 140, 0, 0.4);
+  transition: all 0.3s ease;
+  z-index: 999;
 }
+
+.cart-icon-glow:hover {
+  box-shadow: 0 6px 25px rgba(255, 140, 0, 0.7);
+  transform: scale(1.08);
+}
+
+/* cart counter badge */
+#cartCount {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: red;
+  color: white;
+  font-size: 13px;
+  font-weight: bold;
+  border-radius: 50%;
+  padding: 2px 6px;
+  box-shadow: 0 0 6px rgba(255,0,0,0.5);
+}
+
+
   </style>
 </head>
  
@@ -808,7 +825,7 @@ iframe {
  </div>
 </header>
   
-<a href="/cart/" class="cart-icon glow" id="cartIcon">🛒<span id="cartCount">0</span></a>
+<a href="/cart/" class="cart-icon-glow" id="cartIcon">🛒<span id="cartCount">0</span></a>
 
   <div class="container">
   <div  class="gridd">
