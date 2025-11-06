@@ -776,12 +776,12 @@ h2::before,
     </div>
 <hr style="border: none; height: 1px; background-color: #333333;" />
     <ul>
-      <li><a href="/index.html/#fashion">👗Fashion</a></li>
-      <li><a href="/index.html/#grocereries">🍎Groceries</a></li>
-      <li><a href="/index.html/#electronics">📱Electronics</a></li>
- <li><a href="/index.html/#health">🏥 Health</a></li>
-      <li><a href="/index.html/#care">🧴Beauty & Personal care</a></li>
-      <li><a href="/index.html/#essentials">🏠Home Essentials</a></li>
+      <li><a href="#fashion">👗Fashion</a></li>
+      <li><a href="#grocereries">🍎Groceries</a></li>
+      <li><a href="#electronics">📱Electronics</a></li>
+ <li><a href="#health">🏥 Health</a></li>
+      <li><a href="#care">🧴Beauty & Personal care</a></li>
+      <li><a href="#essentials">🏠Home Essentials</a></li>
       <li><a href="/dashboard/" id="dashboardLink" style="display:none">📊 Dashboard</a></li>
 <hr style="border: none; height: 1px; background-color: #333333;" />
 <br>
@@ -1112,9 +1112,9 @@ scrollBtn.onclick = () => window.scrollTo({top:0, behavior:'smooth'});
       const emailKey = `profileImage_${user.email}`;
       const savedImg = localStorage.getItem(emailKey);
       const defaultImg = "https://www.svgrepo.com/show/384674/account-avatar-profile-user-11.svg";
-      const profileImg = savedImg || user.photoURL || defaultImg;
+      const finalImg = savedImg || user.photoURL || defaultImg;
 
-      profileImg.style.backgroundImage = `url('${profileImg}')`;
+      profileImg.style.backgroundImage = `url('${fianlImg}')`;
       userName.textContent = user.displayName || user.email.split("@")[0];
       userEmail.textContent = user.email;
       authBtn.textContent = "🚪 Logout";
