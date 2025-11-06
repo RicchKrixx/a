@@ -4,7 +4,7 @@
 <meta charset="utf-8"/>
 <meta name="theme-color" content="#00b7d4">
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Cart • On God Bend Mini Mart</title>
+<title>BixMAX Cart</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <style>
 :root { --brand:#b8860b; --brand-dark:#8b6508; --ink:#1f1f1f; --bg:#f7f7f9; --card:#ffffff; }
@@ -34,30 +34,44 @@ footer{padding:24px 16px;text-align:center;background:#111;color:#bbb;margin-top
 }
 
 .cart-btn {
-  font-size: 30px;
+  position: fixed;
+  top: 20px;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: white;
   text-decoration: none;
-  display: inline-flex; 
-  align-items: center; 
-  color: #fff; 
-  border: 0; 
-  border-radius: 10px; 
-  padding: 8px 12px; 
-  font-weight: 600; 
-  cursor: pointer;
-  position: relative;
+  padding: 10px 25px;
+  background: linear-gradient(90deg, #ff8800, #ffb300);
+  border-top-left-radius: 50px;
+  border-bottom-left-radius: 50px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  box-shadow: 0 4px 15px rgba(255, 136, 0, 0.4);
+  z-index: 999;
+  transition: all 0.3s ease;
 }
 
+/* hover effect */
+.cart-btn:hover {
+  box-shadow: 0 6px 25px rgba(255, 136, 0, 0.6);
+  transform: translateX(-3px);
+}
+
+/* counter badge */
 #cartCount {
   position: absolute;
-  top: -3px;    /* move slightly above */
-  right: -3px;  /* move slightly to the right */
-  background:var(--brand);
-  font-size: 12px;
+  top: -2px;
+  right: 17px;
+  background: red;
+  color: white;
+  font-size: 13px;
   font-weight: bold;
   border-radius: 50%;
   padding: 2px 6px;
-  color: #fff; 
-  line-height: 1;
+  box-shadow: 0 0 6px rgba(255,0,0,0.5);
 }
 
 
@@ -199,7 +213,7 @@ footer{padding:24px 16px;text-align:center;background:#111;color:#bbb;margin-top
 
 <div class="cart-icon">
   <a href="/cart/" class="cart-btn">    
- <a href="/cart/" class="cart-btn glow" id="cartIcon">🛒<span id="cartCount">0</span></a>
+ <a href="/cart/" class="cart-btn" id="cartIcon">🛒<span id="cartCount">0</span></a>
   </a>
 </div>
 </nav>
@@ -215,7 +229,7 @@ footer{padding:24px 16px;text-align:center;background:#111;color:#bbb;margin-top
 </section>
 <div class="suggested-products" id="suggestedProducts"></div>
 <footer>
-  © <span id="year"></span> On God Bend OGB — All Rights Reserved.
+  © <span id="year"></span> BixMAX — All Rights Reserved.
 </footer>
 
 <script type="module">
