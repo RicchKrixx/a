@@ -1362,6 +1362,11 @@ function addToCart(name, price, image) {
 
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
+    if (cartCount > 0) {
+      cartIcon.classList.add('show'); // slide in
+    } else {
+      cartIcon.classList.remove('show'); // slide out
+    }
   // Look for existing product
   const existing = cart.find(item => item.name === name);
   if (existing) {
@@ -1401,39 +1406,6 @@ function updateCartCount() {
 }
 
 document.addEventListener("DOMContentLoaded", updateCartCount);
-</script>
-
-<script>
-  // Initialize cart count
-  let cartCount = 0;
-
-  function updateCartDisplay() {
-    const cartIcon = document.getElementById('cartIcon');
-    const countEl = document.getElementById('cartCount');
-    countEl.textContent = cartCount;
-
-    if (cartCount > 0) {
-      cartIcon.classList.add('show'); // slide in
-    } else {
-      cartIcon.classList.remove('show'); // slide out
-    }
-  }
-
-  // Example: Add to Cart handler (you probably already have one)
-  window.addToCart = function(name, price, img) {
-    cartCount++;
-    updateCartDisplay();
-
-    // Optional visual feedback
-    const cartIcon = document.getElementById('cartIcon');
-    cartIcon.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(-10px)' }, { transform: 'translateX(0)' }], {
-      duration: 400,
-      easing: 'ease-out'
-    });
-  };
-
-  // Run once on load
-  document.addEventListener('DOMContentLoaded', updateCartDisplay);
 </script>
 
 	
