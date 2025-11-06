@@ -114,7 +114,7 @@ hr{border:0;border-top:1px solid var(--border);margin:14px 0}
 <body>
   <header class="header">
     <div class="brand">
-    <h3>CUSTOMER DASHBOARD</h3>
+    <h3>DASHBOARD</h3>
     </div>
     <div class="actions">
       <button class="btn" onclick="goHome()"><i class="fa-solid fa-house"></i>&nbsp;Home</button>
@@ -296,7 +296,7 @@ hr{border:0;border-top:1px solid var(--border);margin:14px 0}
 
     // ------- Profile picture (localStorage)
     function loadLocalAvatar(){
-      const src = localStorage.getItem('profileImg');
+      const src = localStorage.getItem('profilePic');
       if(src){
         avatar.src = src;
         avatar.style.display='block';
@@ -321,7 +321,7 @@ hr{border:0;border-top:1px solid var(--border);margin:14px 0}
     });
 
     window.removePicture = ()=> {
-      localStorage.removeItem('profileImg');
+      localStorage.removeItem('profilePic');
       loadLocalAvatar();
     };
 
@@ -402,7 +402,7 @@ hr{border:0;border-top:1px solid var(--border);margin:14px 0}
       try{
         await deleteUser(user);
         // Optional: clear local profile pic
-        localStorage.removeItem('profileImg');
+        localStorage.removeItem('profilePic');
         alert("Account deleted.");
         location.href = "/";
       }catch(err){
