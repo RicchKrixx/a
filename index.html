@@ -1362,11 +1362,6 @@ function addToCart(name, price, image) {
 
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-    if (cartCount > 0) {
-      cartIcon.classList.add('show'); // slide in
-    } else {
-      cartIcon.classList.remove('show'); // slide out
-    }
   // Look for existing product
   const existing = cart.find(item => item.name === name);
   if (existing) {
@@ -1377,8 +1372,19 @@ function addToCart(name, price, image) {
 
   localStorage.setItem("cart", JSON.stringify(cart));
 
-  // Update cart icon count
-  updateCartCount();
+  // Update cart icon display & count
+  updateCartDisplay();
+
+  // Small bounce animation
+  const cartIcon = document.getElementById('cartIcon');
+  cartIcon.animate(
+    [
+      { transform: 'translateX(0)' },
+      { transform: 'translateX(-10px)' },
+      { transform: 'translateX(0)' }
+    ],
+    { duration: 400, easing: 'ease-out' }
+  );
 
   // Toast feedback
   const toast = document.createElement("div");
@@ -1399,14 +1405,25 @@ function addToCart(name, price, image) {
   setTimeout(() => toast.remove(), 2000);
 }
 
-function updateCartCount() {
+function updateCartDisplay() {
   const cart = JSON.parse(localStorage.getItem("cart")) || [];
   const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
-  document.getElementById("cartCount").textContent = totalQty;
+
+  const cartIcon = document.getElementById("cartIcon");
+  const countEl = document.getElementById("cartCount");
+  countEl.textContent = totalQty;
+
+  if (totalQty > 0) {
+    cartIcon.classList.add("show"); // slide in
+  } else {
+    cartIcon.classList.remove("show"); // slide out
+  }
 }
 
-document.addEventListener("DOMContentLoaded", updateCartCount);
+// Run on page load to show correct state
+document.addEventListener("DOMContentLoaded", updateCartDisplay);
 </script>
+
 
 	
 	<!--StartofTawk.toScript-->
