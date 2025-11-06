@@ -158,8 +158,8 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();  
   
 // Shop coordinates  
-const shopLat = 5.595930;  
-const shopLng = -0.134657;  
+const shopLat = 5.647749;  
+const shopLng = -0.083236;  
 const feePerKm = 3.52;  
   
 // Helpers  
@@ -292,25 +292,51 @@ timestamps: {
     if(!order.email) order.email = currentUser.email;  
   }  
   
-  const saveAndRedirect = () => {  
-    db.collection("orders").add(order).then(docRef=>{  
-  
-    docRef.update({ orderId: docRef.id });  
-      localStorage.removeItem("cart");  
-      updateBadge();  
-      setTimeout(()=>{  
-        window.location.href = "/thankyou/?orderId=" + docRef.id;  
-      }, 1000);  
-    }).catch(err=>{  
-      document.getElementById("loaderOverlay").style.display = "none";  
-      console.error(err);  
-      alert("Failed to submit order.");  
-    });  
-  };  
+// Generate custom order ID: BXM + 7 digits + 1 uppercase letter
+function generateCustomOrderId() {
+  const numbers = Math.floor(1000000 + Math.random() * 9000000); // 7 digits
+  const letter = String.fromCharCode(65 + Math.floor(Math.random() * 26)); // Random A–Z
+  return `BXM${numbers}${letter}`;
+}
+
+// Save order with duplicate-check logic
+const saveAndRedirect = async () => {
+  try {
+    let customId;
+    let exists = true;
+
+    // Keep generating until unique
+    while (exists) {
+      customId = generateCustomOrderId();
+      const snapshot = await db.collection("orders").where("orderId", "==", customId).get();
+      exists = !snapshot.empty; // true if an existing order has that ID
+    }
+
+    // Once unique, assign to order
+    order.orderId = customId;
+
+    // Save to Firestore
+    const docRef = await db.collection("orders").add(order);
+    await docRef.update({ orderId: customId });
+
+    // Clear cart and redirect
+    localStorage.removeItem("cart");
+    updateBadge();
+    setTimeout(() => {
+      window.location.href = "/thankyou/?orderId=" + customId;
+    }, 1000);
+
+  } catch (err) {
+    document.getElementById("loaderOverlay").style.display = "none";
+    console.error(err);
+    alert("Failed to submit order.");
+  }
+};
+
   
   if(order.payMethod==="paystack"){  
     let handler = PaystackPop.setup({  
-      key:'pk_live_e109e6f43344c196649b6262f4c0982c1051b7bf',  
+      key:'pk_live_55fc4deb5da6100b52f981f9f754dc0249e7752f',  
       email:order.email||"customer@example.com",  
       amount:order.total*100,  
       currency:"GHS",  
