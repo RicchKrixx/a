@@ -18,7 +18,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:10p
 #checkout{padding:26px 16px;max-width:900px;margin:0 auto 26px;}  
 form.checkout{background:#fff;border-radius:16px;padding:18px;box-shadow:0 6px 18px rgba(0,0,0,.06);}  
 .fields{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));}  
-input,select,textarea{width:100%;padding:10px;border-radius:10px;border:1px solid #ddd;}  
+input,select,textarea{width:100%;padding:10px;border-radius:10px;border:1px solid #ddd;font-size:16px;}  
 .order-summary{margin-top:16px;background:#fafafa;border-radius:12px;padding:12px;}  
 .pay-row{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0;}  
 .place{width:100%;background:#111;color:#fff;border:0;border-radius:12px;padding:12px 14px;font-weight:800;cursor:pointer;}  
@@ -36,7 +36,7 @@ footer{padding:24px 16px;text-align:center;background:#111;color:#bbb;margin-top
   color: white;
   text-decoration: none;
   padding: 10px 25px;
-  background: linear-gradient(90deg, #ff8800, #ffb300);
+  background: linear-gradient(90deg, #00b7d4, #ffb300);
   border-top-left-radius: 50px;
   border-bottom-left-radius: 50px;
   border-top-right-radius: 0;
@@ -66,19 +66,6 @@ footer{padding:24px 16px;text-align:center;background:#111;color:#bbb;margin-top
   box-shadow: 0 0 6px rgba(255,0,0,0.5);
 }
 
-  /* Hamburger */  
-.hamburger{display:block;width:30px;height:25px;margin:20px;position:relative;cursor:pointer;z-index:2001;color:white;}  
-.hamburger span{position:absolute;height:4px;width:100%;background:#fff;border-radius:2px;transition:all 0.3s ease;}  
-.hamburger span:nth-child(1){top:0;}  
-.hamburger span:nth-child(2){top:10px;}  
-.hamburger span:nth-child(3){top:20px;}  
-.menu{position:fixed;top:40px;right:-250px;width:250px;height:auto;background:#f1f1f1;box-shadow:-2px 0 5px rgba(0,0,0,0.3);transition:right 0.3s ease;padding-top:60px;border-radius:8px;z-index:2000;}  
-.menu a{display:block;padding:15px 25px;text-decoration:none;color:#333;font-size:18px;}  
-.menu a:hover{background:#ddd;}  
-.menu.active{right:0;}  
-.hamburger.active span:nth-child(1){transform:rotate(45deg);top:10px;background:#333;}  
-.hamburger.active span:nth-child(2){opacity:0;}  
-.hamburger.active span:nth-child(3){transform:rotate(-45deg);top:10px;background:#333;}  
   
 #loaderOverlay {  
   position: fixed;  
@@ -113,7 +100,7 @@ footer{padding:24px 16px;text-align:center;background:#111;color:#bbb;margin-top
   cursor: not-allowed;  
 }  
 .place:not(:disabled) {  
-  background: var(--brand);  
+  background: #00b7d4;  
 }  
 .place:not(:disabled):hover {  
   background: var(--brand-dark);  
