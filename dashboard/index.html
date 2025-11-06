@@ -1,286 +1,418 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BixMAX Dashboard</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: white;
-    }
+<meta charset="utf-8" />
+<meta name="theme-color" content="#00b7d4">
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BixMAX Customer Dashboard</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-    .dashboard {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-      max-width: 800px;
-      margin: 0 auto;
-    }
+<style>
+:root{
+  --brand:#00b7d4;
+  --brand-dark:#ffb300;
+  --ink:#1f1f1f;
+  --bg:#0f0f0f;
+  --card:#171717;
+  --muted:#9ca3af;
+  --success:#16a34a;
+  --danger:#dc2626;
+  --warning:#f59e0b;
+  --border:#262626;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:#fff}
 
-    .profile {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 30px;
-      position: relative;
-    }
+.container{max-width:980px;margin:0 auto;padding:18px 16px}
 
-    .profile-img-container {
-      position: relative;
-    }
+/* Header */
+.header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 14px;background:#111;border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:10
+}
+.brand{display:flex;align-items:center;gap:10px}
+.brand h3{font-size:18px;margin:0;font-weight:700;letter-spacing:.3px; color: #00b7d4;}
+.header .actions{display:flex;gap:8px}
+.btn{
+  border:1px solid var(--border);background:#1a1a1a;color:#fff;
+  padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:600
+}
+.btn:hover{background:#202020}
+.btn.brand{background:var(--brand);border-color:transparent;color:#111}
+.btn.brand:hover{background:var(--brand-dark);color:#fff}
 
-    #profileImage {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      border: 3px solid cyan;
-      cursor: pointer;
-    }
+/* Grid */
+.grid{display:grid;gap:14px;grid-template-columns:1fr}
+@media(min-width:900px){.grid{grid-template-columns:340px 1fr}}
 
-    .verified-badge {
-      position: absolute;
-      bottom: 2px;
-      right: 2px;
-      background: blue;
-      color: white;
-      font-size: 12px;
-      border-radius: 50%;
-      padding: 2px 6px;
-    }
+/* Card */
+.card{
+  background:var(--card);border:1px solid var(--border);border-radius:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);padding:16px
+}
+.card h2{margin:0 0 10px;font-size:18px;color:var(--brand)}
 
-    .dropdown {
-      display: none;
-      position: absolute;
-      top: 90px;
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 8px;
-      overflow: hidden;
-      z-index: 999;
-    }
+/* Profile */
+.profile-wrap{display:flex;gap:14px;align-items:center}
+.avatar-wrap{position:relative;width:96px;height:96px}
+.avatar{
+  width:96px;height:96px;border-radius:50%;object-fit:cover;border:3px solid var(--brand)
+}
+.avatar-fallback{
+  width:96px;height:96px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:#0e0e0e;border:2px dashed var(--border);font-size:32px;color:#bbb
+}
+.p-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 10px;border-radius:999px;background:#101010;border:1px solid var(--border);
+  font-size:12px;color:#d1d5db
+}
 
-    .dropdown label,
-    .dropdown div {
-      padding: 10px;
-      display: block;
-      cursor: pointer;
-      color: white;
-    }
+/* Orders */
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.input{
+  background:#101010;border:1px solid var(--border);padding:10px 12px;border-radius:10px;color:#fff;outline:none
+}
+.list{display:flex;flex-direction:column;gap:10px}
+.order{
+  border:1px solid var(--border);background:#121212;border-radius:14px;padding:12px
+}
+.order-top{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.order-id{font-weight:700}
+.stamp{color:var(--muted);font-size:12px}
+.pill{padding:6px 10px;border-radius:999px;font-weight:700;font-size:12px}
+.pill.success{background:rgba(22,163,74,.1);color:#86efac;border:1px solid rgba(22,163,74,.3)}
+.pill.warn{background:rgba(245,158,11,.08);color:#facc15;border:1px solid rgba(245,158,11,.25)}
+.pill.danger{background:rgba(220,38,38,.08);color:#fca5a5;border:1px solid rgba(220,38,38,.25)}
+.pill.info{background:rgba(184,134,11,.12);color:#f7dfa0;border:1px solid rgba(184,134,11,.35)}
+.meta{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px}
+.meta .chip{
+  border:1px dashed var(--border);background:#0f0f0f;padding:6px 10px;border-radius:10px;color:#d1d5db;font-size:12px
+}
+.total{font-weight:800}
 
-    .dropdown label:hover,
-    .dropdown div:hover {
-      background-color: #334155;
-    }
+/* Skeletons */
+.skel{background:linear-gradient(90deg,#1b1b1b 25%,#232323 37%,#1b1b1b 63%);background-size:400% 100%;animation:shimmer 1.4s ease infinite}
+@keyframes shimmer{0%{background-position:-400px 0}100%{background-position:400px 0}}
+.skel-row{height:64px;border-radius:12px}
 
-    .dropdown input {
-      display: none;
-    }
+/* Empty */
+.empty{
+  text-align:center;border:1px dashed var(--border);padding:20px;border-radius:14px;background:#101010;color:#d1d5db
+}
 
-    .user-info {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-
-    .user-info #user-name {
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    .dashboard-links {
-      width: 100%;
-      margin-top: 20px;
-      background: rgba(255, 255, 255, 0.05);
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px cyan;
-    }
-
-    .dashboard-links ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .dashboard-links li {
-      padding: 12px;
-      border-bottom: 1px solid #334155;
-    }
-
-    .dashboard-links li:last-child {
-      border-bottom: none;
-    }
-
-    .dashboard-links a {
-      color: cyan;
-      text-decoration: none;
-      font-weight: bold;
-      display: block;
-    }
-
-    .dashboard-links a:hover {
-      text-decoration: underline;
-    }
-
-    @media (max-width: 500px) {
-      .user-info #user-name {
-        font-size: 16px;
-      }
-
-      .dashboard-links {
-        padding: 15px;
-      }
-
-      .dashboard-links li {
-        padding: 10px;
-      }
-    }
-  </style>
+/* Danger zone buttons */
+.btn.danger{background:#2a1414;border-color:#7f1d1d}
+.btn.danger:hover{background:#3a1b1b}
+.btn.outline{background:transparent}
+.small{font-size:12px;color:#9ca3af}
+hr{border:0;border-top:1px solid var(--border);margin:14px 0}
+</style>
 </head>
 <body>
-  <div class="dashboard">
-    <div class="profile">
-      <div class="profile-img-container">
-        <img id="profileImage" src="https://www.svgrepo.com/show/384674/account-avatar-profile-user-11.svg" alt="Profile" />
-        <div class="verified-badge">✔</div>
-        <div class="dropdown" id="dropdownMenu">
-          <label>
-            Upload New
-            <input type="file" id="uploadImage" accept="image/*" />
-          </label>
-          <div id="deleteImage">Delete Image</div>
+  <header class="header">
+    <div class="brand">
+    <h3>CUSTOMER DASHBOARD</h3>
+    </div>
+    <div class="actions">
+      <button class="btn" onclick="goHome()"><i class="fa-solid fa-house"></i>&nbsp;Home</button>
+      <button class="btn" onclick="refreshOrders()"><i class="fa-solid fa-rotate-right"></i>&nbsp;Refresh</button>
+      <button class="btn brand" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i>&nbsp;Logout</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="grid">
+      <!-- Profile Card -->
+      <section class="card">
+        <h2>Profile</h2>
+        <div class="profile-wrap">
+          <div class="avatar-wrap">
+            <img id="avatar" class="avatar" alt="Profile" style="display:none">
+            <div id="avatarFallback" class="avatar-fallback"><i class="fa-solid fa-user"></i></div>
+          </div>
+          <div style="flex:1">
+            <div class="badge"><i class="fa-solid fa-id-badge"></i> <span id="displayName">—</span></div>
+            <div class="badge" style="margin-left:6px"><i class="fa-solid fa-envelope"></i> <span id="email">—</span></div>
+            <div class="p-actions">
+              <input id="picInput" type="file" accept="image/*" style="display:none">
+              <button class="btn brand" onclick="document.getElementById('picInput').click()">
+                <i class="fa-solid fa-image"></i>&nbsp;Change Picture
+              </button>
+              <button class="btn outline" onclick="removePicture()">
+                <i class="fa-regular fa-trash-can"></i>&nbsp;Remove Picture
+              </button>
+            </div>
+       
+          </div>
         </div>
-      </div>
-      <div class="user-info">
-        <div id="user-name">Loading...</div>
-        <small id="user-email"></small>
-      </div>
+      </section>
+
+      <!-- Orders Card -->
+      <section class="card">
+        <h2>Order History</h2>
+        <div class="toolbar">
+          <input id="search" class="input" placeholder="Search by Order ID or status…" />
+          <select id="statusFilter" class="input">
+            <option value="">All statuses</option>
+            <option value="pending">Pending</option>
+            <option value="preparing">Preparing</option>
+            <option value="ontheway">Ontheway</option>
+            <option value="delivered">Delivered</option>
+<option value="complete">Complete</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+        <div id="ordersWrap" class="list">
+          <!-- Skeletons -->
+          <div class="skel skel-row"></div>
+          <div class="skel skel-row"></div>
+          <div class="skel skel-row"></div>
+        </div>
+      </section>
     </div>
 
-    <div class="dashboard-links">
-      <ul>
-        <li><a href="/order history/">📜 View Order History</a></li>
-        <li><a href="/track/">📦 Track Your Order</a></li>
-        <li><a href="/about us/#support">🛠️ Support</a></li>
-        <li><a href="/help/">❓ Help Center</a></li>
-        <li><a href="/">🏠 Return to Homepage</a></li>
-        <li><a href="#" onclick="logout()">🚪 Logout</a></li>
-<li><a href="#"onclick="deleteAccount()">❌ Delete Account</a></li>
-      </ul>
-    </div>
+    <!-- Danger Zone -->
+    <section class="card" style="margin-top:14px">
+      <h2>Account</h2>
+      <div style="display:flex;flex-wrap:wrap;gap:10px">
+        <button class="btn danger" onclick="deleteAccount()">
+          <i class="fa-solid fa-user-slash"></i>&nbsp;Delete Account
+        </button>
+        <button class="btn" onclick="logout()">
+          <i class="fa-solid fa-right-from-bracket"></i>&nbsp;Logout
+        </button>
+      </div>
+      <hr>
+      <div class="small">Deleting your account is permanent. If you see a “recent login required” message, log out and sign in again before retrying.</div>
+    </section>
   </div>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <!-- Firebase (modular v11, matching your homepage) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { 
+      getAuth, onAuthStateChanged, signOut, deleteUser 
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { 
+      getFirestore, collection, query, where, getDocs, orderBy, limit 
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-  <script>
-    function logout() {
-      firebase.auth().signOut().then(() => {
-        window.location.href = "/auth/";
-      });
-    }
-
-    window.onload = function () {
-      const firebaseConfig = {
-        apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-        authDomain: "bixmax-6c24c.firebaseapp.com",
-        projectId: "bixmax-6c24c",
-        storageBucket: "bixmax-6c24c.appspot.com",
-        messagingSenderId: "37740442541",
-        appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-      };
-
-      firebase.initializeApp(firebaseConfig);
-
-      firebase.auth().onAuthStateChanged(user => {
-  if (user) {
-    currentEmail = user.email; // ✅ Fix here
-    const name = user.displayName || user.email.split('@')[0];
-    document.getElementById("user-name").textContent = name;
-    document.getElementById("user-email").textContent = user.email;
-    loadProfileImage(user.email);
-  } else {
-    window.location.href = "/auth/";
-  }
-});
-
-      function getImageKey(email) {
-        return "profileImage_" + email;
-      }
-
-      function loadProfileImage(email) {
-        const savedImage = localStorage.getItem(getImageKey(email));
-        if (savedImage) profileImage.src = savedImage;
-      }
-
-      const profileImage = document.getElementById("profileImage");
-      const dropdownMenu = document.getElementById("dropdownMenu");
-      const uploadInput = document.getElementById("uploadImage");
-      const deleteImage = document.getElementById("deleteImage");
-      let currentEmail = "";
-
-      profileImage.addEventListener("click", (e) => {
-        e.stopPropagation();
-        dropdownMenu.style.display = dropdownMenu.style.display === "block" ? "none" : "block";
-      });
-
-      document.addEventListener("click", () => {
-        dropdownMenu.style.display = "none";
-      });
-
-      uploadInput.addEventListener("change", (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = () => {
-          profileImage.src = reader.result;
-          localStorage.setItem(getImageKey(currentEmail), reader.result);
-          dropdownMenu.style.display = "none";
-        };
-        reader.readAsDataURL(file);
-      });
-
-      deleteImage.addEventListener("click", () => {
-        localStorage.removeItem(getImageKey(currentEmail));
-        profileImage.src = "https://www.svgrepo.com/show/384674/account-avatar-profile-user-11.svg";
-        dropdownMenu.style.display = "none";
-      });
-    };
-</script>
-<script>
-  window.deleteAccount = function () {
-    const user = firebase.auth().currentUser;
-
-    if (user) {
-      const confirmDelete = confirm("Are you sure you want to delete your account? This cannot be undone!.");
-      if (!confirmDelete) return;
-
-      user.delete()
-        .then(() => {
-          alert("Your account has been deleted.");
-          window.location.href = "/auth/";
-        })
-        .catch((error) => {
-          if (error.code === "auth/requires-recent-login") {
-            alert("Please sign in again to delete your account.");
-            // Optional: Redirect to login page to re-authenticate
-            window.location.href = "/auth/";
-          } else {
-            alert("Error deleting account: " + error.message);
-          }
-        });
-    } else {
-      alert("No user is currently signed in.");
-    }
+    // ✅ Your OGB Firebase config (same as homepage)
+ const firebaseConfig = {
+    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+    authDomain: "bixmax-6c24c.firebaseapp.com",
+    projectId: "bixmax-6c24c",
+    storageBucket: "bixmax-6c24c.appspot.com",
+    messagingSenderId: "37740442541",
+    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
   };
-</script>
 
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // ------- UI refs
+    const avatar = document.getElementById('avatar');
+    const avatarFallback = document.getElementById('avatarFallback');
+    const picInput = document.getElementById('picInput');
+    const displayNameEl = document.getElementById('displayName');
+    const emailEl = document.getElementById('email');
+    const ordersWrap = document.getElementById('ordersWrap');
+    const searchEl = document.getElementById('search');
+    const statusFilterEl = document.getElementById('statusFilter');
+
+    let ORDERS_CACHE = []; // keep last fetched to filter
+
+    // ------- Helpers
+    const cedi = (n)=> `GH₵${Number(n||0).toFixed(2)}`;
+    function fmtDate(val){
+      try{
+        if(!val) return '—';
+        // support Firestore Timestamp or ISO string/number
+        let d = val.toDate ? val.toDate() : new Date(val);
+        return d.toLocaleString();
+      }catch{ return '—'; }
+    }
+    function statusPill(status='pending'){
+      const s = String(status).toLowerCase();
+      let cls='info', label=status;
+      if(['delivered','completed'].includes(s)){ cls='success'; label='Delivered'; }
+      else if(['shipped','on the way','out for delivery'].includes(s)){ cls='warn'; label='On the way'; }
+      else if(['cancelled','canceled'].includes(s)){ cls='danger'; label='Cancelled'; }
+      else if(['preparing','pending'].includes(s)){ cls='info'; label=s.charAt(0).toUpperCase()+s.slice(1); }
+      return `<span class="pill ${cls}">${label}</span>`;
+    }
+
+    function renderOrders(list){
+      if(!list || !list.length){
+        ordersWrap.innerHTML = `<div class="empty">
+          <i class="fa-regular fa-folder-open" style="font-size:28px"></i>
+          <div style="margin-top:6px">No orders found yet.</div>
+        </div>`;
+        return;
+      }
+      ordersWrap.innerHTML = list.map(o=>{
+        const id = o.id || o.orderId || '—';
+        const items = Array.isArray(o.items) ? o.items.map(i=>`${i.name} ×${i.qty||i.quantity||1}`).join(', ') : (o.summary||'');
+        const total = o.total ?? o.grandTotal ?? o.amount ?? 0;
+        const date = o.createdAt || o.timestamp || o.date || o.created_on;
+        const status = o.status || 'processing';
+        return `
+          <div class="order">
+            <div class="order-top">
+              <div>
+                <div class="order-id">Order #${id}</div>
+                <div class="stamp">${fmtDate(date)}</div>
+              </div>
+              <div>${statusPill(status)}</div>
+            </div>
+            <div class="meta">
+              <div class="chip total"><i class="fa-solid fa-receipt"></i> ${cedi(total)}</div>
+              ${items ? `<div class="chip"><i class="fa-solid fa-boxes-stacked"></i> ${items}</div>`:''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function applyFilters(){
+      const q = (searchEl.value||'').toLowerCase().trim();
+      const sf = (statusFilterEl.value||'').toLowerCase();
+      const filtered = ORDERS_CACHE.filter(o=>{
+        const idStr = String(o.id || o.orderId || '').toLowerCase();
+        const st = String(o.status||'').toLowerCase();
+        const matchText = !q || idStr.includes(q) || st.includes(q);
+        const matchStatus = !sf || st.includes(sf);
+        return matchText && matchStatus;
+      });
+      renderOrders(filtered);
+    }
+
+    searchEl.addEventListener('input', applyFilters);
+    statusFilterEl.addEventListener('change', applyFilters);
+
+    // ------- Profile picture (localStorage)
+    function loadLocalAvatar(){
+      const src = localStorage.getItem('profilePic');
+      if(src){
+        avatar.src = src;
+        avatar.style.display='block';
+        avatarFallback.style.display='none';
+      }else{
+        avatar.style.display='none';
+        avatarFallback.style.display='flex';
+      }
+    }
+    loadLocalAvatar();
+
+    picInput.addEventListener('change', (e)=>{
+      const file = e.target.files?.[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = ()=>{
+        localStorage.setItem('profilePic', reader.result);
+        loadLocalAvatar();
+      };
+      reader.readAsDataURL(file);
+      e.target.value = ''; // reset chooser
+    });
+
+    window.removePicture = ()=> {
+      localStorage.removeItem('profilePic');
+      loadLocalAvatar();
+    };
+
+    // ------- Auth & Orders
+    async function fetchOrdersForUser(user){
+      // Tries userId(uid), then email
+      const ordersRef = collection(db, 'orders');
+
+      // Prefer latest first if you store time; orderBy requires an indexed field.
+      // We'll first try by uid:
+      let results = [];
+
+      try{
+        const q1 = query(ordersRef, where('userId','==', user.uid));
+        const snap1 = await getDocs(q1);
+        snap1.forEach(d=> results.push({ id: d.id, ...d.data() }));
+      }catch(e){ /* ignore */ }
+
+      if(results.length === 0){
+        try{
+          const q2 = query(ordersRef, where('email','==', user.email));
+          const snap2 = await getDocs(q2);
+          snap2.forEach(d=> results.push({ id: d.id, ...d.data() }));
+        }catch(e){ /* ignore */ }
+      }
+
+      // Sort by createdAt desc if available
+      results.sort((a,b)=>{
+        const da = (a.createdAt && a.createdAt.toDate) ? a.createdAt.toDate().getTime() : (a.timestamp?.toDate?.() ? a.timestamp.toDate().getTime() : 0);
+        const dbt= (b.createdAt && b.createdAt.toDate) ? b.createdAt.toDate().getTime() : (b.timestamp?.toDate?.() ? b.timestamp.toDate().getTime() : 0);
+        return dbt - da;
+      });
+
+      return results;
+    }
+
+    async function loadUserAndOrders(){
+      ordersWrap.innerHTML = `<div class="skel skel-row"></div><div class="skel skel-row"></div><div class="skel skel-row"></div>`;
+      onAuthStateChanged(auth, async (user)=>{
+        if(!user){
+          displayNameEl.textContent = 'Guest';
+          emailEl.textContent = '—';
+          ordersWrap.innerHTML = `<div class="empty">Please sign in to view your orders.</div>`;
+          return;
+        }
+        displayNameEl.textContent = user.displayName || (user.email?.split('@')[0]) || 'Customer';
+        emailEl.textContent = user.email || '—';
+
+        try{
+          const orders = await fetchOrdersForUser(user);
+          ORDERS_CACHE = orders;
+          applyFilters();
+        }catch(err){
+          console.error(err);
+          ordersWrap.innerHTML = `<div class="empty">Could not load orders. Please try again.</div>`;
+        }
+      });
+    }
+    loadUserAndOrders();
+
+    // ------- Global actions
+    window.refreshOrders = ()=> loadUserAndOrders();
+    window.goHome = ()=> location.href = "/";
+
+    window.logout = async ()=>{
+      try{
+        await signOut(auth);
+        location.href = "/auth/"; // your login/register page
+      }catch(err){
+        alert("Logout failed: " + err.message);
+      }
+    };
+
+    window.deleteAccount = async ()=>{
+      if(!confirm("Delete account permanently? This cannot be undone.")) return;
+      const user = auth.currentUser;
+      if(!user){ alert("No user logged in."); return; }
+      try{
+        await deleteUser(user);
+        // Optional: clear local profile pic
+        localStorage.removeItem('profilePic');
+        alert("Account deleted.");
+        location.href = "/";
+      }catch(err){
+        if(err.code === 'auth/requires-recent-login'){
+          alert("Please log out and sign in again, then retry delete.");
+        }else{
+          alert("Delete failed: " + err.message);
+        }
+      }
+    };
+  </script>
 </body>
 </html>
