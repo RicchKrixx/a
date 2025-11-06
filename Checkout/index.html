@@ -244,11 +244,26 @@ document.querySelectorAll("input[name='pay']").forEach(radio=>{
 });  
   
 // Wait for auth to initialize  
-let currentUser = null;  
-firebase.auth().onAuthStateChanged(user => {  
-  currentUser = user;  
-});  
-  
+let currentUser = null;
+
+firebase.auth().onAuthStateChanged(async user => {
+  currentUser = user;
+  if (user) {
+    // Try to pre-fill from Firestore user profile
+    const userDoc = await db.collection("users").doc(user.uid).get();
+    if (userDoc.exists) {
+      const data = userDoc.data();
+      if (data.name) document.getElementById("name").value = data.name;
+      if (data.phone) document.getElementById("phone").value = data.phone;
+      if (data.email) document.getElementById("email").value = data.email;
+      if (data.address) document.getElementById("address").value = data.address;
+    } else {
+      // If no profile doc yet, fill email from auth
+      if (user.email) document.getElementById("email").value = user.email;
+    }
+  }
+});
+
 // Submit order  
 function submitOrder(e){  
   e.preventDefault();  
@@ -317,6 +332,19 @@ const saveAndRedirect = async () => {
 
     // Save using custom ID as document ID
     await db.collection("orders").doc(customId).set(order);
+
+    // Save user info for next checkout
+if (currentUser) {
+  const userRef = db.collection("users").doc(currentUser.uid);
+  await userRef.set({
+    name: order.name,
+    phone: order.phone,
+    email: order.email,
+    address: order.address,
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  }, { merge: true });
+}
+
 
     // Clear cart and redirect
     localStorage.removeItem("cart");
