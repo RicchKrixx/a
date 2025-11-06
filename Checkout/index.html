@@ -293,37 +293,36 @@ timestamps: {
   }  
   
 // Generate custom order ID: BXM + 7 digits + 1 uppercase letter
-function generateOrderId() {
+function generateCustomOrderId() {
   const numbers = Math.floor(1000000 + Math.random() * 9000000); // 7 digits
   const letter = String.fromCharCode(65 + Math.floor(Math.random() * 26)); // Random A–Z
   return `BXM${numbers}${letter}`;
 }
 
-// Save order with duplicate-check logic
+// Save order using custom ID as Firestore doc ID
 const saveAndRedirect = async () => {
   try {
-    let orderId;
+    let customId;
     let exists = true;
 
     // Keep generating until unique
     while (exists) {
-      orderId = generateOrderId();
-      const snapshot = await db.collection("orders").where("orderId", "==", customId).get();
-      exists = !snapshot.empty; // true if an existing order has that ID
+      customId = generateCustomOrderId();
+      const doc = await db.collection("orders").doc(customId).get();
+      exists = doc.exists;
     }
 
-    // Once unique, assign to order
-    order.orderId = orderId;
+    // Assign orderId
+    order.orderId = customId;
 
-    // Save to Firestore
-    const docRef = await db.collection("orders").add(order);
-    await docRef.update({ orderId: orderId });
+    // Save using custom ID as document ID
+    await db.collection("orders").doc(customId).set(order);
 
     // Clear cart and redirect
     localStorage.removeItem("cart");
     updateBadge();
     setTimeout(() => {
-      window.location.href = "/thankyou/?orderId=" + orderId;
+      window.location.href = "/thankyou/?orderId=" + customId;
     }, 1000);
 
   } catch (err) {
@@ -332,6 +331,7 @@ const saveAndRedirect = async () => {
     alert("Failed to submit order.");
   }
 };
+
 
   
   if(order.payMethod==="paystack"){  
