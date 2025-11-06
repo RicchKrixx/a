@@ -113,16 +113,16 @@ hr{border:0;border-top:1px solid var(--border);margin:14px 0}
 </head>
 <body>
   <header class="header">
-    <div class="brand">
-    <h3>DASHBOARD</h3>
-    </div>
+
     <div class="actions">
       <button class="btn" onclick="goHome()"><i class="fa-solid fa-house"></i>&nbsp;Home</button>
       <button class="btn" onclick="refreshOrders()"><i class="fa-solid fa-rotate-right"></i>&nbsp;Refresh</button>
       <button class="btn brand" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i>&nbsp;Logout</button>
     </div>
   </header>
-
+    <div class="brand">
+    <h3>DASHBOARD</h3>
+    </div>
   <div class="container">
     <div class="grid">
       <!-- Profile Card -->
@@ -296,7 +296,7 @@ hr{border:0;border-top:1px solid var(--border);margin:14px 0}
 
     // ------- Profile picture (localStorage)
     function loadLocalAvatar(){
-      const src = localStorage.getItem('profilePic');
+      const src = localStorage.getItem('profileImg');
       if(src){
         avatar.src = src;
         avatar.style.display='block';
@@ -313,7 +313,7 @@ hr{border:0;border-top:1px solid var(--border);margin:14px 0}
       if(!file) return;
       const reader = new FileReader();
       reader.onload = ()=>{
-        localStorage.setItem('profilePic', reader.result);
+        localStorage.setItem('profileImg', reader.result);
         loadLocalAvatar();
       };
       reader.readAsDataURL(file);
@@ -321,7 +321,7 @@ hr{border:0;border-top:1px solid var(--border);margin:14px 0}
     });
 
     window.removePicture = ()=> {
-      localStorage.removeItem('profilePic');
+      localStorage.removeItem('profileImg');
       loadLocalAvatar();
     };
 
@@ -389,7 +389,7 @@ hr{border:0;border-top:1px solid var(--border);margin:14px 0}
     window.logout = async ()=>{
       try{
         await signOut(auth);
-        location.href = "/auth/"; // your login/register page
+        location.href = "/auth/"; 
       }catch(err){
         alert("Logout failed: " + err.message);
       }
@@ -402,7 +402,7 @@ hr{border:0;border-top:1px solid var(--border);margin:14px 0}
       try{
         await deleteUser(user);
         // Optional: clear local profile pic
-        localStorage.removeItem('profilePic');
+        localStorage.removeItem('profileImg');
         alert("Account deleted.");
         location.href = "/";
       }catch(err){
