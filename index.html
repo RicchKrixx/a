@@ -505,7 +505,7 @@ font-size: 16px;
 .add {
   margin-top: 8px;
   border: none;
-  background: var(--brand);
+  background: #00b7d4;
   color: #fff;
   padding: 8px 10px;
   border-radius: 10px;
@@ -820,18 +820,24 @@ h2::before,
     </div>
 <hr style="border: none; height: 1px; background-color: #333333;" />
     <ul>
+		<li><a href="/track/">🚚 Track</a></li>
+		<li><a href="#" onclick="Tawk_API.toggle(); return false;">💬 Live Chat</a></li>
+		<li><a href="tel:0536345825"> ☎️Contact</a></li>
+		<li><span><a href="/help/">ℹ️ Help</a></span></li>
+		<!--
       <li><a href="#fashion">👗Fashion</a></li>
       <li><a href="#grocereries">🍎Groceries</a></li>
       <li><a href="#electronics">📱Electronics</a></li>
  <li><a href="#health">🏥 Health</a></li>
       <li><a href="#care">🧴Beauty & Personal care</a></li>
       <li><a href="#essentials">🏠Home Essentials</a></li>
+		-->
       <li><a href="/dashboard/" id="dashboardLink" style="display:none">📊 Dashboard</a></li>
 <hr style="border: none; height: 1px; background-color: #333333;" />
 <br>
 <hr style="border: none; height: 1px; background-color: #333333;" />
 
-      <li><a href="tel:0536345825">☎️Contact</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span><a href="/help/">ℹ️</a></span></li>
+<li><a href="/about/">✍️ About</a></li>
     </ul>
 
     <div class="auth-button">
@@ -1492,49 +1498,6 @@ function updateCartDisplay() {
 document.addEventListener("DOMContentLoaded", updateCartDisplay);
 </script>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const menuProfileImg = document.getElementById("menuProfileImg");
-  const src = localStorage.getItem("profileImg");
-
-  if (menuProfileImg) {
-    if (src) {
-      menuProfileImg.src = src;
-      menuProfileImg.style.display = "block";
-    } else {
-      // optional: hide or show fallback avatar
-      menuProfileImg.style.display = "none";
-    }
-  }
-});
-</script>
-<script>
-  // Close the slide menu when any link inside it is clicked
-  document.querySelectorAll('.menu-overlay a[href^="#"]').forEach(link => {
-    link.addEventListener('click', () => {
-      const menu = document.getElementById('fullMenu');
-      const toggle = document.querySelector('.menu-toggle');
-      const bottomBar = document.getElementById('bottomBar');
-
-      // Smooth scroll to section (if the link has a valid target)
-      const targetId = link.getAttribute('href');
-      const targetEl = document.querySelector(targetId);
-      if (targetEl) {
-        setTimeout(() => {
-          targetEl.scrollIntoView({ behavior: "smooth" });
-        }, 150); // Slight delay to make closing animation smoother
-      }
-
-      // Close the menu
-      menu.classList.remove('show', 'animate');
-      toggle.style.display = 'block';
-      if (bottomBar) bottomBar.style.display = 'flex';
-      document.body.style.overflow = '';
-    });
-  });
-</script>
-
-	
 	<!--StartofTawk.toScript-->
 	<script type="text/javascript"> 
 		var Tawk_API=Tawk_API||{},
