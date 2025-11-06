@@ -1114,7 +1114,7 @@ scrollBtn.onclick = () => window.scrollTo({top:0, behavior:'smooth'});
       const defaultImg = "https://www.svgrepo.com/show/384674/account-avatar-profile-user-11.svg";
       const finalImg = savedImg || user.photoURL || defaultImg;
 
-      profileImg.style.backgroundImage = `url('${fianlImg}')`;
+      profileImg.style.backgroundImage = `url('${finalImg}')`;
       userName.textContent = user.displayName || user.email.split("@")[0];
       userEmail.textContent = user.email;
       authBtn.textContent = "🚪 Logout";
