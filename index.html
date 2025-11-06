@@ -268,13 +268,6 @@ font-weight: bold;
 font-size: 16px;
 } 
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-        }
-
         footer {
             background-color: #1a1a1a;
             color: #ffffff;
@@ -1514,6 +1507,31 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 });
+</script>
+<script>
+  // Close the slide menu when any link inside it is clicked
+  document.querySelectorAll('.menu-overlay a[href^="#"]').forEach(link => {
+    link.addEventListener('click', () => {
+      const menu = document.getElementById('fullMenu');
+      const toggle = document.querySelector('.menu-toggle');
+      const bottomBar = document.getElementById('bottomBar');
+
+      // Smooth scroll to section (if the link has a valid target)
+      const targetId = link.getAttribute('href');
+      const targetEl = document.querySelector(targetId);
+      if (targetEl) {
+        setTimeout(() => {
+          targetEl.scrollIntoView({ behavior: "smooth" });
+        }, 150); // Slight delay to make closing animation smoother
+      }
+
+      // Close the menu
+      menu.classList.remove('show', 'animate');
+      toggle.style.display = 'block';
+      if (bottomBar) bottomBar.style.display = 'flex';
+      document.body.style.overflow = '';
+    });
+  });
 </script>
 
 	
