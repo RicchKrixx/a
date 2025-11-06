@@ -1424,6 +1424,22 @@ function updateCartDisplay() {
 document.addEventListener("DOMContentLoaded", updateCartDisplay);
 </script>
 
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const menuProfileImg = document.getElementById("menuProfileImg");
+  const src = localStorage.getItem("profileImg");
+
+  if (menuProfileImg) {
+    if (src) {
+      menuProfileImg.src = src;
+      menuProfileImg.style.display = "block";
+    } else {
+      // optional: hide or show fallback avatar
+      menuProfileImg.style.display = "none";
+    }
+  }
+});
+</script>
 
 	
 	<!--StartofTawk.toScript-->
