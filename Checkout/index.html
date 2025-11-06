@@ -118,10 +118,10 @@ footer{padding:24px 16px;text-align:center;background:#111;color:#bbb;margin-top
     <h2>Checkout</h2> 
   <form class="checkout" onsubmit="return submitOrder(event)">  
     <div class="fields">  
-      <div><label>Full Name</label><input id="name" required /></div>  
-      <div><label>Phone</label><input id="phone" required /></div>  
-      <div><label>Email</label><input id="email" type="email" placeholder="(optional)" /></div>  
-      <div style="grid-column:1/-1"><label>Delivery Address</label><input id="address" required /></div>  
+      <div><label>Full Name</label><input id="name" placeholder="*john doe" required /></div>  
+      <div><label>Phone</label><input id="phone" placeholder="*0541234567" required /></div>  
+      <div><label>Email</label><input id="email" type="email" placeholder="*name@example.com" required /></div>  
+      <div style="grid-column:1/-1"><label>Delivery Address</label><input id="address" placeholder="*street, town" required /></div>  
     </div>  
     <!-- Hidden lat/lng -->  
     <input type="hidden" id="latitude">  
