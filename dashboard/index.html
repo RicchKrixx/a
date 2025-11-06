@@ -296,7 +296,7 @@ hr{border:0;border-top:1px solid var(--border);margin:14px 0}
 
     // ------- Profile picture (localStorage)
     function loadLocalAvatar(){
-      const src = localStorage.getItem('profilePic');
+      const src = localStorage.getItem('profileImg');
       if(src){
         avatar.src = src;
         avatar.style.display='block';
@@ -321,7 +321,7 @@ hr{border:0;border-top:1px solid var(--border);margin:14px 0}
     });
 
     window.removePicture = ()=> {
-      localStorage.removeItem('profilePic');
+      localStorage.removeItem('profileImg');
       loadLocalAvatar();
     };
 
@@ -402,7 +402,7 @@ hr{border:0;border-top:1px solid var(--border);margin:14px 0}
       try{
         await deleteUser(user);
         // Optional: clear local profile pic
-        localStorage.removeItem('profilePic');
+        localStorage.removeItem('profileImg');
         alert("Account deleted.");
         location.href = "/";
       }catch(err){
