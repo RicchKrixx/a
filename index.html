@@ -757,6 +757,57 @@ h2::before,
   padding: 2px 6px;
   box-shadow: 0 0 6px rgba(255,0,0,0.5);
 }
+/* Skeleton loader styles */
+.skeleton-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 10px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 0 3px rgba(0,0,0,0.05);
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.skeleton-img,
+.skeleton-text,
+.skeleton-btn {
+  border-radius: 8px;
+  background: linear-gradient(90deg, #e0e0e0 25%, #f4f4f4 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s infinite linear;
+}
+
+.skeleton-img {
+  width: 100%;
+  height: 150px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+
+.skeleton-text {
+  height: 16px;
+  margin: 6px 0;
+}
+
+.skeleton-btn {
+  height: 30px;
+  width: 80%;
+  margin: 10px auto 0;
+  border-radius: 20px;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes pulse {
+  0% { opacity: 0.9; }
+  50% { opacity: 1; }
+  100% { opacity: 0.9; }
+}
 
   </style>
 </head>
@@ -1015,6 +1066,23 @@ scrollBtn.onclick = () => window.scrollTo({top:0, behavior:'smooth'});
   const auth = getAuth(app);
   const db = getFirestore(app);
 
+function showSkeletons(container, count = 6) {
+  container.innerHTML = "";
+  for (let i = 0; i < count; i++) {
+    const skeleton = document.createElement("div");
+    skeleton.className = "skeleton-card";
+    skeleton.innerHTML = `
+      <div class="skeleton-img"></div>
+      <div class="skeleton-text" style="width: 80%;"></div>
+      <div class="skeleton-text" style="width: 60%;"></div>
+      <div class="skeleton-btn"></div>
+    `;
+    container.appendChild(skeleton);
+  }
+}
+
+
+	
   function saveProductsToCache(category, products) {
     localStorage.setItem("products_" + category, JSON.stringify({
       products,
@@ -1066,23 +1134,30 @@ scrollBtn.onclick = () => window.scrollTo({top:0, behavior:'smooth'});
     });
   }
 
-  async function loadProducts(category, containerId) {
-    const container = document.getElementById(containerId);
-    container.innerHTML = ""; // No skeletons or loading message
+async function loadProducts(category, containerId) {
+  const container = document.getElementById(containerId);
 
-    const cached = getProductsFromCache(category);
-    if (cached) {
-      renderProducts(cached, container);
-    }
+  // 🩶 Show skeletons while loading
+  showSkeletons(container);
 
+  const cached = getProductsFromCache(category);
+  if (cached) {
+    setTimeout(() => renderProducts(cached, container), 1000); // Simulate short delay
+    return;
+  }
+
+  try {
     const q = query(collection(db, "products"), where("category", "==", category));
     const snapshot = await getDocs(q);
     const products = snapshot.docs.map(doc => doc.data());
 
     saveProductsToCache(category, products);
     renderProducts(products, container);
-    return products;
+  } catch (err) {
+    console.error("Error loading products:", err);
+    container.innerHTML = "<p style='color:red;'>Failed to load products.</p>";
   }
+}
 
   async function loadAllProducts() {
     const categories = [
