@@ -1,4 +1,3 @@
-now check this is not adding the sizes or whatever to the prducts
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1122,8 +1121,7 @@ function showSkeletons(container, count = 6) {
         </div>
         <h3>${product.name}</h3>
         <div class="price">${priceHTML}</div>
-        <button onclick="addToCart('${product.name}', '${product.variation || 'none'}', '${JSON.stringify(product.sizes || [])}' ${product.price})">Add to Cart</button>
-
+      <button onclick='addToCart(${JSON.stringify(product)})'>Add to Cart</button>
 
       `;
 
@@ -1428,79 +1426,35 @@ document.getElementById("imgPreview").onclick = function(e) {
   if (e.target === this) this.style.display = "none";
 };
 
-
-	</script>
-<script>
-function addToCart(product) {
-  // Ensure image has a fallback
-  const imgSrc = image && image.startsWith("http")
-    ? image
-    : "https://via.placeholder.com/150";
-
+window.addToCart = function(product) {
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-  // Look for existing product
-  const existing = cart.find(item => item.name === name);
+  // Check if this variation + size combo already exists
+  const existing = cart.find(
+    item => item.name === product.name && item.variation === product.variation
+  );
+
   if (existing) {
-    existing.qty += 1;
+    existing.quantity = (existing.quantity || 1) + 1;
   } else {
-    cart.push({ name, price, image: imgSrc, qty: 1 });
+    cart.push({
+      name: product.name,
+      price: product.price,
+      variation: product.variation || null,
+      sizes: product.sizes || [],
+      quantity: 1,
+      image: product.image || ""
+    });
   }
 
   localStorage.setItem("cart", JSON.stringify(cart));
 
-  // Update cart icon display & count
-  updateCartDisplay();
+  // Update UI cart count
+  document.getElementById("cartCount").textContent = cart.length;
+  document.getElementById("cartIcon").classList.add("show");
+};
 
-  // Small bounce animation
-  const cartIcon = document.getElementById('cartIcon');
-  cartIcon.animate(
-    [
-      { transform: 'translateX(0)' },
-      { transform: 'translateX(-10px)' },
-      { transform: 'translateX(0)' }
-    ],
-    { duration: 400, easing: 'ease-out' }
-  );
-
-  // Toast feedback
-  const toast = document.createElement("div");
-  toast.textContent = `${name} added to cart 🛒`;
-  Object.assign(toast.style, {
-    position: "fixed",
-    bottom: "20px",
-    left: "50%",
-    transform: "translateX(-50%)",
-    background: "rgba(0,0,0,0.8)",
-    color: "#fff",
-    padding: "10px 16px",
-    borderRadius: "20px",
-    zIndex: 9999,
-    fontSize: "14px"
-  });
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 2000);
-}
-
-function updateCartDisplay() {
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];
-  const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
-
-  const cartIcon = document.getElementById("cartIcon");
-  const countEl = document.getElementById("cartCount");
-  countEl.textContent = totalQty;
-
-  if (totalQty > 0) {
-    cartIcon.classList.add("show"); // slide in
-  } else {
-    cartIcon.classList.remove("show"); // slide out
-  }
-}
-
-// Run on page load to show correct state
-document.addEventListener("DOMContentLoaded", updateCartDisplay);
-</script>
-
+	</script>
 	<!--StartofTawk.toScript-->
 	<script type="text/javascript"> 
 		var Tawk_API=Tawk_API||{},
