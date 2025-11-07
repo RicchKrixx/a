@@ -185,187 +185,69 @@ onAuthStateChanged(auth, user => {
     }
   }
 
-  // Render products by category
-  async function loadProducts(category, containerId) {
-    const container = document.getElementById(containerId);
-    container.innerHTML = "<p>Loading...</p>";
-
-    const q = query(collection(db, "products"), where("category", "==", category));
-    const snapshot = await getDocs(q);
-
-    container.innerHTML = "";
-    snapshot.forEach(docSnap => {
-      const product = docSnap.data();
-      const div = document.createElement("div");
-      div.className = "product";
-      div.innerHTML = `
-        <img src="${product.image || 'https://via.placeholder.com/50'}" />
-        <div class="product-info">
-          <strong>${product.name}</strong><br>
-          ${product.originalPrice ? `<span style="text-decoration: line-through; color: gray;">GH₵${product.originalPrice}</span> ` : ""}
-          GH₵${product.price}
-        </div>
-        <div class="product-actions">
-          <button class="edit-btn">Edit</button>
-          <button class="delete-btn">Delete</button>
-        </div>
-      `;
-
-      // Delete
-      div.querySelector(".delete-btn").addEventListener("click", async () => {
-        await deleteDoc(doc(db, "products", docSnap.id));
-        loadProducts(category, containerId);
-      });
-
-      // Edit
-      div.querySelector(".edit-btn").addEventListener("click", async () => {
-        const newName = prompt("Enter item name", product.name);
-        const newPrice = prompt("Enter new price", product.price);
-        const newOriginal = prompt("Enter original price (optional)", product.originalPrice || "");
-        await updateDoc(doc(db, "products", docSnap.id), {
-          name: newName,
-          price: Number(newPrice),
-          originalPrice: newOriginal ? Number(newOriginal) : null
-        });
-        loadProducts(category, containerId);
-      });
-
-      container.appendChild(div);
-    });
-
-    // Add new product form
-    const form = document.createElement("div");
-    form.className = "add-form";
-    form.innerHTML = `
-      <h4>Add New ${category}</h4>
-      <input type="text" placeholder="Name" id="${containerId}-name" />
-      <input type="number" placeholder="Price" id="${containerId}-price" />
-      <input type="number" placeholder="Original Price (optional)" id="${containerId}-original" />
-      <input type="file" id="${containerId}-file" accept="image/*" />
-      <div class="upload-preview" id="${containerId}-preview"></div>
-      <input type="hidden" id="${containerId}-image" />
-      <button>Add</button>
-    `;
-
-    // Handle image upload
-    const fileInput = form.querySelector(`#${containerId}-file`);
-    const preview = form.querySelector(`#${containerId}-preview`);
-    fileInput.addEventListener("change", async () => {
-      const file = fileInput.files[0];
-      if (!file) return;
-      preview.innerHTML = "<p>Uploading...</p>";
-      try {
-        const url = await uploadToImgbb(file);
-        document.getElementById(`${containerId}-image`).value = url;
-        preview.innerHTML = `<img src="${url}" alt="Preview">`;
-      } catch (err) {
-        preview.innerHTML = `<p style="color:red;">Upload failed: ${err.message}</p>`;
-      }
-    });
-
-    // Add new product
-    form.querySelector("button").addEventListener("click", async () => {
-      const name = document.getElementById(`${containerId}-name`).value;
-      const price = document.getElementById(`${containerId}-price`).value;
-      const original = document.getElementById(`${containerId}-original`).value;
-      const image = document.getElementById(`${containerId}-image`).value;
-      if(!name || !price || !image) return alert("Please fill all required fields and upload an image");
-      await addDoc(collection(db, "products"), {
-        name,
-        price: Number(price),
-        originalPrice: original ? Number(original) : null,
-        image,
-        category
-      });
-      loadProducts(category, containerId);
-    });
-
-    container.appendChild(form);
-  }
-
-  // Load all categories
-  loadProducts("Electronics", "electronics");
-  async function loadFashionProducts(category, containerId) {
+// Render products by category
+async function loadProducts(category, containerId) {
   const container = document.getElementById(containerId);
   container.innerHTML = "<p>Loading...</p>";
 
   const q = query(collection(db, "products"), where("category", "==", category));
   const snapshot = await getDocs(q);
-  container.innerHTML = "";
 
+  container.innerHTML = "";
   snapshot.forEach(docSnap => {
     const product = docSnap.data();
     const div = document.createElement("div");
     div.className = "product";
-    const selectedVariation = product.variation || "none";
-    const selectedSizes = product.sizes || [];
-
     div.innerHTML = `
       <img src="${product.image || 'https://via.placeholder.com/50'}" />
       <div class="product-info">
-        <input type="text" value="${product.name}" placeholder="Name" style="width:100%;margin-bottom:4px;">
-        <input type="number" value="${product.price}" placeholder="Price" style="width:100%;margin-bottom:4px;">
-        <input type="number" value="${product.originalPrice || ""}" placeholder="Original Price (optional)" style="width:100%;margin-bottom:4px;">
-        <input type="text" value="${product.image}" placeholder="Image URL" style="width:100%;margin-bottom:4px;">
-        
-        <select class="variation-type" style="width:100%;margin-bottom:8px;">
-          <option value="none" ${selectedVariation === "none" ? "selected" : ""}>No Variation</option>
-          <option value="number" ${selectedVariation === "number" ? "selected" : ""}>Number Sizes</option>
-          <option value="label" ${selectedVariation === "label" ? "selected" : ""}>S/M/L</option>
-        </select>
-
-        <div class="size-options" style="margin-top:6px;"></div>
+        <strong>${product.name}</strong><br>
+        ${product.originalPrice ? `<span style="text-decoration: line-through; color: gray;">GH₵${product.originalPrice}</span> ` : ""}
+        GH₵${product.price}
+        ${category === "Fashion" && product.variation && product.variation !== "none" ? `
+          <br><small><strong>Variation:</strong> ${product.variation}</small>
+          <br><small><strong>Sizes:</strong> ${(product.sizes || []).join(", ")}</small>
+        ` : ""}
       </div>
       <div class="product-actions">
-        <button class="edit-btn">Update</button>
+        <button class="edit-btn">Edit</button>
         <button class="delete-btn">Delete</button>
       </div>
     `;
 
-    const sizeDiv = div.querySelector(".size-options");
-    const varSelect = div.querySelector(".variation-type");
-
-    function renderSizes(type) {
-      let sizes = type === "number" ? [38, 39, 40, 41, 42, 43, 44, 45] : ["S", "M", "L", "XL"];
-      sizeDiv.innerHTML = sizes
-        .map(size => `
-          <label style="margin-right:8px;">
-            <input type="checkbox" value="${size}" ${selectedSizes.includes(size) ? "checked" : ""}> ${size}
-          </label>
-        `)
-        .join("");
-    }
-
-    if (selectedVariation !== "none") renderSizes(selectedVariation);
-
-    varSelect.addEventListener("change", () => {
-      const newType = varSelect.value;
-      if (newType === "none") sizeDiv.innerHTML = "";
-      else renderSizes(newType);
-    });
-
-    // Update product
-    div.querySelector(".edit-btn").addEventListener("click", async () => {
-      const name = div.querySelector("input[placeholder='Name']").value;
-      const price = parseFloat(div.querySelector("input[placeholder='Price']").value);
-      const originalPrice = parseFloat(div.querySelector("input[placeholder='Original Price (optional)']").value) || null;
-      const image = div.querySelector("input[placeholder='Image URL']").value;
-      const variation = varSelect.value;
-      const sizes = variation === "none"
-        ? []
-        : Array.from(sizeDiv.querySelectorAll("input:checked")).map(i => i.value);
-
-      await updateDoc(doc(db, "products", docSnap.id), {
-        name, price, originalPrice, image, variation, sizes
-      });
-
-      alert("Updated successfully!");
-    });
-
     // Delete product
     div.querySelector(".delete-btn").addEventListener("click", async () => {
       await deleteDoc(doc(db, "products", docSnap.id));
-      loadFashionProducts(category, containerId);
+      loadProducts(category, containerId);
+    });
+
+    // Edit product
+    div.querySelector(".edit-btn").addEventListener("click", async () => {
+      const newName = prompt("Enter item name", product.name);
+      const newPrice = prompt("Enter new price", product.price);
+      const newOriginal = prompt("Enter original price (optional)", product.originalPrice || "");
+
+      let updates = {
+        name: newName,
+        price: Number(newPrice),
+        originalPrice: newOriginal ? Number(newOriginal) : null
+      };
+
+      // Only Fashion category gets variation options
+      if (category === "Fashion") {
+        const newVariation = prompt("Enter variation type (none / number / label)", product.variation || "none");
+        let newSizes = [];
+        if (newVariation !== "none") {
+          const allowedSizes = newVariation === "number" ? "38,39,40,41,42,43,44,45" : "S,M,L,XL";
+          const inputSizes = prompt(`Enter available sizes (comma separated)\nAvailable: ${allowedSizes}`, (product.sizes || []).join(","));
+          newSizes = inputSizes ? inputSizes.split(",").map(s => s.trim()) : [];
+        }
+        updates.variation = newVariation;
+        updates.sizes = newSizes;
+      }
+
+      await updateDoc(doc(db, "products", docSnap.id), updates);
+      loadProducts(category, containerId);
     });
 
     container.appendChild(div);
@@ -382,33 +264,8 @@ onAuthStateChanged(auth, user => {
     <input type="file" id="${containerId}-file" accept="image/*" />
     <div class="upload-preview" id="${containerId}-preview"></div>
     <input type="hidden" id="${containerId}-image" />
-
-    <select id="${containerId}-variation" style="margin-top:8px;">
-      <option value="none">No Variation</option>
-      <option value="number">Number Sizes</option>
-      <option value="label">S/M/L</option>
-    </select>
-    <div class="size-options" id="${containerId}-sizes" style="margin-top:8px;"></div>
-
     <button>Add</button>
   `;
-
-  // Variation logic for add form
-  const varSelectAdd = form.querySelector(`#${containerId}-variation`);
-  const sizeDivAdd = form.querySelector(`#${containerId}-sizes`);
-  function renderAddSizes(type) {
-    let sizes = type === "number" ? [38, 39, 40, 41, 42, 43, 44, 45] : ["S", "M", "L", "XL"];
-    sizeDivAdd.innerHTML = sizes.map(size => `
-      <label style="margin-right:8px;">
-        <input type="checkbox" value="${size}"> ${size}
-      </label>
-    `).join("");
-  }
-  varSelectAdd.addEventListener("change", () => {
-    const t = varSelectAdd.value;
-    if (t === "none") sizeDivAdd.innerHTML = "";
-    else renderAddSizes(t);
-  });
 
   // Handle image upload
   const fileInput = form.querySelector(`#${containerId}-file`);
@@ -432,31 +289,43 @@ onAuthStateChanged(auth, user => {
     const price = document.getElementById(`${containerId}-price`).value;
     const original = document.getElementById(`${containerId}-original`).value;
     const image = document.getElementById(`${containerId}-image`).value;
-    const variation = varSelectAdd.value;
-    const sizes = variation === "none"
-      ? []
-      : Array.from(sizeDivAdd.querySelectorAll("input:checked")).map(i => i.value);
 
-    if (!name || !price || !image) return alert("Please fill all required fields and upload an image");
+    if (!name || !price || !image) {
+      alert("Please fill all required fields and upload an image");
+      return;
+    }
 
-    await addDoc(collection(db, "products"), {
+    let newDoc = {
       name,
       price: Number(price),
       originalPrice: original ? Number(original) : null,
       image,
-      category,
-      variation,
-      sizes
-    });
+      category
+    };
 
-    loadFashionProducts(category, containerId);
+    // Add variation logic only for Fashion
+    if (category === "Fashion") {
+      const variation = prompt("Enter variation type (none / number / label)", "none");
+      let sizes = [];
+      if (variation !== "none") {
+        const allowedSizes = variation === "number" ? "38,39,40,41,42,43,44,45" : "S,M,L,XL";
+        const inputSizes = prompt(`Enter available sizes (comma separated)\nAvailable: ${allowedSizes}`);
+        sizes = inputSizes ? inputSizes.split(",").map(s => s.trim()) : [];
+      }
+      newDoc.variation = variation;
+      newDoc.sizes = sizes;
+    }
+
+    await addDoc(collection(db, "products"), newDoc);
+    loadProducts(category, containerId);
   });
 
   container.appendChild(form);
 }
 
-// Call this instead of loadProducts("Fashion", "fashion");
-loadFashionProducts("Fashion", "fashion");
+  // Load all categories
+  loadProducts("Electronics", "electronics");
+loadProducts("Fashion", "fashion");
 
 loadProducts("Groceries", "groceries");
   loadProducts("Essentials", "essentials");
