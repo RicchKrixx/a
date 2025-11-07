@@ -369,20 +369,7 @@ function renderCart(){
         <div>
           <strong>${item.name}</strong><br/>
           GH₵ ${item.price.toFixed(2)} each
-                  ${item.color || item.size ? `    
-          <p class="variation">    
-            ${item.color ? `Color: ${item.color}` : ""}    
-            ${item.size ? ` | Size: ${item.size}` : ""}    
-          </p>` : ""}    
 
-        ${(item.variation !== "none" && item.sizes?.length > 0) ? `    
-          <div class="size-dropdown">    
-            <select onchange="changeSize(${i}, this.value)">    
-              <option value="">Select Size</option>    
-              ${item.sizes.map(size => `    
-                <option value="${size}" ${item.size === size ? "selected" : ""}>${size}</option>    
-              `).join("")}    
-            </select>
         </div>
         <div class="qty">
           <button onclick="decrease(${i})">-</button>
