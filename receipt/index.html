@@ -5,127 +5,169 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BixMAX | Receipt</title>
   <style>
-     * { margin: 0; padding: 0; box-sizing: border-box; }
-   html, body {
-	   height: 100%;
-	   overflow-x: hidden;
-	   font-family: Arial, sans-serif;
-	    background: linear-gradient(90deg, #00b7d4, #ffb300);
-   }
-    .box {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 40px 30px;
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, #00b7d4, #ffb300);
+      color: #333;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 50px auto;
+      background: rgba(255, 255, 255, 0.15);
       border-radius: 20px;
-              border: solid 5px rgb(255, 255, 255, 0.1);
-        backdrop-filter: blur(25px);
-	box-shadow: 0px 0px 30px 20px rgb(0,0,0,0.1);
-      max-width: 100%;
-	    margin-top: 50px;
-      backdrop-filter: blur(15px);
+      backdrop-filter: blur(20px);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+      padding: 30px;
     }
 
-
-    @media (max-width: 600px) {
-      .cart-item {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      
-    }
-       .heading {
-      display: flex;
-      justify-content: space-between;
-      font-weight: bold;
-      margin-bottom: 10px;
-      border-bottom: 1px solid #ccc;
-      padding-bottom: 8px;
-    }
-.inline-table {
-  list-style: none;
-  padding: 0;
-  margin: 0;
- 
-}
-
-.inline-table li {
-  display: inline-block;
-   margin-left: 0;
-  width: 90px; /* Adjust as needed */
-  margin-bottom: 5px;
-}
-
-       .cart-info h4 {
-      text-align: right !important;
-           margin-right: 0 !important; 
-    }
-.receipt-box {
-      background: #fff;
-      width: 100%;
-       margin: 0;
-      padding: 5px;
-      border-radius: 16px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-        h1 {
+    header {
       text-align: center;
-      color: #1976d2;
-    }
-    .order-id, h2 {
-      text-align: left;
       margin-bottom: 20px;
-      font-weight: bold;
-      font-size: 18px;
     }
-        
+
+    header h1 {
+      color: #fff;
+      font-size: 28px;
+      margin-bottom: 5px;
+    }
+
+    header p {
+      color: rgba(255,255,255,0.9);
+      font-size: 15px;
+    }
+
+    .receipt-box {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+
+    .section {
+      margin-bottom: 25px;
+    }
+
+    .section h2 {
+      font-size: 18px;
+      color: #1976d2;
+      border-bottom: 2px solid #1976d2;
+      display: inline-block;
+      padding-bottom: 4px;
+      margin-bottom: 12px;
+    }
+
+    .info p {
+      margin: 4px 0;
+      font-size: 15px;
+    }
+
+    .table-header, .table-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      padding: 8px 10px;
+      border-bottom: 1px solid #ddd;
+      align-items: center;
+      text-align: left;
+    }
+
+    .table-header {
+      background: #f5f5f5;
+      font-weight: bold;
+    }
+
+    .table-row:last-child {
+      border-bottom: none;
+    }
+
     .total {
       text-align: right;
-      font-size: 20px;
+      font-size: 18px;
       font-weight: bold;
+      margin-top: 15px;
       color: #1976d2;
     }
+
     .back-btn {
       display: block;
-      margin-top: 20px;
+      margin-top: 25px;
       text-align: center;
       text-decoration: none;
-      padding: 10px 20px;
       background: #1976d2;
       color: white;
-      border-radius: 8px;
       font-weight: bold;
+      padding: 10px 20px;
+      border-radius: 8px;
+      transition: background 0.3s;
     }
-        .cart-info p {
-      text-align: center !important;
-        }
-            .cart-info b {
-      text-align: left !important;
-        }
+
+    .back-btn:hover {
+      background: #125ca1;
+    }
+
+    @media (max-width: 600px) {
+      .table-header, .table-row {
+        grid-template-columns: 1.5fr 1fr 1fr 1fr;
+        font-size: 14px;
+      }
+      .container {
+        margin: 20px;
+        padding: 20px;
+      }
+    }
   </style>
 </head>
 <body>
-<div class="box">
-    <h1>🧾Order Receipt</h1>
-  <h2>
-    <div>
-    Order ID: <span class="order-id" id="orderId"> Loading…</span></div></h2>
-  <section class="receipt-box">
- 
-    <div class="heading">
-      <span>Item name</span>
-      <span>Qty</span>
-      <span>Unit price</span>
+
+<div class="container">
+  <header>
+    <h1>🧾 BixMAX Order Receipt</h1>
+    <p>Thank you for shopping with us!</p>
+  </header>
+
+  <div class="receipt-box">
+    <div class="section">
+      <h2>Order Details</h2>
+      <div class="info">
+        <p><strong>Order ID:</strong> <span id="orderId">Loading…</span></p>
+        <p><strong>Date:</strong> <span id="orderDate">—</span></p>
+      </div>
     </div>
- 
-  <div id="cartContainer"></div>
-   <div class="total">Total: GH₵<span id="grandTotal">0.00</span></div>
-     </section>
-     <a href="/" id="homeBtn" class="back-btn">Return to Home</a>
-</div><!-- Firebase SDKs (add if not already on the page) -->
+
+    <div class="section">
+      <h2>Customer Info</h2>
+      <div class="info" id="customerInfo">
+        <p><strong>Name:</strong> —</p>
+        <p><strong>Phone:</strong> —</p>
+        <p><strong>Address:</strong> —</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Purchased Items</h2>
+      <div class="table-header">
+        <span>Item Name</span>
+        <span>Qty</span>
+        <span>Unit Price</span>
+        <span>Subtotal</span>
+      </div>
+      <div id="cartContainer"></div>
+      <div class="total">Total: GH₵<span id="grandTotal">0.00</span></div>
+    </div>
+
+    <a href="/" id="homeBtn" class="back-btn">Return to Home</a>
+  </div>
+</div>
+
+<!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script>
-  // 🔥 Your Firebase config
   const firebaseConfig = {
     apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
     authDomain: "bixmax-6c24c.firebaseapp.com",
@@ -134,32 +176,29 @@
     messagingSenderId: "37740442541",
     appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
   };
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
 </script>
 
 <script>
 document.addEventListener("DOMContentLoaded", async () => {
-  const cartContainer = document.getElementById('cartContainer');
-  const grandTotalEl = document.getElementById('grandTotal');
-  const orderIdSpan = document.getElementById('orderId');
-
-  // Get orderId from URL
   const params = new URLSearchParams(window.location.search);
   const orderId = params.get("orderId");
+  const orderIdEl = document.getElementById("orderId");
+  const orderDateEl = document.getElementById("orderDate");
+  const cartContainer = document.getElementById("cartContainer");
+  const grandTotalEl = document.getElementById("grandTotal");
+  const customerInfo = document.getElementById("customerInfo");
 
   if (!orderId) {
-    orderIdSpan.textContent = "Unavailable";
+    orderIdEl.textContent = "Unavailable";
     cartContainer.innerHTML = "<p style='text-align:center;color:red;'>❌ No order ID found.</p>";
     return;
   }
 
-  orderIdSpan.textContent = orderId;
+  orderIdEl.textContent = orderId;
 
   try {
-    // 🔍 Fetch order details from Firestore
     const docRef = db.collection("orders").doc(orderId);
     const docSnap = await docRef.get();
 
@@ -168,57 +207,56 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    const orderData = docSnap.data();
+    const order = docSnap.data();
 
-    // 🧾 Show items in receipt
+    // Set customer info
+    customerInfo.innerHTML = `
+      <p><strong>Name:</strong> ${order.name || "N/A"}</p>
+      <p><strong>Phone:</strong> ${order.phone || "N/A"}</p>
+      <p><strong>Address:</strong> ${order.address || "N/A"}</p>
+    `;
+
+    // Date
+    const date = order.timestamp?.seconds
+      ? new Date(order.timestamp.seconds * 1000).toLocaleString()
+      : new Date().toLocaleString();
+    orderDateEl.textContent = date;
+
+    // Items
     cartContainer.innerHTML = "";
     let total = 0;
 
-    if (orderData.items && orderData.items.length > 0) {
-      orderData.items.forEach(item => {
-        const itemEl = document.createElement("div");
-        itemEl.className = "cart-item";
-        const lineTotal = item.qty * item.price;
-        total += lineTotal;
-
-        itemEl.innerHTML = `
-          <div class="cart-info">
-            <ul class="inline-table">
-              <li><b>${item.name}</b></li>
-              <li><p>${item.qty}</p></li>
-              <li><h4>GH₵${item.price.toFixed(2)}</h4></li>
-            </ul>
-          </div>
+    if (order.items && order.items.length > 0) {
+      order.items.forEach(item => {
+        const subtotal = item.qty * item.price;
+        total += subtotal;
+        const row = document.createElement("div");
+        row.classList.add("table-row");
+        row.innerHTML = `
+          <span>${item.name}</span>
+          <span>${item.qty}</span>
+          <span>GH₵${item.price.toFixed(2)}</span>
+          <span>GH₵${subtotal.toFixed(2)}</span>
         `;
-        cartContainer.appendChild(itemEl);
+        cartContainer.appendChild(row);
       });
     } else {
-      cartContainer.innerHTML = "<p style='text-align:center;'>No items found in this order.</p>";
+      cartContainer.innerHTML = "<p style='text-align:center;'>No items in this order.</p>";
     }
 
     grandTotalEl.textContent = total.toFixed(2);
-
-    // 💡 Optional: Display user info (if saved in order)
-    if (orderData.name || orderData.address) {
-      const infoBox = document.createElement("div");
-      infoBox.style.marginTop = "15px";
-      infoBox.style.padding = "10px";
-      infoBox.style.background = "#f8f8f8";
-      infoBox.style.borderRadius = "8px";
-      infoBox.innerHTML = `
-        <p><b>Customer:</b> ${orderData.name || "N/A"}</p>
-        <p><b>Phone:</b> ${orderData.phone || "N/A"}</p>
-        <p><b>Address:</b> ${orderData.address || "N/A"}</p>
-        <p><b>Date:</b> ${new Date(orderData.timestamp?.seconds * 1000 || Date.now()).toLocaleString()}</p>
-      `;
-      document.querySelector(".receipt-box").appendChild(infoBox);
-    }
-
   } catch (err) {
     console.error("Error loading receipt:", err);
     cartContainer.innerHTML = "<p style='text-align:center;color:red;'>Error loading receipt.</p>";
   }
 });
+</script>
+
+<script>
+  document.getElementById("homeBtn").addEventListener("click", () => {
+    localStorage.removeItem("cart");
+    localStorage.removeItem("grandTotal");
+  });
 </script>
 
 </body>
