@@ -157,6 +157,10 @@
       </div>
       <div id="cartContainer"></div>
       <div class="total">Total: GH₵<span id="grandTotal">0.00</span></div>
+      <button id="downloadBtn" class="back-btn" style="background:#28a745;margin-top:10px;">
+  Download PDF
+</button>
+
     </div>
 
     <a href="/" id="homeBtn" class="back-btn">Return to Home</a>
@@ -166,6 +170,8 @@
 <!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script>
   const firebaseConfig = {
@@ -257,6 +263,31 @@ document.addEventListener("DOMContentLoaded", async () => {
     localStorage.removeItem("cart");
     localStorage.removeItem("grandTotal");
   });
+</script>
+<script>
+document.getElementById("downloadBtn").addEventListener("click", async () => {
+  const { jsPDF } = window.jspdf;
+  const receiptBox = document.querySelector(".receipt-box");
+
+  // Capture the receipt section as an image
+  const canvas = await html2canvas(receiptBox, { scale: 2 });
+  const imgData = canvas.toDataURL("image/png");
+
+  // Create PDF
+  const pdf = new jsPDF("p", "mm", "a4");
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const pageHeight = pdf.internal.pageSize.getHeight();
+
+  // Scale image to fit page
+  const imgWidth = pageWidth - 20;
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+  pdf.addImage(imgData, "PNG", 10, 10, imgWidth, imgHeight);
+
+  // File name includes order ID if available
+  const orderId = document.getElementById("orderId")?.textContent.trim() || "receipt";
+  pdf.save(`${orderId}_BixMAX_Receipt.pdf`);
+});
 </script>
 
 </body>
