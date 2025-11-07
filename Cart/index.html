@@ -223,7 +223,8 @@ footer{padding:24px 16px;text-align:center;background:#111;color:#bbb;margin-top
   <div class="cart-list" id="cartList"></div>
   <div class="cart-footer" id="cartFooter">
   <div class="total"><span>Subtotal</span><span id="subtotal">GH₵ 0</span></div>
-  <a href="/Checkout/" class="checkout-btn">Proceed to Checkout</a>
+ <button class="checkout-btn" onclick="proceedToCheckout()">Proceed to Checkout</button>
+
 </div>
 </section>
 <div class="suggested-products" id="suggestedProducts"></div>
@@ -360,26 +361,42 @@ function renderCart(){
   } else {
     footer.style.display = "block";
 
-    cart.forEach((item,i)=>{
-      subtotal += item.price*item.qty;
-      const div = document.createElement("div");
-      div.className = "cart-item";
-      div.innerHTML = `
-       <img src="${item.image}" alt="${item.name}">
-        <div>
-          <strong>${item.name}</strong><br/>
-          GH₵ ${item.price.toFixed(2)} each
+cart.forEach((item, i) => {
+  subtotal += item.price * item.qty;
+  const div = document.createElement("div");
+  div.className = "cart-item";
 
-        </div>
-        <div class="qty">
-          <button onclick="decrease(${i})">-</button>
-          <span>${item.qty}</span>
-          <button onclick="increase(${i})">+</button>
-          <button class="remove" style="margin-left:6px;background:#f44336;color:#fff;" onclick="removeItem(${i})">remove</button>
-        </div>
-      `;
-      list.appendChild(div);
-    });
+  let variationHTML = "";
+  if (item.variations && item.variations.length > 0) {
+    const selected = item.selectedVariation || "";
+    variationHTML = `
+      <div style="margin-top:6px;">
+        <label style="font-size:13px;color:#666;">Choose Variation:</label><br>
+        <select onchange="updateVariation(${i}, this.value)" style="padding:4px;border-radius:6px;border:1px solid #ccc;">
+          <option value="">-- Select --</option>
+          ${item.variations.map(v => `<option value="${v}" ${selected === v ? "selected" : ""}>${v}</option>`).join("")}
+        </select>
+      </div>
+    `;
+  }
+
+  div.innerHTML = `
+    <img src="${item.image}" alt="${item.name}">
+    <div>
+      <strong>${item.name}</strong><br/>
+      GH₵ ${item.price.toFixed(2)} each
+      ${variationHTML}
+    </div>
+    <div class="qty">
+      <button onclick="decrease(${i})">-</button>
+      <span>${item.qty}</span>
+      <button onclick="increase(${i})">+</button>
+      <button class="remove" style="margin-left:6px;background:#f44336;color:#fff;" onclick="removeItem(${i})">remove</button>
+    </div>
+  `;
+  list.appendChild(div);
+});
+
     document.getElementById("subtotal").textContent = "GH₵ "+subtotal.toFixed(2);
   }
 
@@ -405,6 +422,21 @@ function removeItem(i){
   let cart=getCart(); 
   cart.splice(i,1); 
   saveCart(cart); 
+}
+function updateVariation(index, value) {
+  let cart = getCart();
+  cart[index].selectedVariation = value;
+  saveCart(cart);
+}
+function proceedToCheckout() {
+  const cart = getCart();
+  for (let item of cart) {
+    if (item.variations && item.variations.length > 0 && !item.selectedVariation) {
+      alert(`Please select a variation for "${item.name}" before checking out.`);
+      return;
+    }
+  }
+  window.location.href = "/Checkout/";
 }
 
 // ---------------------------
