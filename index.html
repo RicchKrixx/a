@@ -1051,6 +1051,7 @@ scrollBtn.onclick = () => window.scrollTo({top:0, behavior:'smooth'});
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
   import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
@@ -1064,7 +1065,7 @@ scrollBtn.onclick = () => window.scrollTo({top:0, behavior:'smooth'});
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
-
+  const db = getFirestore();
 function showSkeletons(container, count = 6) {
   container.innerHTML = "";
   for (let i = 0; i < count; i++) {
@@ -1121,7 +1122,8 @@ function showSkeletons(container, count = 6) {
         </div>
         <h3>${product.name}</h3>
         <div class="price">${priceHTML}</div>
-        <button class="add" onclick="addToCart('${product.name}', ${product.price}, '${imgSrc}')">Add to Cart</button>
+        <button onclick="addToCartById('${product.id}')">Add to Cart</button>
+
       `;
 
       const img = div.querySelector("img");
@@ -1425,10 +1427,7 @@ document.getElementById("imgPreview").onclick = function(e) {
   if (e.target === this) this.style.display = "none";
 };
 
-
-	</script>
-<script>
-function addToCart(name, price, image) {
+async function addToCart(name, price, image, productId = null) {
   // Ensure image has a fallback
   const imgSrc = image && image.startsWith("http")
     ? image
@@ -1436,20 +1435,35 @@ function addToCart(name, price, image) {
 
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-  // Look for existing product
-  const existing = cart.find(item => item.name === name);
+  let productData = { name, price, image: imgSrc };
+
+  // ✅ If we have a Firestore product ID, fetch the full product info
+  if (productId) {
+    try {
+      const productRef = doc(db, "products", productId);
+      const productSnap = await getDoc(productRef);
+      if (productSnap.exists()) {
+        productData = { id: productId, ...productSnap.data() };
+      }
+    } catch (err) {
+      console.error("Error fetching product from Firestore:", err);
+    }
+  }
+
+  // ✅ Keep your same logic for adding/updating qty
+  const existing = cart.find(item => item.name === productData.name);
   if (existing) {
     existing.qty += 1;
   } else {
-    cart.push({ name, price, image: imgSrc, qty: 1 });
+    cart.push({ ...productData, qty: 1 });
   }
 
   localStorage.setItem("cart", JSON.stringify(cart));
 
-  // Update cart icon display & count
+  // ✅ Your existing display update logic
   updateCartDisplay();
 
-  // Small bounce animation
+  // ✅ Your bounce animation
   const cartIcon = document.getElementById('cartIcon');
   cartIcon.animate(
     [
@@ -1460,9 +1474,9 @@ function addToCart(name, price, image) {
     { duration: 400, easing: 'ease-out' }
   );
 
-  // Toast feedback
+  // ✅ Your toast feedback
   const toast = document.createElement("div");
-  toast.textContent = `${name} added to cart 🛒`;
+  toast.textContent = `${productData.name} added to cart 🛒`;
   Object.assign(toast.style, {
     position: "fixed",
     bottom: "20px",
@@ -1488,13 +1502,12 @@ function updateCartDisplay() {
   countEl.textContent = totalQty;
 
   if (totalQty > 0) {
-    cartIcon.classList.add("show"); // slide in
+    cartIcon.classList.add("show");
   } else {
-    cartIcon.classList.remove("show"); // slide out
+    cartIcon.classList.remove("show");
   }
 }
 
-// Run on page load to show correct state
 document.addEventListener("DOMContentLoaded", updateCartDisplay);
 </script>
 
