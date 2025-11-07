@@ -355,51 +355,70 @@ function renderCart(){
         <h2>Your cart is empty</h2>
         <p>Looks like you haven’t added anything yet.</p>
         <a href="/">Continue Shopping</a>
-      </div>
-    `;
-    footer.style.display = "none";   // hide subtotal + checkout
+      </div>`;
+    footer.style.display = "none";
   } else {
     footer.style.display = "block";
+    cart.forEach((item,i)=>{
+      subtotal += item.price*item.qty;
+      const div = document.createElement("div");
+      div.className = "cart-item";
 
-cart.forEach((item,i)=>{ 
-    subtotal += item.price*item.qty; 
-    const div = document.createElement("div"); 
-    div.className = "cart-item"; 
-    div.innerHTML = 
-        <img src="${item.image}" alt="${item.name}"> 
-        <div> 
-        <strong>${item.name}</strong><br/>
-        GH₵ ${item.price.toFixed(2)} each 
-            ${item.color || item.size ? `    
-          <p class="variation">       
-            ${item.size ? ` | Size: ${item.size}` : ""}    
-          </p>` : ""}    
+      // 🟡 show size dropdown if fashion item has variation
+      let variationHTML = "";
+      if (item.category === "Fashion" && item.variation && item.variation !== "none" && item.sizes && item.sizes.length > 0) {
+        const selected = item.selectedSize || "";
+        variationHTML = `
+          <div style="margin-top:6px;">
+            <label style="font-size:13px;color:#666;">Select ${item.variation === "number" ? "Size" : "Label"}:</label><br>
+            <select onchange="updateSize(${i}, this.value)" style="padding:4px;border-radius:6px;border:1px solid #ccc;">
+              <option value="">-- choose --</option>
+              ${item.sizes.map(s => `<option value="${s}" ${selected === s ? "selected" : ""}>${s}</option>`).join("")}
+            </select>
+          </div>`;
+      }
 
-        ${(item.variation !== "none" && item.sizes?.length > 0) ? `    
-          <div class="size-dropdown">    
-            <select onchange="changeSize(${i}, this.value)">    
-              <option value="">Select Size</option>    
-              ${item.sizes.map(size => `    
-                <option value="${size}" ${item.size === size ? "selected" : ""}>${size}</option>    
-              `).join("")}    
-            </select> 
-    </div> 
-    <div class="qty"> 
-    <button onclick="decrease(${i})">-</button> 
-    <span>${item.qty}</span> 
-    <button onclick="increase(${i})">+</button> 
-    <button class="remove" style="margin-left:6px;background:#f44336;color:#fff;" 
-    onclick="removeItem(${i})">remove</button>
+      div.innerHTML = `
+        <img src="${item.image}" alt="${item.name}">
+        <div>
+          <strong>${item.name}</strong><br/>
+          GH₵ ${item.price.toFixed(2)} each
+          ${variationHTML}
         </div>
-        ; 
-      list.appendChild(div); });
-
+        <div class="qty">
+          <button onclick="decrease(${i})">-</button>
+          <span>${item.qty}</span>
+          <button onclick="increase(${i})">+</button>
+          <button class="remove" style="margin-left:6px;background:#f44336;color:#fff;" onclick="removeItem(${i})">remove</button>
+        </div>`;
+      list.appendChild(div);
+    });
     document.getElementById("subtotal").textContent = "GH₵ "+subtotal.toFixed(2);
   }
 
-  // ✅ Always show suggested products
-  renderSuggestions(); 
+  renderSuggestions();
 }
+
+// ✅ store selected size
+function updateSize(index, value){
+  let cart = getCart();
+  cart[index].selectedSize = value;
+  saveCart(cart);
+}
+
+// ✅ validate size before checkout
+window.addEventListener("click", e => {
+  if(e.target.matches(".checkout-btn")){
+    const cart = getCart();
+    for(let item of cart){
+      if(item.category === "Fashion" && item.variation !== "none" && item.sizes?.length > 0 && !item.selectedSize){
+        e.preventDefault();
+        alert(`Please select a size for "${item.name}" before checkout.`);
+        return;
+      }
+    }
+  }
+});
 
 function increase(i){ 
   let cart=getCart(); 
@@ -419,20 +438,6 @@ function removeItem(i){
   let cart=getCart(); 
   cart.splice(i,1); 
   saveCart(cart); 
-}
-function changeSize(index, newSize) {    
-  cart[index].size = newSize;    
-  localStorage.setItem("cart", JSON.stringify(cart));        
-} 
-function proceedToCheckout() {
-  const cart = getCart();
-  for (let item of cart) {
-    if (item.variation !== "none" && item.sizes?.length > 0) {
-      alert(`Please select a variation for "${item.name}" before checking out.`);
-      return;
-    }
-  }
-  window.location.href = "/Checkout/";
 }
 
 // ---------------------------
