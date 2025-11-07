@@ -1426,40 +1426,44 @@ document.getElementById("imgPreview").onclick = function(e) {
   if (e.target === this) this.style.display = "none";
 };
 
-
-	</script>
-<script>
-function addToCart(id, name, price, image) {
-  // Ensure image has a valid URL
+window.addToCart = async function (id, name, price, image) {
   const imgSrc = image && image.startsWith("http")
     ? image
     : "https://via.placeholder.com/150";
 
-  // Get existing cart from localStorage
+  // 🔹 Fetch full product data from Firestore (to get sizes, etc.)
+  const productRef = doc(db, "products", id);
+  const productSnap = await getDoc(productRef);
+  let productData = {};
+
+  if (productSnap.exists()) {
+    productData = productSnap.data();
+  }
+
+  // 🔹 Load current cart
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-  // Check if the product already exists (by ID)
+  // 🔹 Check for existing product
   const existing = cart.find(item => item.id === id);
   if (existing) {
     existing.qty += 1;
   } else {
-    // Store only what’s needed
     cart.push({
-      id,       // Firestore document ID
+      id,
       name,
       price,
       image: imgSrc,
-      qty: 1
+      qty: 1,
+      sizes: productData.sizes || [],
+      variation: productData.variation || "none"
     });
   }
 
-  // Save back to localStorage
+  // 🔹 Save and update
   localStorage.setItem("cart", JSON.stringify(cart));
-
-  // Update cart count display
   updateCartDisplay();
 
-  // Optional: Toast or animation
+  // 🔹 Show confirmation toast
   const toast = document.createElement("div");
   toast.textContent = `${name} added to cart 🛒`;
   Object.assign(toast.style, {
@@ -1476,15 +1480,13 @@ function addToCart(id, name, price, image) {
   });
   document.body.appendChild(toast);
   setTimeout(() => toast.remove(), 2000);
-}
+};
 
 function updateCartDisplay() {
   const cart = JSON.parse(localStorage.getItem("cart")) || [];
   const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
-
   const countEl = document.getElementById("cartCount");
   const cartIcon = document.getElementById("cartIcon");
-
   countEl.textContent = totalQty;
 
   if (totalQty > 0) {
