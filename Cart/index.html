@@ -326,11 +326,11 @@ async function addSuggested(productId){
 // Cart functions
 // ---------------------------
 function getCart(){ 
-  return JSON.parse(localStorage.getItem("cart"))||[]; 
+  return JSON.parse(localStorage.getItem("cart")) || []; 
 }
 
 function saveCart(cart){ 
-  localStorage.setItem("cart",JSON.stringify(cart)); 
+  localStorage.setItem("cart", JSON.stringify(cart)); 
   updateBadge(); 
   renderCart(); 
 }
@@ -348,7 +348,7 @@ function renderCart(){
   list.innerHTML = "";
   let subtotal = 0;
 
-  if(cart.length===0){ 
+  if(cart.length === 0){ 
     list.innerHTML = `
       <div class="empty-cart">
         <i class="fas fa-shopping-cart"></i>
@@ -359,19 +359,20 @@ function renderCart(){
     footer.style.display = "none";
   } else {
     footer.style.display = "block";
-    cart.forEach((item,i)=>{
-      subtotal += item.price*item.qty;
+
+    cart.forEach((item, i) => {
+      subtotal += item.price * item.qty;
       const div = document.createElement("div");
       div.className = "cart-item";
 
-      // 🟡 show size dropdown if fashion item has variation
+      // 🟡 variation dropdown if product has variation + sizes
       let variationHTML = "";
-      if (item.category === "Fashion" && item.variation && item.variation !== "none" && item.sizes && item.sizes.length > 0) {
-        const selected = item.selectedSize || "";
+      if (item.variation && item.variation !== "none" && Array.isArray(item.sizes) && item.sizes.length > 0) {
+        const selected = item.selectedVariation || "";
         variationHTML = `
           <div style="margin-top:6px;">
             <label style="font-size:13px;color:#666;">Select ${item.variation === "number" ? "Size" : "Label"}:</label><br>
-            <select onchange="updateSize(${i}, this.value)" style="padding:4px;border-radius:6px;border:1px solid #ccc;">
+            <select onchange="updateVariation(${i}, this.value)" style="padding:4px;border-radius:6px;border:1px solid #ccc;">
               <option value="">-- choose --</option>
               ${item.sizes.map(s => `<option value="${s}" ${selected === s ? "selected" : ""}>${s}</option>`).join("")}
             </select>
@@ -393,50 +394,51 @@ function renderCart(){
         </div>`;
       list.appendChild(div);
     });
-    document.getElementById("subtotal").textContent = "GH₵ "+subtotal.toFixed(2);
+
+    document.getElementById("subtotal").textContent = "GH₵ " + subtotal.toFixed(2);
   }
 
-  renderSuggestions();
+  renderSuggestions(); 
 }
 
-// ✅ store selected size
-function updateSize(index, value){
+// ✅ update variation choice
+function updateVariation(index, value) {
   let cart = getCart();
-  cart[index].selectedSize = value;
+  cart[index].selectedVariation = value;
   saveCart(cart);
 }
 
-// ✅ validate size before checkout
-window.addEventListener("click", e => {
-  if(e.target.matches(".checkout-btn")){
-    const cart = getCart();
-    for(let item of cart){
-      if(item.category === "Fashion" && item.variation !== "none" && item.sizes?.length > 0 && !item.selectedSize){
-        e.preventDefault();
-        alert(`Please select a size for "${item.name}" before checkout.`);
-        return;
-      }
+// ✅ Proceed to Checkout — ensures all variations chosen
+function proceedToCheckout() {
+  const cart = getCart();
+  for (let item of cart) {
+    if (item.variation && item.variation !== "none" && Array.isArray(item.sizes) && item.sizes.length > 0 && !item.selectedVariation) {
+      alert(`Please select a variation for "${item.name}" before checking out.`);
+      return;
     }
   }
-});
+  // ✅ Continue to checkout page
+  window.location.href = "/Checkout/";
+}
 
+// ✅ quantity and remove
 function increase(i){ 
-  let cart=getCart(); 
+  let cart = getCart(); 
   cart[i].qty++; 
   saveCart(cart); 
 }
 
 function decrease(i){ 
-  let cart=getCart(); 
-  if(cart[i].qty>1){ 
+  let cart = getCart(); 
+  if(cart[i].qty > 1){ 
     cart[i].qty--; 
     saveCart(cart); 
   } 
 }
 
 function removeItem(i){ 
-  let cart=getCart(); 
-  cart.splice(i,1); 
+  let cart = getCart(); 
+  cart.splice(i, 1); 
   saveCart(cart); 
 }
 
@@ -447,11 +449,13 @@ document.getElementById("year").textContent = new Date().getFullYear();
 renderCart();
 updateBadge();
 
-// expose functions to window (needed for inline onclick)
+// expose to window for inline handlers
 window.addSuggested = addSuggested;
 window.increase = increase;
 window.decrease = decrease;
 window.removeItem = removeItem;
+window.updateVariation = updateVariation;
+window.proceedToCheckout = proceedToCheckout;
 </script>
 </body>
 </html>
