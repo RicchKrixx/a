@@ -1113,11 +1113,6 @@ function showSkeletons(container, count = 6) {
         : `<span style="font-weight:700; color:#222;font-size:14px;">GH₵${product.price.toFixed(2)}</span>`;
 
       const imgSrc = product.image?.startsWith("http") ? product.image : "https://via.placeholder.com/150";
-      const sizeOptions = product.sizes
-  ? `<select id="size-${product.id}" style="margin-top:5px;">
-       ${product.sizes.map(s => `<option value="${s}">${s}</option>`).join('')}
-     </select>`
-  : '';
       div.innerHTML = `
         ${discount ? `<span class="badge">🔥${discount}% OFF</span>` : ""}
         <div class="image-wrapper">
@@ -1125,7 +1120,8 @@ function showSkeletons(container, count = 6) {
         </div>
         <h3>${product.name}</h3>
         <div class="price">${priceHTML}</div>
-        <button class="add" onclick="addToCart('${product.id}', '${product.name}', ${product.price}, '${imgSrc}', 'size-${product.id}')">Add to Cart</button>
+       <button class="add" onclick="addToCart('${product.id}', '${product.name}', ${product.price}, '${imgSrc}')">Add to Cart</button>
+
 
       `;
 
@@ -1433,48 +1429,37 @@ document.getElementById("imgPreview").onclick = function(e) {
 
 	</script>
 <script>
-function addToCart(id, name, price, image, sizeSelectId) {
-  // 🔹 Get selected size if any
-  let size = '';
-  if (sizeSelectId) {
-    const select = document.getElementById(sizeSelectId);
-    if (select) size = select.value;
-  }
-
-  // 🔹 Ensure valid image
+function addToCart(id, name, price, image) {
+  // Ensure image has a valid URL
   const imgSrc = image && image.startsWith("http")
     ? image
     : "https://via.placeholder.com/150";
 
-  // 🔹 Load current cart
+  // Get existing cart from localStorage
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-  // 🔹 Check for existing item (same name + size)
-  const existing = cart.find(item => item.name === name && item.size === size);
+  // Check if the product already exists (by ID)
+  const existing = cart.find(item => item.id === id);
   if (existing) {
     existing.qty += 1;
   } else {
-    cart.push({ id, name, price, image: imgSrc, size, qty: 1 });
+    // Store only what’s needed
+    cart.push({
+      id,       // Firestore document ID
+      name,
+      price,
+      image: imgSrc,
+      qty: 1
+    });
   }
 
-  // 🔹 Save updated cart
+  // Save back to localStorage
   localStorage.setItem("cart", JSON.stringify(cart));
 
-  // 🔹 Update cart display/count
+  // Update cart count display
   updateCartDisplay();
 
-  // 🔹 Small cart bounce animation
-  const cartIcon = document.getElementById('cartIcon');
-  cartIcon.animate(
-    [
-      { transform: 'translateX(0)' },
-      { transform: 'translateX(-10px)' },
-      { transform: 'translateX(0)' }
-    ],
-    { duration: 400, easing: 'ease-out' }
-  );
-
-  // 🔹 Toast message
+  // Optional: Toast or animation
   const toast = document.createElement("div");
   toast.textContent = `${name} added to cart 🛒`;
   Object.assign(toast.style, {
@@ -1497,18 +1482,18 @@ function updateCartDisplay() {
   const cart = JSON.parse(localStorage.getItem("cart")) || [];
   const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
 
-  const cartIcon = document.getElementById("cartIcon");
   const countEl = document.getElementById("cartCount");
+  const cartIcon = document.getElementById("cartIcon");
+
   countEl.textContent = totalQty;
 
   if (totalQty > 0) {
-    cartIcon.classList.add("show"); // slide in
+    cartIcon.classList.add("show");
   } else {
-    cartIcon.classList.remove("show"); // slide out
+    cartIcon.classList.remove("show");
   }
 }
 
-// Run on page load to show correct cart state
 document.addEventListener("DOMContentLoaded", updateCartDisplay);
 </script>
 
