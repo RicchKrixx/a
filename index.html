@@ -1,3 +1,4 @@
+now check this is not adding the sizes or whatever to the prducts
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1048,7 +1049,7 @@ scrollBtn.onclick = () => window.scrollTo({top:0, behavior:'smooth'});
 </script>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
   import { getAuth } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
   import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
@@ -1065,21 +1066,23 @@ scrollBtn.onclick = () => window.scrollTo({top:0, behavior:'smooth'});
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  // ✅ Skeleton loader
-  function showSkeletons(container, count = 6) {
-    container.innerHTML = "";
-    for (let i = 0; i < count; i++) {
-      container.innerHTML += `
-        <div class="skeleton-card">
-          <div class="skeleton-img"></div>
-          <div class="skeleton-text" style="width: 80%;"></div>
-          <div class="skeleton-text" style="width: 60%;"></div>
-          <div class="skeleton-btn"></div>
-        </div>`;
-    }
+function showSkeletons(container, count = 6) {
+  container.innerHTML = "";
+  for (let i = 0; i < count; i++) {
+    const skeleton = document.createElement("div");
+    skeleton.className = "skeleton-card";
+    skeleton.innerHTML = `
+      <div class="skeleton-img"></div>
+      <div class="skeleton-text" style="width: 80%;"></div>
+      <div class="skeleton-text" style="width: 60%;"></div>
+      <div class="skeleton-btn"></div>
+    `;
+    container.appendChild(skeleton);
   }
+}
 
-  // ✅ Cache handling
+
+	
   function saveProductsToCache(category, products) {
     localStorage.setItem("products_" + category, JSON.stringify({
       products,
@@ -1094,15 +1097,9 @@ scrollBtn.onclick = () => window.scrollTo({top:0, behavior:'smooth'});
     return (Date.now() - parsed.timestamp > maxAge) ? null : parsed.products;
   }
 
-  // ✅ Product rendering
   function renderProducts(products, container) {
     container.innerHTML = "";
-
-    if (!products || products.length === 0) {
-      container.innerHTML = `<p style="text-align:center;color:#666;">No products found in this category.</p>`;
-      return;
-    }
-
+  
     products.forEach(product => {
       const div = document.createElement("div");
       div.className = "card";
@@ -1120,49 +1117,59 @@ scrollBtn.onclick = () => window.scrollTo({top:0, behavior:'smooth'});
 
       div.innerHTML = `
         ${discount ? `<span class="badge">🔥${discount}% OFF</span>` : ""}
-        <img src="${imgSrc}" alt="${product.name}" loading="lazy"/>
+        <div class="image-wrapper">
+          <img src="${imgSrc}" alt="${product.name}" loading="lazy"/>
+        </div>
         <h3>${product.name}</h3>
         <div class="price">${priceHTML}</div>
-        <button onclick="addToCartById('${product.id || ''}')">Add to Cart</button>
+        <button onclick="addToCart('${product.name}', '${product.variation || 'none'}', '${JSON.stringify(product.sizes || [])}' ${product.price})">Add to Cart</button>
+
+
       `;
+
+      const img = div.querySelector("img");
+      img.onerror = () => {
+        img.src = "https://via.placeholder.com/150";
+      };
 
       container.appendChild(div);
     });
   }
 
-  // ✅ Firestore loader
-  async function loadProducts(category, containerId) {
-    const container = document.getElementById(containerId);
-    showSkeletons(container);
+async function loadProducts(category, containerId) {
+  const container = document.getElementById(containerId);
 
-    const cached = getProductsFromCache(category);
-    if (cached) {
-      setTimeout(() => renderProducts(cached, container), 500);
-      return;
-    }
+  // 🩶 Show skeletons while loading
+  showSkeletons(container);
 
-    try {
-      const q = query(collection(db, "products"), where("category", "==", category));
-      const snapshot = await getDocs(q);
-      const products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-      saveProductsToCache(category, products);
-      renderProducts(products, container);
-    } catch (err) {
-      console.error("Error loading products:", err);
-      container.innerHTML = `<p style="color:red;">Failed to load products.</p>`;
-    }
+  const cached = getProductsFromCache(category);
+  if (cached) {
+    setTimeout(() => renderProducts(cached, container), 1000); // Simulate short delay
+    return;
   }
 
-  // ✅ Load all categories on page load
-  window.addEventListener("DOMContentLoaded", () => {
-    loadProducts("electronics", "grid-electronics");
-    loadProducts("fashion", "grid-fashion");
-    loadProducts("groceries", "grid-groceries");
-    loadProducts("home-essentials", "grid-essentials");
-    loadProducts("health", "grid-health");
-    loadProducts("care", "grid-care");
-  });
+  try {
+    const q = query(collection(db, "products"), where("category", "==", category));
+    const snapshot = await getDocs(q);
+    const products = snapshot.docs.map(doc => doc.data());
+
+    saveProductsToCache(category, products);
+    renderProducts(products, container);
+  } catch (err) {
+    console.error("Error loading products:", err);
+    container.innerHTML = "<p style='color:red;'>Failed to load products.</p>";
+  }
+}
+
+  async function loadAllProducts() {
+    const categories = [
+      { name: "Electronics", id: "grid-electronics" },
+      { name: "Fashion", id: "grid-fashion" },
+      { name: "Groceries", id: "grid-groceries" },
+      { name: "Essentials", id: "grid-essentials" },
+      { name: "Health", id: "grid-health" },
+      { name: "Care", id: "grid-care" }
+    ];
     let allProducts = [];
     await Promise.all(categories.map(async cat => {
       const products = await loadProducts(cat.name, cat.id);
@@ -1421,7 +1428,10 @@ document.getElementById("imgPreview").onclick = function(e) {
   if (e.target === this) this.style.display = "none";
 };
 
-async function addToCart(name, price, image, productId = null) {
+
+	</script>
+<script>
+function addToCart(product) {
   // Ensure image has a fallback
   const imgSrc = image && image.startsWith("http")
     ? image
@@ -1429,35 +1439,20 @@ async function addToCart(name, price, image, productId = null) {
 
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-  let productData = { name, price, image: imgSrc };
-
-  // ✅ If we have a Firestore product ID, fetch the full product info
-  if (productId) {
-    try {
-      const productRef = doc(db, "products", productId);
-      const productSnap = await getDoc(productRef);
-      if (productSnap.exists()) {
-        productData = { id: productId, ...productSnap.data() };
-      }
-    } catch (err) {
-      console.error("Error fetching product from Firestore:", err);
-    }
-  }
-
-  // ✅ Keep your same logic for adding/updating qty
-  const existing = cart.find(item => item.name === productData.name);
+  // Look for existing product
+  const existing = cart.find(item => item.name === name);
   if (existing) {
     existing.qty += 1;
   } else {
-    cart.push({ ...productData, qty: 1 });
+    cart.push({ name, price, image: imgSrc, qty: 1 });
   }
 
   localStorage.setItem("cart", JSON.stringify(cart));
 
-  // ✅ Your existing display update logic
+  // Update cart icon display & count
   updateCartDisplay();
 
-  // ✅ Your bounce animation
+  // Small bounce animation
   const cartIcon = document.getElementById('cartIcon');
   cartIcon.animate(
     [
@@ -1468,9 +1463,9 @@ async function addToCart(name, price, image, productId = null) {
     { duration: 400, easing: 'ease-out' }
   );
 
-  // ✅ Your toast feedback
+  // Toast feedback
   const toast = document.createElement("div");
-  toast.textContent = `${productData.name} added to cart 🛒`;
+  toast.textContent = `${name} added to cart 🛒`;
   Object.assign(toast.style, {
     position: "fixed",
     bottom: "20px",
@@ -1496,12 +1491,13 @@ function updateCartDisplay() {
   countEl.textContent = totalQty;
 
   if (totalQty > 0) {
-    cartIcon.classList.add("show");
+    cartIcon.classList.add("show"); // slide in
   } else {
-    cartIcon.classList.remove("show");
+    cartIcon.classList.remove("show"); // slide out
   }
 }
 
+// Run on page load to show correct state
 document.addEventListener("DOMContentLoaded", updateCartDisplay);
 </script>
 
