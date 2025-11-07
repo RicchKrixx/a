@@ -1128,7 +1128,8 @@ function showSkeletons(container, count = 6) {
         </div>
         <h3>${product.name}</h3>
         <div class="price">${priceHTML}</div>
-        onclick="addToCart('${product.name}', ${product.price}, '${imgSrc}', selectedSize)"
+        <button class="add" onclick="addToCart('${product.name}', ${product.price}, '${imgSrc}', selectedSize)"
+>Add to Cart</button>
 
       `;
 
