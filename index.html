@@ -1049,9 +1049,8 @@ scrollBtn.onclick = () => window.scrollTo({top:0, behavior:'smooth'});
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+  import { getAuth } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
   import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-  import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
@@ -1065,24 +1064,22 @@ scrollBtn.onclick = () => window.scrollTo({top:0, behavior:'smooth'});
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
-  const db = getFirestore();
-function showSkeletons(container, count = 6) {
-  container.innerHTML = "";
-  for (let i = 0; i < count; i++) {
-    const skeleton = document.createElement("div");
-    skeleton.className = "skeleton-card";
-    skeleton.innerHTML = `
-      <div class="skeleton-img"></div>
-      <div class="skeleton-text" style="width: 80%;"></div>
-      <div class="skeleton-text" style="width: 60%;"></div>
-      <div class="skeleton-btn"></div>
-    `;
-    container.appendChild(skeleton);
+
+  // ✅ Skeleton loader
+  function showSkeletons(container, count = 6) {
+    container.innerHTML = "";
+    for (let i = 0; i < count; i++) {
+      container.innerHTML += `
+        <div class="skeleton-card">
+          <div class="skeleton-img"></div>
+          <div class="skeleton-text" style="width: 80%;"></div>
+          <div class="skeleton-text" style="width: 60%;"></div>
+          <div class="skeleton-btn"></div>
+        </div>`;
+    }
   }
-}
 
-
-	
+  // ✅ Cache handling
   function saveProductsToCache(category, products) {
     localStorage.setItem("products_" + category, JSON.stringify({
       products,
@@ -1097,9 +1094,15 @@ function showSkeletons(container, count = 6) {
     return (Date.now() - parsed.timestamp > maxAge) ? null : parsed.products;
   }
 
+  // ✅ Product rendering
   function renderProducts(products, container) {
     container.innerHTML = "";
-  
+
+    if (!products || products.length === 0) {
+      container.innerHTML = `<p style="text-align:center;color:#666;">No products found in this category.</p>`;
+      return;
+    }
+
     products.forEach(product => {
       const div = document.createElement("div");
       div.className = "card";
@@ -1117,58 +1120,49 @@ function showSkeletons(container, count = 6) {
 
       div.innerHTML = `
         ${discount ? `<span class="badge">🔥${discount}% OFF</span>` : ""}
-        <div class="image-wrapper">
-          <img src="${imgSrc}" alt="${product.name}" loading="lazy"/>
-        </div>
+        <img src="${imgSrc}" alt="${product.name}" loading="lazy"/>
         <h3>${product.name}</h3>
         <div class="price">${priceHTML}</div>
-        <button onclick="addToCartById('${product.id}')">Add to Cart</button>
-
+        <button onclick="addToCartById('${product.id || ''}')">Add to Cart</button>
       `;
-
-      const img = div.querySelector("img");
-      img.onerror = () => {
-        img.src = "https://via.placeholder.com/150";
-      };
 
       container.appendChild(div);
     });
   }
 
-async function loadProducts(category, containerId) {
-  const container = document.getElementById(containerId);
+  // ✅ Firestore loader
+  async function loadProducts(category, containerId) {
+    const container = document.getElementById(containerId);
+    showSkeletons(container);
 
-  // 🩶 Show skeletons while loading
-  showSkeletons(container);
+    const cached = getProductsFromCache(category);
+    if (cached) {
+      setTimeout(() => renderProducts(cached, container), 500);
+      return;
+    }
 
-  const cached = getProductsFromCache(category);
-  if (cached) {
-    setTimeout(() => renderProducts(cached, container), 1000); // Simulate short delay
-    return;
+    try {
+      const q = query(collection(db, "products"), where("category", "==", category));
+      const snapshot = await getDocs(q);
+      const products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      saveProductsToCache(category, products);
+      renderProducts(products, container);
+    } catch (err) {
+      console.error("Error loading products:", err);
+      container.innerHTML = `<p style="color:red;">Failed to load products.</p>`;
+    }
   }
 
-  try {
-    const q = query(collection(db, "products"), where("category", "==", category));
-    const snapshot = await getDocs(q);
-    const products = snapshot.docs.map(doc => doc.data());
-
-    saveProductsToCache(category, products);
-    renderProducts(products, container);
-  } catch (err) {
-    console.error("Error loading products:", err);
-    container.innerHTML = "<p style='color:red;'>Failed to load products.</p>";
-  }
-}
-
-  async function loadAllProducts() {
-    const categories = [
-      { name: "Electronics", id: "grid-electronics" },
-      { name: "Fashion", id: "grid-fashion" },
-      { name: "Groceries", id: "grid-groceries" },
-      { name: "Essentials", id: "grid-essentials" },
-      { name: "Health", id: "grid-health" },
-      { name: "Care", id: "grid-care" }
-    ];
+  // ✅ Load all categories on page load
+  window.addEventListener("DOMContentLoaded", () => {
+    loadProducts("electronics", "grid-electronics");
+    loadProducts("fashion", "grid-fashion");
+    loadProducts("groceries", "grid-groceries");
+    loadProducts("home-essentials", "grid-essentials");
+    loadProducts("health", "grid-health");
+    loadProducts("care", "grid-care");
+  });
     let allProducts = [];
     await Promise.all(categories.map(async cat => {
       const products = await loadProducts(cat.name, cat.id);
