@@ -1,3 +1,4 @@
+now check this is not adding the sizes or whatever to the prducts
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1048,8 +1049,8 @@ scrollBtn.onclick = () => window.scrollTo({top:0, behavior:'smooth'});
 </script>
 
 <script type="module">
-   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getAuth } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
   import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -1121,8 +1122,7 @@ function showSkeletons(container, count = 6) {
         </div>
         <h3>${product.name}</h3>
         <div class="price">${priceHTML}</div>
-      <button onclick='addToCart(${JSON.stringify(product)})'>Add to Cart</button>
-
+        <button class="add" onclick="addToCart('${product.name}', ${product.price}, '${imgSrc}')">Add to Cart</button>
       `;
 
       const img = div.querySelector("img");
@@ -1426,9 +1426,79 @@ document.getElementById("imgPreview").onclick = function(e) {
   if (e.target === this) this.style.display = "none";
 };
 
+
 	</script>
-<script> function addToCart(product) { // Ensure image has a fallback const imgSrc = image && image.startsWith("http") ? image : "https://via.placeholder.com/150"; let cart = JSON.parse(localStorage.getItem("cart")) || []; // Look for existing product const existing = cart.find(item => item.name === name); if (existing) { existing.qty += 1; } else { cart.push({ name, price, image: imgSrc, qty: 1 }); } localStorage.setItem("cart", JSON.stringify(cart)); // Update cart icon display & count updateCartDisplay(); // Small bounce animation const cartIcon = document.getElementById('cartIcon'); cartIcon.animate( [ { transform: 'translateX(0)' }, { transform: 'translateX(-10px)' }, { transform: 'translateX(0)' } ], { duration: 400, easing: 'ease-out' } ); // Toast feedback const toast = document.createElement("div"); toast.textContent = ${name} added to cart 🛒; Object.assign(toast.style, { position: "fixed", bottom: "20px", left: "50%", transform: "translateX(-50%)", background: "rgba(0,0,0,0.8)", color: "#fff", padding: "10px 16px", borderRadius: "20px", zIndex: 9999, fontSize: "14px" }); document.body.appendChild(toast); setTimeout(() => toast.remove(), 2000); } function updateCartDisplay() { const cart = JSON.parse(localStorage.getItem("cart")) || []; const totalQty = cart.reduce((sum, item) => sum + item.qty, 0); const cartIcon = document.getElementById("cartIcon"); const countEl = document.getElementById("cartCount"); countEl.textContent = totalQty; if (totalQty > 0) { cartIcon.classList.add("show"); // slide in } else { cartIcon.classList.remove("show"); // slide out } } // Run on page load to show correct state document.addEventListener("DOMContentLoaded", updateCartDisplay); </script>
-	
+<script>
+function addToCart(name, price, image) {
+  // Ensure image has a fallback
+  const imgSrc = image && image.startsWith("http")
+    ? image
+    : "https://via.placeholder.com/150";
+
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  // Look for existing product
+  const existing = cart.find(item => item.name === name);
+  if (existing) {
+    existing.qty += 1;
+  } else {
+    cart.push({ name, price, image: imgSrc, qty: 1 });
+  }
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+
+  // Update cart icon display & count
+  updateCartDisplay();
+
+  // Small bounce animation
+  const cartIcon = document.getElementById('cartIcon');
+  cartIcon.animate(
+    [
+      { transform: 'translateX(0)' },
+      { transform: 'translateX(-10px)' },
+      { transform: 'translateX(0)' }
+    ],
+    { duration: 400, easing: 'ease-out' }
+  );
+
+  // Toast feedback
+  const toast = document.createElement("div");
+  toast.textContent = `${name} added to cart 🛒`;
+  Object.assign(toast.style, {
+    position: "fixed",
+    bottom: "20px",
+    left: "50%",
+    transform: "translateX(-50%)",
+    background: "rgba(0,0,0,0.8)",
+    color: "#fff",
+    padding: "10px 16px",
+    borderRadius: "20px",
+    zIndex: 9999,
+    fontSize: "14px"
+  });
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2000);
+}
+
+function updateCartDisplay() {
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+
+  const cartIcon = document.getElementById("cartIcon");
+  const countEl = document.getElementById("cartCount");
+  countEl.textContent = totalQty;
+
+  if (totalQty > 0) {
+    cartIcon.classList.add("show"); // slide in
+  } else {
+    cartIcon.classList.remove("show"); // slide out
+  }
+}
+
+// Run on page load to show correct state
+document.addEventListener("DOMContentLoaded", updateCartDisplay);
+</script>
+
 	<!--StartofTawk.toScript-->
 	<script type="text/javascript"> 
 		var Tawk_API=Tawk_API||{},
