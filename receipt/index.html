@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BizMAX | Receipt</title>
+  <title>BixMAX | Receipt</title>
   <style>
      * { margin: 0; padding: 0; box-sizing: border-box; }
    html, body {
 	   height: 100%;
 	   overflow-x: hidden;
 	   font-family: Arial, sans-serif;
-	    background: linear-gradient(to bottom right, #1976d2, #00bcd4);
+	    background: linear-gradient(90deg, #00b7d4, #ffb300);
    }
     .box {
       background: rgba(255, 255, 255, 0.1);
@@ -117,86 +117,109 @@
     </div>
  
   <div id="cartContainer"></div>
-   <div class="total">Total: $<span id="grandTotal">0.00</span></div>
+   <div class="total">Total: GH₵<span id="grandTotal">0.00</span></div>
      </section>
-     <a href="/BixMax home/" id="homeBtn" class="back-btn">Return to Home</a>
-</div>
-  <script>
-    const cartContainer = document.getElementById('cartContainer');
-    const grandTotalEl = document.getElementById('grandTotal');
-    const cartCount = document.getElementById('cartCount');
+     <a href="/" id="homeBtn" class="back-btn">Return to Home</a>
+</div><!-- Firebase SDKs (add if not already on the page) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
-    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+<script>
+  // 🔥 Your Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+    authDomain: "bixmax-6c24c.firebaseapp.com",
+    projectId: "bixmax-6c24c",
+    storageBucket: "bixmax-6c24c.appspot.com",
+    messagingSenderId: "37740442541",
+    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+  };
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+  const db = firebase.firestore();
+</script>
 
-    function updateCartDisplay() {
-      cartContainer.innerHTML = '';
-      let total = 0;
-      let itemCount = 0;
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const cartContainer = document.getElementById('cartContainer');
+  const grandTotalEl = document.getElementById('grandTotal');
+  const orderIdSpan = document.getElementById('orderId');
 
-      cart.forEach((item, i) => {
-        const itemEl = document.createElement('div');
-        itemEl.className = 'cart-item';
+  // Get orderId from URL
+  const params = new URLSearchParams(window.location.search);
+  const orderId = params.get("orderId");
+
+  if (!orderId) {
+    orderIdSpan.textContent = "Unavailable";
+    cartContainer.innerHTML = "<p style='text-align:center;color:red;'>❌ No order ID found.</p>";
+    return;
+  }
+
+  orderIdSpan.textContent = orderId;
+
+  try {
+    // 🔍 Fetch order details from Firestore
+    const docRef = db.collection("orders").doc(orderId);
+    const docSnap = await docRef.get();
+
+    if (!docSnap.exists) {
+      cartContainer.innerHTML = "<p style='text-align:center;color:red;'>Order not found.</p>";
+      return;
+    }
+
+    const orderData = docSnap.data();
+
+    // 🧾 Show items in receipt
+    cartContainer.innerHTML = "";
+    let total = 0;
+
+    if (orderData.items && orderData.items.length > 0) {
+      orderData.items.forEach(item => {
+        const itemEl = document.createElement("div");
+        itemEl.className = "cart-item";
+        const lineTotal = item.qty * item.price;
+        total += lineTotal;
+
         itemEl.innerHTML = `
           <div class="cart-info">
-          <ul class="inline-table">
-            <li><b>${item.name}</b></li>
-            <li><p>${item.qty}</p></li>
-            <li><h4>$${item.price.toFixed(2)}</h4></li>
-</ul>
+            <ul class="inline-table">
+              <li><b>${item.name}</b></li>
+              <li><p>${item.qty}</p></li>
+              <li><h4>GH₵${item.price.toFixed(2)}</h4></li>
+            </ul>
           </div>
         `;
         cartContainer.appendChild(itemEl);
-        total += item.qty * item.price;
-        itemCount += item.qty;
       });
-
-      grandTotalEl.textContent = total.toFixed(2);
-      cartCount.textContent = itemCount;
-
-      localStorage.setItem('grandTotal', total.toFixed(2));
-      localStorage.setItem('cart', JSON.stringify(cart));
-    }
-
-    function changeQty(index, delta) {
-      cart[index].qty += delta;
-      if (cart[index].qty <= 0) {
-        removeItem(index);
-      } else {
-        updateCartDisplay();
-      }
-    }
-        function removeItem(index) {
-      cart.splice(index, 1);
-      updateCartDisplay();
-    }
-    updateCartDisplay(); // Run on page load
-   
-  </script>
-     <script>
-    // Get orderId from URL or localStorage
-    const params = new URLSearchParams(window.location.search);
-    let orderId = params.get("orderId") || localStorage.getItem("latestOrderId");
-
-    if (!orderId) {
-      document.getElementById("orderId").textContent = "Unavailable";
-      document.getElementById("viewReceipt").style.display = "none";
     } else {
-      document.getElementById("orderId").textContent = orderId;
-      document.getElementById("viewReceipt").href = "receipt.html?orderId=" + orderId;
+      cartContainer.innerHTML = "<p style='text-align:center;'>No items found in this order.</p>";
     }
-  </script>
-      <script>
-    document.addEventListener("DOMContentLoaded", () => {
-  const total = localStorage.getItem("grandTotal")  "0";
-  document.getElementById("grandTotal").textContent = parseFloat(total).toFixed(2);
-});
 
-  </script>
-	<script>
-  document.getElementById("homeBtn").addEventListener("click", function () {
-    localStorage.removeItem("cart");
-    localStorage.removeItem("grandTotal");
-  });
+    grandTotalEl.textContent = total.toFixed(2);
+
+    // 💡 Optional: Display user info (if saved in order)
+    if (orderData.name || orderData.address) {
+      const infoBox = document.createElement("div");
+      infoBox.style.marginTop = "15px";
+      infoBox.style.padding = "10px";
+      infoBox.style.background = "#f8f8f8";
+      infoBox.style.borderRadius = "8px";
+      infoBox.innerHTML = `
+        <p><b>Customer:</b> ${orderData.name || "N/A"}</p>
+        <p><b>Phone:</b> ${orderData.phone || "N/A"}</p>
+        <p><b>Address:</b> ${orderData.address || "N/A"}</p>
+        <p><b>Date:</b> ${new Date(orderData.timestamp?.seconds * 1000 || Date.now()).toLocaleString()}</p>
+      `;
+      document.querySelector(".receipt-box").appendChild(infoBox);
+    }
+
+  } catch (err) {
+    console.error("Error loading receipt:", err);
+    cartContainer.innerHTML = "<p style='text-align:center;color:red;'>Error loading receipt.</p>";
+  }
+});
 </script>
+
 </body>
 </html>
