@@ -248,11 +248,28 @@ function renderOrder(doc){
   const div = document.createElement("div");
   div.className = "order";
 
-  const itemsHTML = o.items.map(i=>{
-    const img = i.image ? `<img src="${i.image}" alt="${i.name}" onclick="showImage('${i.image}')"/>` : "";
-    const qty = i.qty||i.quantity||1;
-    return `<p>${img} ${i.name} ${i.sizes} x ${qty} — GHS ${i.price*qty}</p>`;
-  }).join("");
+const itemsHTML = o.items.map(i => {
+  const img = i.image ? `<img src="${i.image}" alt="${i.name}" onclick="showImage('${i.image}')"/>` : "";
+  const qty = i.qty || i.quantity || 1;
+
+  // 🟢 Show selected size/variation if available
+  const size = i.size || i.selectedSize || i.selectedVariation || "";
+
+  // Optional details like color or tag
+  const color = i.color ? ` | Color: ${i.color}` : "";
+
+  // Final item line
+  return `
+    <p>
+      ${img}
+      <span>
+        <b>${i.name}</b> ${size ? `(Size: ${size})` : ""}${color} × ${qty} 
+        — GHS ${(i.price * qty).toFixed(2)}
+      </span>
+    </p>
+  `;
+}).join("");
+
 
   const latlng = (o.latitude && o.longitude) ? ` (${o.latitude.toFixed(6)}, ${o.longitude.toFixed(6)})` : "";
 
