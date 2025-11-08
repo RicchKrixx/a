@@ -165,7 +165,18 @@ const feePerKm = 3.52;
 // Helpers  
 function getCart(){ return JSON.parse(localStorage.getItem("cart"))||[]; }  
 function updateBadge(){  
-  let cart=getCart();  
+  // Clean up cart before sending to Firestore
+let cart = getCart().map(item => {
+  let cleaned = { ...item };
+  if (cleaned.selectedVariation) {
+    // rename it properly as 'size' or 'selectedSize'
+    cleaned.size = cleaned.selectedVariation;
+  }
+  delete cleaned.sizes; // remove the full list of available sizes
+  delete cleaned.selectedVariation;
+  return cleaned;
+});
+  
   let qty=cart.reduce((sum,i)=>sum+(i.qty||1),0);  
   document.getElementById("cartCount").textContent=qty;  
 }  
