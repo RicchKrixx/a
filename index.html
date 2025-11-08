@@ -849,11 +849,11 @@ h2::before,
   <div class="header-content">
     <h1>Welcome to BixMAX</h1>
     <p>Your one-stop shop for everything you love</p>
-
+<!--
 <div class="search-container">
   <input type="text" id="searchInput" placeholder="🔍 Search for products..." />
 </div>
-
+-->
  </div>
 </header>
   
@@ -1221,118 +1221,6 @@ async function loadProducts(category, containerId) {
     }
 
  loadAllProducts();
-
-// ----- SEARCH: copy this after your product load functions -----
-(function () {
-  let allProductsGlobal = [];
-
-  function norm(s) {
-    return (s || "").toString().trim().toLowerCase();
-  }
-
-  function ensureNoResultsBanner() {
-    let container = document.querySelector('.sections');
-    if (!container) return null;
-
-    let banner = document.getElementById('searchNoResults');
-    if (!banner) {
-      banner = document.createElement('div');
-      banner.id = 'searchNoResults';
-      banner.style.display = 'none';
-      banner.style.textAlign = 'center';
-      banner.style.marginTop = '2rem';
-      banner.innerHTML = `
-        <img src="https://i.postimg.cc/fyBZgbnw/file-0000000085b0622fad52b0ff61c2fb58.png" alt="No results" />
-        <div>No products found matching your search 🔍</div>
-      `;
-      container.appendChild(banner);
-    }
-    return banner;
-  }
-
-  async function initSearch() {
-    try {
-      allProductsGlobal = await loadAllProducts() || [];
-    } catch (err) {
-      console.error("Failed to load products for search:", err);
-      allProductsGlobal = [];
-    }
-
-    const input = document.getElementById('searchInput');
-    if (!input) return;
-
-    const banner = ensureNoResultsBanner();
-    const categoriesSection = document.querySelector('.categories');
-    const sectionNodes = Array.from(document.querySelectorAll('.section'));
-
-    let timer;
-    input.addEventListener('input', () => {
-      clearTimeout(timer);
-      const value = input.value.trim();
-
-      if (categoriesSection) {
-        categoriesSection.style.display = value === "" ? "block" : "none";
-      }
-
-      timer = setTimeout(() => runSearch(value), 150);
-    });
-
-    function runSearch(rawQuery) {
-      const q = norm(rawQuery);
-
-      if (!q) {
-        banner && (banner.style.display = 'none');
-        sectionNodes.forEach(sec => {
-          const grid = sec.querySelector('.grid');
-          const title = norm(sec.querySelector('h2')?.textContent || "");
-          const hits = allProductsGlobal.filter(p => {
-            const cat = norm(p.category);
-            return cat === title || cat.includes(title) || title.includes(cat);
-          });
-          grid.innerHTML = "";
-          if (hits.length) renderProducts(hits, grid);
-          sec.style.display = 'block';
-        });
-        return;
-      }
-
-      let totalMatches = 0;
-
-      sectionNodes.forEach(sec => {
-        const h2 = sec.querySelector('h2');
-        const grid = sec.querySelector('.grid');
-        if (!h2 || !grid) return;
-
-        const title = norm(h2.textContent || "");
-        const categoryProducts = allProductsGlobal.filter(p => {
-          const cat = norm(p.category);
-          return cat === title || cat.includes(title) || title.includes(cat);
-        });
-
-        const filtered = categoryProducts.filter(p => {
-          const name = norm(p.name);
-          const desc = norm(p.description);
-          const tags = Array.isArray(p.tags) ? p.tags.map(t => norm(t)).join(' ') : "";
-          return name.includes(q) || desc.includes(q) || tags.includes(q);
-        });
-
-        grid.innerHTML = "";
-        if (filtered.length > 0) {
-          renderProducts(filtered, grid);
-          sec.style.display = 'block';
-          totalMatches += filtered.length;
-        } else {
-          sec.style.display = 'none';
-        }
-      });
-
-      banner && (banner.style.display = totalMatches === 0 ? 'block' : 'none');
-    }
-  }
-
-  initSearch();
-})();
-
 });
 	const testimonials = document.querySelectorAll('.testimonial-grid blockquote');
 let index = 0;
