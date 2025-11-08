@@ -1224,159 +1224,126 @@ async function loadProducts(category, containerId) {
 
 
 // ----- SEARCH: copy this after your product load functions -----
-  (function() {
-    // global cache of all products (filled once)
-    let allProductsGlobal = [];
+(function () {
+  let allProductsGlobal = [];
 
-    // helper: normalize strings for safe comparisons
-    function norm(s) {
-      return (s || "").toString().trim().toLowerCase();
-    }
-
-    // create and inject "no results" banner inside .sections
-    function ensureNoResultsBanner() {
-      let container = document.querySelector('.sections');
-      if (!container) {
-        console.warn("No .sections element found for search banner.");
-        return null;
-      }
-      let banner = document.getElementById('searchNoResults');
-      if (!banner) {
-        banner = document.createElement('div');
-        banner.id = 'searchNoResults';
-        banner.innerHTML = `
-          <img src="https://i.postimg.cc/fyBZgbnw/file-0000000085b0622fad52b0ff61c2fb58.png" alt="No results" />
-          <div>No products found matching your search 🔍</div>
-        `;
-        container.parentNode.insertBefore(banner, container); // put banner above sections
-      }
-      return banner;
-    }
-
-    // initialize search: load products once and attach input handler
-    async function initSearch() {
-      try {
-        // loadAllProducts() is your existing function that returns an array of products
-        allProductsGlobal = await loadAllProducts() || [];
-      } catch (err) {
-        console.error("Failed to load products for search:", err);
-        allProductsGlobal = [];
-      }
-
-      // simple debug: open console and type allProductsGlobal.length to confirm load
-      console.info("Search: loaded products count =", allProductsGlobal.length);
-
-      const input = document.getElementById('searchInput');
-      if (!input) {
-        console.warn("Search input (#searchInput) not found.");
-        return;
-      }
-
-      const banner = ensureNoResultsBanner();
-      const sectionsWrapper = document.querySelector('.sections');
-
-      // on empty input we want to re-render original grids using loadAllProducts() results
-      // we keep a mapping of section title -> grid element to re-render easily
-      const sectionNodes = Array.from(document.querySelectorAll('.section','.cat-menu'));
-
-      // debounce helper
-      let timer;
-input.addEventListener('input', () => {
-  clearTimeout(timer);
-  const categoriesSection = document.querySelector('.categories');
-  const value = input.value.trim();
-
-  // hide categories when searching, show when cleared
-  if (categoriesSection) {
-    if (value === "") {
-      categoriesSection.style.display = "block";
-    } else {
-      categoriesSection.style.display = "none";
-    }
+  function norm(s) {
+    return (s || "").toString().trim().toLowerCase();
   }
 
-  timer = setTimeout(() => runSearch(value), 150);
-});
+  function ensureNoResultsBanner() {
+    let container = document.querySelector('.sections');
+    if (!container) return null;
 
+    let banner = document.getElementById('searchNoResults');
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.id = 'searchNoResults';
+      banner.innerHTML = `
+        <img src="https://i.postimg.cc/fyBZgbnw/file-0000000085b0622fad52b0ff61c2fb58.png" alt="No results" />
+        <div>No products found matching your search 🔍</div>
+      `;
+      container.parentNode.insertBefore(banner, container);
+    }
+    return banner;
+  }
 
-      // run the search and update DOM
-      function runSearch(rawQuery) {
-        const q = norm(rawQuery);
-        // If empty search: show all sections and reload original cached products into each grid
-        if (!q) {
-          banner && (banner.style.display = 'none');
-          // show sections and render default products per section
-          sectionNodes.forEach(sec => {
-            sec.style.display = 'block';
-            const title = norm(sec.querySelector('h2')?.textContent || "");
-            const grid = sec.querySelector('.grid');
-            // find products whose category matches this section title
-            const hits = allProductsGlobal.filter(p => {
-              const cat = norm(p.category);
-              // exact match OR section title is contained in product category (robust)
-              return cat === title || cat.includes(title) || title.includes(cat);
-            });
-            // render original hits (or empty)
-            grid.innerHTML = "";
-            if (hits.length) renderProducts(hits, grid);
-          });
-          return;
-        }
+  async function initSearch() {
+    try {
+      allProductsGlobal = await loadAllProducts() || [];
+    } catch (err) {
+      console.error("Failed to load products for search:", err);
+      allProductsGlobal = [];
+    }
 
-        // For a non-empty query: filter per-section and hide empty sections
-        let totalMatches = 0;
+    console.info("Search: loaded products count =", allProductsGlobal.length);
 
+    const input = document.getElementById('searchInput');
+    if (!input) return;
+
+    const banner = ensureNoResultsBanner();
+    const sectionsWrapper = document.querySelector('.sections');
+
+    // ✅ FIXED: select all sections correctly
+    const sectionNodes = Array.from(document.querySelectorAll('.section'));
+
+    let timer;
+    input.addEventListener('input', () => {
+      clearTimeout(timer);
+      const categoriesSection = document.querySelector('.categories');
+      const value = input.value.trim();
+
+      // hide categories when searching
+      if (categoriesSection) {
+        categoriesSection.style.display = value === "" ? "block" : "none";
+      }
+
+      timer = setTimeout(() => runSearch(value), 150);
+    });
+
+    function runSearch(rawQuery) {
+      const q = norm(rawQuery);
+
+      if (!q) {
+        banner && (banner.style.display = 'none');
         sectionNodes.forEach(sec => {
-          const h2 = sec.querySelector('h2');
-          const title = norm(h2?.textContent || "");
+          sec.style.display = 'block';
+
+          const title = norm(sec.querySelector('h2')?.textContent || "");
           const grid = sec.querySelector('.grid');
 
-          // products that belong to this section (category matching heuristics)
-          const categoryProducts = allProductsGlobal.filter(p => {
+          const hits = allProductsGlobal.filter(p => {
             const cat = norm(p.category);
             return cat === title || cat.includes(title) || title.includes(cat);
           });
 
-          // then filter by query across name, description, tags
-          const filtered = categoryProducts.filter(p => {
-            const name = norm(p.name);
-            const desc = norm(p.description);
-            const tags = Array.isArray(p.tags) ? p.tags.map(t => norm(t)).join(' ') : "";
-            return name.includes(q) || desc.includes(q) || tags.includes(q);
-          });
-
           grid.innerHTML = "";
-          if (filtered.length > 0) {
-            renderProducts(filtered, grid);
-            sec.style.display = 'block';
-            totalMatches += filtered.length;
-          } else {
-            // collapse empty section
-            sec.style.display = 'none';
-          }
+          if (hits.length) renderProducts(hits, grid);
         });
-
-        // show banner if nothing matched anywhere
-        if (banner) banner.style.display = totalMatches === 0 ? 'flex' : 'none';
-        // if banner area is hidden and all sections collapsed, ensure it's visible
-        if (!banner && totalMatches === 0 && sectionsWrapper) {
-          // fallback text if banner couldn't be created
-          if (sectionsWrapper) {
-            sectionsWrapper.innerHTML = "<p style='text-align:center; color:#666; margin:40px 0;'>No products found matching your search 🔍</p>";
-          }
-        }
-      }
-    } // end initSearch
-
-    // run after a microtask so loadAllProducts() (if defined earlier) is available
-    setTimeout(() => {
-      if (typeof loadAllProducts !== 'function') {
-        console.error("loadAllProducts() not found. Make sure the function exists before the search script.");
         return;
       }
-      initSearch();
 
+      let totalMatches = 0;
+
+      sectionNodes.forEach(sec => {
+        const h2 = sec.querySelector('h2');
+        const title = norm(h2?.textContent || "");
+        const grid = sec.querySelector('.grid');
+
+        const categoryProducts = allProductsGlobal.filter(p => {
+          const cat = norm(p.category);
+          return cat === title || cat.includes(title) || title.includes(cat);
+        });
+
+        const filtered = categoryProducts.filter(p => {
+          const name = norm(p.name);
+          const desc = norm(p.description);
+          const tags = Array.isArray(p.tags) ? p.tags.map(t => norm(t)).join(' ') : "";
+          return name.includes(q) || desc.includes(q) || tags.includes(q);
+        });
+
+        grid.innerHTML = "";
+        if (filtered.length > 0) {
+          renderProducts(filtered, grid);
+          sec.style.display = 'block';
+          totalMatches += filtered.length;
+        } else {
+          sec.style.display = 'none';
+        }
+      });
+
+      if (banner) banner.style.display = totalMatches === 0 ? 'flex' : 'none';
+    }
+  }
+
+  setTimeout(() => {
+    if (typeof loadAllProducts !== 'function') {
+      console.error("loadAllProducts() not found.");
+      return;
+    }
+    initSearch();
   }, 0);
+
 })();
 
 });
