@@ -1113,6 +1113,7 @@ function showSkeletons(container, count = 6) {
         : `<span style="font-weight:700; color:#222;font-size:14px;">GH₵${product.price.toFixed(2)}</span>`;
 
       const imgSrc = product.image?.startsWith("http") ? product.image : "https://via.placeholder.com/150";
+
       div.innerHTML = `
         ${discount ? `<span class="badge">🔥${discount}% OFF</span>` : ""}
         <div class="image-wrapper">
@@ -1120,8 +1121,7 @@ function showSkeletons(container, count = 6) {
         </div>
         <h3>${product.name}</h3>
         <div class="price">${priceHTML}</div>
-       <button class="add" onclick="addToCart('${product.id}', '${product.name}', ${product.price}, '${imgSrc}')">Add to Cart</button>
-
+       <button class="add" onclick='addToCart(${JSON.stringify(product)})'>Add to Cart</button>
 
       `;
 
@@ -1426,79 +1426,47 @@ document.getElementById("imgPreview").onclick = function(e) {
   if (e.target === this) this.style.display = "none";
 };
 
-window.addToCart = async function (id, name, price, image) {
-  const imgSrc = image && image.startsWith("http")
-    ? image
-    : "https://via.placeholder.com/150";
 
-  // 🔹 Fetch full product data from Firestore (to get sizes, etc.)
-  const productRef = doc(db, "products", id);
-  const productSnap = await getDoc(productRef);
-  let productData = {};
+	</script>
+	<script>
+function addToCart(product) {
+  if (!product || !product.name) return;
 
-  if (productSnap.exists()) {
-    productData = productSnap.data();
-  }
-
-  // 🔹 Load current cart
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-  // 🔹 Check for existing product
-  const existing = cart.find(item => item.id === id);
+  // Look for existing product in cart by name (or you could use id)
+  const existing = cart.find(item => item.name === product.name);
   if (existing) {
     existing.qty += 1;
   } else {
-    cart.push({
-      id,
-      name,
-      price,
-      image: imgSrc,
-      qty: 1,
-      sizes: productData.sizes || [],
-      variation: productData.variation || "none"
-    });
+    cart.push({ ...product, qty: 1 });
   }
 
-  // 🔹 Save and update
   localStorage.setItem("cart", JSON.stringify(cart));
+
   updateCartDisplay();
 
-  // 🔹 Show confirmation toast
-  const toast = document.createElement("div");
-  toast.textContent = `${name} added to cart 🛒`;
-  Object.assign(toast.style, {
-    position: "fixed",
-    bottom: "20px",
-    left: "50%",
-    transform: "translateX(-50%)",
-    background: "rgba(0,0,0,0.8)",
-    color: "#fff",
-    padding: "10px 16px",
-    borderRadius: "20px",
-    zIndex: 9999,
-    fontSize: "14px"
-  });
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 2000);
-};
+  // Small bounce animation
+  const cartIcon = document.getElementById('cartIcon');
+  cartIcon.animate(
+    [
+      { transform: 'translateX(0)' },
+      { transform: 'translateX(-5px)' },
+      { transform: 'translateX(0)' }
+    ],
+    { duration: 300, iterations: 1 }
+  );
+}
 
 function updateCartDisplay() {
   const cart = JSON.parse(localStorage.getItem("cart")) || [];
-  const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
-  const countEl = document.getElementById("cartCount");
-  const cartIcon = document.getElementById("cartIcon");
-  countEl.textContent = totalQty;
-
-  if (totalQty > 0) {
-    cartIcon.classList.add("show");
-  } else {
-    cartIcon.classList.remove("show");
-  }
+  const cartCount = document.getElementById("cartCount");
+  cartCount.textContent = cart.reduce((sum, item) => sum + item.qty, 0);
+  const cartIcon = document.getElementById('cartIcon');
+  if (cart.length > 0) cartIcon.classList.add('show');
+  else cartIcon.classList.remove('show');
 }
-
-document.addEventListener("DOMContentLoaded", updateCartDisplay);
 </script>
-
 
 	<!--StartofTawk.toScript-->
 	<script type="text/javascript"> 
