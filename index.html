@@ -1223,7 +1223,7 @@ async function loadProducts(category, containerId) {
  loadAllProducts();
 
 // ----- SEARCH: copy this after your product load functions -----
-function() {
+(function () {
   let allProductsGlobal = [];
 
   function norm(s) {
@@ -1232,19 +1232,20 @@ function() {
 
   function ensureNoResultsBanner() {
     let container = document.querySelector('.sections');
-    if (!container) {
-      console.warn("No .sections element found for search banner.");
-      return null;
-    }
+    if (!container) return null;
+
     let banner = document.getElementById('searchNoResults');
     if (!banner) {
       banner = document.createElement('div');
       banner.id = 'searchNoResults';
+      banner.style.display = 'none';
+      banner.style.textAlign = 'center';
+      banner.style.marginTop = '2rem';
       banner.innerHTML = `
         <img src="https://i.postimg.cc/fyBZgbnw/file-0000000085b0622fad52b0ff61c2fb58.png" alt="No results" />
         <div>No products found matching your search 🔍</div>
       `;
-      container.parentNode.insertBefore(banner, container);
+      container.appendChild(banner);
     }
     return banner;
   }
@@ -1257,18 +1258,12 @@ function() {
       allProductsGlobal = [];
     }
 
-    console.info("Search: loaded products count =", allProductsGlobal.length);
-    console.log("Sample product:", allProductsGlobal[0]);
-
     const input = document.getElementById('searchInput');
-    if (!input) {
-      console.warn("Search input (#searchInput) not found.");
-      return;
-    }
+    if (!input) return;
 
     const banner = ensureNoResultsBanner();
     const categoriesSection = document.querySelector('.categories');
-    const sectionNodes = Array.from(document.querySelectorAll('.section, .cat-menu'));
+    const sectionNodes = Array.from(document.querySelectorAll('.section'));
 
     let timer;
     input.addEventListener('input', () => {
@@ -1288,15 +1283,15 @@ function() {
       if (!q) {
         banner && (banner.style.display = 'none');
         sectionNodes.forEach(sec => {
-          sec.style.display = 'block';
-          const title = norm(sec.querySelector('h2')?.textContent || "");
           const grid = sec.querySelector('.grid');
+          const title = norm(sec.querySelector('h2')?.textContent || "");
           const hits = allProductsGlobal.filter(p => {
             const cat = norm(p.category);
             return cat === title || cat.includes(title) || title.includes(cat);
           });
           grid.innerHTML = "";
           if (hits.length) renderProducts(hits, grid);
+          sec.style.display = 'block';
         });
         return;
       }
@@ -1305,9 +1300,10 @@ function() {
 
       sectionNodes.forEach(sec => {
         const h2 = sec.querySelector('h2');
-        const title = norm(h2?.textContent || "");
         const grid = sec.querySelector('.grid');
+        if (!h2 || !grid) return;
 
+        const title = norm(h2.textContent || "");
         const categoryProducts = allProductsGlobal.filter(p => {
           const cat = norm(p.category);
           return cat === title || cat.includes(title) || title.includes(cat);
@@ -1336,7 +1332,6 @@ function() {
 
   initSearch();
 })();
-
 
 });
 	const testimonials = document.querySelectorAll('.testimonial-grid blockquote');
