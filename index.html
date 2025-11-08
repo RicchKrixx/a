@@ -1222,9 +1222,8 @@ async function loadProducts(category, containerId) {
 
  loadAllProducts();
 
-
 // ----- SEARCH: copy this after your product load functions -----
-(function () {
+(function() {
   let allProductsGlobal = [];
 
   function norm(s) {
@@ -1233,8 +1232,10 @@ async function loadProducts(category, containerId) {
 
   function ensureNoResultsBanner() {
     let container = document.querySelector('.sections');
-    if (!container) return null;
-
+    if (!container) {
+      console.warn("No .sections element found for search banner.");
+      return null;
+    }
     let banner = document.getElementById('searchNoResults');
     if (!banner) {
       banner = document.createElement('div');
@@ -1257,23 +1258,23 @@ async function loadProducts(category, containerId) {
     }
 
     console.info("Search: loaded products count =", allProductsGlobal.length);
+    console.log("Sample product:", allProductsGlobal[0]);
 
     const input = document.getElementById('searchInput');
-    if (!input) return;
+    if (!input) {
+      console.warn("Search input (#searchInput) not found.");
+      return;
+    }
 
     const banner = ensureNoResultsBanner();
-    const sectionsWrapper = document.querySelector('.sections');
-
-    // ✅ FIXED: select all sections correctly
-    const sectionNodes = Array.from(document.querySelectorAll('.section'));
+    const categoriesSection = document.querySelector('.categories');
+    const sectionNodes = Array.from(document.querySelectorAll('.section, .cat-menu'));
 
     let timer;
     input.addEventListener('input', () => {
       clearTimeout(timer);
-      const categoriesSection = document.querySelector('.categories');
       const value = input.value.trim();
 
-      // hide categories when searching
       if (categoriesSection) {
         categoriesSection.style.display = value === "" ? "block" : "none";
       }
@@ -1288,15 +1289,12 @@ async function loadProducts(category, containerId) {
         banner && (banner.style.display = 'none');
         sectionNodes.forEach(sec => {
           sec.style.display = 'block';
-
           const title = norm(sec.querySelector('h2')?.textContent || "");
           const grid = sec.querySelector('.grid');
-
           const hits = allProductsGlobal.filter(p => {
             const cat = norm(p.category);
             return cat === title || cat.includes(title) || title.includes(cat);
           });
-
           grid.innerHTML = "";
           if (hits.length) renderProducts(hits, grid);
         });
@@ -1332,19 +1330,13 @@ async function loadProducts(category, containerId) {
         }
       });
 
-      if (banner) banner.style.display = totalMatches === 0 ? 'flex' : 'none';
+      banner && (banner.style.display = totalMatches === 0 ? 'block' : 'none');
     }
   }
 
-  setTimeout(() => {
-    if (typeof loadAllProducts !== 'function') {
-      console.error("loadAllProducts() not found.");
-      return;
-    }
-    initSearch();
-  }, 0);
-
+  initSearch();
 })();
+
 
 });
 	const testimonials = document.querySelectorAll('.testimonial-grid blockquote');
