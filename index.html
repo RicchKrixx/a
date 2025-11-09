@@ -482,12 +482,16 @@ font-size: 16px;
   transform: scale(1.03);
 }
 
-.card img {
+.product-img {
   width: 100%;
   height: auto;
   border-radius: 20px;
   margin-bottom: 10px;
   object-fit: cover;
+    display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .card h3 {
@@ -526,6 +530,7 @@ font-size: 16px;
   padding: 4px 6px;
   border-radius: 16px;
   font-style: italic;
+	z-index: 3;
 }
 #scrollTop {
     display: none; /* Hidden by default */
@@ -774,7 +779,7 @@ h2::before,
 
 .skeleton-img {
   width: 100%;
-  height: 150px;
+  aspect-ratio: 1 / 1;
   border-radius: 12px;
   margin-bottom: 10px;
 }
@@ -800,6 +805,12 @@ h2::before,
   0% { opacity: 0.9; }
   50% { opacity: 1; }
   100% { opacity: 0.9; }
+}
+.image-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1; 
+  overflow: hidden;
 }
 
   </style>
@@ -1089,14 +1100,14 @@ function showSkeletons(container, count = 6) {
     }));
   }
 
-  function getProductsFromCache(category, maxAge = 7 * 24 * 60 * 60 * 1000) {
+  function getProductsFromCache(category, maxAge = 1000) {
     const cache = localStorage.getItem("products_" + category);
     if (!cache) return null;
     const parsed = JSON.parse(cache);
     return (Date.now() - parsed.timestamp > maxAge) ? null : parsed.products;
   }
 
-  function renderProducts(products, container) {
+ function renderProducts(products, container) {
   container.innerHTML = "";
 
   products.forEach(product => {
@@ -1119,7 +1130,7 @@ function showSkeletons(container, count = 6) {
       ${discount ? `<span class="badge">🔥${discount}% OFF</span>` : ""}
       <div class="image-wrapper">
         <div class="skeleton-img"></div> <!-- Skeleton for the image -->
-        <img src="${imgSrc}" alt="${product.name}" loading="lazy" class="product-img" style="display:none;"/>
+        <img src="${imgSrc}" alt="${product.name}" loading="lazy" class="product-img"/>
       </div>
       <h3>${product.name}</h3>
       <div class="price">${priceHTML}</div>
@@ -1129,21 +1140,15 @@ function showSkeletons(container, count = 6) {
     const img = div.querySelector("img");
     const skeleton = div.querySelector(".skeleton-img");
 
-    // Ensure image is visible after loading
-    img.onload = function() {
-      img.style.display = 'block'; // Show the image after it loads
-      skeleton.style.display = 'none'; // Hide skeleton
+    // Hide skeleton when image is loaded
+    img.onload = () => {
+      skeleton.style.display = 'none'; // Hide skeleton after image load
     };
 
-    // Handle errors (in case image is not available)
-    img.onerror = function() {
+    // Fallback in case the image fails to load
+    img.onerror = () => {
       img.src = "https://via.placeholder.com/150"; // Fallback image if error occurs
-      img.style.display = 'block'; // Show fallback image
-      skeleton.style.display = 'none'; // Hide skeleton
     };
-
-    // Ensure skeleton stays visible while the image loads
-    skeleton.style.display = 'block'; // Ensure skeleton is visible initially
 
     container.appendChild(div);
   });
