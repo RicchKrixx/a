@@ -1097,42 +1097,57 @@ function showSkeletons(container, count = 6) {
   }
 
   function renderProducts(products, container) {
-    container.innerHTML = "";
-  
-    products.forEach(product => {
-      const div = document.createElement("div");
-      div.className = "card";
+  container.innerHTML = "";
 
-      const discount = product.originalPrice
-        ? Math.round(100 - (product.price / product.originalPrice) * 100)
-        : null;
+  products.forEach(product => {
+    const div = document.createElement("div");
+    div.className = "card";
 
-      const priceHTML = product.originalPrice
-        ? `<span style="text-decoration: line-through; color: gray; font-size:11px; margin-right:3px;">GH₵${product.originalPrice.toFixed(2)}</span>
-           <span style="font-weight:600; color:#222;font-size:14px;">GH₵${product.price.toFixed(2)}</span>`
-        : `<span style="font-weight:700; color:#222;font-size:14px;">GH₵${product.price.toFixed(2)}</span>`;
+    const discount = product.originalPrice
+      ? Math.round(100 - (product.price / product.originalPrice) * 100)
+      : null;
 
-      const imgSrc = product.image?.startsWith("http") ? product.image : "https://via.placeholder.com/150";
+    const priceHTML = product.originalPrice
+      ? `<span style="text-decoration: line-through; color: gray; font-size:11px; margin-right:3px;">GH₵${product.originalPrice.toFixed(2)}</span>
+         <span style="font-weight:600; color:#222;font-size:14px;">GH₵${product.price.toFixed(2)}</span>`
+      : `<span style="font-weight:700; color:#222;font-size:14px;">GH₵${product.price.toFixed(2)}</span>`;
 
-      div.innerHTML = `
-        ${discount ? `<span class="badge">🔥${discount}% OFF</span>` : ""}
-        <div class="image-wrapper">
-          <img src="${imgSrc}" alt="${product.name}" loading="lazy"/>
-        </div>
-        <h3>${product.name}</h3>
-        <div class="price">${priceHTML}</div>
-       <button class="add" onclick='addToCart(${JSON.stringify(product)})'>Add to Cart</button>
+    const imgSrc = product.image?.startsWith("http") ? product.image : "https://via.placeholder.com/150";
 
-      `;
+    // Create the product card
+    div.innerHTML = `
+      ${discount ? `<span class="badge">🔥${discount}% OFF</span>` : ""}
+      <div class="image-wrapper">
+        <div class="skeleton-img"></div> <!-- Skeleton for the image -->
+        <img src="${imgSrc}" alt="${product.name}" loading="lazy" class="product-img" style="display:none;"/>
+      </div>
+      <h3>${product.name}</h3>
+      <div class="price">${priceHTML}</div>
+     <button class="add" onclick='addToCart(${JSON.stringify(product)})'>Add to Cart</button>
+    `;
 
-      const img = div.querySelector("img");
-      img.onerror = () => {
-        img.src = "https://via.placeholder.com/150";
-      };
+    const img = div.querySelector("img");
+    const skeleton = div.querySelector(".skeleton-img");
 
-      container.appendChild(div);
-    });
-  }
+    // Ensure image is visible after loading
+    img.onload = function() {
+      img.style.display = 'block'; // Show the image after it loads
+      skeleton.style.display = 'none'; // Hide skeleton
+    };
+
+    // Handle errors (in case image is not available)
+    img.onerror = function() {
+      img.src = "https://via.placeholder.com/150"; // Fallback image if error occurs
+      img.style.display = 'block'; // Show fallback image
+      skeleton.style.display = 'none'; // Hide skeleton
+    };
+
+    // Ensure skeleton stays visible while the image loads
+    skeleton.style.display = 'block'; // Ensure skeleton is visible initially
+
+    container.appendChild(div);
+  });
+}
 
 async function loadProducts(category, containerId) {
   const container = document.getElementById(containerId);
