@@ -1375,7 +1375,69 @@ function updateCartDisplay() {
 }
 </script>
 <script>
-Fast Charger Head 20W and iPhone Type C Cord- white</script>
+	const searchInput = document.querySelector('.input__search');
+const searchButton = document.querySelector('.input__button__shadow');
+const noResults = document.getElementById('searchNoResults');
+const categoriesSection = document.querySelector('.categories');
+const sectionTitles = document.querySelectorAll('.sections h2');
+const productSections = document.querySelectorAll('.section');
+
+// 🔍 When button is clicked
+searchButton.addEventListener('click', () => {
+  const query = searchInput.value.trim().toLowerCase();
+  const allProducts = document.querySelectorAll('.card'); // get fresh list every time
+
+  // If input is empty → reset everything
+  if (!query) {
+    resetSearch();
+    return;
+  }
+
+  // Hide categories and section titles
+  categoriesSection.style.display = 'none';
+  sectionTitles.forEach(h2 => h2.style.display = 'none');
+
+  let found = 0;
+
+  // Filter all product cards across sections
+  allProducts.forEach(card => {
+    // ✅ Get all text inside the card (name, description, etc.)
+    const text = card.textContent.toLowerCase();
+
+    if (text.includes(query)) {
+      card.style.display = 'block';
+      found++;
+    } else {
+      card.style.display = 'none';
+    }
+  });
+
+  // Hide entire section if no visible products
+  productSections.forEach(section => {
+    const visible = section.querySelectorAll('.card[style*="display: block"]').length;
+    section.style.display = visible ? 'block' : 'none';
+  });
+
+  // Show "no results" if nothing found
+  noResults.style.display = found === 0 ? 'flex' : 'none';
+});
+
+// 🧹 Reset when input cleared
+searchInput.addEventListener('input', () => {
+  if (!searchInput.value.trim()) resetSearch();
+});
+
+// 🔁 Restore everything
+function resetSearch() {
+  const allProducts = document.querySelectorAll('.card');
+  categoriesSection.style.display = 'block';
+  sectionTitles.forEach(h2 => h2.style.display = 'block');
+  productSections.forEach(section => (section.style.display = 'block'));
+  allProducts.forEach(card => (card.style.display = 'block'));
+  noResults.style.display = 'none';
+}
+
+</script>
 	<!--StartofTawk.toScript-->
 	<script type="text/javascript"> 
 		var Tawk_API=Tawk_API||{},
