@@ -738,9 +738,6 @@ h2::before,
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 #searchNoResults img {
@@ -916,6 +913,10 @@ h2::before,
 
   <div class="container">
   <div  class="gridd">
+<div id="searchNoResults">
+  <img src="https://cdn-icons-png.flaticon.com/512/6134/6134065.png" alt="No results">
+  <p>No products found. Try a different search!</p>
+</div>
 
     <section class="categories">
 	  <h2>Shop by Category</h2>
@@ -1373,7 +1374,76 @@ function updateCartDisplay() {
   else cartIcon.classList.remove('show');
 }
 </script>
+<script>
 
+	const searchInput = document.querySelector('.input__search');
+const searchButton = document.querySelector('.input__button__shadow');
+const noResults = document.getElementById('searchNoResults');
+const categoriesSection = document.querySelector('.categories');
+const sectionTitles = document.querySelectorAll('.sections h2');
+const productSections = document.querySelectorAll('.section');
+let allProducts = [];
+
+// Wait until products are rendered
+document.addEventListener('DOMContentLoaded', () => {
+  allProducts = document.querySelectorAll('.card'); // all product cards from all sections
+});
+
+// 🔍 When button is clicked
+searchButton.addEventListener('click', () => {
+  const query = searchInput.value.trim().toLowerCase();
+
+  // If input is empty → reset everything
+  if (!query) {
+    resetSearch();
+    return;
+  }
+
+  // Hide categories and section titles
+  categoriesSection.style.display = 'none';
+  sectionTitles.forEach(h2 => h2.style.display = 'none');
+
+  let found = 0;
+
+  // Filter all product cards across sections
+  allProducts.forEach(card => {
+    const name = card.querySelector('.product-name')?.textContent.toLowerCase() || '';
+    const desc = card.querySelector('.product-desc')?.textContent.toLowerCase() || '';
+
+    if (name.includes(query) || desc.includes(query)) {
+      card.style.display = 'block';
+      found++;
+    } else {
+      card.style.display = 'none';
+    }
+  });
+
+  // Hide entire section if no visible products
+  productSections.forEach(section => {
+    const visible = section.querySelectorAll('.card[style*="display: block"]').length;
+    section.style.display = visible ? 'block' : 'none';
+  });
+
+  // Show "no results" if nothing found
+  noResults.style.display = found === 0 ? 'flex' : 'none';
+});
+
+// 🧹 Reset when input cleared
+searchInput.addEventListener('input', () => {
+  if (!searchInput.value.trim()) resetSearch();
+});
+
+// 🔁 Restore everything
+function resetSearch() {
+  categoriesSection.style.display = 'block';
+  sectionTitles.forEach(h2 => h2.style.display = 'block');
+  productSections.forEach(section => (section.style.display = 'block'));
+  allProducts.forEach(card => (card.style.display = 'block'));
+  noResults.style.display = 'none';
+}
+
+	
+</script>
 	<!--StartofTawk.toScript-->
 	<script type="text/javascript"> 
 		var Tawk_API=Tawk_API||{},
