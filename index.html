@@ -665,7 +665,6 @@ h2::before,
 	z-index: 2002
 }
 
-/* From Uiverse.io by EddyBel */ 
 .input__container {
   position: relative;
   background: rgba(255, 255, 255, 0.664);
@@ -724,6 +723,21 @@ h2::before,
   padding: 8px;
  font-size: 16px;
   position: relative;
+}
+	  .input__close__button {
+  display: none; /* hidden by default */
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-size: 18px;
+  color: #333;
+  padding: 5px;
+  border-radius: 12px;
+  transition: background 300ms;
+}
+
+.input__close__button:hover {
+  background: rgba(255, 255, 255, 0.411);
 }
 /* Taller "no results" banner under the header */
 #searchNoResults {
@@ -905,6 +919,7 @@ h2::before,
       <path d="M4 9a5 5 0 1110 0A5 5 0 014 9zm5-7a7 7 0 104.2 12.6.999.999 0 00.093.107l3 3a1 1 0 001.414-1.414l-3-3a.999.999 0 00-.107-.093A7 7 0 009 2z" fill-rule="evenodd" fill="#17202A"></path>
     </svg>
   </button>
+	<button class="input__close__button" title="Clear search">✕</button>
 </div>
  </div>
 </header>
@@ -1375,35 +1390,35 @@ function updateCartDisplay() {
 }
 </script>
 <script>
-	const searchInput = document.querySelector('.input__search');
+const searchInput = document.querySelector('.input__search');
 const searchButton = document.querySelector('.input__button__shadow');
+const closeButton = document.querySelector('.input__close__button');
 const noResults = document.getElementById('searchNoResults');
 const categoriesSection = document.querySelector('.categories');
 const sectionTitles = document.querySelectorAll('.sections h2');
 const productSections = document.querySelectorAll('.section');
 
-// 🔍 When button is clicked
+// 🔍 When search button is clicked
 searchButton.addEventListener('click', () => {
   const query = searchInput.value.trim().toLowerCase();
-  const allProducts = document.querySelectorAll('.card'); // get fresh list every time
+  const allProducts = document.querySelectorAll('.card');
 
-  // If input is empty → reset everything
   if (!query) {
     resetSearch();
     return;
   }
 
-  // Hide categories and section titles
+  // Hide search button, show close button
+  searchButton.style.display = 'none';
+  closeButton.style.display = 'flex';
+
   categoriesSection.style.display = 'none';
   sectionTitles.forEach(h2 => h2.style.display = 'none');
 
   let found = 0;
 
-  // Filter all product cards across sections
   allProducts.forEach(card => {
-    // ✅ Get all text inside the card (name, description, etc.)
     const text = card.textContent.toLowerCase();
-
     if (text.includes(query)) {
       card.style.display = 'block';
       found++;
@@ -1412,20 +1427,37 @@ searchButton.addEventListener('click', () => {
     }
   });
 
-  // Hide entire section if no visible products
   productSections.forEach(section => {
     const visible = section.querySelectorAll('.card[style*="display: block"]').length;
     section.style.display = visible ? 'block' : 'none';
   });
 
-  // Show "no results" if nothing found
   noResults.style.display = found === 0 ? 'flex' : 'none';
 });
 
-// 🧹 Reset when input cleared
-searchInput.addEventListener('input', () => {
-  if (!searchInput.value.trim()) resetSearch();
+// ✕ When close button is clicked
+closeButton.addEventListener('click', () => {
+  searchInput.value = '';
+  resetSearch();
+  closeButton.style.display = 'none';
+  searchButton.style.display = 'flex';
 });
+
+searchInput.addEventListener('input', () => {
+  const hasText = searchInput.value.trim().length > 0;
+
+  if (hasText) {
+    // User is editing → show search button again
+    searchButton.style.display = 'flex';
+    closeButton.style.display = 'none';
+  } else {
+    // Input is empty → reset everything
+    resetSearch();
+    searchButton.style.display = 'flex';
+    closeButton.style.display = 'none';
+  }
+});
+
 
 // 🔁 Restore everything
 function resetSearch() {
