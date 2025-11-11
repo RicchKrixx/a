@@ -10,7 +10,7 @@
     html, body {
       height: 100%;
       font-family: "Segoe UI", Arial, sans-serif;
-      background: linear-gradient(135deg, #00b7d4, #ffb300);
+      background:  #ffffff;
       color: #333;
     }
 
@@ -35,7 +35,11 @@
       font-size: 28px;
       margin-bottom: 5px;
     }
-
+.thanks {
+     color: rgba(0,200,100,0.9);
+      font-size: 15px;
+      text-align: center;
+    }
     header p {
      color: rgba(0,200,100,0.9);
       font-size: 15px;
@@ -114,17 +118,11 @@
         grid-template-columns: 1.5fr 1fr 1fr 1fr;
         font-size: 14px;
       }
-      .container {
-        margin: 20px;
-        padding: 20px;
-      }
+
     }
   </style>
 </head>
 <body>
-
-<div class="container">
-
 
   <div class="receipt-box">
       <header>
@@ -158,15 +156,14 @@
       </div>
       <div id="cartContainer"></div>
       <div class="total">Total: GH₵<span id="grandTotal">0.00</span></div>
+</div>
+<p class="thanks">SEE YOU AGAIN!</p>
+</div>
       <button id="downloadBtn" class="back-btn" style="background:#28a745;margin-top:10px;">
   Download PDF
 </button>
 
-    </div>
-
     <a href="/" id="homeBtn" class="back-btn">Return to Home</a>
-  </div>
-</div>
 
 <!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
