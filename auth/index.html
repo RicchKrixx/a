@@ -1,317 +1,204 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="robots" content="noindex, nofollow">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BixMAX | Sign In</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #0e1f2f 0%, #1b2e42 100%);
-      color: #ffffff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      margin: 0;
-    }
-
-    .auth-container {
-      background: #ffffff;
-      color: #1b2e42;
-      padding: 2rem;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-      width: 100%;
-      max-width: 400px;
-      transition: transform 0.3s ease;
-    }
-
-    .auth-container:hover {
-      transform: translateY(-4px);
-    }
-
-    .auth-container h2 {
-      text-align: center;
-      font-size: 1.8rem;
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-      color: #1b2e42;
-    }
-
-    .auth-container input {
-      width: 100%;
-      padding: 0.9rem;
-      margin: 0.5rem 0;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      font-size: 1rem;
-      outline: none;
-      transition: border-color 0.3s ease;
-    }
-
-    .auth-container input:focus {
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    }
-
-    .auth-container button {
-      width: 100%;
-      padding: 0.9rem;
-      margin: 1rem 0;
-      border-radius: 8px;
-      border: none;
-      background: #3b82f6;
-      color: #ffffff;
-      font-size: 1rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    .auth-container button:hover {
-      background: #2563eb;
-    }
-
-    .google-signin {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      background: #ffffff;
-      border: 1px solid #d1d5db;
-      color: #1f2937;
-    }
-
-    .google-signin:hover {
-      background: #f3f4f6;
-    }
-
-    .google-signin img {
-      width: 20px;
-      height: 20px;
-    }
-
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin: 1.5rem 0;
-      color: #6b7280;
-      font-size: 0.9rem;
-    }
-
-    .divider::before,
-    .divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: #d1d5db;
-    }
-
-    .switch-link {
-      text-align: center;
-      margin-top: 1rem;
-      font-size: 0.9rem;
-      color: #3b82f6;
-      cursor: pointer;
-      text-decoration: none;
-      transition: color 0.3s ease;
-    }
-
-    .switch-link:hover {
-      color: #2563eb;
-      text-decoration: underline;
-    }
-
-    #nameInput {
-      display: none;
-    }
-
-    @media (max-width: 480px) {
-      .auth-container {
-        margin: 1rem;
-        padding: 1.5rem;
-      }
-    }
-.password-wrapper {
-  position: relative;
-}
-
-.password-wrapper input {
-  padding-right: 40px;
-}
-
-.toggle-password {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  font-size: 1.1rem;
-  color: #6b7280;
-}
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BixMAX | Sign In</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #0e1f2f, #1b2e42);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh;
+  }
+  .auth-container {
+    background: #fff; color: #1b2e42; padding: 2rem; border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2); width: 100%; max-width: 400px;
+    transition: transform 0.3s ease;
+  }
+  .auth-container:hover { transform: translateY(-4px); }
+  .auth-container h2 { text-align: center; margin-bottom: 1.5rem; }
+  .auth-container input { width: 100%; padding: 0.9rem; margin: 0.5rem 0; border-radius: 8px; border: 1px solid #d1d5db; }
+  .auth-container button { width: 100%; padding: 0.9rem; margin: 1rem 0; border-radius: 8px; border: none; background: #3b82f6; color: #fff; cursor: pointer; }
+  .divider { display:flex; align-items:center; gap:1rem; margin:1rem 0; color:#6b7280; font-size:0.9rem; }
+  .divider::before, .divider::after { content:""; flex:1; height:1px; background:#d1d5db; }
+  .switch-link { text-align:center; color:#3b82f6; cursor:pointer; margin-top:1rem; display:block; }
+  .password-wrapper { position:relative; }
+  .password-wrapper input { padding-right: 40px; }
+  .toggle-password { position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; font-size:1.1rem; color:#6b7280; }
+  #loader { position:fixed; inset:0; background:rgba(0,0,0,0.55); display:flex; align-items:center; justify-content:center; z-index:9999; backdrop-filter:blur(3px); opacity:0; pointer-events:none; transition:opacity 0.3s; }
+  #loader.active { opacity:1; pointer-events:all; }
+  .spinner { width:60px; height:60px; border:5px solid #ffffff40; border-top-color:#3b82f6; border-radius:50%; animation:spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background:#3b82f6; color:#fff; padding:0.8rem 1.5rem; border-radius:8px; opacity:0; pointer-events:none; transition:opacity 0.4s; z-index:99999; }
+  #toast.show { opacity:1; pointer-events:auto; }
+</style>
 </head>
 <body>
-  <div class="auth-container">
-    <h2 id="formTitle">Sign In</h2>
-    <input type="text" id="nameInput" placeholder="Username" />
-    <input type="email" id="emailInput" placeholder="Email" />
-   <div class="password-wrapper">
-  <input type="password" id="passwordInput" placeholder="Password" />
-  <span class="toggle-password" onclick="togglePassword()">👁️</span>
-</div>
-    <button onclick="handleAuth()">Sign In</button>
 
-    <div class="divider">or</div>
-    <button class="google-signin" onclick="signInWithGoogle()">
-      <img src="https://www.google.com/favicon.ico" alt="Google Icon" />
-      Sign in with Google
-    </button>
+<div id="loader"><div class="spinner"></div></div>
+<div id="toast"></div>
 
-    <div class="switch-link" onclick="toggleMode()">Don't have an account? Sign Up</div>
-    <div class="switch-link" onclick="resetPassword()">Forgot Password?</div>
+<div class="auth-container">
+  <h2 id="formTitle">Sign In</h2>
+  <input type="text" id="identifierInput" placeholder="Username or Email" />
+  <input type="email" id="emailInput" placeholder="Email (Signup only)" style="display:none;" />
+  <div class="password-wrapper">
+    <input type="password" id="passwordInput" placeholder="Password" />
+    <span class="toggle-password" onclick="togglePassword()">👁️</span>
   </div>
+  <button id="authButton">Sign In</button>
+
+  <div class="divider">or</div>
+  <button class="google-signin" onclick="signInWithGoogle()">
+    <img src="https://www.google.com/favicon.ico" alt="Google Icon" /> Sign in with Google
+  </button>
+
+  <div class="switch-link" onclick="toggleMode()">Don't have an account? Sign Up</div>
+  <div class="switch-link" onclick="resetPassword()">Forgot Password?</div>
+</div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import {
-    getAuth,
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    updateProfile,
-    sendPasswordResetEmail,
-    GoogleAuthProvider,
-    signInWithPopup
-  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, query, where, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  import {
-    getFirestore,
-    collection,
-    query,
-    where,
-    getDocs,
-    addDoc
-  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+  authDomain: "bixmax-6c24c.firebaseapp.com",
+  projectId: "bixmax-6c24c",
+  storageBucket: "bixmax-6c24c.appspot.com",
+  messagingSenderId: "37740442541",
+  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+};
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-    authDomain: "bixmax-6c24c.firebaseapp.com",
-    projectId: "bixmax-6c24c",
-    storageBucket: "bixmax-6c24c.appspot.com",
-    messagingSenderId: "37740442541",
-    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
+
+let isSignUp = false;
+
+const identifierInput = document.getElementById("identifierInput");
+const emailInput = document.getElementById("emailInput");
+const passwordInput = document.getElementById("passwordInput");
+const authButton = document.getElementById("authButton");
+
+// 🔄 Loader
+function showLoader() { document.getElementById("loader").classList.add("active"); }
+function hideLoader() { document.getElementById("loader").classList.remove("active"); }
+
+// ✅ Toast
+function showToast(msg, duration=2000) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  setTimeout(()=> t.classList.remove("show"), duration);
+}
+
+// 🎯 Friendly errors
+function getFriendlyErrorMessage(code) {
+  const map = {
+    "auth/invalid-email":"Invalid email.",
+    "auth/missing-password":"Password required.",
+    "auth/weak-password":"Password must be 6+ chars.",
+    "auth/email-already-in-use":"Email already used.",
+    "auth/user-not-found":"No account found.",
+    "auth/wrong-password":"Incorrect password.",
+    "auth/popup-closed-by-user":"Sign-in cancelled.",
+    "auth/network-request-failed":"Check internet connection."
   };
+  return map[code] || "Something went wrong.";
+}
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  const provider = new GoogleAuthProvider();
+// 🔄 Toggle mode
+window.toggleMode = function(){
+  isSignUp = !isSignUp;
+  document.getElementById("formTitle").textContent = isSignUp ? "Sign Up" : "Sign In";
+  authButton.textContent = isSignUp ? "Sign Up" : "Sign In";
+  document.querySelectorAll(".switch-link")[0].textContent = isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up";
+  emailInput.style.display = isSignUp ? "block" : "none";
+};
 
-  let isSignUp = false;
+// 🔑 Auth handler
+authButton.onclick = async function(){
+  const identifier = identifierInput.value.trim();
+  const passwordVal = passwordInput.value.trim();
+  const signupEmail = emailInput.value.trim();
 
-  window.toggleMode = function () {
-    isSignUp = !isSignUp;
-    document.getElementById("formTitle").textContent = isSignUp ? "Sign Up" : "Sign In";
-    document.querySelector("button:not(.google-signin)").textContent = isSignUp ? "Sign Up" : "Sign In";
-    document.querySelectorAll(".switch-link")[0].textContent = isSignUp
-      ? "Already have an account? Sign In"
-      : "Don't have an account? Sign Up";
-    document.getElementById("nameInput").style.display = isSignUp ? "block" : "none";
-  };
+  if(!identifier || !passwordVal) return showToast("Fill all required fields.");
+  showLoader();
 
-  window.handleAuth = async function () {
-    const email = document.getElementById("emailInput").value.trim();
-    const password = document.getElementById("passwordInput").value.trim();
-    const name = document.getElementById("nameInput").value.trim();
+  try{
+    if(isSignUp){
+      if(!signupEmail) return showToast("Please enter email for signup.");
 
-    if (isSignUp) {
-      if (!name || !email || !password) {
-        alert("Please fill all fields.");
-        return;
-      }
+      // Check username exists
+      const usersRef = collection(db,"users");
+      const q = query(usersRef, where("username","==",identifier.toLowerCase()));
+      const snapshot = await getDocs(q);
+      if(!snapshot.empty) return showToast("Username already exists.");
 
-      try {
-        // Check if username already exists
-        const usersRef = collection(db, "users");
-        const q = query(usersRef, where("username", "==", name.toLowerCase()));
-        const snapshot = await getDocs(q);
+      const userCredential = await createUserWithEmailAndPassword(auth, signupEmail, passwordVal);
+      const user = userCredential.user;
+      await updateProfile(user, { displayName: identifier });
+      await addDoc(usersRef, { uid:user.uid, username:identifier.toLowerCase(), email:signupEmail });
 
-        if (!snapshot.empty) {
-          alert("Username already exists. Choose a different one.");
-          return;
-        }
-
-        // Create user
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-
-        // Set display name
-        await updateProfile(user, { displayName: name });
-
-        // Save username to Firestore
-        await addDoc(usersRef, {
-          uid: user.uid,
-          username: name.toLowerCase(),
-          email: email
-        });
-
-        alert("Signup successful!");
-        window.location.href = "/";
-      } catch (error) {
-        alert(error.message);
-      }
+      showToast("Account created!");
+      setTimeout(()=> window.location.href="/",1000);
     } else {
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-        alert("Login successful!");
-        window.location.href = "/";
-      } catch (error) {
-        alert(error.message);
+      let loginEmail = identifier;
+      if(!identifier.includes("@")){
+        const usersRef = collection(db,"users");
+        const q = query(usersRef, where("username","==",identifier.toLowerCase()));
+        const snapshot = await getDocs(q);
+        if(snapshot.empty){ hideLoader(); return showToast("Username not found."); }
+        loginEmail = snapshot.docs[0].data().email;
       }
+
+      await signInWithEmailAndPassword(auth, loginEmail, passwordVal);
+      showToast("Welcome back!");
+      setTimeout(()=> window.location.href="/",1000);
     }
-  };
+  } catch(err){
+    showToast(getFriendlyErrorMessage(err.code));
+  } finally{ hideLoader(); }
+};
 
-  window.signInWithGoogle = function () {
-    signInWithPopup(auth, provider)
-      .then(() => {
-        alert("Google Sign-In successful!");
-        window.location.href = "/";
-      })
-      .catch(error => {
-        alert(error.message);
-      });
-  };
+// 🔐 Google Sign In
+window.signInWithGoogle = async function(){
+  showLoader();
+  try{
+    await signInWithPopup(auth, provider);
+    showToast("Signed in with Google!");
+    setTimeout(()=> window.location.href="/",1000);
+  }catch(err){ showToast(getFriendlyErrorMessage(err.code)); }
+  finally{ hideLoader(); }
+};
 
-  window.resetPassword = function () {
-    const email = prompt("Enter your email to reset your password:");
-    if (!email) return;
-
-    sendPasswordResetEmail(auth, email)
-      .then(() => {
-        alert("Password reset email sent! Check your inbox.");
-      })
-      .catch(error => {
-        alert("Error: " + error.message);
-      });
-  };
+// 🔑 Password reset
+window.resetPassword = async function(){
+  const email = prompt("Enter your email:");
+  if(!email) return;
+  showLoader();
+  try{
+    await sendPasswordResetEmail(auth,email);
+    showToast("Password reset email sent!");
+  }catch(err){ showToast(getFriendlyErrorMessage(err.code)); }
+  finally{ hideLoader(); }
+};
 </script>
+
 <script>
-  function togglePassword() {
-    const input = document.getElementById("passwordInput");
-    const icon = document.querySelector(".toggle-password");
-    const isPassword = input.type === "password";
-    input.type = isPassword ? "text" : "password";
-    icon.textContent = isPassword ? "🙈" : "👁️";
-  }
+function togglePassword(){
+  const input = passwordInput;
+  const icon = document.querySelector(".toggle-password");
+  const isPass = input.type === "password";
+  input.type = isPass ? "text" : "password";
+  icon.textContent = isPass ? "🙈" : "👁️";
+}
 </script>
+
 </body>
 </html>
