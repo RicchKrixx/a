@@ -108,7 +108,7 @@ color: red;
 border: none;
 }
 
-.menu-overlay ul {
+.menu-overlay li {
 list-style: none;
 margin-top: 5px;
 left: 5px;
@@ -181,29 +181,29 @@ margin-bottom: 10px;
 
 /* Responsive */
 @media (max-width: 480px) {
-nav ul {
+nav li {
 flex-direction: column;
 gap: 2px;
 }
 }
 
-.menu-overlay ul li {
+.menu-overlay  li {
 margin: 10px;
 opacity: 0;
 transform: translateX(-30px);
 }
 
-.menu-overlay.show.animate ul li {
+.menu-overlay.show.animate  li {
 animation: slideIn 0.5s forwards;
 }
 
-.menu-overlay.show.animate ul li:nth-child(1) { animation-delay: 0.1s; }
-.menu-overlay.show.animate ul li:nth-child(2) { animation-delay: 0.2s; }
-.menu-overlay.show.animate ul li:nth-child(3) { animation-delay: 0.3s; }
-.menu-overlay.show.animate ul li:nth-child(4) { animation-delay: 0.4s; }
-.menu-overlay.show.animate ul li:nth-child(5) { animation-delay: 0.5s; }
-.menu-overlay.show.animate ul li:nth-child(6) { animation-delay: 0.6s; }
-.menu-overlay.show.animate ul li:nth-child(7) { animation-delay: 0.7s; }
+.menu-overlay.show.animate  li:nth-child(1) { animation-delay: 0.1s; }
+.menu-overlay.show.animate  li:nth-child(2) { animation-delay: 0.2s; }
+.menu-overlay.show.animate  li:nth-child(3) { animation-delay: 0.3s; }
+.menu-overlay.show.animate  li:nth-child(4) { animation-delay: 0.4s; }
+.menu-overlay.show.animate  li:nth-child(5) { animation-delay: 0.5s; }
+.menu-overlay.show.animate  li:nth-child(6) { animation-delay: 0.6s; }
+.menu-overlay.show.animate  li:nth-child(7) { animation-delay: 0.7s; }
 
 @keyframes slideIn {
 to {
@@ -213,7 +213,7 @@ transform: translateX(0);
 }
 
 
-.menu-overlay ul li a {
+.menu-overlay li a {
 color: white;
 font-size: 16px;
 text-decoration: none;
@@ -312,21 +312,21 @@ font-size: 16px;
             color: #ffffff;
         }
 
-        .footer-section ul {
+        .footer-section li {
             list-style: none;
         }
 
-        .footer-section ul li {
+        .footer-section  li {
             margin-bottom: 10px;
         }
 
-        .footer-section ul li a {
+        .footer-section  li a {
             color: #cccccc;
             text-decoration: none;
             transition: color 0.3s ease;
         }
 
-        .footer-section ul li a:hover {
+        .footer-section  li a:hover {
             color: #ffffff;
         }
 
@@ -882,7 +882,7 @@ h2::before,
       <button class="close" onclick="toggleMenu()">✕</button>
     </div>
 <hr style="border: none; height: 1px; background-color: #333333;" />
-    <ul>
+   
 		<li><a href="/track/">🚚 Track</a></li>
 		<li><a href="#" onclick="Tawk_API.toggle(); return false;">💬 Live Chat</a></li>
 		<li><a href="tel:0536345825"> ☎️Contact</a></li>
@@ -901,7 +901,7 @@ h2::before,
 <hr style="border: none; height: 1px; background-color: #333333;" />
 
 <li><a href="/about us/">✍️ About</a></li>
-    </ul>
+   
 
     <div class="auth-button">
       <button id="authBtn">🔐 Sign In</button>
@@ -1040,24 +1040,24 @@ h2::before,
             <!-- Quick Links -->
             <div class="footer-section">
                 <h3>Quick Links</h3>
-                <ul>
+               
                     <li><a href="#home">Home</a></li>
                     <li><a href="/about us/">About Us</a></li>
                     <li><a href="/about us/#services">Services</a></li>
 								<li><a href="/about us/#blog">Blog</a></li>
-                </ul>
+            
             </div>
 
             <!-- Resources -->
             <div class="footer-section">
                 <h3>Resources</h3>
-                <ul>
+               
                     <li><a href="/about us/#documentation">Documentation</a></li>
                     <li><a href="/about us/#support">Support</a></li>
                     <li><a href="/about us/#faq">FAQ</a></li>
                     <li><a href="/about us/#privacy-policy">Privacy Policy</a></li>
                     <li><a href="/about us/#terms">Terms of Service</a></li>
-                </ul>
+              
             </div>
 
             <!-- Contact Info -->
