@@ -1154,6 +1154,13 @@ function showSkeletons(container, count = 6) {
 }
 
 
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
 	
   function saveProductsToCache(category, products) {
     localStorage.setItem("products_" + category, JSON.stringify({
@@ -1187,7 +1194,7 @@ function showSkeletons(container, count = 6) {
 
     const imgSrc = product.image?.startsWith("http") ? product.image : "https://via.placeholder.com/150";
 
-    // Create the product card
+    // Create the product cardw
     div.innerHTML = `
       ${discount ? `<span class="badge">🔥${discount}% OFF</span>` : ""}
       <div class="image-wrapper">
@@ -1233,8 +1240,11 @@ async function loadProducts(category, containerId) {
     const snapshot = await getDocs(q);
     const products = snapshot.docs.map(doc => doc.data());
 
-    saveProductsToCache(category, products);
-    renderProducts(products, container);
+const products = snapshot.docs.map(doc => doc.data());
+shuffleArray(products); // ← shuffle before rendering
+saveProductsToCache(category, products);
+renderProducts(products, container);
+
   } catch (err) {
     console.error("Error loading products:", err);
     container.innerHTML = "<p style='color:red;'>Failed to load products.</p>";
