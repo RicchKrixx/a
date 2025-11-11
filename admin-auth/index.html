@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login</title>
+<style>
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #0e1f2f 0%, #1b2e42 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  color: white;
+}
+.admin-container {
+  background: #1b2e42;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 350px;
+  text-align: center;
+}
+.admin-container input {
+  width: 100%;
+  padding: 0.8rem;
+  margin: 0.5rem 0;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+}
+.admin-container button {
+  width: 100%;
+  padding: 0.8rem;
+  margin-top: 1rem;
+  border: none;
+  border-radius: 6px;
+  background: #3b82f6;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #fff;
+}
+/* Loader overlay */
+#loader {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(3px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+#loader.active { opacity:1; pointer-events:all; }
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 5px solid #ffffff40;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+/* Toast notification */
+#toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #3b82f6;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 99999;
+}
+#toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div id="loader"><div class="spinner"></div></div>
+<div id="toast"></div>
+
+<div class="admin-container">
+  <h2>Admin Login</h2>
+  <input type="text" id="adminIdentifier" placeholder="Email or Phone" />
+  <input type="password" id="adminPassword" placeholder="Password" />
+  <button id="adminLoginBtn">Login</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+  authDomain: "bixmax-6c24c.firebaseapp.com",
+  projectId: "bixmax-6c24c",
+  storageBucket: "bixmax-6c24c.appspot.com",
+  messagingSenderId: "37740442541",
+  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// Admin credentials
+const ADMIN_EMAIL = "ydrill47@gmail.com";
+const ADMIN_PHONE = "0536345825";
+
+// Loader
+function showLoader() { document.getElementById("loader").classList.add("active"); }
+function hideLoader() { document.getElementById("loader").classList.remove("active"); }
+
+// Toast
+function showToast(msg, duration=2000){
+  const toast = document.getElementById("toast");
+  toast.textContent = msg;
+  toast.classList.add("show");
+  setTimeout(()=>toast.classList.remove("show"), duration);
+}
+
+// Admin login
+async function adminLogin() {
+  const id = document.getElementById("adminIdentifier").value.trim();
+  const pass = document.getElementById("adminPassword").value.trim();
+
+  if(!id || !pass) return showToast("Enter both fields");
+
+  // Only allow your predefined admin email/phone
+  if(id !== ADMIN_EMAIL && id !== ADMIN_PHONE){
+    return showToast("Not Authorized");
+  }
+
+  showLoader();
+  try {
+    // Use Firebase Auth to validate password for your email
+    await signInWithEmailAndPassword(auth, ADMIN_EMAIL, pass);
+    showToast("Admin login successful!");
+    setTimeout(() => {
+      window.history.back(); // Go back to previous page
+    }, 1000);
+  } catch(err) {
+    showToast("Access Denied: Invalid password");
+    console.error(err);
+  } finally {
+    hideLoader();
+  }
+}
+
+
+document.getElementById("adminLoginBtn").addEventListener("click", adminLogin);
+</script>
+
+</body>
+</html>
