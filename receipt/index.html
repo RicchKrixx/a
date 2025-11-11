@@ -270,26 +270,34 @@ document.getElementById("downloadBtn").addEventListener("click", async () => {
   const { jsPDF } = window.jspdf;
   const receiptBox = document.querySelector(".receipt-box");
 
-  // Capture the receipt section as an image
-  const canvas = await html2canvas(receiptBox, { scale: 2 });
+  // Capture the receipt box with high resolution
+  const canvas = await html2canvas(receiptBox, { scale: 2, useCORS: true });
   const imgData = canvas.toDataURL("image/png");
 
-  // Create PDF
   const pdf = new jsPDF("p", "mm", "a4");
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
 
-  // Scale image to fit page
-  const imgWidth = pageWidth - 20;
-  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  // Calculate image dimensions to fully fit within one A4 page
+  let imgWidth = pageWidth - 20; // leave 10mm margin on each side
+  let imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-  pdf.addImage(imgData, "PNG", 10, 10, imgWidth, imgHeight);
+  // If the image is too tall to fit, scale it down to fit height too
+  if (imgHeight > pageHeight - 20) {
+    imgHeight = pageHeight - 20;
+    imgWidth = (canvas.width * imgHeight) / canvas.height;
+  }
 
-  // File name includes order ID if available
+  const x = (pageWidth - imgWidth) / 2;
+  const y = (pageHeight - imgHeight) / 2;
+
+  pdf.addImage(imgData, "PNG", x, y, imgWidth, imgHeight);
+
   const orderId = document.getElementById("orderId")?.textContent.trim() || "receipt";
   pdf.save(`${orderId}_BixMAX_Receipt.pdf`);
 });
 </script>
+
 
 </body>
 </html>
