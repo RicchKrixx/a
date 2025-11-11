@@ -144,7 +144,7 @@ const ADMIN_PHONES = ["+233536345825"]; // E.164 format
 
 onAuthStateChanged(auth, user => {
   if (!user) {
-    window.location.href = "/admin-dashboard/";
+    window.location.href = "/admin-auth/";
     return;
   }
 
@@ -152,7 +152,7 @@ onAuthStateChanged(auth, user => {
   const phoneAllowed = user.phoneNumber && ADMIN_PHONES.includes(user.phoneNumber);
 
   if (!emailAllowed && !phoneAllowed) {
-    window.location.href = "/admin-dashboard/";
+    window.location.href = "/admin-auth/";
   }
 });
 
