@@ -239,8 +239,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         row.innerHTML = `
           <span>${item.name}</span>
           <span>${item.qty}</span>
-          <span>GH₵${item.price.toFixed(2)}</span>
-          <span>GH₵${subtotal.toFixed(2)}</span>
+          <span>${item.price.toFixed(2)}</span>
+          <span>${subtotal.toFixed(2)}</span>
         `;
         cartContainer.appendChild(row);
       });
