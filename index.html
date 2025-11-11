@@ -1225,31 +1225,29 @@ function shuffleArray(array) {
 
 async function loadProducts(category, containerId) {
   const container = document.getElementById(containerId);
-
-  // 🩶 Show skeletons while loading
   showSkeletons(container);
 
   const cached = getProductsFromCache(category);
   if (cached) {
-    setTimeout(() => renderProducts(cached, container), 1000); // Simulate short delay
-    return;
+    setTimeout(() => renderProducts(cached, container), 1000);
+    return cached; // ✅ return cached products
   }
 
   try {
     const q = query(collection(db, "products"), where("category", "==", category));
     const snapshot = await getDocs(q);
     const products = snapshot.docs.map(doc => doc.data());
-
-const products = snapshot.docs.map(doc => doc.data());
-shuffleArray(products); // ← shuffle before rendering
-saveProductsToCache(category, products);
-renderProducts(products, container);
-
+    shuffleArray(products);
+    saveProductsToCache(category, products);
+    renderProducts(products, container);
+    return products; // ✅ return products
   } catch (err) {
     console.error("Error loading products:", err);
     container.innerHTML = "<p style='color:red;'>Failed to load products.</p>";
+    return []; // ✅ return empty array on error
   }
 }
+
 
   async function loadAllProducts() {
     const categories = [
