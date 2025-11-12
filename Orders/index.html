@@ -417,9 +417,10 @@ async function advanceStatus(orderId, newStatus) {
     const doc = await db.collection("orders").doc(orderId).get();
     const data = doc.data();
     const email = data?.email || "N/A";
+    const email = data?.userId || "N/A";
 
     // 3️⃣ Create notification
-    await createNotification(orderId, email, newStatus);
+    await createNotification(orderId, userId, email, newStatus);
 
   } catch (err) {
     console.error("Failed to advance status:", err);
@@ -430,11 +431,12 @@ async function advanceStatus(orderId, newStatus) {
 // Create notification in top-level 'notifications' collection
 async function createNotification(orderId, email, status) {
   const message = STATUS_MESSAGES[status] || `Order ${orderId} status updated to ${status}`;
-  console.log("Creating notification:", { orderId, email, status, message });
+  console.log("Creating notification:", { orderId, userId, email, status, message });
 
   try {
     const docRef = await db.collection("notifications").add({
       orderId,
+      userId,
       email,
       status,
       message,
