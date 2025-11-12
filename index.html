@@ -154,7 +154,7 @@ margin-bottom: 10px;
   font-size: 14px;
   font-style: italic;
   padding: 12px;
-  border-left: 4px solid #ffcc00;
+  border-left: 6px solid #ffcc00;
   border-radius: 20px;
 }
 
@@ -167,7 +167,7 @@ margin-bottom: 10px;
   height: 50px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #ffcc00;
+  border: 2px solid #00b7d4;
   margin-bottom: 8px;
 }
 
@@ -178,6 +178,7 @@ margin-bottom: 10px;
   color: #333;
   margin-top: 5px;
 }
+
 
 /* Responsive */
 @media (max-width: 480px) {
@@ -1004,29 +1005,9 @@ h2::before,
 </div>
 <section class="testimonials">
   <h2>What Our Customers Say</h2>
-  <div class="testimonial-grid">
-    <blockquote>
-      <span><img src="https://i.postimg.cc/XYNFYy52/A1BCF7DE-62DD-4F55-8613-FAA324A9AD70.jpg" alt="Sarah"></span>
-      “Great selection and fast delivery” - <b>Sarah T</b>
-      <span>⭐⭐⭐⭐⭐</span>
-    </blockquote>
-    <blockquote>
-      <span><img src="https://i.postimg.cc/XYNFYy52/A1BCF7DE-62DD-4F55-8613-FAA324A9AD70.jpg" alt="James"></span>
-      "Best price I've found online" - <b>James K</b>
-      <span>⭐⭐⭐⭐</span>
-    </blockquote>
-    <blockquote>
-      <span><img src="https://i.postimg.cc/XYNFYy52/A1BCF7DE-62DD-4F55-8613-FAA324A9AD70.jpg" alt="Amina"></span>
-      "Highly Recommend this store" - <b>Amina R</b>
-      <span>⭐⭐⭐⭐⭐</span>
-    </blockquote>
-	      <blockquote>
-      <span><img src="https://i.postimg.cc/XYNFYy52/A1BCF7DE-62DD-4F55-8613-FAA324A9AD70.jpg" alt="Amina"></span>
-      "Best customer supprt" - <b>Ama Y</b>
-      <span>⭐⭐⭐⭐</span>
-    </blockquote>
-  </div>
+  <div class="testimonial-grid" id="testimonialGrid"></div>
 </section>
+
 </div>
 </div>
 <br>
@@ -1325,23 +1306,7 @@ onAuthStateChanged(auth, async user => {
 
  loadAllProducts();
 });
-	const testimonials = document.querySelectorAll('.testimonial-grid blockquote');
-let index = 0;
 
-function showTestimonial(i) {
-  testimonials.forEach((t, idx) => {
-    t.classList.toggle('active', idx === i);
-  });
-}
-
-// Show first testimonial initially
-showTestimonial(index);
-
-// Auto-slide every 3 seconds
-setInterval(() => {
-  index = (index + 1) % testimonials.length;
-  showTestimonial(index);
-}, 3000);
       // Update year
       document.getElementById("year").textContent = new Date().getFullYear();
 	document.addEventListener('click', (e) => {
@@ -1372,8 +1337,7 @@ document.getElementById("imgPreview").onclick = function(e) {
 };
 
 
-	</script>
-	<script>
+	
 function addToCart(product) {
   if (!product || !product.name) return;
 
@@ -1411,6 +1375,57 @@ function updateCartDisplay() {
   if (cart.length > 0) cartIcon.classList.add('show');
   else cartIcon.classList.remove('show');
 }
+
+  const testimonialGrid = document.getElementById("testimonialGrid");
+
+  async function loadTestimonials() {
+    try {
+      const snapshot = await getDocs(collection(db, "testimonials"));
+      if (snapshot.empty) {
+        testimonialGrid.innerHTML = `<p style="color:#666;">No testimonials yet.</p>`;
+        return;
+      }
+
+      const testimonials = [];
+      snapshot.forEach(doc => testimonials.push(doc.data()));
+
+      testimonials.forEach(t => {
+        const block = document.createElement("blockquote");
+        block.innerHTML = `
+          <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+            <img src="${t.photoURL || 'https://i.postimg.cc/XYNFYy52/A1BCF7DE-62DD-4F55-8613-FAA324A9AD70.jpg'}" 
+                 alt="${t.name || 'User'}" 
+                 style="width:60px;height:60px;border-radius:50%;object-fit:cover;">
+            <p style="font-style:italic;color:#333;">“${t.text || ''}”</p>
+            <b>${t.name || 'Anonymous'}</b>
+            <span style="color:gold;">${"⭐".repeat(t.rating || 0)}</span>
+          </div>
+        `;
+        testimonialGrid.appendChild(block);
+      });
+
+      // Auto slide (optional)
+      const blocks = testimonialGrid.querySelectorAll("blockquote");
+      let index = 0;
+
+      function showTestimonial(i) {
+        blocks.forEach((b, idx) => b.style.display = idx === i ? "block" : "none");
+      }
+
+      showTestimonial(index);
+
+      setInterval(() => {
+        index = (index + 1) % blocks.length;
+        showTestimonial(index);
+      }, 3000);
+    } catch (err) {
+      console.error("Error loading testimonials:", err);
+      testimonialGrid.innerHTML = `<p style="color:red;">Failed to load testimonials.</p>`;
+    }
+  }
+
+  loadTestimonials();
+
 </script>
 <script>
 const searchInput = document.querySelector('.input__search');
@@ -1493,6 +1508,8 @@ function resetSearch() {
 }
 
 </script>
+<script>
+
 	<!--StartofTawk.toScript-->
 	<script type="text/javascript"> 
 		var Tawk_API=Tawk_API||{},
