@@ -22,9 +22,9 @@
       background: rgba(255, 255, 255, 0.1);
       padding: 40px 30px;
       border-radius: 20px;
-              border: solid 5px rgb(255, 255, 255, 0.1);
-        backdrop-filter: blur(25px);
-	box-shadow: 0px 0px 30px 20px rgb(0,0,0,0.1);
+      border: solid 5px rgb(255, 255, 255, 0.1);
+      backdrop-filter: blur(25px);
+      box-shadow: 0px 0px 30px 20px rgb(0,0,0,0.1);
       max-width: 90%;
       backdrop-filter: blur(15px);
     }
@@ -57,11 +57,195 @@
       background-color: cyan;
       box-shadow: 0 5px 15px rgba(0,0,0,0.3);
       transition: transform 0.2s ease, background 0.2s;
+      cursor: pointer;
     }
 
     .btn:hover {
       background: #00a9b3;
       transform: scale(1.05);
+    }
+
+    /* 🌟 Popup feedback modal */
+    .feedback-modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(5px);
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      z-index: 10;
+    }
+
+    .feedback-modal.active {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .feedback-box {
+      background: white;
+      color: black;
+      padding: 25px;
+      border-radius: 15px;
+      width: 300px;
+      text-align: center;
+      animation: pop 0.3s ease;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+.rating {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 0.3rem;
+  --stroke: #666;
+  --fill: #ffc73a;
+        justify-content: center;
+      align-items: center;
+}
+
+.rating input {
+  appearance: unset;
+}
+
+.rating label {
+  cursor: pointer;
+}
+
+.rating svg {
+  width: 2rem;
+  height: 2rem;
+  overflow: visible;
+  fill: transparent;
+  stroke: var(--stroke);
+  stroke-linejoin: bevel;
+  stroke-dasharray: 12;
+  animation: idle 4s linear infinite;
+  transition: stroke 0.2s, fill 0.5s;
+}
+
+@keyframes idle {
+  from {
+    stroke-dashoffset: 24;
+  }
+}
+
+.rating label:hover svg {
+  stroke: var(--fill);
+}
+
+.rating input:checked ~ label svg {
+  transition: 0s;
+  animation: idle 4s linear infinite, yippee 0.75s backwards;
+  fill: var(--fill);
+  stroke: var(--fill);
+  stroke-opacity: 0;
+  stroke-dasharray: 0;
+  stroke-linejoin: miter;
+  stroke-width: 8px;
+}
+
+@keyframes yippee {
+  0% {
+    transform: scale(1);
+    fill: var(--fill);
+    fill-opacity: 0;
+    stroke-opacity: 1;
+    stroke: var(--stroke);
+    stroke-dasharray: 10;
+    stroke-width: 1px;
+    stroke-linejoin: bevel;
+  }
+
+  30% {
+    transform: scale(0);
+    fill: var(--fill);
+    fill-opacity: 0;
+    stroke-opacity: 1;
+    stroke: var(--stroke);
+    stroke-dasharray: 10;
+    stroke-width: 1px;
+    stroke-linejoin: bevel;
+  }
+
+  30.1% {
+    stroke: var(--fill);
+    stroke-dasharray: 0;
+    stroke-linejoin: miter;
+    stroke-width: 8px;
+  }
+
+  60% {
+    transform: scale(1.2);
+    fill: var(--fill);
+  }
+}
+
+
+    textarea {
+      width: 100%;
+      height: 60px;
+      border-radius: 10px;
+      padding: 8px;
+      margin-top: 10px;
+      resize: none;
+    }
+
+    .modal-buttons {
+      margin-top: 15px;
+    }
+
+    .modal-buttons button {
+      margin: 0 8px;
+      padding: 8px 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .submit-btn {
+      background: #00b7d4;
+      color: white;
+    }
+
+    .skip-btn {
+      background: #ddd;
+    }
+
+    /* Loader */
+    .loader {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 99;
+    }
+    .loader.active {
+      visibility: visible;
+      opacity: 1;
+    }
+    .spinner {
+      width: 50px; height: 50px;
+      border: 6px solid #fff;
+      border-top: 6px solid #00b7d4;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
   </style>
 </head>
@@ -72,29 +256,178 @@
     <p>Order ID: <span class="order-id" id="orderId">Loading...</span></p>
     
     <div>
-  <a href="/receipt/" id="viewReceipt" class="btn">📄 View Receipt</a>	
-      <a href="/" id="homeBtn" class="btn">🏠 Return Home</a>
+      <a id="viewReceipt" class="btn">📄 View Receipt</a>	
+      <a id="homeBtn" class="btn">🏠 Return Home</a>
     </div>
   </div>
 
-  <script>
-    // Get orderId from URL or localStorage
+  <!-- 🌟 Feedback Modal -->
+  <div class="feedback-modal" id="feedbackModal">
+    <div class="feedback-box">
+      <h3>How was your shopping experience?</h3>
+<!-- From Uiverse.io by SelfMadeSystem --> 
+<div class="rating" id="starRating">
+  <input type="radio" id="star-1" name="star-radio" value="star-1">
+  <label for="star-1">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path pathLength="360" d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"></path></svg>
+  </label>
+  <input type="radio" id="star-2" name="star-radio" value="star-1">
+  <label for="star-2">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path pathLength="360" d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"></path></svg>
+  </label>
+  <input type="radio" id="star-3" name="star-radio" value="star-1">
+  <label for="star-3">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path pathLength="360" d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"></path></svg>
+  </label>
+  <input type="radio" id="star-4" name="star-radio" value="star-1">
+  <label for="star-4">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path pathLength="360" d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"></path></svg>
+  </label>
+  <input type="radio" id="star-5" name="star-radio" value="star-1">
+  <label for="star-5">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path pathLength="360" d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"></path></svg>
+  </label>
+</div>
+      <textarea id="feedbackText" placeholder="Leave a short comment (optional)"></textarea>
+      <div class="modal-buttons">
+        <button class="submit-btn" id="submitFeedback">Submit</button>
+        <button class="skip-btn" id="skipFeedback">Skip</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loader -->
+  <div class="loader" id="loader">
+    <div class="spinner"></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import { 
+      getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs 
+    } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+    import { 
+      getAuth, onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+      authDomain: "bixmax-6c24c.firebaseapp.com",
+      projectId: "bixmax-6c24c",
+      storageBucket: "bixmax-6c24c.appspot.com",
+      messagingSenderId: "37740442541",
+      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
     const params = new URLSearchParams(window.location.search);
-    let orderId = params.get("orderId") || localStorage.getItem("latestOrderId");
+    const orderId = params.get("orderId") || localStorage.getItem("latestOrderId");
+    const orderEl = document.getElementById("orderId");
+    const viewBtn = document.getElementById("viewReceipt");
+    const homeBtn = document.getElementById("homeBtn");
+    const loader = document.getElementById("loader");
 
     if (!orderId) {
-      document.getElementById("orderId").textContent = "Unavailable";
-      document.getElementById("viewReceipt").style.display = "none";
+      orderEl.textContent = "Unavailable";
+      viewBtn.style.display = "none";
     } else {
-      document.getElementById("orderId").textContent = orderId;
-      document.getElementById("viewReceipt").href = "/receipt/?orderId=" + orderId;
+      orderEl.textContent = orderId;
+    }
+
+    let targetUrl = "";
+
+    [viewBtn, homeBtn].forEach(btn => {
+      btn.addEventListener("click", async e => {
+        e.preventDefault();
+        targetUrl = btn === viewBtn ? `/receipt/?orderId=${orderId}` : "/";
+        loader.classList.add("active");
+
+        onAuthStateChanged(auth, async user => {
+          if (!user) {
+            // not signed in → go directly
+            loader.classList.remove("active");
+            redirect();
+          } else {
+            // check if user already wrote review
+            const q = query(collection(db, "testimonials"), where("email", "==", user.email));
+            const snap = await getDocs(q);
+            loader.classList.remove("active");
+
+            if (snap.empty) {
+              // show modal
+              document.getElementById("feedbackModal").classList.add("active");
+            } else {
+              // already reviewed → skip
+              redirect();
+            }
+          }
+        });
+      });
+    });
+
+    // ⭐ rating logic
+const stars = document.querySelectorAll("#starRating label");
+let rating = 0;
+
+// Because of row-reverse, we need to count backward
+stars.forEach((s, i) => {
+  s.addEventListener("click", () => {
+    rating = stars.length - i; // 5 - i → corrects reverse order
+    stars.forEach((st, idx) => {
+      st.classList.toggle("active", idx >= i); // highlight correct stars
+    });
+  });
+});
+
+
+    // Submit feedback
+    document.getElementById("submitFeedback").addEventListener("click", async () => {
+      loader.classList.add("active");
+      const text = document.getElementById("feedbackText").value.trim();
+      const user = auth.currentUser;
+      if (!user) return redirect();
+if (rating > 0 || text) {
+  // 🟢 Get user profile from Firestore
+  const userDoc = await getDocs(query(collection(db, "users"), where("email", "==", user.email)));
+  let photoURL = "";
+  let name = user.displayName || "Anonymous";
+
+  if (!userDoc.empty) {
+    const userData = userDoc.docs[0].data();
+    photoURL = userData.photoURL || "";
+    name = userData.displayName || name;
+  }
+
+  // 🟢 Save testimonial with photoURL from Firestore
+  await addDoc(collection(db, "testimonials"), {
+    email: user.email,
+    name,
+    photoURL,
+    rating,
+    text,
+    createdAt: serverTimestamp()
+  });
+}
+
+   
+      loader.classList.remove("active");
+      redirect();
+    });
+
+    // Skip feedback
+    document.getElementById("skipFeedback").addEventListener("click", redirect);
+
+    function redirect() {
+      document.getElementById("feedbackModal").classList.remove("active");
+      setTimeout(() => {
+        localStorage.removeItem("cart");
+        localStorage.removeItem("grandTotal");
+        window.location.href = targetUrl;
+      }, 500);
     }
   </script>
-	<script>
-  document.getElementById("homeBtn").addEventListener("click", function () {
-    localStorage.removeItem("cart");
-    localStorage.removeItem("grandTotal");
-  });
-</script>
 </body>
 </html>
