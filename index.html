@@ -1589,110 +1589,93 @@ function resetSearch() {
   allProducts.forEach(card => (card.style.display = 'block'));
   noResults.style.display = 'none';
 }
- const notifContainer = document.getElementById("notificationContainer");
-  const notifBtn = document.getElementById("notifBtn");
-  const notifCount = document.getElementById("notifCount");
-  const notifModal = document.getElementById("notifModal");
-  const notifList = document.getElementById("notifList");
+const notifBtn = document.getElementById("notifBtn");
+const notifCount = document.getElementById("notifCount");
+const notifModal = document.getElementById("notifModal");
+const notifList = document.getElementById("notifList");
+const notifContainer = document.getElementById("notificationContainer");
 
-  let notifications = [];
+let notifications = [];
+let currentUser = null;
 
-  // Toggle notification modal
-  notifBtn.addEventListener("click", () => {
-    notifModal.style.display = notifModal.style.display === "block" ? "none" : "block";
-  });
+// Toggle notification modal
+notifBtn.addEventListener("click", () => {
+  notifModal.style.display = notifModal.style.display === "block" ? "none" : "block";
+});
 
-  // ✅ Listen for user auth state
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      // Only show container for signed-in users
-      notifContainer.style.display = "block";
-      await loadNotifications(user);
-      // Poll every 10 seconds
-      setInterval(() => loadNotifications(user), 10000);
-    } else {
-      // Hide everything if not signed in
-      notifContainer.style.display = "none";
-      notifModal.style.display = "none";
-    }
-  });
+// Check auth and load notifications
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentUser = user;
+    await loadNotifications(user.uid, user.email);
+  } else {
+    notifContainer.style.display = "none"; // hide if not signed in
+  }
+});
 
-  // 📨 Fetch notifications for the current user
-  async function loadNotifications(user) {
-    try {
-      // Match both uid and email
-      const notifQuery = query(
-        collection(db, "notifications"),
-        where("uid", "==", user.uid),
-        where("email", "==", user.email),
-        orderBy("timestamp", "desc")
-      );
+// Load notifications filtered by uid + email
+async function loadNotifications(uid, email) {
+  try {
+    const userQuery = query(
+      collection(db, "notifications"),
+      where("uid", "==", uid),
+      where("email", "==", email),
+      orderBy("timestamp", "desc")
+    );
+    const snapshot = await getDocs(userQuery);
+    notifications = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-      const snapshot = await getDocs(notifQuery);
-      notifications = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    displayNotifications();
+  } catch (err) {
+    console.error("Failed to load notifications:", err);
+  }
+}
 
-      displayNotifications();
-    } catch (err) {
-      console.error("Failed to load notifications:", err);
-    }
+// Display notifications
+function displayNotifications() {
+  notifList.innerHTML = "";
+
+  const unreadCount = notifications.filter(n => !n.read).length;
+
+  if (notifications.length === 0 || unreadCount === 0) {
+    notifContainer.style.display = "none"; // hide if no unread
+    notifModal.style.display = "none"; // also hide modal
+    return;
   }
 
-  // 💬 Display notifications
-  function displayNotifications() {
-    notifList.innerHTML = "";
+  notifContainer.style.display = "block"; // show if signed in and has unread
 
-    // Hide container if no notifications
-    if (notifications.length === 0) {
-      notifList.innerHTML = `<p style="color:#555;">No notifications at the moment.</p>`;
-      notifCount.style.display = "none";
-      return;
-    }
+  notifications.forEach(notif => {
+    const div = document.createElement("div");
+    div.style.padding = "8px";
+    div.style.borderBottom = "1px solid #eee";
+    div.style.cursor = "pointer";
+    div.style.background = notif.read ? "#f9f9f9" : "#e0f7fa";
+    div.style.borderRadius = "24px";
+    div.innerHTML = `<strong>${notif.orderId}</strong><p style="margin:4px 0;border-radius:20px;">${notif.message}</p>`;
 
-    // Create each notification
-    notifications.forEach(notif => {
-      const div = document.createElement("div");
-      div.style.padding = "8px";
-      div.style.borderBottom = "1px solid #eee";
-      div.style.cursor = "pointer";
-      div.style.background = notif.read ? "#f9f9f9" : "#e0f7fa";
-      div.style.borderRadius = "24px";
-      div.innerHTML = `
-        <strong>${notif.orderId || "Order"}</strong>
-        <p style="margin:4px 0;border-radius:20px;">${notif.message}</p>
-      `;
-
-      // Mark as read when clicked
-      div.addEventListener("click", () => {
-        if (!notif.read) markAsRead(notif.id);
-      });
-
-      notifList.appendChild(div);
+    div.addEventListener("click", () => {
+      if (!notif.read) markAsRead(notif.id);
     });
 
-    // 🧮 Update count
-    const unreadCount = notifications.filter(n => !n.read).length;
-    notifCount.textContent = unreadCount;
-    notifCount.style.display = unreadCount > 0 ? "block" : "none";
+    notifList.appendChild(div);
+  });
 
-    // 🫥 Hide the whole thing if all are read
-    if (unreadCount === 0) {
-      notifModal.style.display = "none";
-      notifCount.style.display = "none";
-    }
-  }
+  notifCount.textContent = unreadCount;
+  notifCount.style.display = "block";
+}
 
-  // ✅ Mark as read
-  async function markAsRead(notifId) {
-    try {
-      await updateDoc(doc(db, "notifications", notifId), { read: true });
-      notifications = notifications.map(n =>
-        n.id === notifId ? { ...n, read: true } : n
-      );
-      displayNotifications();
-    } catch (err) {
-      console.error("Failed to mark as read:", err);
-    }
+// Mark notification as read
+async function markAsRead(notifId) {
+  try {
+    await updateDoc(doc(db, "notifications", notifId), { read: true });
+    notifications = notifications.map(n => n.id === notifId ? { ...n, read: true } : n);
+    displayNotifications();
+  } catch (err) {
+    console.error("Failed to mark as read:", err);
   }
+}
+
 	// Optional: Poll Firestore every X seconds for new notifications 
 	setInterval(loadNotifications, 1000); // refresh every 30 seconds 
 	
