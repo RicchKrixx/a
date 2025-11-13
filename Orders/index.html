@@ -398,7 +398,7 @@ const STATUS_MESSAGES = {
   "Ontheway": "🚚 Your order is on the way! It should reach you shortly. Track it for updates.",
   "Delivered": "📦 Your order has been delivered! We hope you enjoy it.",
   "Complete": "✅ Your order is complete. Thank you for shopping with us!",
-  "Cancelled": "❌ Your order has been cancelled. If this is unexpected, please contact support."
+  "cancelled": "❌ Your order has been cancelled. If this is unexpected, please contact support."
 };
 
 // Advance status button
@@ -417,10 +417,10 @@ async function advanceStatus(orderId, newStatus) {
     const doc = await db.collection("orders").doc(orderId).get();
     const data = doc.data();
     const email = data?.email || "N/A";
-    const email = data?.userId || "N/A";
+    const email = data?.uid || "N/A";
 
     // 3️⃣ Create notification
-    await createNotification(orderId, userId, email, newStatus);
+    await createNotification(orderId, uid, email, newStatus);
 
   } catch (err) {
     console.error("Failed to advance status:", err);
@@ -431,12 +431,12 @@ async function advanceStatus(orderId, newStatus) {
 // Create notification in top-level 'notifications' collection
 async function createNotification(orderId, email, status) {
   const message = STATUS_MESSAGES[status] || `Order ${orderId} status updated to ${status}`;
-  console.log("Creating notification:", { orderId, userId, email, status, message });
+  console.log("Creating notification:", { orderId, uid, email, status, message });
 
   try {
     const docRef = await db.collection("notifications").add({
       orderId,
-      userId,
+      uid,
       email,
       status,
       message,
