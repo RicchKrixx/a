@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta property="og:title" content="BixMAX Online Shop" />
 <meta property="og:description" content="Shop the best fashion, groceries, and more at BixMAX." />
 <meta property="og:image" content="https://i.postimg.cc/xdDHJfy0/grok-image-47idy2-2.jpg" />
@@ -1693,6 +1693,11 @@ function resetSearch() {
       console.error("Failed to mark as read:", err);
     }
   }
+	// Optional: Poll Firestore every X seconds for new notifications 
+	setInterval(loadNotifications, 1000); // refresh every 30 seconds 
+	
+	// Load notifications on page load 
+		loadNotifications();
 </script>
 
 	<!--StartofTawk.toScript-->
