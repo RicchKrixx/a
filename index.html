@@ -1314,7 +1314,6 @@ async function loadProducts(category, containerId) {
     return allProducts;
   }
 
-
 onAuthStateChanged(auth, async user => {
   const profileImg = document.getElementById('menuProfileImg');
   const userName = document.getElementById('menuUserName');
@@ -1324,35 +1323,51 @@ onAuthStateChanged(auth, async user => {
 
   const defaultImg = "https://www.svgrepo.com/show/384674/account-avatar-profile-user-11.svg";
 
-  if (user) {
-    try {
-      const userRef = doc(db, "users", user.uid);
-      const snap = await getDoc(userRef);
-      const data = snap.exists() ? snap.data() : {};
-
-      const finalImg = data.photoURL || user.photoURL || defaultImg;
-
-      profileImg.style.backgroundImage = `url('${finalImg}')`;
-      userName.textContent = data.displayName || user.displayName || user.email.split("@")[0];
-      userEmail.textContent = user.email;
-      authBtn.textContent = "🚪 Logout";
-      dashboardLink.style.display = "block";
-      authBtn.onclick = () => signOut(auth);
-    } catch (err) {
-      console.error("Failed to load profile:", err);
-      profileImg.style.backgroundImage = `url('${defaultImg}')`;
-      userName.textContent = user.email.split("@")[0];
-      userEmail.textContent = user.email;
-    }
-  } else {
+  if (!user) {
     profileImg.style.backgroundImage = `url('${defaultImg}')`;
     userName.textContent = "Guest";
     userEmail.textContent = "";
     authBtn.textContent = "🔐 Sign In";
     dashboardLink.style.display = "none";
     authBtn.onclick = () => window.location.href = "/auth/";
+    return;
+  }
+
+  try {
+    // ⭐ NEW LOGIC: use dynamic doc lookup
+    const userRef = await getUserDocRef(user);
+    const snap = await getDoc(userRef);
+
+    const data = snap.exists() ? snap.data() : {};
+
+    // pick image
+    const finalImg =
+      data.photoURL ||
+      user.photoURL ||
+      defaultImg;
+
+    // apply to UI
+    profileImg.style.backgroundImage = `url('${finalImg}')`;
+    userName.textContent =
+      data.displayName ||
+      user.displayName ||
+      user.email.split("@")[0];
+
+    userEmail.textContent = user.email;
+    authBtn.textContent = "🚪 Logout";
+    dashboardLink.style.display = "block";
+    authBtn.onclick = () => signOut(auth);
+
+  } catch (err) {
+    console.error("Failed to load profile:", err);
+
+    // fallback display
+    profileImg.style.backgroundImage = `url('${defaultImg}')`;
+    userName.textContent = user.email.split("@")[0];
+    userEmail.textContent = user.email;
   }
 });
+
 
   window.addEventListener('DOMContentLoaded', async () => {
     if (!localStorage.getItem('bixmax_has_visited')) {
