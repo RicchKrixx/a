@@ -534,7 +534,7 @@ timestamps: {
 }; 
   // Attach userId if logged in  
   if(currentUser){  
-    order.userId = currentUser.uid;  
+    order.uid = currentUser.uid;  
     if(!order.email) order.email = currentUser.email;  
   }  
   
