@@ -398,7 +398,7 @@ const STATUS_MESSAGES = {
   "Ontheway": "🚚 Your order is on the way! It should reach you shortly. Track it for updates.",
   "Delivered": "📦 Your order has been delivered! We hope you enjoy it.",
   "Complete": "✅ Your order is complete. Thank you for shopping with us!",
-  "cancelled": "❌ Your order has been cancelled. If this is unexpected, please contact support."
+  "Cancelled": "❌ Your order has been cancelled. If this is unexpected, please contact support."
 };
 
 // Advance status button
@@ -417,10 +417,9 @@ async function advanceStatus(orderId, newStatus) {
     const doc = await db.collection("orders").doc(orderId).get();
     const data = doc.data();
     const email = data?.email || "N/A";
-    const email = data?.uid || "N/A";
 
     // 3️⃣ Create notification
-    await createNotification(orderId, uid, email, newStatus);
+    await createNotification(orderId, email, newStatus);
 
   } catch (err) {
     console.error("Failed to advance status:", err);
@@ -431,25 +430,33 @@ async function advanceStatus(orderId, newStatus) {
 // Create notification in top-level 'notifications' collection
 async function createNotification(orderId, email, status) {
   const message = STATUS_MESSAGES[status] || `Order ${orderId} status updated to ${status}`;
-  console.log("Creating notification:", { orderId, uid, email, status, message });
+  console.log("Creating notification:", { orderId, email, status, message });
 
   try {
+    // Read order to get UID
+    const orderDoc = await db.collection("orders").doc(orderId).get();
+    const orderData = orderDoc.data();
+
+    const uid = orderData?.uid || null;
+
     const docRef = await db.collection("notifications").add({
+      uid: uid,   // 🔥 SAVING UID
       orderId,
-      uid,
       email,
       status,
       message,
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       read: false
     });
-    console.log("Notification successfully created with ID:", docRef.id);
+
+    console.log("Notification created with UID:", uid);
 
   } catch (err) {
     console.error("Failed to create notification:", err);
     alert("Failed to create notification: " + err.message);
   }
 }
+
 
 </script>
 
