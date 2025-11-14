@@ -195,7 +195,7 @@ hr{border:0;border-top:1px solid var(--border);margin:14px 0}
       getAuth, onAuthStateChanged, signOut, deleteUser 
     } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
     import { 
-      getFirestore, collection, query, where, getDocs, orderBy, limit 
+      getFirestore, collection, query, where, getDocs, doc, orderBy, limit 
     } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
     // ✅ Your OGB Firebase config (same as homepage)
@@ -293,7 +293,6 @@ hr{border:0;border-top:1px solid var(--border);margin:14px 0}
     statusFilterEl.addEventListener('change', applyFilters);
 
        // ------- Profile picture (ImgBB + Firestore)
-    import { collection, query, where, getDocs, doc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 async function getUserDocRef(user) {
   const q = query(
