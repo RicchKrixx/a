@@ -195,7 +195,7 @@ hr{border:0;border-top:1px solid var(--border);margin:14px 0}
       getAuth, onAuthStateChanged, signOut, deleteUser 
     } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
     import { 
-      getFirestore, collection, query, where, getDocs, doc, orderBy, limit 
+      getFirestore, collection, query, where, setDoc, getDocs, doc, orderBy, limit 
     } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
     // ✅ Your OGB Firebase config (same as homepage)
@@ -361,6 +361,26 @@ async function loadUserProfile(user) {
     avatarFallback.style.display = "flex";
   }
 }
+ picInput.addEventListener("change", async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      const user = auth.currentUser;
+      if (!user) return alert("Please sign in first.");
+
+      try {
+        const url = await uploadToImgBB(file);
+        await saveProfilePicToFirestore(user, url);
+        avatar.src = url;
+        avatar.style.display = "block";
+        avatarFallback.style.display = "none";
+        alert("Profile picture updated successfully!");
+      } catch (err) {
+        console.error(err);
+        alert("Failed to upload: " + err.message);
+      }
+      e.target.value = ""; // reset chooser
+    });
 
 window.removePicture = async () => {
   const user = auth.currentUser;
