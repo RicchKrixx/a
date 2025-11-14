@@ -162,54 +162,63 @@ margin-bottom: 10px;
 
 }
 /*==========================*/
-.testimonial-grid {
-  width: 350px;
-  margin: 0 auto;
+
+.testimonial-container {
+  width: 100%;
+  overflow: hidden;
+  padding: 10px 0;
 }
 
-.testimonial-grid blockquote {
-  display: none;
-  background-color: #eee;
-  font-size: 14px;
-  font-style: italic;
+.testimonial-track {
+  display: flex;
+  gap: 20px;
+  animation: slideRight 25s linear infinite;
+}
+
+.testimonial-item {
+  min-width: 260px;
   padding: 15px;
+  background: #eee;
   border-left: 6px solid #ffcc00;
   border-radius: 20px;
+  box-sizing: border-box;
+  font-style: italic;
+  font-size: 14px;
 }
 
-.testimonial-grid blockquote.active {
-  display: block;
-}
-
-.testimonial-grid .header {
+.testimonial-header {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 8px;
 }
 
-.testimonial-grid img {
-  width: 50px;
-  height: 50px;
+.testimonial-header img {
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
-  object-fit: cover;
   border: 2px solid #00b7d4;
+  object-fit: cover;
 }
 
-.testimonial-grid .name {
+.testimonial-name {
   font-weight: bold;
   color: #333;
   font-size: 14px;
 }
 
-.testimonial-grid .text {
-  color: #333;
-  margin: 6px 0;
+.stars {
+  color: gold;
+  margin-top: 4px;
 }
 
-.testimonial-grid .stars {
-  color: gold;
-  font-size: 16px;
+/* Infinite slide animation */
+@keyframes slideRight {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-50%));
+  }
 }
 
 
@@ -1050,7 +1059,7 @@ h2::before,
       <span id="notifCount" style="
         position:absolute;
         top:2px;
-        right:4px;
+        right:3px;
         background:red;
         color:white;
         font-size:12px;
@@ -1067,12 +1076,18 @@ h2::before,
     position:fixed;
     top:70px;
     right:20px;
-    background:white;
+    background-color: #999cff;
+  background-image: radial-gradient(at 85% 51%, hsla(60,60%,61%,1) 0px, transparent 50%),
+    radial-gradient(at 74% 68%, hsla(235,69%,77%,1) 0px, transparent 50%),
+    radial-gradient(at 64% 79%, hsla(284,72%,73%,1) 0px, transparent 50%),
+    radial-gradient(at 75% 16%, hsla(283,60%,72%,1) 0px, transparent 50%),
+    radial-gradient(at 90% 65%, hsla(153,70%,64%,1) 0px, transparent 50%),
+    radial-gradient(at 91% 83%, hsla(283,74%,69%,1) 0px, transparent 50%),
+    radial-gradient(at 72% 91%, hsla(213,75%,75%,1) 0px, transparent 50%);
     width:300px;
     max-height:400px;
     overflow-y:auto;
-    box-shadow:0 0 15px rgba(0,0,0,0.2);
-    border-radius:10px;
+    border-radius:24px;
     display:none;
     z-index:1001;
     padding:10px;
@@ -1091,8 +1106,11 @@ h2::before,
   <img class="preview-content" id="previewImg">
 </div>
 <section class="testimonials">
-  <div class="testimonial-grid" id="testimonialGrid"></div>
+  <div class="testimonial-container">
+    <div class="testimonial-track" id="testimonialTrack"></div>
+  </div>
 </section>
+
 </div>
 </div>
 
@@ -1400,76 +1418,7 @@ onAuthStateChanged(auth, async user => {
 
  loadAllProducts();
 });
-const testimonialGrid = document.getElementById("testimonialGrid");
 
-async function loadTestimonials() {
-  try {
-    const snapshot = await getDocs(collection(db, "testimonials"));
-    if (snapshot.empty) {
-      testimonialGrid.innerHTML = `<p style="color:#666;">No testimonials yet.</p>`;
-      return;
-    }
-
-    const testimonials = [];
-    snapshot.forEach(doc => testimonials.push(doc.data()));
-
-    testimonials.forEach(t => {
-      const block = document.createElement("blockquote");
-      block.innerHTML = `
-        <div class="header" style="display:flex;align-items:center;gap:10px;margin-bottom:5px;">
-          <img src="${t.photoURL || 'https://i.postimg.cc/XYNFYy52/A1BCF7DE-62DD-4F55-8613-FAA324A9AD70.jpg'}"
-               alt="${t.name || 'User'}"
-               style="width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid #00b7d4;">
-          <span class="name" style="font-weight:bold;color:#333;">${t.name || 'Anonymous'}</span>
-        </div>
-        <p class="text" style="font-style:italic;color:#444;margin:8px 0;">“${t.text || ''}”</p>
-        <div class="stars" style="color:gold;">${"⭐".repeat(t.rating || 0)}</div>
-      `;
-      testimonialGrid.appendChild(block);
-    });
-
-    // ✨ Unique random fade rotation
-    const blocks = testimonialGrid.querySelectorAll("blockquote");
-    let currentIndex = -1;
-
-    function showRandomTestimonial() {
-      if (currentIndex >= 0) {
-        const current = blocks[currentIndex];
-        current.style.opacity = 0;
-        setTimeout(() => (current.style.display = "none"), 400);
-      }
-
-      let nextIndex;
-      do {
-        nextIndex = Math.floor(Math.random() * blocks.length);
-      } while (nextIndex === currentIndex && blocks.length > 1);
-
-      const next = blocks[nextIndex];
-      next.style.display = "block";
-      setTimeout(() => (next.style.opacity = 1), 10);
-      currentIndex = nextIndex;
-    }
-
-    if (blocks.length > 0) {
-      blocks.forEach(b => {
-        b.style.transition = "opacity 0.5s ease";
-        b.style.opacity = 0;
-        b.style.display = "none";
-      });
-      showRandomTestimonial();
-      setInterval(showRandomTestimonial, 4000);
-    }
-
-  } catch (err) {
-    console.error("Error loading testimonials:", err);
-    testimonialGrid.innerHTML = `<p style="color:red;">Error loading testimonials.</p>`;
-  }
-}
-
-// ✅ Call the function outside
-loadTestimonials();
-
- 
 	
       // Update year
       document.getElementById("year").textContent = new Date().getFullYear();
@@ -1502,6 +1451,46 @@ document.getElementById("imgPreview").onclick = function(e) {
 		
 
 
+
+async function loadTestimonials() {
+  const track = document.getElementById("testimonialTrack");
+
+  try {
+    const snapshot = await getDocs(collection(db, "testimonials"));
+    const testimonials = [];
+
+    snapshot.forEach(doc => testimonials.push(doc.data()));
+
+    if (testimonials.length === 0) {
+      track.innerHTML = `<p>No testimonials yet.</p>`;
+      return;
+    }
+
+    // Generate the items twice to create seamless infinite loop
+    const doubled = [...testimonials, ...testimonials];
+
+    doubled.forEach(t => {
+      const item = document.createElement("div");
+      item.className = "testimonial-item";
+
+      item.innerHTML = `
+        <div class="testimonial-header">
+          <img src="${t.photoURL || 'https://i.postimg.cc/XYNFYy52/A1BCF7DE-62DD-4F55-8613-FAA324A9AD70.jpg'}">
+          <span class="testimonial-name">${t.name || 'User'}</span>
+        </div>
+        <p>“${t.text || ''}”</p>
+        <div class="stars">${"⭐".repeat(t.rating || 0)}</div>
+      `;
+
+      track.appendChild(item);
+    });
+  } catch (err) {
+    console.error(err);
+    track.innerHTML = `<p style="color:red;">Error loading testimonials</p>`;
+  }
+}
+
+loadTestimonials();
 
 	</script>
 	<script>
