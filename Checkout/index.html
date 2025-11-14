@@ -554,10 +554,24 @@ const saveAndRedirect = async () => {
     // Save using custom ID as document ID
     await db.collection("orders").doc(customId).set(order);
 
-    // Save user info for next checkout
 if (currentUser) {
-  const userRef = db.collection("users").doc(currentUser.uid);
+  const userQuery = await db.collection("users")
+    .where("uid", "==", currentUser.uid)
+    .limit(1)
+    .get();
+
+  let userRef;
+
+  if (!userQuery.empty) {
+    // User document found → update it
+    userRef = userQuery.docs[0].ref;
+  } else {
+    // No document found → create one with your own auto ID
+    userRef = db.collection("users").doc();
+  }
+
   await userRef.set({
+    uid: currentUser.uid,
     name: order.name,
     phone: order.phone,
     email: order.email,
