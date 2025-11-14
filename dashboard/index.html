@@ -293,7 +293,23 @@ hr{border:0;border-top:1px solid var(--border);margin:14px 0}
     statusFilterEl.addEventListener('change', applyFilters);
 
        // ------- Profile picture (ImgBB + Firestore)
-    import { doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { collection, query, where, getDocs, doc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+async function getUserDocRef(user) {
+  const q = query(
+    collection(db, "users"),
+    where("uid", "==", user.uid)
+  );
+
+  const snap = await getDocs(q);
+
+  if (!snap.empty) {
+    return snap.docs[0].ref; // return existing doc
+  }
+
+  // no document found → create one with auto ID
+  return doc(collection(db, "users"));
+}
 
     const IMGBB_API_KEY = "4778722b6cb7fffaf637e09bde8407ea"; // ⬅️ Replace with your own key
 
@@ -310,74 +326,59 @@ hr{border:0;border-top:1px solid var(--border);margin:14px 0}
       return data.data.url; // ✅ Direct image URL
     }
 
-    async function saveProfilePicToFirestore(user, url) {
-      const userRef = doc(db, "users", user.uid);
-      await setDoc(
-        userRef,
-        {
-          displayName: user.displayName || "",
-          email: user.email,
-          photoURL: url,
-          updatedAt: new Date(),
-        },
-        { merge: true }
-      );
+  async function saveProfilePicToFirestore(user, url) {
+  const userRef = await getUserDocRef(user);
+
+  await setDoc(
+    userRef,
+    {
+      uid: user.uid,
+      displayName: user.displayName || "",
+      email: user.email,
+      photoURL: url,
+      updatedAt: new Date(),
+    },
+    { merge: true }
+  );
+}
+
+async function loadUserProfile(user) {
+  const userRef = await getUserDocRef(user);
+  const snap = await getDoc(userRef);
+
+  if (snap.exists()) {
+    const data = snap.data();
+
+    if (data.photoURL) {
+      avatar.src = data.photoURL;
+      avatar.style.display = "block";
+      avatarFallback.style.display = "none";
+    } else {
+      avatar.style.display = "none";
+      avatarFallback.style.display = "flex";
     }
+  } else {
+    avatar.style.display = "none";
+    avatarFallback.style.display = "flex";
+  }
+}
 
-    async function loadUserProfile(user) {
-      const userRef = doc(db, "users", user.uid);
-      const snap = await getDoc(userRef);
-      if (snap.exists()) {
-        const data = snap.data();
-        if (data.photoURL) {
-          avatar.src = data.photoURL;
-          avatar.style.display = "block";
-          avatarFallback.style.display = "none";
-        } else {
-          avatar.style.display = "none";
-          avatarFallback.style.display = "flex";
-        }
-      } else {
-        avatar.style.display = "none";
-        avatarFallback.style.display = "flex";
-      }
-    }
+window.removePicture = async () => {
+  const user = auth.currentUser;
+  if (!user) return alert("Please sign in first.");
 
-    picInput.addEventListener("change", async (e) => {
-      const file = e.target.files?.[0];
-      if (!file) return;
+  const userRef = await getUserDocRef(user);
 
-      const user = auth.currentUser;
-      if (!user) return alert("Please sign in first.");
-
-      try {
-        const url = await uploadToImgBB(file);
-        await saveProfilePicToFirestore(user, url);
-        avatar.src = url;
-        avatar.style.display = "block";
-        avatarFallback.style.display = "none";
-        alert("Profile picture updated successfully!");
-      } catch (err) {
-        console.error(err);
-        alert("Failed to upload: " + err.message);
-      }
-      e.target.value = ""; // reset chooser
-    });
-
-    window.removePicture = async () => {
-      const user = auth.currentUser;
-      if (!user) return alert("Please sign in first.");
-      try {
-        const userRef = doc(db, "users", user.uid);
-        await updateDoc(userRef, { photoURL: null });
-        avatar.style.display = "none";
-        avatarFallback.style.display = "flex";
-        alert("Profile picture removed.");
-      } catch (err) {
-        console.error(err);
-        alert("Failed to remove: " + err.message);
-      }
-    };
+  try {
+    await updateDoc(userRef, { photoURL: null });
+    avatar.style.display = "none";
+    avatarFallback.style.display = "flex";
+    alert("Profile picture removed.");
+  } catch (err) {
+    console.error(err);
+    alert("Failed to remove: " + err.message);
+  }
+};
 
     // ------- Auth & Orders
     async function fetchOrdersForUser(user){
