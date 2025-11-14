@@ -1015,21 +1015,21 @@ h2::before,
 
 
 <!-- 🔔 Notification Button -->
-<div id="notificationContainer" style="position:fixed; top:20px; right:20px; z-index:1000; display:none;">
+<div id="notificationContainer" style="position:fixed; top:20px; right:20px; z-index:1000;">
   <button id="notifBtn" style="
-    background: transparent; 
-    border:none; 
-    border-radius:50%; 
-    width:45px; 
-    height:45px; 
-    cursor:pointer; 
-    position:relative; 
-    font-size: 30px;
+    background:#fff;
+    border:none;
+    border-radius:50%;
+    width:45px;
+    height:45px;
+    box-shadow:0 0 10px rgba(0,0,0,0.2);
+    cursor:pointer;
+    position:relative;
   ">
     🔔
     <span id="notifCount" style="
       position:absolute;
-      top:5px;
+      top:2px;
       right:4px;
       background:red;
       color:white;
@@ -1058,8 +1058,9 @@ h2::before,
   padding:10px;
 ">
   <h3 style="margin-bottom:10px;font-size:16px;">Notifications</h3>
-  <div id="notifList" style="display:flex;flex-direction:column;gap:10px;border-radius:20px;"></div>
+  <div id="notifList" style="display:flex;flex-direction:column;gap:10px;"></div>
 </div>
+
 
 
 
@@ -1438,6 +1439,75 @@ async function loadTestimonials() {
 
 // ✅ Call the function outside
 loadTestimonials();
+
+
+
+const notifBtn = document.getElementById("notifBtn");
+const notifCount = document.getElementById("notifCount");
+const notifModal = document.getElementById("notifModal");
+const notifList = document.getElementById("notifList");
+
+let notifications = [];
+
+// Toggle notification modal
+notifBtn.addEventListener("click", () => {
+  notifModal.style.display = notifModal.style.display === "block" ? "none" : "block";
+});
+
+// Fetch notifications from Firestore
+async function loadNotifications() {
+  try {
+    const notifQuery = query(
+      collection(db, "notifications"),
+      orderBy("timestamp", "desc")
+    );
+    const snapshot = await getDocs(notifQuery);
+    notifications = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    displayNotifications();
+  } catch (err) {
+    console.error("Failed to load notifications:", err);
+  }
+}
+
+// Display notifications in the modal
+function displayNotifications() {
+  notifList.innerHTML = "";
+  if (notifications.length === 0) {
+    notifList.innerHTML = `<p style="color:#555;">No notifications at the moment.</p>`;
+    notifCount.style.display = "none";
+    return;
+  }
+
+  notifications.forEach(notif => {
+    const div = document.createElement("div");
+    div.style.padding = "8px";
+    div.style.borderBottom = "1px solid #eee";
+    div.innerHTML = `<strong>${notif.orderId}</strong><p style="margin:4px 0;">${notif.message}</p>`;
+    notifList.appendChild(div);
+  });
+
+  // Update count
+  notifCount.textContent = notifications.length;
+  notifCount.style.display = notifications.length > 0 ? "block" : "none";
+}
+// Mark notification as read
+async function markAsRead(notifId) {
+  try {
+    await updateDoc(doc(db, "notifications", notifId), { read: true });
+    // Update local state
+    notifications = notifications.map(n => n.id === notifId ? { ...n, read: true } : n);
+    renderNotifications();
+  } catch (err) {
+    console.error("Failed to mark as read:", err);
+  }
+}
+// Optional: Poll Firestore every X seconds for new notifications
+setInterval(loadNotifications, 30000); // refresh every 30 seconds
+
+// Load notifications on page load
+loadNotifications();
+	
       // Update year
       document.getElementById("year").textContent = new Date().getFullYear();
 	document.addEventListener('click', (e) => {
@@ -1466,6 +1536,9 @@ document.querySelector("#imgPreview .close").onclick = function() {
 document.getElementById("imgPreview").onclick = function(e) {
   if (e.target === this) this.style.display = "none";
 };
+		
+
+
 
 	</script>
 	<script>
@@ -1592,100 +1665,7 @@ function resetSearch() {
   noResults.style.display = 'none';
 }
 </script>
-	<script>	
-const notifBtn = document.getElementById("notifBtn");
-const notifCount = document.getElementById("notifCount");
-const notifModal = document.getElementById("notifModal");
-const notifList = document.getElementById("notifList");
-const notifContainer = document.getElementById("notificationContainer");
 
-let notifications = [];
-let currentUser = null;
-
-// Toggle notification modal
-notifBtn.addEventListener("click", () => {
-  notifModal.style.display = notifModal.style.display === "block" ? "none" : "block";
-});
-
-// Check auth and load notifications
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    currentUser = user;
-    await loadNotifications(user.uid, user.email);
-  } else {
-    notifContainer.style.display = "none"; // hide if not signed in
-  }
-});
-
-// Load notifications filtered by uid + email
-async function loadNotifications(uid, email) {
-  try {
-    const userQuery = query(
-      collection(db, "notifications"),
-      where("uid", "==", uid),
-      where("email", "==", email),
-      orderBy("timestamp", "desc")
-    );
-    const snapshot = await getDocs(userQuery);
-    notifications = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-    displayNotifications();
-  } catch (err) {
-    console.error("Failed to load notifications:", err);
-  }
-}
-
-// Display notifications
-function displayNotifications() {
-  notifList.innerHTML = "";
-
-  const unreadCount = notifications.filter(n => !n.read).length;
-
-  if (notifications.length === 0 || unreadCount === 0) {
-    notifContainer.style.display = "none"; // hide if no unread
-    notifModal.style.display = "none"; // also hide modal
-    return;
-  }
-
-  notifContainer.style.display = "block"; // show if signed in and has unread
-
-  notifications.forEach(notif => {
-    const div = document.createElement("div");
-    div.style.padding = "8px";
-    div.style.borderBottom = "1px solid #eee";
-    div.style.cursor = "pointer";
-    div.style.background = notif.read ? "#f9f9f9" : "#e0f7fa";
-    div.style.borderRadius = "24px";
-    div.innerHTML = `<strong>${notif.orderId}</strong><p style="margin:4px 0;border-radius:20px;">${notif.message}</p>`;
-
-    div.addEventListener("click", () => {
-      if (!notif.read) markAsRead(notif.id);
-    });
-
-    notifList.appendChild(div);
-  });
-
-  notifCount.textContent = unreadCount;
-  notifCount.style.display = "block";
-}
-
-// Mark notification as read
-async function markAsRead(notifId) {
-  try {
-    await updateDoc(doc(db, "notifications", notifId), { read: true });
-    notifications = notifications.map(n => n.id === notifId ? { ...n, read: true } : n);
-    displayNotifications();
-  } catch (err) {
-    console.error("Failed to mark as read:", err);
-  }
-}
-
-	// Optional: Poll Firestore every X seconds for new notifications 
-	setInterval(loadNotifications, 1000); // refresh every 30 seconds 
-	
-	// Load notifications on page load 
-		loadNotifications();
-</script>
 
 	<!--StartofTawk.toScript-->
 	<script type="text/javascript"> 
