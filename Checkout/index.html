@@ -470,20 +470,30 @@ let currentUser = null;
 firebase.auth().onAuthStateChanged(async user => {
   currentUser = user;
   if (user) {
-    // Try to pre-fill from Firestore user profile
-    const userDoc = await db.collection("users").doc(user.uid).get();
-    if (userDoc.exists) {
-      const data = userDoc.data();
-      if (data.name) document.getElementById("name").value = data.name;
-      if (data.phone) document.getElementById("phone").value = data.phone;
-      if (data.email) document.getElementById("email").value = data.email;
-      if (data.address) document.getElementById("address").value = data.address;
-    } else {
-      // If no profile doc yet, fill email from auth
+    try {
+      // 🔎 Query the users collection where uid == current user's uid
+      const q = db.collection("users").where("uid", "==", user.uid);
+      const snapshot = await q.get();
+
+      if (!snapshot.empty) {
+        // Assuming only one match
+        const data = snapshot.docs[0].data();
+
+        if (data.name) document.getElementById("name").value = data.name;
+        if (data.phone) document.getElementById("phone").value = data.phone;
+        if (data.email) document.getElementById("email").value = data.email;
+        if (data.address) document.getElementById("address").value = data.address;
+      } else {
+        // If no profile doc yet, fill email from auth
+        if (user.email) document.getElementById("email").value = user.email;
+      }
+    } catch (err) {
+      console.error("Failed to load user profile:", err);
       if (user.email) document.getElementById("email").value = user.email;
     }
   }
 });
+
 
 // Submit order  
 function submitOrder(e){  
