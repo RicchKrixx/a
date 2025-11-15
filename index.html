@@ -1059,32 +1059,35 @@ h2::before,
 		</div>
 
   <!-- 🔔 Notification Button -->
-  <div id="notificationContainer" style="position:fixed; top:20px; right:30px;  z-index:1000;">
-       <button id="notifBtn" style="
-      background:transparent;
-      border:none;
+<div id="notificationContainer" style="position:fixed; top:20px; right:30px; z-index:1000;">
+  <button id="notifBtn" style="
+    background:transparent;
+    border:none;
+    border-radius:50%;
+    width:65px;
+    height:65px;
+    font-size:28px;
+    box-shadow:0 0 10px rgba(0,0,0,0.2);
+    cursor:pointer;
+    position:relative;
+    display:none;
+  ">
+    🔔
+    <span id="notifCount" style="
+      position:absolute;
+      top:5px;
+      right:6px;
+      background:red;
+      color:white;
+      font-size:16px;
+      font-weight:bold;
+      padding:4px 7px;
       border-radius:50%;
-      width:60px;
-      height:60px;
-      box-shadow:0 0 10px rgba(0,0,0,0.2);
-      cursor:pointer;
-      position:relative;
       display:none;
-	  font-size: 30px;	   
-    ">🔔<span id="notifCount" style="
-        position:absolute;
-        top:2px;
-        right:4px;
-        background:red;
-        color:white;
-        font-size:12px;
-        font-weight:bold;
-        padding:2px 5px;
-        border-radius:50%;
-        display:none;
-      ">0</span>
-    </button>
-  </div>
+    ">0</span>
+  </button>
+</div>
+
 
   <!-- 📋 Notification Modal -->
   <div id="notifModal" style="
