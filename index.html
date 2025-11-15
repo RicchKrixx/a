@@ -1060,21 +1060,20 @@ h2::before,
 
   <!-- 🔔 Notification Button -->
   <div id="notificationContainer" style="position:fixed; top:20px; right:30px;  display: flex; align-items: center; justify-content: center; z-index:1000;">
-    <button class="notif-btn" id="notifBtn" style="
-      background: transparent;
+    <button id="notifBtn" style="
+      background: blue;
       border:none;
       border-radius:50%;
       width:45px;
       height:45px;
       font-size:24px;
       cursor:pointer;
+      position:relative;
       display:none;
-		  justify-content: center;
-  align-items: center;
-    ">🔔<span class="notif-count" id="notifCount" style="
+    ">🔔<span id="notifCount" style="
         position:absolute;
         top:2px;
-        right: 2px;
+        right: 1px;
         background:red;
         color:white;
         font-size:12px;
@@ -1083,7 +1082,7 @@ h2::before,
         border-radius:50%;
         display:none;
       ">0</span>
-    </button>
+	</button>
   </div>
 
   <!-- 📋 Notification Modal -->
