@@ -422,8 +422,7 @@ function resetSearch() {
   allProducts.forEach(card => (card.style.display = 'block'));
   noResults.style.display = 'none';
 }
-</script>
- <script>
+
     const notifBtn = document.getElementById("notifBtn");
     const notifCount = document.getElementById("notifCount");
     const notifModal = document.getElementById("notifModal");
