@@ -2057,6 +2057,22 @@ function resetSearch() {
       }
     }
   </script>
+<script src="https://unpkg.com/scrollreveal"></script>
+
+<script>
+ScrollReveal().reveal(
+  '.section, img, .header-content, .categories, .category-grid, .sections, .grid, .card, .testimonials, .footer-section, .footer-container, .contact-info, .socials',
+  {
+    distance: '40px',
+    duration: 600,
+    opacity: 0,
+    origin: 'bottom',
+    reset: false,
+    viewFactor: 0.2  // <--- only reveal when 20% enters screen
+  }
+);
+</script>
+
 	<!--StartofTawk.toScript-->
 	<script type="text/javascript"> 
 		var Tawk_API=Tawk_API||{},
