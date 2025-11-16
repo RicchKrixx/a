@@ -146,7 +146,13 @@ authButton.onclick = async function(){
       await addDoc(usersRef, { uid:user.uid, username:identifier.toLowerCase(), email:signupEmail });
 
       showToast("Account created!");
-      setTimeout(()=>  window.history.back();
+// After successful signup/login
+const redirectUrl = document.referrer && document.referrer !== window.location.href
+  ? document.referrer
+  : "/"; // fallback to homepage
+
+setTimeout(() => window.location.href = redirectUrl, 1000);
+
     } else {
       let loginEmail = identifier;
       if(!identifier.includes("@")){
@@ -159,7 +165,13 @@ authButton.onclick = async function(){
 
       await signInWithEmailAndPassword(auth, loginEmail, passwordVal);
       showToast("Welcome back!");
-      setTimeout(()=>  window.history.back();
+     // After successful signup/login
+const redirectUrl = document.referrer && document.referrer !== window.location.href
+  ? document.referrer
+  : "/"; // fallback to homepage
+
+setTimeout(() => window.location.href = redirectUrl, 1000);
+
     }
   } catch(err){
     showToast(getFriendlyErrorMessage(err.code));
