@@ -146,7 +146,7 @@ authButton.onclick = async function(){
       await addDoc(usersRef, { uid:user.uid, username:identifier.toLowerCase(), email:signupEmail });
 
       showToast("Account created!");
-      setTimeout(()=> window.location.href="/",1000);
+      setTimeout(()=>  window.history.back();
     } else {
       let loginEmail = identifier;
       if(!identifier.includes("@")){
@@ -159,7 +159,7 @@ authButton.onclick = async function(){
 
       await signInWithEmailAndPassword(auth, loginEmail, passwordVal);
       showToast("Welcome back!");
-      setTimeout(()=> window.location.href="/",1000);
+      setTimeout(()=>  window.history.back();
     }
   } catch(err){
     showToast(getFriendlyErrorMessage(err.code));
