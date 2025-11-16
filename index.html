@@ -454,7 +454,7 @@ font-size: 16px;
   content: '';
   position: absolute;
   inset: 0;
-  background-image: url('header-img.png');
+  background-image: url('header-img.jpg');
   background-size: cover;
   background-position: center;
   filter: blur(7px); /* Adjust blur strength */
@@ -667,17 +667,7 @@ font-size: 16px;
   overflow: hidden;
 }
 
-/* The blurred background layer */
-h2::before,
-.sections h2::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: cyan;
-  filter: blur(6px);
-  z-index: -1; /* keep it behind the text */
-  transform: scale(1.1); /* avoids edge clipping */
-}
+
 /* Image preview overlay */
 .img-preview {
   display: none; 
