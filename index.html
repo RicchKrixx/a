@@ -60,19 +60,11 @@ body.noscroll {
 }  
 /*==========================*/
   .container {
-padding-top: 5px;
-padding-bottom: 0;
-text-align: center;
-background: #adadaf;
-border-radius:24px;
-}
-/*==========================*/
-  .gridd {
 padding: 5px;
 padding-bottom: 30;
 text-align: center;
 background: #adf;
-border-radius:24px;
+border-radius:4px;
 }
 /*==========================*/
 
@@ -943,6 +935,8 @@ font-size: 16px;
 </head>
  
 <body id="pageBody">
+   <div class="container">
+  
   <div class="menu-toggle" onclick="toggleMenu()">☰</div>
 
   <div id="fullMenu" class="menu-overlay">
@@ -1003,8 +997,7 @@ font-size: 16px;
   
 <a href="/Cart/" class="cart-icon" id="cartIcon">🛒<span id="cartCount">0</span></a>
 
-  <div class="container">
-  <div  class="gridd">
+ 
 <div id="searchNoResults">
   <img src="https://cdn-icons-png.flaticon.com/512/6134/6134065.png" alt="No results">
   <p>No products found. check your spelling and try again!</p>
@@ -1447,9 +1440,6 @@ font-size: 16px;
   </div>
 </section>
 
-</div>
-</div>
-
 
 <br>
    <footer style="text-decoration: none;">
@@ -1515,6 +1505,7 @@ font-size: 16px;
             <p>&copy; <span id="year"></span> BixMAX. All rights reserved.</p>
         </div>
 </footer>
+</div>
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <!-- Font Awesome for icons (you'll need to include this in your project) -->
     <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script>
