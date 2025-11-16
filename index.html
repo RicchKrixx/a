@@ -928,6 +928,17 @@ font-size: 16px;
   box-shadow: 0 0 3px rgba(0,0,0,0.05);
   animation: pulse 1.5s infinite ease-in-out;
 }
+	  .reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.7s ease-in-out;
+}
+
+.reveal.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
   </style>
 </head>
  
@@ -1444,13 +1455,13 @@ font-size: 16px;
    <footer style="text-decoration: none;">
         <div class="footer-container">
             <!-- Company Info -->
-            <div class="footer-section company-info">
+            <div class="footer-section company-info" class="reveal">
                 <div class="footer-logo">About BixMAX</div>
                 <p>BixMAX is your all-in-one online shopping destination, offering a seamless, fast, and affordable shopping experience. From fashion to groceries, electronics to accessories, we bring everything you need right to your fingertips.</p>
             </div>
 
             <!-- Quick Links -->
-            <div class="footer-section">
+            <div class="footer-section" class="reveal">
                 <h3>Quick Links</h3>
                
                     <li><a href="#home">Home</a></li>
@@ -1461,7 +1472,7 @@ font-size: 16px;
             </div>
 
             <!-- Resources -->
-            <div class="footer-section">
+            <div class="footer-section" class="reveal">
                 <h3>Resources</h3>
                
                     <li><a href="/about us/#documentation">Documentation</a></li>
@@ -1473,7 +1484,7 @@ font-size: 16px;
             </div>
 
             <!-- Contact Info -->
-            <div class="contact-info" style="text-decoration: none;">
+            <div class="contact-info" style="text-decoration: none;" class="reveal">
                 <h3>Contact Us</h3>
              
                               <p><i class="fas fa-phone"></i><a href="tel:+233536345825"> +233 (53) 634-5825</a></p>
@@ -1486,7 +1497,7 @@ font-size: 16px;
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 
-<div class="socials">
+<div class="socials" class="reveal">
   <a href="https://www.facebook.com/share/19dfn17s9G/" class="facebook" data-label="Facebook"><i class="fab fa-facebook-f"></i></a>
   <a href="#" class="x" data-label="X (Twitter)"><i class="fab fa-x-twitter"></i></a>
   <a href="https://www.instagram.com/bixmax_store?igsh=d29xMTBlcTZ4N3I3" class="instagram" data-label="Instagram"><i class="fab fa-instagram"></i></a>
@@ -2057,21 +2068,22 @@ function resetSearch() {
       }
     }
   </script>
-<script src="https://unpkg.com/scrollreveal"></script>
-
 <script>
-ScrollReveal().reveal(
-  '.section, img, .header-content, .categories, .category-grid, .sections, .grid, .card, .testimonials, .footer-section, .footer-container, .contact-info, .socials',
-  {
-    distance: '40px',
-    duration: 600,
-    opacity: 0,
-    origin: 'bottom',
-    reset: false,
-    viewFactor: 0.2  // <--- only reveal when 20% enters screen
-  }
-);
+document.addEventListener("DOMContentLoaded", () => {
+  const reveals = document.querySelectorAll(".reveal");
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("show");
+      }
+    });
+  }, { threshold: 0.2 });
+
+  reveals.forEach(r => observer.observe(r));
+});
 </script>
+
 
 	<!--StartofTawk.toScript-->
 	<script type="text/javascript"> 
