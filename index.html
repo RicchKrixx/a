@@ -454,7 +454,7 @@ font-size: 16px;
   content: '';
   position: absolute;
   inset: 0;
-  background-image: url('https://i.postimg.cc/xdDHJfy0/grok-image-47idy2-2.jpg');
+  background-image: url('header-img');
   background-size: cover;
   background-position: center;
   filter: blur(7px); /* Adjust blur strength */
@@ -658,11 +658,13 @@ font-size: 16px;
   display: flex;
   justify-content: center;
   align-items: center;
+  background: transparent;
+  box-shadow:0 0 10px rgba(3,2,7,2.2);
+	backdrop-filter: blur(10px);
   color: white;
   padding: 10px 20px;
-  border-radius: 24px;
+  border-radius: 5px;
   overflow: hidden;
-  z-index: 1; /* ensures text stays above blur */
 }
 
 /* The blurred background layer */
@@ -671,7 +673,7 @@ h2::before,
   content: "";
   position: absolute;
   inset: 0;
-  background: url(https://i.postimg.cc/tgnrwWwy/74651E6D-1C42-46AB-A5AE-24B6CDA1DC48.jpg) center/cover no-repeat;
+  background: cyan;
   filter: blur(6px);
   z-index: -1; /* keep it behind the text */
   transform: scale(1.1); /* avoids edge clipping */
@@ -1011,32 +1013,32 @@ h2::before,
 	  <h2>Shop by Category</h2>
     <div class="category-grid">
       <a class="cat-menu" href="#electronics">
-        <img src="https://i.postimg.cc/1XrW4Mkt/th.webp" alt="Electronics">
+        <img src="th.jpg" alt="Electronics">
         <div class="category">Electronics</div>
       </a>
 
       <a class="cat-menu" href="#fashion">
-        <img src="https://i.postimg.cc/ZRc3dgq5/th-2.webp" alt="Fashion">
+        <img src="th1.jpg" alt="Fashion">
         <div class="category">Fashion</div>
       </a>
 
       <a class="cat-menu" href="#groceries">
-        <img src="https://i.postimg.cc/15gnm4Dm/th-3.webp" alt="Groceries">
+        <img src="th3.jpg" alt="Groceries">
         <div class="category">Groceries</div>
       </a>
 
       <a class="cat-menu" href="#home-essentials">
-        <img src="https://i.postimg.cc/zfhFV0Wr/th-1.webp" alt="Home Essentials">
+        <img src="th2.jpg" alt="Home Essentials">
         <div class="category">Essentials</div>
       </a>
 
       <a class="cat-menu" href="#health">
-        <img src="https://i.postimg.cc/gJSjdPJr/OIP.webp" alt="Health">
+        <img src="th4.jpg" alt="Health">
         <div class="category">Health</div>
       </a>
 
       <a class="cat-menu" href="#care">
-        <img src="https://i.postimg.cc/8zQ5T41W/download.webp" alt="Beauty & Care">
+        <img src="th5.jpg" alt="Beauty & Care">
         <div class="category">Beauty Care</div>
       </a>
     </div>
