@@ -128,7 +128,7 @@
       <input type="text" id="messageInput" placeholder="Enter your message">
     </div>
   </div>
-  <button class="generate" id="generateBtn">Generate QR Code (30GHS)</button>
+  <button class="generate" id="generateBtn">Generate QR Code (5GHS)</button>
   <div id="qrcode"></div>
   <button id="downloadBtn">Download QR Code</button>
   <button id="resetBtn">Reset</button>
@@ -242,7 +242,7 @@ modalTopupBtn.addEventListener("click", ()=>{
   if(!currentUser) return alert("Sign in first");
 
   const handler = PaystackPop.setup({
-    key: "pk_live_55fc4deb5da6100b52f981f9f754dc0249e7752f",
+    key: "pk_live_58c854a20089f4810d6cc5c753ebde517bbdcdd7",
     email: currentUser.email,
     amount: amount*100,
     currency: "GHS",
@@ -288,7 +288,7 @@ generateBtn.addEventListener("click", ()=>{
     whatsappInputDiv.classList.add("hidden");
 
     // Deduct 30 GHS
-    userBalance -= 30;
+    userBalance -= 5;
     db.collection("users").doc(userDocId).update({balance:userBalance});
     updateBalanceBtn();
   },1200);
