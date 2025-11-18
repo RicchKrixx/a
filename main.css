@@ -1,4 +1,3 @@
- 
 :root {
   --brand: #b8860b;
   --brand-dark: #8b6508;
@@ -18,19 +17,11 @@ body.noscroll {
 }  
 /*==========================*/
   .container {
-padding-top: 5px;
-padding-bottom: 0;
-text-align: center;
-background: #adadaf;
-border-radius:24px;
-}
-/*==========================*/
-  .gridd {
 padding: 5px;
 padding-bottom: 30;
 text-align: center;
 background: #adf;
-border-radius:24px;
+border-radius:4px;
 }
 /*==========================*/
 
@@ -247,7 +238,7 @@ text-decoration: none;
     }
     .auth-button {
       position: absolute;
-      bottom: 0;
+      bottom: 5px;
       left: 20px;
       right: 20px;
       text-align: center;
@@ -296,12 +287,24 @@ font-size: 16px;
             margin-bottom: 30px;
         }
 
-        .footer-logo {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #ffffff;
-        }
+     
+.footer-logo {
+  display: flex;
+  align-items: center; /* vertical alignment */
+  gap: 15px; /* space between image and text */
+}
+
+.footer-logo img {
+  width: 100px;
+  height: auto;
+}
+
+.footer-logo span {
+  font-weight: bold;
+  line-height: 1.4;
+  color: #fafafa; /* optional */
+}
+
 
         .footer-section h3 {
             font-size: 18px;
@@ -404,7 +407,6 @@ font-size: 16px;
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
   border-radius: 16px;
 }
 
@@ -412,7 +414,7 @@ font-size: 16px;
   content: '';
   position: absolute;
   inset: 0;
-  background-image: url('https://i.postimg.cc/xdDHJfy0/grok-image-47idy2-2.jpg');
+  background-image: url('header-img.jpg');
   background-size: cover;
   background-position: center;
   filter: blur(7px); /* Adjust blur strength */
@@ -614,26 +616,21 @@ font-size: 16px;
 .sections h2 {
   position: relative;
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
-  color: white;
+  background: transparent;
+	backdrop-filter: blur(40px);
+  color: #fafafa;
   padding: 10px 20px;
-  border-radius: 24px;
-  overflow: hidden;
-  z-index: 1; /* ensures text stays above blur */
+  border-radius: 12px;
+  font-size: 20px;
+}
+hr {
+  border: none;
+  height: 3px;
+  background: linear-gradient(to right, transparent, #1f1f1f, transparent);
 }
 
-/* The blurred background layer */
-h2::before,
-.sections h2::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: url(https://i.postimg.cc/tgnrwWwy/74651E6D-1C42-46AB-A5AE-24B6CDA1DC48.jpg) center/cover no-repeat;
-  filter: blur(6px);
-  z-index: -1; /* keep it behind the text */
-  transform: scale(1.1); /* avoids edge clipping */
-}
 /* Image preview overlay */
 .img-preview {
   display: none; 
@@ -810,18 +807,6 @@ h2::before,
   box-shadow: 0 0 6px rgba(255,0,0,0.5);
 }
 /* Skeleton loader styles */
-.skeleton-card1	{
-  background: #fff;
-  border-radius: 14px;
-  padding: 20px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  box-shadow: 0 0 3px rgba(0,0,0,0.05);
-  animation: pulse 1.5s infinite ease-in-out;
-}
-	  
 .skeleton-card {
   background: #fff;
   border-radius: 14px;
@@ -895,4 +880,30 @@ h2::before,
     font-size: 20px;
   }
 }
- 
+	  .skeleton-card1	{
+  background: #fff;
+  border-radius: 14px;
+  padding: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 0 3px rgba(0,0,0,0.05);
+  animation: pulse 1.5s infinite ease-in-out;
+}
+	  .reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.7s ease-in-out;
+}
+
+.reveal.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+.name{
+font-family: "Rubik 80s Fade", systemx-ui;
+font-style: normal;
+font-weight: 400;
+	color: #00b7d4;
+}
