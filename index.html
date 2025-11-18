@@ -1043,7 +1043,7 @@ hr {
 
 <div class="sections" id="products">
   <section class="section" id="electronics">
-    <h2>ELECTRONICS <span style="color:red;">hot</span> sales:<small style="color:#222;" id="flashSaleTimer"> 00d:00h:00m:00s</small></span></h2>
+    <h2>ELECTRONICS <span style="font-size: 14px;"><span style="color:red;">hot</span><small style="font-size: 12px;"> sales:</small><small style="color:#222;" id="timer1"> 00d:00h:00m:00s</small></span></h2>
 	  <hr>
     <div class="grid" id="grid-electronics">
          <div class="skeleton-card">
@@ -1097,7 +1097,7 @@ hr {
     </div>
   </section>
   <section class="section" id="fashion">
-    <h2>FASHION <span style="color:red;">hot</span> sales:<small style="color:#222;" id="flashSaleTimer"> 00d:00h:00m:00s</small></span></h2>
+    <h2>FASHION <span style="font-size: 14px;"><span style="color:red;">hot</span><small style="font-size: 12px;"> sales:</small><small style="color:#222;" id="timer2"> 00d:00h:00m:00s</small></span></h2>
 	  <hr>
     <div class="grid" id="grid-fashion">
               <div class="skeleton-card">
@@ -1150,7 +1150,7 @@ hr {
     </div>
   </section>
 <section class="section" id="groceries">
-    <h2>GROCERIES <span style="color:red;">hot</span> sales:<small style="color:#222;" id="flashSaleTimer"> 00d:00h:00m:00s</small></span></h2>
+    <h2>GROCERIES <span style="font-size: 14px;"><span style="color:red;">hot</span><small style="font-size: 12px;"> sales:</small><small style="color:#222;" id="timer3"> 00d:00h:00m:00s</small></span></h2>
 	<hr>
     <div class="grid" id="grid-groceries">
                <div class="skeleton-card">
@@ -1204,7 +1204,7 @@ hr {
     </div>
   </section>
   <section class="section" id="home-essentials">
-    <h2>HOME ESSENTIALS <span style="color:red;">hot</span> sales:<small style="color:#222;" id="flashSaleTimer"> 00d:00h:00m:00s</small></span></h2>
+    <h2>HOME ESSENTIALS <span style="font-size: 14px;"><span style="color:red;">hot</span><small style="font-size: 12px;"> sales:</small><small style="color:#222;" id="timer4"> 00d:00h:00m:00s</small></span></h2>
 	  <hr>
     <div class="grid" id="grid-essentials">
                <div class="skeleton-card">
@@ -1258,7 +1258,7 @@ hr {
     </div>
   </section>
   <section class="section" id="health">
-    <h2>HEALTH <span style="color:red;">hot</span> sales:<small style="color:#222;" id="flashSaleTimer"> 00d:00h:00m:00s</small></span></h2>
+    <h2>HEALTH <span style="font-size: 14px;"><span style="color:red;">hot</span><small style="font-size: 12px;"> sales:</small><small style="color:#222;" id="timer5"> 00d:00h:00m:00s</small></span></h2>
 	  <hr>
     <div class="grid" id="grid-health">
                <div class="skeleton-card">
@@ -1312,7 +1312,7 @@ hr {
     </div>
   </section>
   <section class="section" id="care">
-    <h2>BEAUTY & PERSONAL CARE <span style="color:red;">hot</span> sales:<small style="color:#222;" id="flashSaleTimer"> 00d:00h:00m:00s</small></span></h2>
+    <h2>BEAUTY & PERSONAL CARE <span style="font-size: 14px;"><span style="color:red;">hot</span><small style="font-size: 12px;"> sales:</small><small style="color:#222;" id="timer6"> 00d:00h:00m:00s</small></span></h2>
 	  <hr>
     <div class="grid" id="grid-care">
                <div class="skeleton-card">
@@ -2090,35 +2090,44 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 <script>
-// Set the flash sale end date (YYYY/MM/DD HH:MM:SS)
-const flashEndTime = new Date("2025/11/20 00:00:00").getTime();
+const timers = [
+  { id: "timer1", end: "2025/11/20 00:00:00" },
+  { id: "timer2", end: "2025/11/21 23:00:00" },
+  { id: "timer3", end: "2025/11/19 08:30:00" },
+  { id: "timer4", end: "2025/11/21 20:45:00" },
+  { id: "timer5", end: "2025/11/20 00:00:00" },
+  { id: "timer6", end: "2025/11/20 15:15:15" }
+];
 
-function updateFlashSaleTimer() {
-  const now = new Date().getTime();
-  const distance = flashEndTime - now;
+function startCountdown(id, endTime) {
+  const end = new Date(endTime).getTime();
 
-  if (distance < 0) {
-    document.getElementById("flashSaleTimer").innerHTML = "Flash Sale Ended";
-    return;
+  function update() {
+    const now = Date.now();
+    const diff = end - now;
+
+    const element = document.getElementById(id);
+    if (!element) return;
+
+    if (diff <= 0) {
+      element.textContent = " Ended";
+      return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = ("0" + Math.floor((diff / (1000 * 60 * 60)) % 24)).slice(-2);
+    const mins  = ("0" + Math.floor((diff / (1000 * 60)) % 60)).slice(-2);
+    const secs  = ("0" + Math.floor((diff / 1000) % 60)).slice(-2);
+
+    element.textContent = ` ${days}d : ${hours}h : ${mins}m : ${secs}s`;
   }
 
-  let days = Math.floor(distance / (1000 * 60 * 60 * 24));
-  let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-  let seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-  // Format with leading zeros
-  hours = hours < 10 ? "0" + hours : hours;
-  minutes = minutes < 10 ? "0" + minutes : minutes;
-  seconds = seconds < 10 ? "0" + seconds : seconds;
-
-  document.getElementById("flashSaleTimer").innerHTML =
-    ` ${days}d : ${hours}h : ${minutes}m : ${seconds}s`;
+  update();
+  setInterval(update, 1000);
 }
 
-// Update every second
-setInterval(updateFlashSaleTimer, 1000);
-updateFlashSaleTimer();
+// Start timers
+timers.forEach(t => startCountdown(t.id, t.end));
 </script>
 
 	<!--StartofTawk.toScript-->
