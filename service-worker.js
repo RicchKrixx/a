@@ -3,8 +3,8 @@ const ASSETS = [
   "/",
   "/index.html",
   "/manifest.json",
-  "/Bixmaxlogo.png",
-  "/Bixmax.store.logo.png"
+  "/shop-logo-removebg-preview.png",
+  "/shop-logo-removebg-preview.png"
 ];
 
 // Install - Cache essential assets
@@ -34,6 +34,6 @@ self.addEventListener("push", event => {
   const data = event.data?.json() || {};
   self.registration.showNotification(data.title || "Hello from BixMAX!", {
     body: data.body || "Thanks for visiting us!",
-    icon: "https://bixmax.store/logo.png"
+    icon: "https://bixmax.store/shop-logo-removebg-preview.png"
   });
 });
