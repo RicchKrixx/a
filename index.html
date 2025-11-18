@@ -331,13 +331,23 @@ font-size: 16px;
         }
 
      
-        .footer-logo img {
-            width: 100px;
-			height: auto;
-            font-weight: bold;
-            margin-bottom: 6px;
-  
-        }
+.footer-logo {
+  display: flex;
+  align-items: center; /* vertical alignment */
+  gap: 15px; /* space between image and text */
+}
+
+.footer-logo img {
+  width: 100px;
+  height: auto;
+}
+
+.footer-logo span {
+  font-weight: bold;
+  line-height: 1.4;
+  color: #fafafa; /* optional */
+}
+
 
         .footer-section h3 {
             font-size: 18px;
@@ -1455,7 +1465,7 @@ hr {
             <!-- Company Info -->
             <div class="footer-section company-info">
 				<div class="reveal">
-                <div class="footer-logo"><img src="https://i.postimg.cc/fbMdWcc6/shop-logo-removebg-preview.png"</img>
+                <div class="footer-logo"><img src="https://i.postimg.cc/fbMdWcc6/shop-logo-removebg-preview.png">
 				 <span>BixMAX is your all-in-one online shopping destination, offering a seamless, fast, and affordable shopping experience.</span>
 				</div>
             </div>
@@ -1803,7 +1813,7 @@ async function loadTestimonials() {
     snapshot.forEach(doc => testimonials.push(doc.data()));
 
     if (testimonials.length === 0) {
-      track.innerHTML = `<p>No testimonials yet.</p>`;
+      track.innerHTML = `<p>...</p>`;
       return;
     }
 
@@ -1827,7 +1837,7 @@ async function loadTestimonials() {
     });
   } catch (err) {
     console.error(err);
-    track.innerHTML = `<p style="color:red;">Error loading testimonials</p>`;
+    track.innerHTML = `<p style="color:red;">...</p>`;
   }
 }
 
