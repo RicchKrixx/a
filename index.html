@@ -63,7 +63,7 @@ body.noscroll {
 padding: 5px;
 padding-bottom: 30;
 text-align: center;
-background: #fff;
+background: #adf;
 border-radius:4px;
 }
 /*==========================*/
@@ -650,17 +650,20 @@ font-size: 16px;
 .sections h2 {
   position: relative;
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
   background: transparent;
-  box-shadow:0 0 10px rgba(3,2,7,2.2);
-	backdrop-filter: blur(10px);
-  color: #dee;
+	backdrop-filter: blur(40px);
+  color: #fafafa;
   padding: 10px 20px;
   border-radius: 12px;
   overflow: hidden;
 }
-
+hr {
+  border: none;
+  height: 3px;
+  background: linear-gradient(to right, transparent, #1f1f1f, transparent);
+}
 
 /* Image preview overlay */
 .img-preview {
@@ -1004,6 +1007,7 @@ font-size: 16px;
 
     <section class="categories">
 	  <h2>Shop by Category</h2>
+		<hr>
     <div class="category-grid">
       <a class="cat-menu" href="#electronics">
         <img src="th.jpg" alt="Electronics">
@@ -1039,7 +1043,8 @@ font-size: 16px;
 
 <div class="sections" id="products">
   <section class="section" id="electronics">
-    <h2>ELECTRONICS</h2>
+    <h2>ELECTRONICS <span style="color:red;">hot</span> sales:<small style="color:#222;" id="flashSaleTimer"> 00d:00h:00m:00s</small></span></h2>
+	  <hr>
     <div class="grid" id="grid-electronics">
          <div class="skeleton-card">
     <div id="skeleton">
@@ -1092,7 +1097,8 @@ font-size: 16px;
     </div>
   </section>
   <section class="section" id="fashion">
-    <h2>FASHION</h2>
+    <h2>FASHION <span style="color:red;">hot</span> sales:<small style="color:#222;" id="flashSaleTimer"> 00d:00h:00m:00s</small></span></h2>
+	  <hr>
     <div class="grid" id="grid-fashion">
               <div class="skeleton-card">
     <div id="skeleton">
@@ -1144,7 +1150,8 @@ font-size: 16px;
     </div>
   </section>
 <section class="section" id="groceries">
-    <h2>GROCERIES</h2>
+    <h2>GROCERIES <span style="color:red;">hot</span> sales:<small style="color:#222;" id="flashSaleTimer"> 00d:00h:00m:00s</small></span></h2>
+	<hr>
     <div class="grid" id="grid-groceries">
                <div class="skeleton-card">
     <div id="skeleton">
@@ -1197,7 +1204,8 @@ font-size: 16px;
     </div>
   </section>
   <section class="section" id="home-essentials">
-    <h2>HOME ESSENTIALS</h2>
+    <h2>HOME ESSENTIALS <span style="color:red;">hot</span> sales:<small style="color:#222;" id="flashSaleTimer"> 00d:00h:00m:00s</small></span></h2>
+	  <hr>
     <div class="grid" id="grid-essentials">
                <div class="skeleton-card">
     <div id="skeleton">
@@ -1250,7 +1258,8 @@ font-size: 16px;
     </div>
   </section>
   <section class="section" id="health">
-    <h2>HEALTH</h2>
+    <h2>HEALTH <span style="color:red;">hot</span> sales:<small style="color:#222;" id="flashSaleTimer"> 00d:00h:00m:00s</small></span></h2>
+	  <hr>
     <div class="grid" id="grid-health">
                <div class="skeleton-card">
     <div id="skeleton">
@@ -1303,7 +1312,8 @@ font-size: 16px;
     </div>
   </section>
   <section class="section" id="care">
-    <h2>BEAUTY & PERSONAL CARE</h2>
+    <h2>BEAUTY & PERSONAL CARE <span style="color:red;">hot</span> sales:<small style="color:#222;" id="flashSaleTimer"> 00d:00h:00m:00s</small></span></h2>
+	  <hr>
     <div class="grid" id="grid-care">
                <div class="skeleton-card">
     <div id="skeleton">
@@ -2079,6 +2089,37 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
+<script>
+// Set the flash sale end date (YYYY/MM/DD HH:MM:SS)
+const flashEndTime = new Date("2025/11/20 00:00:00").getTime();
+
+function updateFlashSaleTimer() {
+  const now = new Date().getTime();
+  const distance = flashEndTime - now;
+
+  if (distance < 0) {
+    document.getElementById("flashSaleTimer").innerHTML = "Flash Sale Ended";
+    return;
+  }
+
+  let days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  // Format with leading zeros
+  hours = hours < 10 ? "0" + hours : hours;
+  minutes = minutes < 10 ? "0" + minutes : minutes;
+  seconds = seconds < 10 ? "0" + seconds : seconds;
+
+  document.getElementById("flashSaleTimer").innerHTML =
+    ` ${days}d : ${hours}h : ${minutes}m : ${seconds}s`;
+}
+
+// Update every second
+setInterval(updateFlashSaleTimer, 1000);
+updateFlashSaleTimer();
+</script>
 
 	<!--StartofTawk.toScript-->
 	<script type="text/javascript"> 
