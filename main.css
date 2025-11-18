@@ -623,7 +623,7 @@ font-size: 16px;
   color: #fafafa;
   padding: 10px 20px;
   border-radius: 12px;
-  font-size: 20px;
+  font-size: 18px;
 }
 hr {
   border: none;
@@ -905,5 +905,10 @@ hr {
 font-family: "Rubik 80s Fade", systemx-ui;
 font-style: normal;
 font-weight: 400;
-	color: #00b7d4;
+border-radius: 14px;
+padding: 2px;
+color: blue;
+  background: rgba(255, 255, 255, 0.664);
+	backdrop-filter: blur(40px);
+	box-shadow:  0 10px 10px 0 #adf, inset 0 -9px 9px 0 #00b7d4;
 }
