@@ -7,12 +7,12 @@
   "theme_color": "#0f172a",
   "icons": [
     {
-      "src": "Bixmax.store.logo.png",
+      "src": "shop-logo-removebg-preview.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "Bixmax.store.logo.png",
+      "src": "shop-logo-removebg-preview.png",
       "sizes": "512x512",
       "type": "image/png"
     }
