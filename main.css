@@ -726,7 +726,7 @@ hr {
   position: relative;
 }
 	  .input__close__button {
-  display: none; /* hidden by default */
+  display: none;
   cursor: pointer;
   border: none;
   background: none;
@@ -745,7 +745,7 @@ hr {
   display: none;
   margin: 40px auto;
   padding: 60px 20px;
-  min-height: 60vh; /* makes it tall enough under the header */
+  min-height: 60vh;
   text-align: center;
   color: #555;
   font-size: 18px;
@@ -908,7 +908,7 @@ font-weight: 400;
 border-radius: 14px;
 padding: 2px;
 color: blue;
-  background: rgba(255, 255, 255, 0.664);
-	backdrop-filter: blur(40px);
-	box-shadow:  0 10px 10px 0 #adf, inset 0 -9px 9px 0 #00b7d4;
+background: rgba(255, 255, 255, 0.664);
+backdrop-filter: blur(40px);
+box-shadow:  0 10px 10px 0 #adf, inset 0 -9px 9px 0 #00b7d4;
 }
