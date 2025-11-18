@@ -8,7 +8,7 @@ const ASSETS_TO_CACHE = [
     '/manifest.json',   
     // Ensure you update these paths if you create CSS or JS files later
     // e.g., '/styles/main.css', '/scripts/app.js'
-    '/icons/shop-logo-removebg-preview.png'
+    '/shop-logo-removebg-preview.png'
 ];
 
 // Installation: Cache all assets
