@@ -1455,8 +1455,9 @@ hr {
             <!-- Company Info -->
             <div class="footer-section company-info">
 				<div class="reveal">
-                <div class="footer-logo"><img src="https://i.postimg.cc/fbMdWcc6/shop-logo-removebg-preview.png"</img></div>
-                <p>BixMAX is your all-in-one online shopping destination, offering a seamless, fast, and affordable shopping experience. From fashion to groceries, electronics to accessories, we bring everything you need right to your fingertips.</p>
+                <div class="footer-logo"><img src="https://i.postimg.cc/fbMdWcc6/shop-logo-removebg-preview.png"</img>
+				 <span>BixMAX is your all-in-one online shopping destination, offering a seamless, fast, and affordable shopping experience.</span>
+				</div>
             </div>
 			</div>
             <!-- Quick Links -->
@@ -2118,7 +2119,7 @@ function startCountdown(id, endTime) {
     const mins  = ("0" + Math.floor((diff / (1000 * 60)) % 60)).slice(-2);
     const secs  = ("0" + Math.floor((diff / 1000) % 60)).slice(-2);
 
-    element.textContent = ` ${days}d : ${hours}h : ${mins}m : ${secs}s`;
+    element.textContent = ` ${days}d:${hours}h:${mins}m:${secs}s`;
   }
 
   update();
