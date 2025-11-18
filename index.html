@@ -440,7 +440,6 @@ font-size: 16px;
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
   border-radius: 16px;
 }
 
@@ -1952,7 +1951,7 @@ searchInput.addEventListener('input', () => {
 function resetSearch() {
   const allProducts = document.querySelectorAll('.card');
   categoriesSection.style.display = 'block';
-  sectionTitles.forEach(h2 => h2.style.display = 'block');
+  sectionTitles.forEach(h2 => h2.style.display = 'flex');
   productSections.forEach(section => (section.style.display = 'block'));
   allProducts.forEach(card => (card.style.display = 'block'));
   noResults.style.display = 'none';
