@@ -11,7 +11,8 @@
 <meta name="description" content="Shop the best fashion, groceries, and more at BixMAX." />
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-8QXD268M23"></script>
-<script>
+<link rel="manifest" href="/manifest.json">
+	<script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
@@ -2149,7 +2150,7 @@ function startCountdown(id, endTime) {
 // Start timers
 timers.forEach(t => startCountdown(t.id, t.end));
 </script>
-
+<script src="/pwa-register.js"></script>
 	<!--StartofTawk.toScript-->
 	<script type="text/javascript"> 
 		var Tawk_API=Tawk_API||{},
