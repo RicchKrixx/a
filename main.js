@@ -241,42 +241,72 @@ document.getElementById("imgPreview").onclick = function(e) {
 		
 
 
+let currentIdx = 0;
+let testimonialInterval;
 
 async function loadTestimonials() {
-  const track = document.getElementById("testimonialTrack");
-
+  const card = document.getElementById("testimonialCard");
+  
   try {
+    // 1. Fetch Data
     const snapshot = await getDocs(collection(db, "testimonials"));
     const testimonials = [];
-
     snapshot.forEach(doc => testimonials.push(doc.data()));
 
+    // Case 0: No Data
     if (testimonials.length === 0) {
-      track.innerHTML = `<p>...</p>`;
+      card.innerHTML = `<p>No reviews yet.</p>`;
+      card.classList.add("visible");
       return;
     }
 
-    // Generate the items twice to create seamless infinite loop
-    const doubled = [...testimonials, ...testimonials];
+    // Helper function to update the HTML
+    const showTestimonial = (index) => {
+      const t = testimonials[index];
+      
+      // 2. Fade Out
+      card.classList.remove("visible");
 
-    doubled.forEach(t => {
-      const item = document.createElement("div");
-      item.className = "testimonial-item";
+      // 3. Wait for fade out (800ms), then swap content and Fade In
+      setTimeout(() => {
+        card.innerHTML = `
+            <div class="testimonial-header">
+              <img src="${t.photoURL || 'https://i.postimg.cc/XYNFYy52/A1BCF7DE-62DD-4F55-8613-FAA324A9AD70.jpg'}" alt="User">
+              <div>
+                <div class="testimonial-name" style="font-weight:bold; color:#333;">${t.name || 'User'}</div>
+                <div class="stars">${"⭐".repeat(t.rating || 5)}</div>
+              </div>
+            </div>
+            <p>“${t.text || ''}”</p>
+        `;
+        
+        // Fade In
+        card.classList.add("visible");
+      }, 800); // Must match CSS transition time (0.8s)
+    };
 
-      item.innerHTML = `
-        <div class="testimonial-header">
-          <img src="${t.photoURL || 'https://i.postimg.cc/XYNFYy52/A1BCF7DE-62DD-4F55-8613-FAA324A9AD70.jpg'}">
-          <span class="testimonial-name">${t.name || 'User'}</span>
-        </div>
-        <p>“${t.text || ''}”</p>
-        <div class="stars">${"⭐".repeat(t.rating || 0)}</div>
-      `;
+    // Initial Load
+    showTestimonial(0);
 
-      track.appendChild(item);
-    });
+    // Case 1: Only One Testimonial -> Stop here, no looping needed.
+    if (testimonials.length === 1) {
+      return; 
+    }
+
+    // Case 2: Multiple Testimonials -> Start Interval
+    // Change every 5 seconds (5000ms) + transition time
+    testimonialInterval = setInterval(() => {
+      currentIdx++;
+      if (currentIdx >= testimonials.length) {
+        currentIdx = 0;
+      }
+      showTestimonial(currentIdx);
+    }, 6000);
+
   } catch (err) {
     console.error(err);
-    track.innerHTML = `<p style="color:red;">...</p>`;
+    card.innerHTML = `<p>No reviews yet</p>`;
+    card.classList.add("visible");
   }
 }
 
