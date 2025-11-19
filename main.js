@@ -190,7 +190,20 @@ onAuthStateChanged(auth, async user => {
   }
 });
 
-
+  window.addEventListener('DOMContentLoaded', async () => {
+    if (!localStorage.getItem('bixmax_has_visited')) {
+      localStorage.setItem('bixmax_has_visited', 'true');
+      if ('Notification' in window && Notification.permission !== 'denied') {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            new Notification("👋 Welcome to BixMAX!", {
+              body: "Thanks for visiting us!",
+              icon: "Bixmaxlogo.png"
+            });
+          }
+        });
+      }
+    }
  loadAllProducts();
 });
 
