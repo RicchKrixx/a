@@ -77,7 +77,7 @@ function renderOrderSummary(){
     const grand = subtotal + deliveryFee;  
   
     document.getElementById("deliveryFee").textContent = "GH₵ " + deliveryFee;  
-    document.getElementById("grandTotal").textContent = "GH₵ " + grand;  
+    document.getElementById("grandTotal").textContent = "GH₵ " + grand.toFixed(2);  
   
     btn.disabled = false;  
     btn.textContent = document.querySelector("input[name='pay']:checked").value==="paystack"   
