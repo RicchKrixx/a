@@ -114,60 +114,49 @@ margin-bottom: 10px;
 
 .testimonial-container {
   width: 100%;
-  overflow: hidden;
-  padding: 10px 0;
-}
-
-.testimonial-track {
+  margin: 0 auto;
+  padding: 20px;
   display: flex;
-  gap: 20px;
-  animation: slideRight 10s linear infinite;
+  justify-content: center;
 }
 
 .testimonial-item {
-  min-width: 260px;
-  padding: 15px;
   background: #eee;
+  padding: 20px;
   border-left: 6px solid #ffcc00;
   border-radius: 20px;
   box-sizing: border-box;
   font-style: italic;
   font-size: 14px;
+  
+  /* Smooth Fade Transition */
+  opacity: 0; /* Start hidden */
+  transition: opacity 0.8s ease-in-out;
+}
+
+/* This class is added by JS to show the item */
+.visible {
+  opacity: 1;
 }
 
 .testimonial-header {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
+  margin-bottom: 10px;
 }
 
 .testimonial-header img {
-  width: 45px;
-  height: 45px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   border: 2px solid #00b7d4;
   object-fit: cover;
 }
 
-.testimonial-name {
-  font-weight: bold;
-  color: #333;
-  font-size: 14px;
-}
-
 .stars {
   color: gold;
-  margin-top: 4px;
-}
-
-/* Infinite slide animation */
-@keyframes slideRight {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(calc(-50%));
-  }
+  margin-top: 5px;
 }
 
 
