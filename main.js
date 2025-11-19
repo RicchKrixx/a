@@ -15,7 +15,7 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-function showSkeletons(container, count = 6) {
+function showSkeletons(container, count = 12) {
   container.innerHTML = "";
   for (let i = 0; i < count; i++) {
     const skeleton = document.createElement("div");
