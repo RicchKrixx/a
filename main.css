@@ -300,7 +300,7 @@ font-size: 16px;
 }
 
 .footer-logo span {
-  font-weight: bold;
+	font-size: 14px;
   line-height: 1.4;
   color: #fafafa; /* optional */
 }
