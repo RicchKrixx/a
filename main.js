@@ -191,21 +191,6 @@ onAuthStateChanged(auth, async user => {
 });
 
 
-  window.addEventListener('DOMContentLoaded', async () => {
-    if (!localStorage.getItem('bixmax_has_visited')) {
-      localStorage.setItem('bixmax_has_visited', 'true');
-      if ('Notification' in window && Notification.permission !== 'denied') {
-        Notification.requestPermission().then(permission => {
-          if (permission === 'granted') {
-            new Notification("👋 Welcome to BixMAX!", {
-              body: "Thanks for visiting us!",
-              icon: "Bixmaxlogo.png"
-            });
-          }
-        });
-      }
-    }
-
  loadAllProducts();
 });
 
@@ -311,3 +296,51 @@ async function loadTestimonials() {
 }
 
 loadTestimonials();
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    
+    // 1. Check if we have already welcomed this user (stored in their browser)
+    const hasBeenWelcomed = localStorage.getItem("browserWelcomeShown");
+
+    if (!hasBeenWelcomed) {
+        
+        // 2. We need a user interaction to ask for permission (browsers require this).
+        // We will wait for their first click anywhere on the page to ask.
+        document.addEventListener("click", askForNotificationPermission, { once: true });
+    }
+
+    function askForNotificationPermission() {
+        if (!("Notification" in window)) {
+            console.log("This browser does not support desktop notification");
+            return;
+        }
+
+        // 3. Request Permission
+        Notification.requestPermission().then((permission) => {
+            if (permission === "granted") {
+                showWelcomeNotification();
+            }
+        });
+    }
+
+    function showWelcomeNotification() {
+        // 4. Create the Browser Notification
+        const notification = new Notification("Welcome to BixMAX! 🛍️", {
+            body: "Your all-in-one online shopping store. Check out our hot sales!",
+            icon: "https://i.postimg.cc/fbMdWcc6/shop-logo-removebg-preview.png", // Your logo
+            vibrate: [200, 100, 200] // Vibrate phone (Android only)
+        });
+
+        // 5. What happens if they click the notification?
+        notification.onclick = function() {
+            window.focus(); // Bring window to front
+            window.location.href = "https://bixmax.store/#fashion"; // Go to fashion section
+            notification.close();
+        };
+
+        // 6. Save that we have welcomed them so we don't annoy them next time
+        localStorage.setItem("browserWelcomeShown", "true");
+    }
+});
+
