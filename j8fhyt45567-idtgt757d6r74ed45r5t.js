@@ -62,10 +62,10 @@ function renderOrderSummary(){
   
   summary.innerHTML = `  
     <b>Order Summary:</b><br/>  
-    ${cart.map(i=>`${i.name} x${i.qty} — GH₵ ${i.price*i.qty}`).join("<br/>")}  
-    <br/><br/>Subtotal: GH₵ ${subtotal}  
-    <br/>Delivery: <span id="deliveryFee">Calculating…</span>  
-    <br/><b>Total: <span id="grandTotal">Hang on…</span></b>  
+    ${cart.map(i=>`${i.name} x${i.qty} — GH₵ ${i.price*i.qty}`).join("<br>")}  
+    <br><br>Delivery expected within 7 days<br><br>Subtotal: GH₵ ${subtotal}  
+    <br>Delivery: <span id="deliveryFee">Calculating…</span>  
+    <br><b>Total: <span id="grandTotal">Hang on…</span></b>
   `;  
   
   const lat = parseFloat(document.getElementById("latitude").value);  
