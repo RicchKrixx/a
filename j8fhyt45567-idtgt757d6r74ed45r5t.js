@@ -13,7 +13,7 @@ const db = firebase.firestore();
 // Shop coordinates  
 const shopLat = 5.791;  
 const shopLng = -0.199;  
-const feePerKm = 1.27;  
+const feePerKm = 1.30;  
   
 // Helpers  
 function getCart(){ return JSON.parse(localStorage.getItem("cart"))||[]; }  
@@ -72,8 +72,15 @@ function renderOrderSummary(){
   const lng = parseFloat(document.getElementById("longitude").value);  
   
   if(!isNaN(lat)&&!isNaN(lng)){  
-    const dist = getDistanceKm(shopLat, shopLng, lat, lng);  
-    const deliveryFee = Math.round(dist*feePerKm);  
+    const dist = getDistanceKm(shopLat, shopLng, lat, lng);
+    
+    // --- 1. CHANGED THIS (Cap fee at 65 for display) ---
+    let deliveryFee = Math.round(dist*feePerKm); 
+    if (deliveryFee > 65) {
+        deliveryFee = 65;
+    }
+    // ----------------------------------------------------
+
     const grand = subtotal + deliveryFee;  
   
     document.getElementById("deliveryFee").textContent = "GH₵ " + deliveryFee;  
@@ -151,8 +158,14 @@ function submitOrder(e){
   const lng = parseFloat(document.getElementById("longitude").value);  
   let deliveryFee = 0;  
   if(!isNaN(lat)&&!isNaN(lng)){  
-    const dist = getDistanceKm(shopLat,shopLng,lat,lng);  
-    deliveryFee = Math.round(dist*feePerKm);  
+    const dist = getDistanceKm(shopLat,shopLng,lat,lng); 
+    
+    // --- 2. CHANGED THIS (Cap fee at 65 for processing) ---
+    deliveryFee = Math.round(dist*feePerKm); 
+    if (deliveryFee > 65) {
+        deliveryFee = 65;
+    }
+    // ------------------------------------------------------
   }  
   const grand = subtotal + deliveryFee;  
   
