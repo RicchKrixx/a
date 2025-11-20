@@ -902,3 +902,161 @@ backdrop-filter: blur(40px);
 box-shadow:  0 10px 10px 0 #adf, inset 0 -9px 9px 0 #00b7d4;
 }
 
+/* --- Modal Overlay --- */
+.product-modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Dim background */
+  backdrop-filter: blur(4px);
+  align-items: center;
+  justify-content: center;
+  padding: 20px; /* Prevents touching screen edges */
+}
+
+/* --- The Compact Box --- */
+.modal-content {
+  background-color: #fff;
+  width: 100%;
+  max-width: 450px; /* Phone-sized width, looks good on desktop too */
+  max-height: 90vh; /* Never taller than 90% of screen */
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Keeps corners round */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  animation: fadeInUp 0.3s ease;
+  position: relative;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Scrollable Area (Middle) --- */
+.modal-body {
+  overflow-y: auto; /* Only this part scrolls */
+  padding: 0;
+  flex-grow: 1;
+}
+
+/* --- Image Area --- */
+.main-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 280px; /* Fixed height - prevents "too tall" */
+  background: #f8f8f8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.main-image-wrapper img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  padding: 10px;
+}
+
+/* Arrows */
+.nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.8);
+  border: none;
+  width: 35px; height: 35px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.prev { left: 10px; }
+.next { right: 10px; }
+
+/* Thumbnails */
+.thumbnails-container {
+  padding: 10px 15px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+}
+
+.thumb-img {
+  width: 50px; height: 50px;
+  border-radius: 12px;
+  object-fit: cover;
+  opacity: 0.5;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+.thumb-img.active-thumb { opacity: 1; border-color: #ffae00; }
+
+/* --- Details Area --- */
+.modal-info {
+  padding: 20px;
+}
+
+.modal-info h2 {
+  margin: 0 0 5px;
+  font-size: 20px;
+  color: #222;
+}
+
+.modal-price {
+  font-size: 22px;
+  font-weight: bold;
+  color: #d32f2f;
+  margin-bottom: 15px;
+}
+
+.modal-description {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 0;
+}
+
+/* --- Footer (Buttons) - Fixed at bottom --- */
+.modal-footer {
+  background: #fff;
+  padding: 15px 20px;
+  border-top: 1px solid #eee;
+  display: flex;
+  gap: 10px;
+}
+
+.add-btn-large, .buy-now-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.add-btn-large { background: #00b7d4; color:#f3f4f6; }
+.buy-now-btn { background: #000; color: #fff; }
+
+/* Close Button */
+.close-modal {
+  position: absolute;
+  top: 10px; right: 10px;
+  background: rgba(0,0,0,0.1);
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  color: #333;
+  font-size: 20px;
+}
