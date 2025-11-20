@@ -143,8 +143,9 @@ async function loadProducts(category, containerId) {
     return allProducts;
   }
 
-
-
+// ------------------------------------------------------------------
+// 1. AUTHENTICATION LISTENER
+// ------------------------------------------------------------------
 onAuthStateChanged(auth, async user => {
   const profileImg = document.getElementById('menuProfileImg');
   const userName = document.getElementById('menuUserName');
@@ -156,103 +157,154 @@ onAuthStateChanged(auth, async user => {
 
   if (user) {
     try {
-      // 🔎 Query the users collection where uid == current user's uid
       const q = query(collection(db, "users"), where("uid", "==", user.uid));
       const querySnapshot = await getDocs(q);
-
       let data = {};
-      if (!querySnapshot.empty) {
-        // Assuming only one document matches
-        data = querySnapshot.docs[0].data();
-      }
+      if (!querySnapshot.empty) data = querySnapshot.docs[0].data();
 
       const finalImg = data.photoURL || user.photoURL || defaultImg;
 
-      profileImg.style.backgroundImage = `url('${finalImg}')`;
-      userName.textContent = data.displayName || user.displayName || user.email.split("@")[0];
-      userEmail.textContent = user.email;
-      authBtn.textContent = "🚪 Logout";
-      dashboardLink.style.display = "block";
-      authBtn.onclick = () => signOut(auth);
+      if(profileImg) profileImg.style.backgroundImage = `url('${finalImg}')`;
+      if(userName) userName.textContent = data.displayName || user.displayName || user.email.split("@")[0];
+      if(userEmail) userEmail.textContent = user.email;
+      
+      if(authBtn) {
+          authBtn.textContent = "🚪 Logout";
+          authBtn.onclick = () => signOut(auth);
+      }
+      if(dashboardLink) dashboardLink.style.display = "block";
+
     } catch (err) {
       console.error("Failed to load profile:", err);
-      profileImg.style.backgroundImage = `url('${defaultImg}')`;
-      userName.textContent = user.email.split("@")[0];
-      userEmail.textContent = user.email;
     }
   } else {
-    profileImg.style.backgroundImage = `url('${defaultImg}')`;
-    userName.textContent = "Guest";
-    userEmail.textContent = "";
-    authBtn.textContent = "🔐 Sign In";
-    dashboardLink.style.display = "none";
-    authBtn.onclick = () => window.location.href = "/auth/";
+    if(profileImg) profileImg.style.backgroundImage = `url('${defaultImg}')`;
+    if(userName) userName.textContent = "Guest";
+    if(userEmail) userEmail.textContent = "";
+    if(authBtn) {
+        authBtn.textContent = "🔐 Sign In";
+        authBtn.onclick = () => window.location.href = "/auth/";
+    }
+    if(dashboardLink) dashboardLink.style.display = "none";
   }
 });
 
+// ------------------------------------------------------------------
+// 2. MAIN PAGE INITIALIZATION (Consolidated)
+// ------------------------------------------------------------------
 document.addEventListener("DOMContentLoaded", function() {
- loadAllProducts();
+    
+    // A. Load Content
+    loadAllProducts();
+    loadTestimonials(); // Moved inside for safety
+
+    // B. Update Copyright Year
+    const yearEl = document.getElementById("year");
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+    // C. Browser Notification Logic
+    const hasBeenWelcomed = localStorage.getItem("browserWelcomeShown");
+
+    if (!hasBeenWelcomed) {
+        document.addEventListener("click", askForNotificationPermission, { once: true });
+    }
+
+    function askForNotificationPermission() {
+        if (!("Notification" in window)) return;
+
+        Notification.requestPermission().then((permission) => {
+            if (permission === "granted") {
+                showWelcomeNotification();
+            }
+        });
+    }
+
+    function showWelcomeNotification() {
+        const notification = new Notification("Welcome to BixMAX! 🛍️", {
+            body: "Your all-in-one online shopping store. Check out our hot sales!",
+            icon: "https://i.postimg.cc/fbMdWcc6/shop-logo-removebg-preview.png", 
+            vibrate: [200, 100, 200]
+        });
+
+        notification.onclick = function() {
+            window.focus();
+            window.location.href = "https://bixmax.store/#fashion";
+            notification.close();
+        };
+
+        localStorage.setItem("browserWelcomeShown", "true");
+    }
+
+    // D. Menu Close Logic (Fixed missing variables)
+    const menu = document.getElementById('fullMenu');
+    const hamburger = document.querySelector('.menu-toggle');
+
+    document.addEventListener('click', (e) => {
+        // Only run if menu and hamburger exist
+        if (menu && hamburger) {
+            if (!menu.contains(e.target) && !hamburger.contains(e.target)) {
+                menu.classList.remove('active');
+                menu.classList.remove('show'); // Added 'show' based on your HTML
+                hamburger.classList.remove('active');
+            }
+        }
+    });
 });
 
-	
-      // Update year
-      document.getElementById("year").textContent = new Date().getFullYear();
-	document.addEventListener('click', (e) => {
-  if (!menu.contains(e.target) && !hamburger.contains(e.target)) {
-    menu.classList.remove('active');
-    hamburger.classList.remove('active');
-  }
-});
-
-// Open preview when any product image is clicked
+// ------------------------------------------------------------------
+// 3. IMAGE PREVIEW LOGIC (Event Delegation)
+// ------------------------------------------------------------------
 document.addEventListener("click", function(e) {
   if (e.target.tagName === "IMG" && e.target.closest(".card")) {
     const modal = document.getElementById("imgPreview");
     const modalImg = document.getElementById("previewImg");
-    modal.style.display = "flex";
-    modalImg.src = e.target.src;
+    if (modal && modalImg) {
+        modal.style.display = "flex";
+        modalImg.src = e.target.src;
+    }
   }
 });
 
 // Close preview
-document.querySelector("#imgPreview .close").onclick = function() {
-  document.getElementById("imgPreview").style.display = "none";
-};
+const closePreviewBtn = document.querySelector("#imgPreview .close");
+if (closePreviewBtn) {
+    closePreviewBtn.onclick = function() {
+        document.getElementById("imgPreview").style.display = "none";
+    };
+}
 
 // Close if clicked outside image
-document.getElementById("imgPreview").onclick = function(e) {
-  if (e.target === this) this.style.display = "none";
-};
-		
+const previewModal = document.getElementById("imgPreview");
+if (previewModal) {
+    previewModal.onclick = function(e) {
+        if (e.target === this) this.style.display = "none";
+    };
+}
 
-
+// ------------------------------------------------------------------
+// 4. TESTIMONIALS LOGIC
+// ------------------------------------------------------------------
 let currentIdx = 0;
 let testimonialInterval;
 
 async function loadTestimonials() {
   const card = document.getElementById("testimonialCard");
+  if (!card) return; // Safety check
   
   try {
-    // 1. Fetch Data
     const snapshot = await getDocs(collection(db, "testimonials"));
     const testimonials = [];
     snapshot.forEach(doc => testimonials.push(doc.data()));
 
-    // Case 0: No Data
     if (testimonials.length === 0) {
       card.innerHTML = `<p>No reviews yet.</p>`;
       card.classList.add("visible");
       return;
     }
 
-    // Helper function to update the HTML
     const showTestimonial = (index) => {
       const t = testimonials[index];
-      
-      // 2. Fade Out
       card.classList.remove("visible");
-
-      // 3. Wait for fade out (800ms), then swap content and Fade In
       setTimeout(() => {
         card.innerHTML = `
             <div class="testimonial-header">
@@ -264,29 +316,19 @@ async function loadTestimonials() {
             </div>
             <p>“${t.text || ''}”</p>
         `;
-        
-        // Fade In
         card.classList.add("visible");
-      }, 800); // Must match CSS transition time (0.8s)
+      }, 800);
     };
 
-    // Initial Load
     showTestimonial(0);
 
-    // Case 1: Only One Testimonial -> Stop here, no looping needed.
-    if (testimonials.length === 1) {
-      return; 
+    if (testimonials.length > 1) {
+      testimonialInterval = setInterval(() => {
+        currentIdx++;
+        if (currentIdx >= testimonials.length) currentIdx = 0;
+        showTestimonial(currentIdx);
+      }, 6000);
     }
-
-    // Case 2: Multiple Testimonials -> Start Interval
-    // Change every 5 seconds (5000ms) + transition time
-    testimonialInterval = setInterval(() => {
-      currentIdx++;
-      if (currentIdx >= testimonials.length) {
-        currentIdx = 0;
-      }
-      showTestimonial(currentIdx);
-    }, 6000);
 
   } catch (err) {
     console.error(err);
@@ -294,7 +336,3 @@ async function loadTestimonials() {
     card.classList.add("visible");
   }
 }
-
-loadTestimonials();
-
-
