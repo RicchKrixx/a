@@ -129,32 +129,44 @@ function showToast(msg, duration=2000){
 
 // Admin login
 async function adminLogin() {
-  const id = document.getElementById("adminIdentifier").value.trim();
-  const pass = document.getElementById("adminPassword").value.trim();
+    const id = document.getElementById("adminIdentifier").value.trim();
+    const pass = document.getElementById("adminPassword").value.trim();
 
-  if(!id || !pass) return showToast("Enter both fields");
+    if(!id || !pass) return showToast("Enter both fields");
+    
+    // Check if the identifier is one of the authorized emails
+    const isEmailAdmin = ADMIN_EMAIL.includes(id); 
 
-  // Only allow your predefined admin email/phone
-  if(id !== ADMIN_EMAIL && id !== ADMIN_PHONE){
-    return showToast("Not Authorized");
-  }
+    // Find the primary email to use for Firebase Auth:
+    // If the user entered an admin email, use that email.
+    // If the user entered the admin phone, use the first email in the list.
+    let authEmail = null;
+    if (isEmailAdmin) {
+        authEmail = id;
+    } else if (id === ADMIN_PHONE) {
+        authEmail = ADMIN_EMAIL[0]; // Use the first email for phone login
+    } else {
+        // If it's not a recognized email or the authorized phone, deny access.
+        return showToast("Not Authorized");
+    }
 
-  showLoader();
-  try {
-    // Use Firebase Auth to validate password for your email
-    await signInWithEmailAndPassword(auth, ADMIN_EMAIL, pass);
-    showToast("Admin login successful!");
-    setTimeout(() => {
-      window.history.back(); // Go back to previous page
-    }, 1000);
-  } catch(err) {
-    showToast("Access Denied: Invalid password");
-    console.error(err);
-  } finally {
-    hideLoader();
-  }
+    showLoader();
+    try {
+        // Use Firebase Auth to validate password for the selected admin email
+        await signInWithEmailAndPassword(auth, authEmail, pass);
+        
+        showToast("Admin login successful!");
+        setTimeout(() => {
+            window.history.back();
+        }, 1000);
+    } catch(err) {
+        // Firebase error (usually 'auth/invalid-credential', 'auth/wrong-password', etc.)
+        showToast("Access Denied: Invalid credentials");
+        console.error(err);
+    } finally {
+        hideLoader();
+    }
 }
-
 
 document.getElementById("adminLoginBtn").addEventListener("click", adminLogin);
 </script>
