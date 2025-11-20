@@ -771,13 +771,37 @@
 
 
 
+<div id="productModal" class="product-modal">
+  <div class="modal-content">
+    
+    <span class="close-modal" onclick="closeProductModal()">&times;</span>
 
+    <div class="modal-body">
+      
+      <div class="main-image-wrapper">
+        <button class="nav-btn prev" onclick="changeModalImage(-1)">&#10094;</button>
+        <img id="modalImg" src="" alt="Product">
+        <button class="nav-btn next" onclick="changeModalImage(1)">&#10095;</button>
+      </div>
 
-	  <!-- Image Preview Modal -->
-<div id="imgPreview" class="img-preview">
-  <span class="close">&times;</span>
-  <img class="preview-content" id="previewImg">
+      <div id="modalThumbnails" class="thumbnails-container"></div>
+
+      <div class="modal-info">
+        <h2 id="modalTitle">Product Name</h2>
+        <div id="modalPrice" class="modal-price"></div>
+        <p id="modalDesc" class="modal-description"></p>
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button id="modalAddToCartBtn" class="add-btn-large">Add to Cart</button>
+      <button id="modalBuyNowBtn" class="buy-now-btn">Buy Now</button>
+    </div>
+
+  </div>
 </div>
+	   
 <section class="testimonials">
 <h2> What our customers say </h2>
 	<hr>
