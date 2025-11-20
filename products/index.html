@@ -3,335 +3,473 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Products Edit</title>
+  <title>Products Edit (Advanced)</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f7fb;
-      margin: 0;
-      padding: 20px;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
+    body { font-family: 'Segoe UI', sans-serif; background: #f4f7fb; margin: 0; padding: 20px; }
+    h1 { text-align: center; margin-bottom: 20px; color: #333; }
+    
+    /* Accordion Styles */
     .accordion {
-      background: #fff;
-      color: #333;
-      cursor: pointer;
-      padding: 15px;
-      width: 100%;
-      border: none;
-      outline: none;
-      transition: 0.3s;
-      font-size: 18px;
-      font-weight: bold;
-      border-radius: 10px;
-      margin-bottom: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      background: #fff; color: #333; cursor: pointer; padding: 15px; width: 100%;
+      border: none; text-align: left; outline: none; transition: 0.3s;
+      font-size: 18px; font-weight: 600; border-radius: 8px; margin-bottom: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; justify-content: space-between;
     }
-    .accordion.active {
-      background: #0077ff;
-      color: #fff;
-    }
+    .accordion:after { content: '\002B'; font-weight: bold; }
+    .accordion.active:after { content: "\2212"; }
+    .accordion.active { background: #0077ff; color: #fff; }
+    
     .panel {
-      padding: 15px;
-      background: #fff;
-      display: none;
-      border-radius: 10px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      padding: 15px; background: #fff; display: none; border-radius: 8px;
+      margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
+
+    /* Product List Styles */
     .product {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #f9f9f9;
-      padding: 10px;
-      border-radius: 8px;
-      margin-bottom: 10px;
+      display: flex; align-items: flex-start; justify-content: space-between;
+      background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 10px;
+      border-left: 4px solid #0077ff;
     }
     .product img {
-      width: 50px;
-      height: 50px;
-      border-radius: 6px;
-      margin-right: 10px;
-      object-fit: cover;
+      width: 60px; height: 60px; border-radius: 6px; margin-right: 15px; object-fit: cover;
+      border: 1px solid #ddd;
     }
-    .product-info {
-      flex: 1;
-    }
+    .product-info { flex: 1; }
+    .product-desc { font-size: 13px; color: #666; margin-top: 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    
+    .product-actions { display: flex; flex-direction: column; gap: 5px; }
     .product-actions button {
-      margin-left: 5px;
-      padding: 6px 10px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
+      padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px;
     }
     .edit-btn { background: #0077ff; color: #fff; }
     .delete-btn { background: #ff3b3b; color: #fff; }
-    .add-form {
-      margin-top: 15px;
-      padding: 10px;
-      border-top: 1px solid #ddd;
+
+    /* Add Form Styles */
+    .add-form { margin-top: 20px; padding: 15px; background: #f0f4f8; border-radius: 8px; }
+    .add-form input, .add-form textarea, .add-form select {
+      width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 4px;
+      border: 1px solid #ccc; box-sizing: border-box;
     }
-    .add-form input {
-      padding: 6px;
-      margin: 5px;
-      font-size: 16px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
+    .add-form textarea { height: 60px; resize: vertical; }
+    
+    /* Edit Modal Styles */
+    .modal-overlay {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center;
     }
-    .add-form button {
-      padding: 6px 12px;
-      background: #28a745;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
+    .modal-content {
+      background: #fff; padding: 20px; border-radius: 10px; width: 90%; max-width: 500px;
+      max-height: 90vh; overflow-y: auto; position: relative;
     }
-    .upload-preview {
-      margin: 10px 5px;
+    .modal-close { position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer; }
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 4px; }
+    .form-group input, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+    
+    /* Gallery Preview in Modal */
+    .gallery-preview-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 5px; }
+    .gallery-thumb { position: relative; width: 60px; height: 60px; }
+    .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
+    .gallery-remove {
+      position: absolute; top: -5px; right: -5px; background: red; color: white;
+      border-radius: 50%; width: 18px; height: 18px; text-align: center;
+      line-height: 16px; font-size: 12px; cursor: pointer;
     }
-    .upload-preview img {
-      max-width: 120px;
-      border-radius: 6px;
-      margin-top: 5px;
-    }
+    
+    .save-btn { width: 100%; padding: 10px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px; }
+	.add-btn{ padding: 5px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px; }
   </style>
 </head>
 <body>
-  <h1>Products Editor</h1>
+  <h1>BixMAX Admin</h1>
 
-  <button class="accordion"> Electronics</button>
+  <button class="accordion">Electronics</button>
   <div class="panel" id="electronics"></div>
 
-  <button class="accordion"> Fashion</button>
+  <button class="accordion">Fashion</button>
   <div class="panel" id="fashion"></div>
 
-  <button class="accordion"> Groceries</button>
+  <button class="accordion">Groceries</button>
   <div class="panel" id="groceries"></div>
 
-  <button class="accordion"> Essentials</button>
+  <button class="accordion">Essentials</button>
   <div class="panel" id="essentials"></div>
   
-    <button class="accordion"> Health</button>
+  <button class="accordion">Health</button>
   <div class="panel" id="health"></div>
   
-    <button class="accordion"> Care</button>
+  <button class="accordion">Care</button>
   <div class="panel" id="care"></div>
 
-  <!-- Firebase + Imgbb -->
+  <div id="editModal" class="modal-overlay">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeEditModal()">&times;</span>
+      <h2>Edit Product</h2>
+      <input type="hidden" id="edit-id">
+      <input type="hidden" id="edit-category">
+      
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" id="edit-name">
+      </div>
+      <div class="form-group">
+        <label>Price (GH₵)</label>
+        <input type="number" id="edit-price">
+      </div>
+      <div class="form-group">
+        <label>Original Price (Optional)</label>
+        <input type="number" id="edit-original">
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="edit-desc" rows="3"></textarea>
+      </div>
+      
+      <div id="edit-fashion-fields" style="display:none; background:#f0f8ff; padding:10px; border-radius:5px; margin-bottom:10px;">
+          <div class="form-group">
+            <label>Variation Type (none / number / label)</label>
+            <input type="text" id="edit-variation">
+          </div>
+          <div class="form-group">
+            <label>Sizes (comma separated)</label>
+            <input type="text" id="edit-sizes">
+          </div>
+      </div>
+
+      <div class="form-group">
+        <label>Main Image</label>
+        <img id="edit-main-preview" src="" style="width:50px; height:50px; object-fit:cover; display:none; margin-bottom:5px;">
+        <input type="file" id="edit-main-file" accept="image/*">
+      </div>
+
+      <div class="form-group">
+        <label>Gallery Images</label>
+        <div id="edit-gallery-list" class="gallery-preview-container"></div>
+        <div style="margin-top:5px;">
+            <small>Add more:</small>
+            <input type="file" id="edit-gallery-files" multiple accept="image/*">
+        </div>
+      </div>
+
+      <button class="save-btn" onclick="saveProductChanges()">Save Changes</button>
+    </div>
+  </div>
+
 <script type="module">
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
-  import { getFirestore, collection, query, where, getDocs, addDoc, updateDoc, deleteDoc, doc } 
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs, addDoc, updateDoc, deleteDoc, doc } 
     from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
 
-  const firebaseConfig = {
-      apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-      authDomain: "bixmax-6c24c.firebaseapp.com",
-      projectId: "bixmax-6c24c",
-      storageBucket: "bixmax-6c24c.appspot.com",
-      messagingSenderId: "37740442541",
-      appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-    };
+const firebaseConfig = {
+    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+    authDomain: "bixmax-6c24c.firebaseapp.com",
+    projectId: "bixmax-6c24c",
+    storageBucket: "bixmax-6c24c.appspot.com",
+    messagingSenderId: "37740442541",
+    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 const auth = getAuth(app);
 const ADMIN_EMAILS = ["ydrill47@gmail.com", "favourgadri17@gmail.com"];
-const ADMIN_PHONES = ["+233536345825"]; // E.164 format
+const ADMIN_PHONES = ["+233536345825"];
 
+// Auth Check
 onAuthStateChanged(auth, user => {
-  if (!user) {
-    window.location.href = "/admin-auth/";
-    return;
-  }
-
+  if (!user) { window.location.href = "/admin-auth/"; return; }
   const emailAllowed = ADMIN_EMAILS.includes(user.email);
   const phoneAllowed = user.phoneNumber && ADMIN_PHONES.includes(user.phoneNumber);
-
-  if (!emailAllowed && !phoneAllowed) {
-    window.location.href = "/admin-auth/";
-  }
+  if (!emailAllowed && !phoneAllowed) { window.location.href = "/admin-auth/"; }
 });
 
-  const IMGBB_API_KEY = "4778722b6cb7fffaf637e09bde8407ea"; // replace with your real key
+const IMGBB_API_KEY = "4778722b6cb7fffaf637e09bde8407ea"; 
 
-  // Accordion toggle
-  document.querySelectorAll(".accordion").forEach(btn => {
+// Accordion Logic
+document.querySelectorAll(".accordion").forEach(btn => {
     btn.addEventListener("click", function() {
-      this.classList.toggle("active");
-      const panel = this.nextElementSibling;
-      panel.style.display = panel.style.display === "block" ? "none" : "block";
+        this.classList.toggle("active");
+        const panel = this.nextElementSibling;
+        panel.style.display = panel.style.display === "block" ? "none" : "block";
     });
-  });
+});
 
-  // Upload image to Imgbb
-  async function uploadToImgbb(file) {
+// Upload Helper
+async function uploadToImgbb(file) {
     const formData = new FormData();
     formData.append("image", file);
-
-    const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
-      method: "POST",
-      body: formData
-    });
-
-    const data = await res.json();
-    if (data.success) {
-      return data.data.url;
-    } else {
-      throw new Error(data.error.message);
-    }
-  }
-
-// Render products by category
-async function loadProducts(category, containerId) {
-  const container = document.getElementById(containerId);
-  container.innerHTML = "<p>Loading...</p>";
-
-  const q = query(collection(db, "products"), where("category", "==", category));
-  const snapshot = await getDocs(q);
-
-  container.innerHTML = "";
-  snapshot.forEach(docSnap => {
-    const product = docSnap.data();
-    const div = document.createElement("div");
-    div.className = "product";
-    div.innerHTML = `
-      <img src="${product.image || 'https://via.placeholder.com/50'}" />
-      <div class="product-info">
-        <strong>${product.name}</strong><br>
-        ${product.originalPrice ? `<span style="text-decoration: line-through; color: gray;">GH₵${product.originalPrice}</span> ` : ""}
-        GH₵${product.price}
-        ${category === "Fashion" && product.variation && product.variation !== "none" ? `
-          <br><small><strong>Variation:</strong> ${product.variation}</small>
-          <br><small><strong>Sizes:</strong> ${(product.sizes || []).join(", ")}</small>
-        ` : ""}
-      </div>
-      <div class="product-actions">
-        <button class="edit-btn">Edit</button>
-        <button class="delete-btn">Delete</button>
-      </div>
-    `;
-
-    // Delete product
-    div.querySelector(".delete-btn").addEventListener("click", async () => {
-      await deleteDoc(doc(db, "products", docSnap.id));
-      loadProducts(category, containerId);
-    });
-
-    // Edit product
-    div.querySelector(".edit-btn").addEventListener("click", async () => {
-      const newName = prompt("Enter item name", product.name);
-      const newPrice = prompt("Enter new price", product.price);
-      const newOriginal = prompt("Enter original price (optional)", product.originalPrice || "");
-
-      let updates = {
-        name: newName,
-        price: Number(newPrice),
-        originalPrice: newOriginal ? Number(newOriginal) : null
-      };
-
-      // Only Fashion category gets variation options
-      if (category === "Fashion") {
-        const newVariation = prompt("Enter variation type (none / number / label)", product.variation || "none");
-        let newSizes = [];
-        if (newVariation !== "none") {
-          const allowedSizes = newVariation === "number" ? "38,39,40,41,42,43,44,45" : "S,M,L,XL";
-          const inputSizes = prompt(`Enter available sizes (comma separated)\nAvailable: ${allowedSizes}`, (product.sizes || []).join(","));
-          newSizes = inputSizes ? inputSizes.split(",").map(s => s.trim()) : [];
-        }
-        updates.variation = newVariation;
-        updates.sizes = newSizes;
-      }
-
-      await updateDoc(doc(db, "products", docSnap.id), updates);
-      loadProducts(category, containerId);
-    });
-
-    container.appendChild(div);
-  });
-
-  // Add new product form
-  const form = document.createElement("div");
-  form.className = "add-form";
-  form.innerHTML = `
-    <h4>Add New ${category}</h4>
-    <input type="text" placeholder="Name" id="${containerId}-name" />
-    <input type="number" placeholder="Price" id="${containerId}-price" />
-    <input type="number" placeholder="Original Price (optional)" id="${containerId}-original" />
-    <input type="file" id="${containerId}-file" accept="image/*" />
-    <div class="upload-preview" id="${containerId}-preview"></div>
-    <input type="hidden" id="${containerId}-image" />
-    <button>Add</button>
-  `;
-
-  // Handle image upload
-  const fileInput = form.querySelector(`#${containerId}-file`);
-  const preview = form.querySelector(`#${containerId}-preview`);
-  fileInput.addEventListener("change", async () => {
-    const file = fileInput.files[0];
-    if (!file) return;
-    preview.innerHTML = "<p>Uploading...</p>";
     try {
-      const url = await uploadToImgbb(file);
-      document.getElementById(`${containerId}-image`).value = url;
-      preview.innerHTML = `<img src="${url}" alt="Preview">`;
+        const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+            method: "POST", body: formData
+        });
+        const data = await res.json();
+        if (data.success) return data.data.url;
+        else throw new Error(data.error.message);
     } catch (err) {
-      preview.innerHTML = `<p style="color:red;">Upload failed: ${err.message}</p>`;
+        console.error("Upload failed", err);
+        return null;
     }
-  });
-
-  // Add new product
-  form.querySelector("button").addEventListener("click", async () => {
-    const name = document.getElementById(`${containerId}-name`).value;
-    const price = document.getElementById(`${containerId}-price`).value;
-    const original = document.getElementById(`${containerId}-original`).value;
-    const image = document.getElementById(`${containerId}-image`).value;
-
-    if (!name || !price || !image) {
-      alert("Please fill all required fields and upload an image");
-      return;
-    }
-
-    let newDoc = {
-      name,
-      price: Number(price),
-      originalPrice: original ? Number(original) : null,
-      image,
-      category
-    };
-
-    // Add variation logic only for Fashion
-    if (category === "Fashion") {
-      const variation = prompt("Enter variation type (none / number / label)", "none");
-      let sizes = [];
-      if (variation !== "none") {
-        const allowedSizes = variation === "number" ? "38,39,40,41,42,43,44,45" : "S,M,L,XL";
-        const inputSizes = prompt(`Enter available sizes (comma separated)\nAvailable: ${allowedSizes}`);
-        sizes = inputSizes ? inputSizes.split(",").map(s => s.trim()) : [];
-      }
-      newDoc.variation = variation;
-      newDoc.sizes = sizes;
-    }
-
-    await addDoc(collection(db, "products"), newDoc);
-    loadProducts(category, containerId);
-  });
-
-  container.appendChild(form);
 }
 
-  // Load all categories
-  loadProducts("Electronics", "electronics");
-loadProducts("Fashion", "fashion");
+// Global variable to store current editing gallery
+let tempGalleryImages = [];
 
+// --- EDIT MODAL FUNCTIONS ---
+
+window.closeEditModal = function() {
+    document.getElementById("editModal").style.display = "none";
+}
+
+// Open Edit Modal and Populate Data
+window.openEditModal = function(product, id) {
+    document.getElementById("edit-id").value = id;
+    document.getElementById("edit-category").value = product.category;
+    document.getElementById("edit-name").value = product.name;
+    document.getElementById("edit-price").value = product.price;
+    document.getElementById("edit-original").value = product.originalPrice || "";
+    document.getElementById("edit-desc").value = product.description || "";
+    
+    // Fashion Fields
+    const fashionFields = document.getElementById("edit-fashion-fields");
+    if(product.category === "Fashion") {
+        fashionFields.style.display = "block";
+        document.getElementById("edit-variation").value = product.variation || "none";
+        document.getElementById("edit-sizes").value = (product.sizes || []).join(",");
+    } else {
+        fashionFields.style.display = "none";
+    }
+
+    // Main Image Preview
+    const mainPrev = document.getElementById("edit-main-preview");
+    if(product.image) {
+        mainPrev.src = product.image;
+        mainPrev.style.display = "block";
+    } else {
+        mainPrev.style.display = "none";
+    }
+    document.getElementById("edit-main-file").value = ""; // Reset file input
+
+    // Gallery Images
+    tempGalleryImages = product.images || []; // Load existing
+    renderEditGallery();
+    document.getElementById("edit-gallery-files").value = ""; // Reset
+
+    document.getElementById("editModal").style.display = "flex";
+}
+
+// Render small thumbnails with delete buttons in modal
+function renderEditGallery() {
+    const container = document.getElementById("edit-gallery-list");
+    container.innerHTML = "";
+    
+    tempGalleryImages.forEach((url, index) => {
+        const div = document.createElement("div");
+        div.className = "gallery-thumb";
+        div.innerHTML = `
+            <img src="${url}">
+            <div class="gallery-remove" onclick="removeGalleryImage(${index})">&times;</div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+window.removeGalleryImage = function(index) {
+    tempGalleryImages.splice(index, 1);
+    renderEditGallery();
+}
+
+// SAVE CHANGES FROM MODAL
+window.saveProductChanges = async function() {
+    const btn = document.querySelector(".save-btn");
+    btn.textContent = "Saving...";
+    btn.disabled = true;
+
+    const id = document.getElementById("edit-id").value;
+    const category = document.getElementById("edit-category").value;
+    
+    // 1. Main Image Upload (if new one selected)
+    const mainFileInput = document.getElementById("edit-main-file");
+    let newMainImage = null;
+    if(mainFileInput.files[0]) {
+        newMainImage = await uploadToImgbb(mainFileInput.files[0]);
+    }
+
+    // 2. Gallery Uploads (if new ones selected)
+    const galleryInput = document.getElementById("edit-gallery-files");
+    if(galleryInput.files.length > 0) {
+        for(let i=0; i<galleryInput.files.length; i++) {
+            const url = await uploadToImgbb(galleryInput.files[i]);
+            if(url) tempGalleryImages.push(url);
+        }
+    }
+
+    // 3. Construct Update Object
+    let updates = {
+        name: document.getElementById("edit-name").value,
+        price: Number(document.getElementById("edit-price").value),
+        originalPrice: document.getElementById("edit-original").value ? Number(document.getElementById("edit-original").value) : null,
+        description: document.getElementById("edit-desc").value,
+        images: tempGalleryImages // The updated array
+    };
+
+    if(newMainImage) updates.image = newMainImage;
+
+    // Fashion logic
+    if(category === "Fashion") {
+        updates.variation = document.getElementById("edit-variation").value;
+        const sizesStr = document.getElementById("edit-sizes").value;
+        updates.sizes = sizesStr ? sizesStr.split(",").map(s => s.trim()) : [];
+    }
+
+    try {
+        await updateDoc(doc(db, "products", id), updates);
+        closeEditModal();
+        loadProducts(category, category.toLowerCase()); // Refresh list
+    } catch (err) {
+        alert("Error updating: " + err.message);
+    } finally {
+        btn.textContent = "Save Changes";
+        btn.disabled = false;
+    }
+}
+
+
+// --- LOAD PRODUCTS FUNCTION ---
+async function loadProducts(category, containerId) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = "<p style='padding:10px;'>Loading...</p>";
+
+    const q = query(collection(db, "products"), where("category", "==", category));
+    const snapshot = await getDocs(q);
+
+    container.innerHTML = "";
+    
+    snapshot.forEach(docSnap => {
+        const product = docSnap.data();
+        const div = document.createElement("div");
+        div.className = "product";
+        
+        const galleryCount = (product.images && product.images.length > 0) ? `+${product.images.length} more imgs` : "";
+
+        div.innerHTML = `
+            <img src="${product.image || 'https://via.placeholder.com/50'}" />
+            <div class="product-info">
+                <strong>${product.name}</strong>
+                <span style="font-size:12px; background:#eee; padding:2px 5px; border-radius:4px;">${galleryCount}</span>
+                <br>
+                GH₵${product.price} 
+                ${product.originalPrice ? `<s style="color:gray; font-size:12px;">${product.originalPrice}</s>` : ""}
+                <div class="product-desc">${product.description || "No description"}</div>
+                ${category === "Fashion" ? `<small>Sizes: ${(product.sizes||[]).join(",")}</small>` : ""}
+            </div>
+            <div class="product-actions">
+                <button class="edit-btn">Edit Details</button>
+                <button class="delete-btn">Delete</button>
+            </div>
+        `;
+
+        // Delete
+        div.querySelector(".delete-btn").addEventListener("click", async () => {
+            if(confirm("Delete this product?")) {
+                await deleteDoc(doc(db, "products", docSnap.id));
+                loadProducts(category, containerId);
+            }
+        });
+
+        // Edit (Opens Modal)
+        div.querySelector(".edit-btn").addEventListener("click", () => {
+            openEditModal(product, docSnap.id);
+        });
+
+        container.appendChild(div);
+    });
+
+    // --- ADD NEW FORM (AT BOTTOM OF PANEL) ---
+    const form = document.createElement("div");
+    form.className = "add-form";
+    form.innerHTML = `
+        <h4>Add New ${category}</h4>
+        <input type="text" placeholder="Name" id="new-${containerId}-name">
+        <input type="number" placeholder="Price" id="new-${containerId}-price">
+        <input type="number" placeholder="Original Price (opt)" id="new-${containerId}-original">
+        <textarea placeholder="Description" id="new-${containerId}-desc"></textarea>
+        
+        <label>Main Image:</label>
+        <input class="upload" type="file" id="new-${containerId}-file" accept="image/*">
+        
+        <label>Gallery Images:</label>
+        <input type="file" id="new-${containerId}-gallery" multiple accept="image/*">
+        
+        <button class="add-btn" id="btn-add-${containerId}">Add Product</button>
+        <div id="status-${containerId}" style="margin-top:5px; font-size:13px;"></div>
+    `;
+
+    form.querySelector(`#btn-add-${containerId}`).addEventListener("click", async () => {
+        const name = document.getElementById(`new-${containerId}-name`).value;
+        const price = document.getElementById(`new-${containerId}-price`).value;
+        const original = document.getElementById(`new-${containerId}-original`).value;
+        const desc = document.getElementById(`new-${containerId}-desc`).value;
+        const mainFile = document.getElementById(`new-${containerId}-file`).files[0];
+        const galleryFiles = document.getElementById(`new-${containerId}-gallery`).files;
+        const status = document.getElementById(`status-${containerId}`);
+
+        if (!name || !price || !mainFile) {
+            alert("Name, Price, and Main Image are required!");
+            return;
+        }
+
+        status.innerHTML = "Uploading images... please wait.";
+        
+        try {
+            // 1. Upload Main
+            const mainUrl = await uploadToImgbb(mainFile);
+            
+            // 2. Upload Gallery
+            let galleryUrls = [];
+            for(let i=0; i<galleryFiles.length; i++) {
+                const url = await uploadToImgbb(galleryFiles[i]);
+                if(url) galleryUrls.push(url);
+            }
+
+            let newDoc = {
+                name, 
+                price: Number(price),
+                originalPrice: original ? Number(original) : null,
+                description: desc,
+                image: mainUrl,
+                images: galleryUrls,
+                category: category
+            };
+
+            if(category === "Fashion") {
+                const variation = prompt("Variation type (none/number/label)?", "none");
+                if(variation && variation !== "none") {
+                    newDoc.variation = variation;
+                    const sizes = prompt("Sizes (comma separated)?");
+                    newDoc.sizes = sizes ? sizes.split(",") : [];
+                }
+            }
+
+            await addDoc(collection(db, "products"), newDoc);
+            status.innerHTML = "Success!";
+            loadProducts(category, containerId); // Reload list
+        } catch(e) {
+            status.innerHTML = "Error: " + e.message;
+        }
+    });
+
+    container.appendChild(form);
+}
+
+// Load Initial Data
+loadProducts("Electronics", "electronics");
+loadProducts("Fashion", "fashion");
 loadProducts("Groceries", "groceries");
-  loadProducts("Essentials", "essentials");
-  loadProducts("Health", "health");
-  loadProducts("Care", "care");
+loadProducts("Essentials", "essentials");
+loadProducts("Health", "health");
+loadProducts("Care", "care");
+
 </script>
 </body>
 </html>
