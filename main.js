@@ -53,7 +53,7 @@ function shuffleArray(array) {
     return (Date.now() - parsed.timestamp > maxAge) ? null : parsed.products;
   }
 
- function renderProducts(products, container) {
+function renderProducts(products, container) {
   container.innerHTML = "";
 
   products.forEach(product => {
@@ -64,6 +64,7 @@ function shuffleArray(array) {
       ? Math.round(100 - (product.price / product.originalPrice) * 100)
       : null;
 
+    // Logic for price display
     const priceHTML = product.originalPrice
       ? `<span style="text-decoration: line-through; color: gray; font-size:11px; margin-right:3px;">GH₵${product.originalPrice.toFixed(2)}</span>
          <span style="font-weight:600; color:#222;font-size:14px;">GH₵${product.price.toFixed(2)}</span>`
@@ -71,30 +72,31 @@ function shuffleArray(array) {
 
     const imgSrc = product.image?.startsWith("http") ? product.image : "https://via.placeholder.com/150";
 
-    // Create the product cardw
     div.innerHTML = `
       ${discount ? `<span class="badge">🔥${discount}% OFF</span>` : ""}
-      <div class="image-wrapper">
-        <div class="skeleton-img"></div> <!-- Skeleton for the image -->
+      <div class="image-wrapper" style="cursor: pointer;">
+        <div class="skeleton-img"></div>
         <img src="${imgSrc}" alt="${product.name}" loading="lazy" class="product-img"/>
       </div>
       <h3>${product.name}</h3>
       <div class="price">${priceHTML}</div>
-     <button class="add" onclick='addToCart(${JSON.stringify(product)})'>Add to Cart</button>
+      <button class="add">Add to Cart</button>
     `;
 
+    // 1. Handle Image Loading
     const img = div.querySelector("img");
     const skeleton = div.querySelector(".skeleton-img");
+    img.onload = () => { skeleton.style.display = 'none'; };
+    img.onerror = () => { img.src = "https://via.placeholder.com/150"; };
 
-    // Hide skeleton when image is loaded
-    img.onload = () => {
-      skeleton.style.display = 'none'; // Hide skeleton after image load
-    };
+    // 2. ADD CLICK EVENT TO IMAGE (Opens the new Modal)
+    img.addEventListener("click", () => {
+        openProductModal(product);
+    });
 
-    // Fallback in case the image fails to load
-    img.onerror = () => {
-      img.src = "https://via.placeholder.com/150"; // Fallback image if error occurs
-    };
+    // 3. Handle "Add to Cart" button
+    const addBtn = div.querySelector(".add");
+    addBtn.onclick = () => addToCart(product);
 
     container.appendChild(div);
   });
@@ -251,36 +253,106 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 
-// ------------------------------------------------------------------
-// 3. IMAGE PREVIEW LOGIC (Event Delegation)
-// ------------------------------------------------------------------
-document.addEventListener("click", function(e) {
-  if (e.target.tagName === "IMG" && e.target.closest(".card")) {
-    const modal = document.getElementById("imgPreview");
-    const modalImg = document.getElementById("previewImg");
-    if (modal && modalImg) {
-        modal.style.display = "flex";
-        modalImg.src = e.target.src;
-    }
+// --- GALLERY VARIABLES ---
+let currentModalImages = [];
+let currentImageIndex = 0;
+
+// 1. OPEN MODAL
+window.openProductModal = function(product) {
+  const modal = document.getElementById("productModal");
+  
+  // Setup Images
+  if (product.images && Array.isArray(product.images) && product.images.length > 0) {
+      currentModalImages = product.images;
+  } else {
+      currentModalImages = [product.image || "https://via.placeholder.com/150"];
   }
-});
+  
+  currentImageIndex = 0;
+  updateMainImage();
+  renderThumbnails();
 
-// Close preview
-const closePreviewBtn = document.querySelector("#imgPreview .close");
-if (closePreviewBtn) {
-    closePreviewBtn.onclick = function() {
-        document.getElementById("imgPreview").style.display = "none";
-    };
+  // Setup Text
+  document.getElementById("modalTitle").textContent = product.name;
+  document.getElementById("modalDesc").textContent = product.description || "No description available.";
+
+  const priceEl = document.getElementById("modalPrice");
+  if (product.originalPrice) {
+      priceEl.innerHTML = `<span style="text-decoration: line-through; color: gray; font-size: 16px; margin-right: 8px;">GH₵${product.originalPrice.toFixed(2)}</span>
+                           <span>GH₵${product.price.toFixed(2)}</span>`;
+  } else {
+      priceEl.textContent = `GH₵${product.price.toFixed(2)}`;
+  }
+
+  // Setup Buttons
+  document.getElementById("modalAddToCartBtn").onclick = () => {
+      window.addToCart(product);
+      window.closeProductModal();
+  };
+
+  document.getElementById("modalBuyNowBtn").onclick = () => {
+      window.addToCart(product);
+      window.location.href = "/Cart/";
+  };
+
+  modal.style.display = "flex";
+};
+
+// 2. UPDATE IMAGE
+function updateMainImage() {
+    const img = document.getElementById("modalImg");
+    img.src = currentModalImages[currentImageIndex];
+
+    // Highlight thumbnail
+    document.querySelectorAll(".thumb-img").forEach((t, i) => {
+        if(i === currentImageIndex) t.classList.add("active-thumb");
+        else t.classList.remove("active-thumb");
+    });
 }
 
-// Close if clicked outside image
-const previewModal = document.getElementById("imgPreview");
-if (previewModal) {
-    previewModal.onclick = function(e) {
-        if (e.target === this) this.style.display = "none";
-    };
+// 3. RENDER THUMBNAILS
+function renderThumbnails() {
+    const container = document.getElementById("modalThumbnails");
+    const prev = document.querySelector(".nav-btn.prev");
+    const next = document.querySelector(".nav-btn.next");
+
+    container.innerHTML = "";
+
+    if (currentModalImages.length <= 1) {
+        container.style.display = "none";
+        prev.style.display = "none"; 
+        next.style.display = "none";
+    } else {
+        container.style.display = "flex";
+        prev.style.display = "flex"; 
+        next.style.display = "flex";
+        
+        currentModalImages.forEach((src, idx) => {
+            const thumb = document.createElement("img");
+            thumb.src = src;
+            thumb.className = "thumb-img";
+            thumb.onclick = () => { currentImageIndex = idx; updateMainImage(); };
+            container.appendChild(thumb);
+        });
+    }
 }
 
+// 4. ARROWS
+window.changeModalImage = function(dir) {
+    currentImageIndex += dir;
+    if (currentImageIndex >= currentModalImages.length) currentImageIndex = 0;
+    else if (currentImageIndex < 0) currentImageIndex = currentModalImages.length - 1;
+    updateMainImage();
+};
+
+// 5. CLOSE
+window.closeProductModal = function() {
+    document.getElementById("productModal").style.display = "none";
+};
+
+window.onclick = function(e) {
+    if (e.target === document.getElementById("productModal")) closeProductModal();
+};
 // ------------------------------------------------------------------
 // 4. TESTIMONIALS LOGIC
 // ------------------------------------------------------------------
