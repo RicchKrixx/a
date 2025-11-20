@@ -190,36 +190,7 @@ onAuthStateChanged(auth, async user => {
   }
 });
 
-  // Wait for the page to load
-  window.addEventListener('DOMContentLoaded', () => {
-    
-    // Check if this is a new user
-    if (!localStorage.getItem('bixmax_has_visited')) {
-      
-      // Define the function to ask for permission
-      const askPermission = () => {
-        if ('Notification' in window && Notification.permission !== 'denied') {
-          Notification.requestPermission().then(permission => {
-            if (permission === 'granted') {
-              
-              // Send the notification
-              new Notification("👋 Welcome to BixMAX!", {
-                body: "Thanks for visiting us! Check out our hot sales.",
-                // Use a full URL for the icon to ensure it works on all pages
-                icon: "https://i.postimg.cc/fbMdWcc6/shop-logo-removebg-preview.png"
-              });
-              
-              // Mark user as visited so we don't ask again
-              localStorage.setItem('bixmax_has_visited', 'true');
-            }
-          });
-        }
-      };
-
-      // Triggers the request on the FIRST click anywhere on the site
-      document.addEventListener('click', askPermission, { once: true });
-    }
-  });
+document.addEventListener("DOMContentLoaded", function() {
  loadAllProducts();
 });
 
@@ -325,4 +296,5 @@ async function loadTestimonials() {
 }
 
 loadTestimonials();
+
 
