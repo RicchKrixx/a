@@ -1060,3 +1060,13 @@ box-shadow:  0 10px 10px 0 #adf, inset 0 -9px 9px 0 #00b7d4;
   color: #333;
   font-size: 20px;
 }
+img {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version */
+  pointer-events: none; /* Prevents cursor pointer effect */
+  -webkit-user-drag: none; /* Prevents dragging on some browsers */
+}
