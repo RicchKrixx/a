@@ -408,3 +408,17 @@ async function loadTestimonials() {
     card.classList.add("visible");
   }
 }
+document.addEventListener('DOMContentLoaded', function() {
+  const images = document.querySelectorAll('img');
+
+  images.forEach(img => {
+    // 1. Prevent image drag (desktop)
+    img.setAttribute('draggable', false);
+
+    // 2. Prevent right-click/context menu (desktop/mobile long press)
+    img.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+      // Optional: Show a message like "Content is protected"
+    });
+  });
+});
