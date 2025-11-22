@@ -72,31 +72,12 @@ function renderProducts(products, container) {
 
     const imgSrc = product.image?.startsWith("http") ? product.image : "https://via.placeholder.com/150";
 
-    // --- UPDATED HTML TO INCLUDE SHARE BUTTON ---
     div.innerHTML = `
       ${discount ? `<span class="badge">🔥${discount}% OFF</span>` : ""}
-      
       <div class="image-wrapper" style="cursor: pointer;">
-// OLD LINE:
-// <button class="share-btn" ... > ... </button>
-
-// NEW LINE (Copy this):
-<button 
-    class="share-btn" 
-    onclick="window.handleShare(event, '${product.name.replace(/'/g, "\\'")}', '${product.price}')"
->
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="18" cy="5" r="3"></circle>
-        <circle cx="6" cy="12" r="3"></circle>
-        <circle cx="18" cy="19" r="3"></circle>
-        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-    </svg>
-</button>
         <div class="skeleton-img"></div>
-        <img src="${imgSrc}" alt="${product.name}" loading="lazy" class="product-img lazy-fade"/>
+        <img src="${imgSrc}" alt="${product.name}" loading="lazy" class="product-img"/>
       </div>
-
       <h3>${product.name}</h3>
       <div class="price">${priceHTML}</div>
       <button class="add">Add to Cart</button>
@@ -105,13 +86,10 @@ function renderProducts(products, container) {
     // 1. Handle Image Loading
     const img = div.querySelector("img");
     const skeleton = div.querySelector(".skeleton-img");
-    img.onload = () => { 
-        skeleton.style.display = 'none'; 
-        img.style.opacity = 1; // Ensure fade-in works
-    };
+    img.onload = () => { skeleton.style.display = 'none'; };
     img.onerror = () => { img.src = "https://via.placeholder.com/150"; };
 
-    // 2. ADD CLICK EVENT TO IMAGE (Opens the Modal)
+    // 2. ADD CLICK EVENT TO IMAGE (Opens the new Modal)
     img.addEventListener("click", () => {
         openProductModal(product);
     });
@@ -120,16 +98,10 @@ function renderProducts(products, container) {
     const addBtn = div.querySelector(".add");
     addBtn.onclick = () => addToCart(product);
 
-    // --- 4. HANDLE SHARE BUTTON CLICK ---
-    const shareBtn = div.querySelector(".share-btn");
-    shareBtn.onclick = (e) => {
-        e.stopPropagation(); // STOP the click from opening the modal
-        shareProduct(product); // Trigger the share
-    };
-
     container.appendChild(div);
   });
 }
+
 async function loadProducts(category, containerId) {
   const container = document.getElementById(containerId);
   showSkeletons(container);
@@ -450,4 +422,3 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 });
-
