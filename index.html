@@ -1016,71 +1016,100 @@
     to { opacity: 1; transform: translate(-50%, 0); }
 }
 </style>
-<div id="bixmax-loader">
-    <div class="loader-spinner"></div>
+<div id="bixmax-splash">
+    <div class="splash-container">
+        <div class="splash-ring"></div>
+        
+        <img src="shop-logo-removebg-preview.png" alt="BixMAX" class="splash-logo">
+    </div>
 </div>
 
 <style>
-    /* 2. THE LOADER CSS */
-    #bixmax-loader {
+    /* 2. SPLASH SCREEN CSS */
+    #bixmax-splash {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: #ffffff; /* Clean white background */
-        z-index: 99999; /* Sits on top of everything */
+        background-color: #ffffff; /* White Background */
+        z-index: 999999; /* Highest priority */
         display: flex;
         align-items: center;
         justify-content: center;
         transition: opacity 0.5s ease-out, visibility 0.5s;
     }
 
-    /* The Spinning Ring */
-    .loader-spinner {
-        width: 50px;
-        height: 50px;
-        border: 4px solid #e5e7eb; /* Light gray circle */
-        border-top: 4px solid #6366f1; /* YOUR BRAND COLOR */
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
+    .splash-container {
+        position: relative;
+        width: 100px;
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
-    /* The Fade Out Animation */
-    .loader-hidden {
+    /* The Logo Image */
+    .splash-logo {
+        width: 60px; /* Adjust size to fit inside ring */
+        height: auto;
+        position: relative;
+        z-index: 2;
+        animation: pulse 1.5s infinite ease-in-out;
+    }
+
+    /* The Rotating Ring */
+    .splash-ring {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border: 3px solid transparent;
+        border-top-color: #6366f1; /* BixMAX Brand Color */
+        border-right-color: #6366f1;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        z-index: 1;
+    }
+
+    /* Hide Class */
+    .splash-hidden {
         opacity: 0;
         visibility: hidden;
     }
 
+    /* Animations */
     @keyframes spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
     }
+
+    @keyframes pulse {
+        0% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.05); opacity: 0.8; }
+        100% { transform: scale(1); opacity: 1; }
+    }
 </style>
 
 <script>
-    // 3. THE LOGIC
-    // Wait for the whole page (images, styles) to finish loading
-    window.addEventListener('load', () => {
-        const loader = document.getElementById('bixmax-loader');
+    // 3. THE LOGIC (Constant Time)
+    document.addEventListener("DOMContentLoaded", () => {
         
-        // Add the class to fade it out
-        loader.classList.add('loader-hidden');
+        // CHANGE THIS NUMBER to make it longer or shorter (5000 = 5 seconds)
+        const SHOW_TIME = 5000; 
 
-        // Remove it from the HTML entirely after the fade finishes (cleanup)
-        loader.addEventListener('transitionend', () => {
-            loader.remove();
-        });
+        setTimeout(() => {
+            const loader = document.getElementById('bixmax-splash');
+            if (loader) {
+                // 1. Fade it out
+                loader.classList.add('splash-hidden');
+                
+                // 2. Remove it from the code completely after fade ends
+                setTimeout(() => {
+                    loader.remove();
+                }, 500); // Wait 0.5s for CSS transition
+            }
+        }, SHOW_TIME);
     });
-
-    // Safety Net: If the page takes too long (e.g. 5 seconds), force remove the loader
-    // This prevents users from getting stuck on a white screen if an image fails.
-    setTimeout(() => {
-        const loader = document.getElementById('bixmax-loader');
-        if (loader) {
-            loader.classList.add('loader-hidden');
-        }
-    }, 5000); 
 </script>
 <script>
     const overlay = document.getElementById('connection-overlay');
