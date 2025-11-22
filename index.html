@@ -821,7 +821,11 @@
 
 
 <br>
+	   <button id="install-btn" class="install-btn" hidden>
+    Install Bixmax App
+</button>
    </div>
+	
    <footer style="text-decoration: none;">
         <div class="footer-container">
             <!-- Company Info -->
@@ -958,6 +962,27 @@
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
     }
+	.install-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--brand-color);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 30px;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    z-index: 1000;
+    font-weight: bold;
+    cursor: pointer;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+    40% {transform: translateY(-10px);}
+    60% {transform: translateY(-5px);}
+}
 </style>
 
 <script>
@@ -1321,6 +1346,29 @@ timers.forEach(t => startCountdown(t.id, t.end));
     });
   }
 </script>
+	<script>
+		let deferredPrompt;
+const installBtn = document.getElementById('install-btn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    // 1. Prevent default browser banner
+    e.preventDefault();
+    deferredPrompt = e;
+    // 2. Show our custom button
+    installBtn.hidden = false;
+});
+
+installBtn.addEventListener('click', async () => {
+    if (deferredPrompt) {
+        // 3. Show the install prompt
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`User response: ${outcome}`);
+        deferredPrompt = null;
+        installBtn.hidden = true;
+    }
+});
+	</script>
 <script src="/pwa-register.js"></script>
 	<!--StartofTawk.toScript-->
 	<script type="text/javascript"> 
@@ -1336,6 +1384,5 @@ timers.forEach(t => startCountdown(t.id, t.end));
 		})();
 	</script> 
 		<!--End of Tawk.to Script-->
-	
 </body>
 </html>
