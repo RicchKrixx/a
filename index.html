@@ -82,17 +82,7 @@
 		<li><span><a href="/help/"> Help</a></span></li>
 		<li><a href="/qrcodes/">Generate QR code</a></li>
 	  <li>
-		  <div id="wishlistModal" class="modal" style="display:none;">
-    <div class="modal-content" style="max-width: 500px;">
-        <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h2>Saved Items</h2>
-            <span class="close" onclick="document.getElementById('wishlistModal').style.display='none'">&times;</span>
-        </div>
-        
-        <div id="wishlist-container" class="product-grid" style="grid-template-columns: 1fr;">
-            </div>
-    </div>
-</div>
+		<a href="#" onclick="openWishlist()">Saved Items</a>
 	  </li>
 	  <!--
       <li><a href="#fashion">👗Fashion</a></li>
@@ -136,7 +126,17 @@
   <img src="https://cdn-icons-png.flaticon.com/512/6134/6134065.png" alt="No results">
   <p>No products found. check your spelling and try again!</p>
 </div>
-
+  <div id="wishlistModal" class="modal" style="display:none;">
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h2>Saved Items</h2>
+            <span class="close" onclick="document.getElementById('wishlistModal').style.display='none'">&times;</span>
+        </div>
+        
+        <div id="wishlist-container" class="product-grid" style="grid-template-columns: 1fr;">
+            </div>
+    </div>
+</div>
     <section class="categories">
 	  <h2>Shop by Category</h2>
 		<hr>
