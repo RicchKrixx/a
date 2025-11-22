@@ -1112,24 +1112,45 @@ box-shadow:  0 10px 10px 0 #adf, inset 0 -9px 9px 0 #00b7d4;
     /* ADD THIS LINE: */
     pointer-events: none; 
 }
-
-/* 5. Heart Button on Products */
-.heart-btn {
+/* --- WISHLIST HEART BUTTON --- */
+.wishlist-btn {
     position: absolute;
     top: 10px;
     right: 10px;
-    background: rgba(255,255,255,0.9);
-    border: none;
-    border-radius: 50%;
     width: 35px;
     height: 35px;
-    cursor: pointer;
-    z-index: 5;
-    font-size: 1.2rem;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.2s;
+    cursor: pointer;
+    z-index: 10; /* Above the image */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: transform 0.2s ease;
 }
-.heart-btn:active { transform: scale(1.3); }
-.heart-btn.active { color: red; }
+
+.wishlist-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: #333; /* Default outline color */
+    stroke-width: 2;
+    fill: none; /* Empty heart by default */
+    transition: all 0.3s ease;
+    pointer-events: none; /* Clicks go through SVG to Button */
+}
+
+/* Active State (Liked) */
+.wishlist-btn.active svg {
+    fill: #ef4444; /* Red Fill */
+    stroke: #ef4444; /* Red Outline */
+    animation: heart-pop 0.3s ease-out;
+}
+
+/* Animation */
+@keyframes heart-pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
