@@ -821,9 +821,16 @@
 
 
 <br>
-	   <button id="install-btn" class="install-btn" hidden>
-    Install Bixmax App
-</button>
+	 <div id="install-container" class="install-container">
+    <button id="install-btn" class="install-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        <span>Install App</span>
+    </button>
+</div>
    </div>
 	
    <footer style="text-decoration: none;">
@@ -896,7 +903,7 @@
 		<strong class="off">YOUR'RE OFFLINE</strong>
         <div class="spinner"></div>
         <h3>Reconnecting...</h3>
-        <p class="p">Hang tight, we are waiting for your signal.</p>
+        <p class="p">Connect to the internet to continue shopping.</p>
     </div>
 </div>
 
@@ -962,26 +969,47 @@
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
     }
-	.install-btn {
+	/* Container to help with positioning */
+.install-container {
+    display: none; /* Hidden by default */
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: var(--brand-color);
-    color: white;
-    padding: 12px 20px;
-    border-radius: 30px;
-    border: none;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    z-index: 1000;
-    font-weight: bold;
-    cursor: pointer;
-    animation: bounce 2s infinite;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    animation: slideUp 0.5s ease-out forwards;
 }
 
-@keyframes bounce {
-    0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
-    40% {transform: translateY(-10px);}
-    60% {transform: translateY(-5px);}
+/* The Button Design */
+.install-btn {
+    background-color: var(--brand-color, #6366f1); /* Falls back to #6366f1 if var missing */
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4); /* Colored shadow */
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between icon and text */
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.install-btn:hover {
+    transform: scale(1.05); /* Grows slightly */
+    box-shadow: 0 15px 35px rgba(99, 102, 241, 0.5);
+}
+
+.install-btn:active {
+    transform: scale(0.95); /* Shrinks when clicked */
+}
+
+/* Entrance Animation */
+@keyframes slideUp {
+    from { opacity: 0; transform: translate(-50%, 50px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
 }
 </style>
 
@@ -1347,26 +1375,41 @@ timers.forEach(t => startCountdown(t.id, t.end));
   }
 </script>
 	<script>
-		let deferredPrompt;
+let deferredPrompt; // Saves the event for later
+const installContainer = document.getElementById('install-container');
 const installBtn = document.getElementById('install-btn');
 
+// 1. Listen for the 'beforeinstallprompt' event
 window.addEventListener('beforeinstallprompt', (e) => {
-    // 1. Prevent default browser banner
+    // Prevent the mini-infobar from appearing on mobile
     e.preventDefault();
+    // Stash the event so we can trigger it later.
     deferredPrompt = e;
-    // 2. Show our custom button
-    installBtn.hidden = false;
+    // Show our cool button
+    installContainer.style.display = 'block';
+    console.log("Bixmax: Install prompt captured");
 });
 
+// 2. Handle the click
 installBtn.addEventListener('click', async () => {
     if (deferredPrompt) {
-        // 3. Show the install prompt
+        // Show the install prompt
         deferredPrompt.prompt();
+        // Wait for the user to respond to the prompt
         const { outcome } = await deferredPrompt.userChoice;
         console.log(`User response: ${outcome}`);
+        
+        // We've used the prompt, so clear it
         deferredPrompt = null;
-        installBtn.hidden = true;
+        // Hide the button
+        installContainer.style.display = 'none';
     }
+});
+
+// 3. (Optional) If they install, hide the button immediately
+window.addEventListener('appinstalled', () => {
+    installContainer.style.display = 'none';
+    console.log('Bixmax: App installed successfully');
 });
 	</script>
 <script src="/pwa-register.js"></script>
