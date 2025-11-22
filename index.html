@@ -81,6 +81,19 @@
 		<li><a href="tel:0536345825"> Contact</a></li>
 		<li><span><a href="/help/"> Help</a></span></li>
 		<li><a href="/qrcodes/">Generate QR code</a></li>
+	  <li>
+		  <div id="wishlistModal" class="modal" style="display:none;">
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h2>Saved Items</h2>
+            <span class="close" onclick="document.getElementById('wishlistModal').style.display='none'">&times;</span>
+        </div>
+        
+        <div id="wishlist-container" class="product-grid" style="grid-template-columns: 1fr;">
+            </div>
+    </div>
+</div>
+	  </li>
 	  <!--
       <li><a href="#fashion">👗Fashion</a></li>
       <li><a href="#grocereries">🍎Groceries</a></li>
@@ -1554,6 +1567,19 @@ function isLiked(product) {
 function updateWishlistCount() {
     const countEl = document.getElementById('wishlist-count');
     if(countEl) countEl.innerText = wishlist.length;
+}
+	window.openWishlist = function() {
+    const modal = document.getElementById('wishlistModal');
+    const container = document.getElementById('wishlist-container');
+    
+    if(wishlist.length === 0) {
+        container.innerHTML = "<p style='text-align:center; padding:20px;'>Your wishlist is empty.</p>";
+    } else {
+        // Reuse your renderProducts function but render into the modal!
+        renderProducts(wishlist, container);
+    }
+    
+    modal.style.display = "flex";
 }
 </script>
 	<script src="/pwa-register.js"></script>
