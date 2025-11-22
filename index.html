@@ -1413,31 +1413,38 @@ window.addEventListener('appinstalled', () => {
 });
 	</script>
 	<script>
-// --- SHARE FUNCTION ---
+// --- UPDATED ROBUST SHARE FUNCTION ---
 async function shareProduct(product) {
     const shareData = {
         title: product.name,
-        text: `Check out this ${product.name} on Bixmax! \nPrice: GH₵${product.price}`,
-        url: window.location.href // Or specific product URL if you have routing
+        text: `Check out this ${product.name} on BixMAX! \nPrice: GH₵${product.price}`,
+        url: window.location.href
     };
 
-    // 1. Mobile Native Share
+    // 1. Try Native Share (Android/iOS/Windows 10+)
     if (navigator.share) {
         try {
             await navigator.share(shareData);
-            console.log('Shared successfully');
+            return; // If successful, stop here.
         } catch (err) {
-            console.log('Error sharing:', err);
+            // If user cancels or it fails, we continue to the fallback below
+            console.log('Native share closed or failed, trying clipboard...');
         }
-    } 
-    // 2. Desktop Fallback (Clipboard)
-    else {
-        try {
-            await navigator.clipboard.writeText(`${shareData.text}\n${shareData.url}`);
-            alert("Link copied to clipboard! Ready to paste.");
-        } catch (err) {
-            console.error('Failed to copy:', err);
-        }
+    }
+
+    // 2. Fallback: Copy to Clipboard (Desktop / Non-native)
+    try {
+        // Try modern clipboard API
+        await navigator.clipboard.writeText(`${shareData.text}\n${shareData.url}`);
+        
+        // Show your Toast or Alert here
+        alert("Link copied to clipboard!"); 
+        
+    } catch (err) {
+        // 3. Ultimate Fallback (For Insecure HTTP connections)
+        // If clipboard fails (because site is not HTTPS), show a prompt
+        console.error('Clipboard failed:', err);
+        prompt("Copy this link manually:", shareData.url);
     }
 }
 	</script>
