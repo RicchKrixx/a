@@ -63,7 +63,8 @@ function renderProducts(products, container) {
     const discount = product.originalPrice
       ? Math.round(100 - (product.price / product.originalPrice) * 100)
       : null;
-
+// Check if this product is already in wishlist
+    const likedClass = isLiked(product) ? "active" : "";
     // Logic for price display
     const priceHTML = product.originalPrice
       ? `<span style="text-decoration: line-through; color: gray; font-size:11px; margin-right:3px;">GH₵${product.originalPrice.toFixed(2)}</span>
@@ -75,6 +76,11 @@ function renderProducts(products, container) {
     div.innerHTML = `
       ${discount ? `<span class="badge">🔥${discount}% OFF</span>` : ""}
       <div class="image-wrapper" style="cursor: pointer;">
+	  <button class="wishlist-btn ${likedClass}" aria-label="Add to Wishlist">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+        </button>
         <div class="skeleton-img"></div>
         <img src="${imgSrc}" alt="${product.name}" loading="lazy" class="product-img"/>
       </div>
@@ -97,7 +103,9 @@ function renderProducts(products, container) {
     // 3. Handle "Add to Cart" button
     const addBtn = div.querySelector(".add");
     addBtn.onclick = () => addToCart(product);
-
+// WIRE UP THE HEART BUTTON
+    const heartBtn = div.querySelector(".wishlist-btn");
+    heartBtn.addEventListener("click", (e) => window.toggleWishlist(e, product));
     container.appendChild(div);
   });
 }
