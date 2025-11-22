@@ -1,19 +1,98 @@
- import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-  import { getFirestore, collection, query, where, getDoc, getDocs, orderBy, updateDoc, doc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getFirestore, collection, query, where, getDoc, getDocs, orderBy, updateDoc, doc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
-    authDomain: "bixmax-6c24c.firebaseapp.com",
-    projectId: "bixmax-6c24c",
-    storageBucket: "bixmax-6c24c.appspot.com",
-    messagingSenderId: "37740442541",
-    appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyB0BBzQzGX6MHVSjn09VSD-JGpSwOu8EqQ",
+  authDomain: "bixmax-6c24c.firebaseapp.com",
+  projectId: "bixmax-6c24c",
+  storageBucket: "bixmax-6c24c.appspot.com",
+  messagingSenderId: "37740442541",
+  appId: "1:37740442541:web:a2e2b9bb81c6a8e76c6724"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// --- WISHLIST SYSTEM (NEW) ---
+// 1. Load wishlist from phone
+let wishlist = JSON.parse(localStorage.getItem('bixmax_wishlist')) || [];
+
+// 2. Global Toggle Function
+window.toggleWishlist = function(event, name, price, image) {
+    // Stop the card from clicking (don't open modal)
+    event.stopPropagation();
+    event.preventDefault();
+    
+    const btn = event.currentTarget;
+    const index = wishlist.findIndex(item => item.name === name);
+
+    if (index === -1) {
+        // Add to list
+        wishlist.push({ name, price, image });
+        btn.classList.add('active');
+    } else {
+        // Remove from list
+        wishlist.splice(index, 1);
+        btn.classList.remove('active');
+    }
+
+    // Save to local storage
+    localStorage.setItem('bixmax_wishlist', JSON.stringify(wishlist));
+    updateWishlistCount();
+};
+
+// 3. Open Wishlist Modal
+window.openWishlist = function() {
+    const modal = document.getElementById('wishlistModal');
+    const container = document.getElementById('wishlist-container');
+    
+    modal.style.display = "flex";
+    container.innerHTML = "";
+
+    if (wishlist.length === 0) {
+        container.innerHTML = "<p style='text-align:center; padding:20px; color:gray;'>No saved items.</p>";
+        return;
+    }
+
+    wishlist.forEach(item => {
+        const div = document.createElement('div');
+        div.style.cssText = "display:flex; gap:15px; margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px; align-items:center;";
+        div.innerHTML = `
+            <img src="${item.image}" style="width:60px; height:60px; object-fit:cover; border-radius:8px;">
+            <div style="flex:1;">
+                <h4 style="margin:0; font-size:14px;">${item.name}</h4>
+                <div style="font-weight:bold; font-size:14px;">GH₵${item.price}</div>
+            </div>
+            <button onclick="removeItemFromWishlist('${item.name}')" style="color:red; background:none; border:none; cursor:pointer; font-size:20px;">&times;</button>
+        `;
+        container.appendChild(div);
+    });
+};
+
+// 4. Close Wishlist
+window.closeWishlist = function() {
+    document.getElementById('wishlistModal').style.display = "none";
+};
+
+// 5. Helper to remove inside modal
+window.removeItemFromWishlist = function(name) {
+    wishlist = wishlist.filter(item => item.name !== name);
+    localStorage.setItem('bixmax_wishlist', JSON.stringify(wishlist));
+    updateWishlistCount();
+    openWishlist(); // Refresh modal
+    
+    // If on homepage, update the heart icons real-time
+    loadAllProducts(); 
+};
+
+function updateWishlistCount() {
+    const el = document.getElementById('wishlist-count');
+    if(el) el.innerText = wishlist.length;
+}
+// --- END WISHLIST SYSTEM ---
+
 
 function showSkeletons(container, count = 12) {
   container.innerHTML = "";
@@ -30,7 +109,6 @@ function showSkeletons(container, count = 12) {
   }
 }
 
-
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -38,21 +116,22 @@ function shuffleArray(array) {
   }
   return array;
 }
-	
-  function saveProductsToCache(category, products) {
-    localStorage.setItem("products_" + category, JSON.stringify({
-      products,
-      timestamp: Date.now()
-    }));
-  }
+    
+function saveProductsToCache(category, products) {
+  localStorage.setItem("products_" + category, JSON.stringify({
+    products,
+    timestamp: Date.now()
+  }));
+}
 
-  function getProductsFromCache(category, maxAge = 1000) {
-    const cache = localStorage.getItem("products_" + category);
-    if (!cache) return null;
-    const parsed = JSON.parse(cache);
-    return (Date.now() - parsed.timestamp > maxAge) ? null : parsed.products;
-  }
+function getProductsFromCache(category, maxAge = 1000) {
+  const cache = localStorage.getItem("products_" + category);
+  if (!cache) return null;
+  const parsed = JSON.parse(cache);
+  return (Date.now() - parsed.timestamp > maxAge) ? null : parsed.products;
+}
 
+// --- MODIFIED RENDER PRODUCTS (Now includes Hearts) ---
 function renderProducts(products, container) {
   container.innerHTML = "";
 
@@ -63,9 +142,7 @@ function renderProducts(products, container) {
     const discount = product.originalPrice
       ? Math.round(100 - (product.price / product.originalPrice) * 100)
       : null;
-// Check if this product is already in wishlist
-    const likedClass = isLiked(product) ? "active" : "";
-    // Logic for price display
+
     const priceHTML = product.originalPrice
       ? `<span style="text-decoration: line-through; color: gray; font-size:11px; margin-right:3px;">GH₵${product.originalPrice.toFixed(2)}</span>
          <span style="font-weight:600; color:#222;font-size:14px;">GH₵${product.price.toFixed(2)}</span>`
@@ -73,14 +150,20 @@ function renderProducts(products, container) {
 
     const imgSrc = product.image?.startsWith("http") ? product.image : "https://via.placeholder.com/150";
 
+    // CHECK IF LIKED
+    const isLiked = wishlist.some(item => item.name === product.name);
+    const activeClass = isLiked ? "active" : "";
+
     div.innerHTML = `
       ${discount ? `<span class="badge">🔥${discount}% OFF</span>` : ""}
       <div class="image-wrapper" style="cursor: pointer;">
-	  <button class="wishlist-btn ${likedClass}" aria-label="Add to Wishlist">
-            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+        
+        <button class="wishlist-btn ${activeClass}" onclick="toggleWishlist(event, '${product.name.replace(/'/g, "\\'")}', ${product.price}, '${imgSrc}')">
+             <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
             </svg>
         </button>
+
         <div class="skeleton-img"></div>
         <img src="${imgSrc}" alt="${product.name}" loading="lazy" class="product-img"/>
       </div>
@@ -89,35 +172,32 @@ function renderProducts(products, container) {
       <button class="add">Add to Cart</button>
     `;
 
-    // 1. Handle Image Loading
     const img = div.querySelector("img");
     const skeleton = div.querySelector(".skeleton-img");
     img.onload = () => { skeleton.style.display = 'none'; };
     img.onerror = () => { img.src = "https://via.placeholder.com/150"; };
 
-    // 2. ADD CLICK EVENT TO IMAGE (Opens the new Modal)
     img.addEventListener("click", () => {
         openProductModal(product);
     });
 
-    // 3. Handle "Add to Cart" button
     const addBtn = div.querySelector(".add");
     addBtn.onclick = () => addToCart(product);
-// WIRE UP THE HEART BUTTON
-    const heartBtn = div.querySelector(".wishlist-btn");
-    heartBtn.addEventListener("click", (e) => window.toggleWishlist(e, product));
+
     container.appendChild(div);
   });
 }
 
 async function loadProducts(category, containerId) {
   const container = document.getElementById(containerId);
+  if (!container) return []; // Safety check
+
   showSkeletons(container);
 
   const cached = getProductsFromCache(category);
   if (cached) {
-    setTimeout(() => renderProducts(cached, container), 1000);
-    return cached; // ✅ return cached products
+    setTimeout(() => renderProducts(cached, container), 500);
+    return cached;
   }
 
   try {
@@ -127,35 +207,32 @@ async function loadProducts(category, containerId) {
     shuffleArray(products);
     saveProductsToCache(category, products);
     renderProducts(products, container);
-    return products; // ✅ return products
+    return products;
   } catch (err) {
     console.error("Error loading products:", err);
     container.innerHTML = "<p style='color:red;'>Failed to load products.</p>";
-    return []; // ✅ return empty array on error
+    return [];
   }
 }
 
+async function loadAllProducts() {
+  const categories = [
+    { name: "Electronics", id: "grid-electronics" },
+    { name: "Fashion", id: "grid-fashion" },
+    { name: "Groceries", id: "grid-groceries" },
+    { name: "Essentials", id: "grid-essentials" },
+    { name: "Health", id: "grid-health" },
+    { name: "Care", id: "grid-care" }
+  ];
+  let allProducts = [];
+  await Promise.all(categories.map(async cat => {
+    const products = await loadProducts(cat.name, cat.id);
+    allProducts = allProducts.concat(products);
+  }));
+  updateWishlistCount(); // Initial count update
+  return allProducts;
+}
 
-  async function loadAllProducts() {
-    const categories = [
-      { name: "Electronics", id: "grid-electronics" },
-      { name: "Fashion", id: "grid-fashion" },
-      { name: "Groceries", id: "grid-groceries" },
-      { name: "Essentials", id: "grid-essentials" },
-      { name: "Health", id: "grid-health" },
-      { name: "Care", id: "grid-care" }
-    ];
-    let allProducts = [];
-    await Promise.all(categories.map(async cat => {
-      const products = await loadProducts(cat.name, cat.id);
-      allProducts = allProducts.concat(products);
-    }));
-    return allProducts;
-  }
-
-// ------------------------------------------------------------------
-// 1. AUTHENTICATION LISTENER
-// ------------------------------------------------------------------
 onAuthStateChanged(auth, async user => {
   const profileImg = document.getElementById('menuProfileImg');
   const userName = document.getElementById('menuUserName');
@@ -199,29 +276,20 @@ onAuthStateChanged(auth, async user => {
   }
 });
 
-// ------------------------------------------------------------------
-// 2. MAIN PAGE INITIALIZATION (Consolidated)
-// ------------------------------------------------------------------
 document.addEventListener("DOMContentLoaded", function() {
-    
-    // A. Load Content
     loadAllProducts();
-    loadTestimonials(); // Moved inside for safety
+    loadTestimonials();
 
-    // B. Update Copyright Year
     const yearEl = document.getElementById("year");
     if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-    // C. Browser Notification Logic
     const hasBeenWelcomed = localStorage.getItem("browserWelcomeShown");
-
     if (!hasBeenWelcomed) {
         document.addEventListener("click", askForNotificationPermission, { once: true });
     }
 
     function askForNotificationPermission() {
         if (!("Notification" in window)) return;
-
         Notification.requestPermission().then((permission) => {
             if (permission === "granted") {
                 showWelcomeNotification();
@@ -245,16 +313,14 @@ document.addEventListener("DOMContentLoaded", function() {
         localStorage.setItem("browserWelcomeShown", "true");
     }
 
-    // D. Menu Close Logic (Fixed missing variables)
     const menu = document.getElementById('fullMenu');
     const hamburger = document.querySelector('.menu-toggle');
 
     document.addEventListener('click', (e) => {
-        // Only run if menu and hamburger exist
         if (menu && hamburger) {
             if (!menu.contains(e.target) && !hamburger.contains(e.target)) {
                 menu.classList.remove('active');
-                menu.classList.remove('show'); // Added 'show' based on your HTML
+                menu.classList.remove('show');
                 hamburger.classList.remove('active');
             }
         }
@@ -265,11 +331,9 @@ document.addEventListener("DOMContentLoaded", function() {
 let currentModalImages = [];
 let currentImageIndex = 0;
 
-// 1. OPEN MODAL
 window.openProductModal = function(product) {
   const modal = document.getElementById("productModal");
   
-  // Setup Images
   if (product.images && Array.isArray(product.images) && product.images.length > 0) {
       currentModalImages = product.images;
   } else {
@@ -280,7 +344,6 @@ window.openProductModal = function(product) {
   updateMainImage();
   renderThumbnails();
 
-  // Setup Text
   document.getElementById("modalTitle").textContent = product.name;
   document.getElementById("modalDesc").textContent = product.description || "No description available.";
 
@@ -292,7 +355,6 @@ window.openProductModal = function(product) {
       priceEl.textContent = `GH₵${product.price.toFixed(2)}`;
   }
 
-  // Setup Buttons
   document.getElementById("modalAddToCartBtn").onclick = () => {
       window.addToCart(product);
       window.closeProductModal();
@@ -306,19 +368,16 @@ window.openProductModal = function(product) {
   modal.style.display = "flex";
 };
 
-// 2. UPDATE IMAGE
 function updateMainImage() {
     const img = document.getElementById("modalImg");
     img.src = currentModalImages[currentImageIndex];
 
-    // Highlight thumbnail
     document.querySelectorAll(".thumb-img").forEach((t, i) => {
         if(i === currentImageIndex) t.classList.add("active-thumb");
         else t.classList.remove("active-thumb");
     });
 }
 
-// 3. RENDER THUMBNAILS
 function renderThumbnails() {
     const container = document.getElementById("modalThumbnails");
     const prev = document.querySelector(".nav-btn.prev");
@@ -328,12 +387,12 @@ function renderThumbnails() {
 
     if (currentModalImages.length <= 1) {
         container.style.display = "none";
-        prev.style.display = "none"; 
-        next.style.display = "none";
+        if(prev) prev.style.display = "none"; 
+        if(next) next.style.display = "none";
     } else {
         container.style.display = "flex";
-        prev.style.display = "flex"; 
-        next.style.display = "flex";
+        if(prev) prev.style.display = "flex"; 
+        if(next) next.style.display = "flex";
         
         currentModalImages.forEach((src, idx) => {
             const thumb = document.createElement("img");
@@ -345,7 +404,6 @@ function renderThumbnails() {
     }
 }
 
-// 4. ARROWS
 window.changeModalImage = function(dir) {
     currentImageIndex += dir;
     if (currentImageIndex >= currentModalImages.length) currentImageIndex = 0;
@@ -353,23 +411,21 @@ window.changeModalImage = function(dir) {
     updateMainImage();
 };
 
-// 5. CLOSE
 window.closeProductModal = function() {
     document.getElementById("productModal").style.display = "none";
 };
 
 window.onclick = function(e) {
-    if (e.target === document.getElementById("productModal")) closeProductModal();
+    if (e.target === document.getElementById("productModal")) window.closeProductModal();
 };
-// ------------------------------------------------------------------
-// 4. TESTIMONIALS LOGIC
-// ------------------------------------------------------------------
+
+// --- TESTIMONIALS ---
 let currentIdx = 0;
 let testimonialInterval;
 
 async function loadTestimonials() {
   const card = document.getElementById("testimonialCard");
-  if (!card) return; // Safety check
+  if (!card) return; 
   
   try {
     const snapshot = await getDocs(collection(db, "testimonials"));
@@ -416,17 +472,13 @@ async function loadTestimonials() {
     card.classList.add("visible");
   }
 }
+
 document.addEventListener('DOMContentLoaded', function() {
   const images = document.querySelectorAll('img');
-
   images.forEach(img => {
-    // 1. Prevent image drag (desktop)
     img.setAttribute('draggable', false);
-
-    // 2. Prevent right-click/context menu (desktop/mobile long press)
     img.addEventListener('contextmenu', function(e) {
       e.preventDefault();
-      // Optional: Show a message like "Content is protected"
     });
   });
 });
