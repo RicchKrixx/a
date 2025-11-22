@@ -768,7 +768,10 @@ hr {
   color: white;
   text-decoration: none;
   padding: 10px 25px;
-  background: transparent;
+  background: #fff;
+border-radius: 6px;
+padding: 4px 8px;
+opacity: 0.8;
   border-top-left-radius: 50px;
   border-bottom-left-radius: 50px;
   box-shadow: 0 6px 20px rgba(255, 136, 0, 0.6);
