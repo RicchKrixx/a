@@ -123,17 +123,7 @@
   <img src="https://cdn-icons-png.flaticon.com/512/6134/6134065.png" alt="No results">
   <p>No products found. check your spelling and try again!</p>
 </div>
-  <div id="wishlistModal" class="modal" style="display:none;">
-    <div class="modal-content" style="max-width: 500px;">
-        <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h2>Saved Items</h2>
-            <span class="close" onclick="document.getElementById('wishlistModal').style.display='none'">&times;</span>
-        </div>
-        
-        <div id="wishlist-container" class="product-grid" style="grid-template-columns: 1fr;">
-            </div>
-    </div>
-</div>
+ 
 	   <a href="#" onclick="openWishlist()">Saved Items</a>
     <section class="categories">
 	  <h2>Shop by Category</h2>
@@ -822,7 +812,15 @@
 
   </div>
 </div>
-	   
+<div id="wishlistModal" style="display:none;">
+    <div class="modal-content">
+        <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+            <h2>My Wishlist ❤️</h2>
+            <span class="close" onclick="document.getElementById('wishlistModal').style.display='none'">&times;</span>
+        </div>
+        <div id="wishlist-container"></div>
+    </div>
+</div>	   
 <section class="testimonials">
 <h2> What our customers say </h2>
 	<hr>
