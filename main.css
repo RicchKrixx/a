@@ -1104,7 +1104,11 @@ box-shadow:  0 10px 10px 0 #adf, inset 0 -9px 9px 0 #00b7d4;
 }
 
 .share-btn svg {
-    width: 18px;
-    height: 18px;
-    stroke: #333;
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    
+    /* ADD THIS LINE: */
+    pointer-events: none; 
 }
