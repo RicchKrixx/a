@@ -1115,8 +1115,8 @@ box-shadow:  0 10px 10px 0 #adf, inset 0 -9px 9px 0 #00b7d4;
 /* --- WISHLIST HEART BUTTON --- */
 .wishlist-btn {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 1px;
+    right: 1px;
     width: 35px;
     height: 35px;
     background-color: rgba(255, 255, 255, 0.9);
