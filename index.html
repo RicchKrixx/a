@@ -124,8 +124,8 @@
   <p>No products found. check your spelling and try again!</p>
 </div>
  
-<button onclick="openWishlist()" style="background:none; border:none; cursor:pointer; font-size:inherit; color:inherit;">
-    ❤️ Saved Items
+<button onclick="openWishlist()" style="position:fixed; left:5px; top:50%; background: #fff; border:none; cursor:pointer; font-size:inherit; color:inherit;">
+    ❤️ <span id="wishlist-count" class="position:absolute; right:1px; top:1px">0</span>
 </button>
     <section class="categories">
 	  <h2>Shop by Category</h2>
@@ -723,9 +723,6 @@
     </div>
   </section>
 		</div>
-<a href="javascript:void(0)" onclick="openWishlist()" class="menu-link">
-    ❤️ Saved Items (<span id="wishlist-count">0</span>)
-</a>
 
   <!-- 🔔 Notification Button -->
 <div id="notificationContainer" style="position:fixed; top:20px; right:30px; z-index:1000;">
