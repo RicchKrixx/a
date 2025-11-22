@@ -759,7 +759,7 @@ hr {
 }
 .cart-icon {
   position: fixed;
-  top: 200px;
+  top: 80px;
   right: -120px; 
   display: flex;
   align-items: center;
@@ -768,7 +768,7 @@ hr {
   color: white;
   text-decoration: none;
   padding: 10px 25px;
-  background: linear-gradient(90deg, #00b7d4, #ffb300);
+  background: transparent;
   border-top-left-radius: 50px;
   border-bottom-left-radius: 50px;
   box-shadow: 0 4px 15px rgba(255, 136, 0, 0.4);
@@ -1060,14 +1060,15 @@ box-shadow:  0 10px 10px 0 #adf, inset 0 -9px 9px 0 #00b7d4;
 .close-modal {
   position: absolute;
   top: 10px; right: 10px;
-  background: rgba(0,0,0,0.1);
+  background: transparent;
   width: 30px; height: 30px;
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
   z-index: 10;
   color: #333;
-  font-size: 20px;
+  font-size: 40px;
+	padding: 20px:
 }
 
 
