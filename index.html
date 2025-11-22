@@ -1412,46 +1412,7 @@ window.addEventListener('appinstalled', () => {
     console.log('Bixmax: App installed successfully');
 });
 	</script>
-	<script>
-// -------------------------------------------------------
-// GLOBAL SHARE FUNCTION (Works on HTTP, HTTPS, Android, PC)
-// -------------------------------------------------------
-window.handleShare = async function(event, name, price) {
-    // 1. Stop the click from opening the product modal
-    if(event) {
-        event.stopPropagation();
-        event.preventDefault();
-    }
 
-    const url = window.location.href;
-    const text = `Check out ${name} (GH₵${price}) on Bixmax!`;
-    const shareData = { title: name, text: text, url: url };
-
-    // 2. METHOD A: Native Mobile Share (Android/iOS)
-    if (navigator.share) {
-        try {
-            await navigator.share(shareData);
-            return; // Success! We are done.
-        } catch (err) {
-            console.log("User closed share menu or failed:", err);
-            // If it failed, don't give up -> Try Method B
-        }
-    }
-
-    // 3. METHOD B: Clipboard Copy (Laptop/Desktop)
-    try {
-        await navigator.clipboard.writeText(`${text}\n${url}`);
-        alert("✅ Link copied to clipboard!");
-        return;
-    } catch (err) {
-        console.log("Clipboard blocked (probably due to HTTP):", err);
-    }
-
-    // 4. METHOD C: The "Ultimate Fallback" (Works Everywhere)
-    // If everything else failed, show a manual text box
-    prompt("Copy this link manually:", url);
-};
-	</script>
 	<script src="/pwa-register.js"></script>
 	<!--StartofTawk.toScript-->
 	<script type="text/javascript"> 
