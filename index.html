@@ -1413,40 +1413,59 @@ window.addEventListener('appinstalled', () => {
 });
 	</script>
 	<script>
-// --- UPDATED ROBUST SHARE FUNCTION ---
-async function shareProduct(product) {
-    const shareData = {
-        title: product.name,
-        text: `Check out this ${product.name} on BixMAX! \nPrice: GH₵${product.price}`,
-        url: window.location.href
-    };
+// -------------------------------------------------------
+// GLOBAL SHARE FUNCTION (Works on HTTP, HTTPS, Android, PC)
+// -------------------------------------------------------
+window.handleShare = async function(event, name, price) {
+    // 1. Stop the click from opening the product modal
+    if(event) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
 
-    // 1. Try Native Share (Android/iOS/Windows 10+)
+    const url = window.location.href;
+    const text = `Check out ${name} (GH₵${price}) on Bixmax!`;
+    const shareData = { title: name, text: text, url: url };
+
+    // 2. METHOD A: Native Mobile Share (Android/iOS)
     if (navigator.share) {
-        try {
+        try {// OLD LINE:
+// <button class="share-btn" ... > ... </button>
+
+// NEW LINE (Copy this):
+<button 
+    class="share-btn" 
+    onclick="window.handleShare(event, '${product.name.replace(/'/g, "\\'")}', '${product.price}')"
+>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="18" cy="5" r="3"></circle>
+        <circle cx="6" cy="12" r="3"></circle>
+        <circle cx="18" cy="19" r="3"></circle>
+        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+    </svg>
+</button>
             await navigator.share(shareData);
-            return; // If successful, stop here.
+            return; // Success! We are done.
         } catch (err) {
-            // If user cancels or it fails, we continue to the fallback below
-            console.log('Native share closed or failed, trying clipboard...');
+            console.log("User closed share menu or failed:", err);
+            // If it failed, don't give up -> Try Method B
         }
     }
 
-    // 2. Fallback: Copy to Clipboard (Desktop / Non-native)
+    // 3. METHOD B: Clipboard Copy (Laptop/Desktop)
     try {
-        // Try modern clipboard API
-        await navigator.clipboard.writeText(`${shareData.text}\n${shareData.url}`);
-        
-        // Show your Toast or Alert here
-        alert("Link copied to clipboard!"); 
-        
+        await navigator.clipboard.writeText(`${text}\n${url}`);
+        alert("✅ Link copied to clipboard!");
+        return;
     } catch (err) {
-        // 3. Ultimate Fallback (For Insecure HTTP connections)
-        // If clipboard fails (because site is not HTTPS), show a prompt
-        console.error('Clipboard failed:', err);
-        prompt("Copy this link manually:", shareData.url);
+        console.log("Clipboard blocked (probably due to HTTP):", err);
     }
-}
+
+    // 4. METHOD C: The "Ultimate Fallback" (Works Everywhere)
+    // If everything else failed, show a manual text box
+    prompt("Copy this link manually:", url);
+};
 	</script>
 	<script src="/pwa-register.js"></script>
 	<!--StartofTawk.toScript-->
