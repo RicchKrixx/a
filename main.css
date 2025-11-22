@@ -771,9 +771,10 @@ hr {
   background: transparent;
   border-top-left-radius: 50px;
   border-bottom-left-radius: 50px;
-  box-shadow: 0 4px 15px rgba(255, 136, 0, 0.4);
+  box-shadow: 0 6px 20px rgba(255, 136, 0, 0.6);
   z-index: 999;
   opacity: 0;
+	backdrop-filter: blur(3px);
   pointer-events: none;
   transition: right 0.6s ease, opacity 0.4s ease;
 }
