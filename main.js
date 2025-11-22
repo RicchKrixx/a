@@ -423,16 +423,3 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
-enableIndexedDbPersistence(db)
-  .catch((err) => {
-      if (err.code == 'failed-precondition') {
-          
-          console.log("Persistence failed: Multiple tabs open");
-      } else if (err.code == 'unimplemented') {
-         
-          console.log("Persistence not supported by this browser");
-      }
-  });
-
-
-export { db };
