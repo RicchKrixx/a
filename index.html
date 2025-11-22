@@ -834,6 +834,9 @@
     </button>
 </div>
    </div>
+
+
+
 	
    <footer style="text-decoration: none;">
         <div class="footer-container">
@@ -1510,7 +1513,49 @@ window.addEventListener('appinstalled', () => {
     console.log('Bixmax: App installed successfully');
 });
 	</script>
+<script>
+	// --- WISHLIST STATE MANAGEMENT ---
+let wishlist = JSON.parse(localStorage.getItem('bixmax_wishlist')) || [];
 
+// 1. Function to Toggle Item (Add/Remove)
+window.toggleWishlist = function(event, product) {
+    // Stop the click from opening the product modal
+    event.stopPropagation();
+    event.preventDefault();
+
+    const btn = event.currentTarget;
+    const index = wishlist.findIndex(item => item.name === product.name); // Using Name as ID (Change to .id if you have IDs)
+
+    if (index === -1) {
+        // ADD to Wishlist
+        wishlist.push(product);
+        btn.classList.add('active');
+        if (navigator.vibrate) navigator.vibrate(50); // Haptic tick
+        // showToast("Saved to Wishlist!"); // Optional: Use your toast function
+    } else {
+        // REMOVE from Wishlist
+        wishlist.splice(index, 1);
+        btn.classList.remove('active');
+    }
+
+    // Save to Phone
+    localStorage.setItem('bixmax_wishlist', JSON.stringify(wishlist));
+    
+    // Update the header counter if you have one
+    updateWishlistCount(); 
+};
+
+// 2. Helper to check if an item is liked
+function isLiked(product) {
+    return wishlist.some(item => item.name === product.name);
+}
+
+// 3. Function to Update Count (Optional)
+function updateWishlistCount() {
+    const countEl = document.getElementById('wishlist-count');
+    if(countEl) countEl.innerText = wishlist.length;
+}
+</script>
 	<script src="/pwa-register.js"></script>
 	<!--StartofTawk.toScript-->
 	<script type="text/javascript"> 
