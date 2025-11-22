@@ -1112,88 +1112,81 @@ box-shadow:  0 10px 10px 0 #adf, inset 0 -9px 9px 0 #00b7d4;
     /* ADD THIS LINE: */
     pointer-events: none; 
 }
-/* --- WISHLIST HEART BUTTON --- */
-.wishlist-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 35px;
-    height: 35px;
-    background-color: rgba(255, 255, 255, 0.9);
-    border: none;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 10; /* Above the image */
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    transition: transform 0.2s ease;
-}
-
-.wishlist-btn svg {
-    width: 20px;
-    height: 20px;
-    stroke: #333; /* Default outline color */
-    stroke-width: 2;
-    fill: none; /* Empty heart by default */
-    transition: all 0.3s ease;
-    pointer-events: none; /* Clicks go through SVG to Button */
-}
-
-/* Active State (Liked) */
-.wishlist-btn.active svg {
-    fill: #ef4444; /* Red Fill */
-    stroke: #ef4444; /* Red Outline */
-    animation: heart-pop 0.3s ease-out;
-}
-
-/* Animation */
-@keyframes heart-pop {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.3); }
-    100% { transform: scale(1); }
-}
-/* Wishlist Modal Overlay */
-#wishlistModal {
+/* 1. The Background Overlay */
+.modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Dimmed background */
-    z-index: 99999999; /* High z-index to sit on top */
-    display: none; /* Hidden by default */
+    background: rgba(0, 0, 0, 0.6); /* Dark see-through background */
+    z-index: 10000; /* Very high priority */
+    display: flex;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(5px); /* Nice blur effect */
+    backdrop-filter: blur(4px); /* Blur effect */
 }
 
-/* The White Box Content */
-#wishlistModal .modal-content {
+/* 2. The White Box */
+.modal-content {
     background: white;
     width: 90%;
     max-width: 500px;
-    max-height: 80vh; /* Don't get too tall */
-    overflow-y: auto; /* Scroll if many items */
-    border-radius: 15px;
-    padding: 20px;
+    max-height: 80vh; /* Max height is 80% of screen */
+    border-radius: 12px;
+    overflow: hidden; /* Keeps corners round */
+    display: flex;
+    flex-direction: column;
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    position: relative;
     animation: slideUp 0.3s ease-out;
 }
 
-/* Close Button (X) */
-.close {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #aaa;
-    cursor: pointer;
+/* 3. Header & Close Button */
+.modal-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
-.close:hover { color: #000; }
 
-/* Animation */
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    line-height: 1;
+    cursor: pointer;
+    color: #666;
+}
+
+/* 4. The Scrollable Product Area */
+.modal-body {
+    padding: 20px;
+    overflow-y: auto; /* Allows scrolling inside the box */
+}
+
+/* 5. Heart Button on Products */
+.heart-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255,255,255,0.9);
+    border: none;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+    z-index: 5;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+}
+.heart-btn:active { transform: scale(1.3); }
+.heart-btn.active { color: red; }
+
 @keyframes slideUp {
-    from { transform: translateY(20px); opacity: 0; }
+    from { transform: translateY(50px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
 }
