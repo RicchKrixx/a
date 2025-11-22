@@ -1071,3 +1071,38 @@ box-shadow:  0 10px 10px 0 #adf, inset 0 -9px 9px 0 #00b7d4;
 }
 
 
+
+/* 2. The Share Button Style */
+.share-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 35px;
+    height: 35px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10; /* Sits on top of the image */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.share-btn:hover {
+    transform: scale(1.1);
+    background-color: #fff;
+    color: #6366f1; /* Your brand color */
+}
+
+.share-btn:active {
+    transform: scale(0.9);
+}
+
+.share-btn svg {
+    width: 18px;
+    height: 18px;
+    stroke: #333;
+}
