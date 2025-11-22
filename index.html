@@ -881,10 +881,10 @@
 </footer>
 <div id="connection-overlay" class="overlay">
     <div class="overlay-content">
+		<strong class="off">YOUR'RE OFFLINE</strong>
         <div class="spinner"></div>
         <h3>Reconnecting...</h3>
-        <p>Hang tight, we are waiting for your signal.</p>
-        <button onclick="dismissOverlay()" class="dismiss-btn">Browse Offline Version</button>
+        <p class="p">Hang tight, we are waiting for your signal.</p>
     </div>
 </div>
 
@@ -893,7 +893,10 @@
         /* Use your brand color here */
         --brand-color: #6366f1; 
     }
-
+.off {
+	font-weight: bold;
+	margin-bottom: 5px;
+}
     .overlay {
         position: fixed;
         top: 0;
@@ -930,7 +933,7 @@
     }
 
     h3 { margin: 1rem 0 0.5rem; color: #1f2937; }
-    p { color: #6b7280; margin-bottom: 1.5rem; font-size: 0.9rem; }
+    .p { color: #6b7280; margin-bottom: 1.5rem; font-size: 0.9rem; }
 
     /* SPINNER ANIMATION */
     .spinner {
@@ -942,17 +945,6 @@
         margin: 0 auto;
         animation: spin 1s linear infinite;
     }
-
-    .dismiss-btn {
-        background: transparent;
-        border: 1px solid #e5e7eb;
-        padding: 8px 16px;
-        border-radius: 8px;
-        color: #6b7280;
-        font-size: 0.85rem;
-        cursor: pointer;
-    }
-    .dismiss-btn:hover { background: #f3f4f6; color: #1f2937; }
 
     @keyframes spin {
         0% { transform: rotate(0deg); }
