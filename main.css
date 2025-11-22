@@ -1154,3 +1154,46 @@ box-shadow:  0 10px 10px 0 #adf, inset 0 -9px 9px 0 #00b7d4;
     50% { transform: scale(1.3); }
     100% { transform: scale(1); }
 }
+/* Wishlist Modal Overlay */
+#wishlistModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Dimmed background */
+    z-index: 10000; /* High z-index to sit on top */
+    display: none; /* Hidden by default */
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px); /* Nice blur effect */
+}
+
+/* The White Box Content */
+#wishlistModal .modal-content {
+    background: white;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh; /* Don't get too tall */
+    overflow-y: auto; /* Scroll if many items */
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    position: relative;
+    animation: slideUp 0.3s ease-out;
+}
+
+/* Close Button (X) */
+.close {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+}
+.close:hover { color: #000; }
+
+/* Animation */
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
