@@ -971,6 +971,8 @@ box-shadow:  0 10px 10px 0 #adf, inset 0 -9px 9px 0 #00b7d4;
   max-height: 100%;
   object-fit: contain;
   padding: 10px;
+
+	border-radius: 12px;
 }
 
 /* Arrows */
