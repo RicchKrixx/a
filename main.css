@@ -1112,58 +1112,6 @@ box-shadow:  0 10px 10px 0 #adf, inset 0 -9px 9px 0 #00b7d4;
     /* ADD THIS LINE: */
     pointer-events: none; 
 }
-/* 1. The Background Overlay */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6); /* Dark see-through background */
-    z-index: 10000; /* Very high priority */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(4px); /* Blur effect */
-}
-
-/* 2. The White Box */
-.modal-content {
-    background: white;
-    width: 90%;
-    max-width: 500px;
-    max-height: 80vh; /* Max height is 80% of screen */
-    border-radius: 12px;
-    overflow: hidden; /* Keeps corners round */
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    animation: slideUp 0.3s ease-out;
-}
-
-/* 3. Header & Close Button */
-.modal-header {
-    padding: 15px 20px;
-    border-bottom: 1px solid #eee;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.close-btn {
-    background: none;
-    border: none;
-    font-size: 2rem;
-    line-height: 1;
-    cursor: pointer;
-    color: #666;
-}
-
-/* 4. The Scrollable Product Area */
-.modal-body {
-    padding: 20px;
-    overflow-y: auto; /* Allows scrolling inside the box */
-}
 
 /* 5. Heart Button on Products */
 .heart-btn {
@@ -1185,8 +1133,3 @@ box-shadow:  0 10px 10px 0 #adf, inset 0 -9px 9px 0 #00b7d4;
 }
 .heart-btn:active { transform: scale(1.3); }
 .heart-btn.active { color: red; }
-
-@keyframes slideUp {
-    from { transform: translateY(50px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
