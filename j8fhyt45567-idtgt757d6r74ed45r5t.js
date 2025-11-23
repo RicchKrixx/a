@@ -74,24 +74,61 @@ function renderOrderSummary(){
   if(!isNaN(lat)&&!isNaN(lng)){  
     const dist = getDistanceKm(shopLat, shopLng, lat, lng);
     
-    // --- 1. CHANGED THIS (Cap fee at 65 for display) ---
     let deliveryFee = Math.round(dist*feePerKm); 
     if (deliveryFee > 65) {
         deliveryFee = 65;
     }
-    // ----------------------------------------------------
 
     const grand = subtotal + deliveryFee;  
   
     document.getElementById("deliveryFee").textContent = "GH₵ " + deliveryFee;  
     document.getElementById("grandTotal").textContent = "GH₵ " + grand.toFixed(2);  
+
+    // --- NEW LOGIC START: DISABLE POD IF > 95 ---
+    
+    // 1. Find the inputs (Assuming Paystack has value="paystack")
+    // We select the "pay" input that is NOT paystack (this is your POD)
+    const podInput = document.querySelector("input[name='pay']:not([value='paystack'])");
+    const paystackInput = document.querySelector("input[name='pay'][value='paystack']");
+
+    if (podInput) {
+        if (grand > 95) {
+            // Price is too high: Disable POD
+            podInput.disabled = true;
+            
+            // Optional: Dim the text next to it for visual feedback
+            if (podInput.parentElement) {
+                podInput.parentElement.style.opacity = "0.5";
+                podInput.parentElement.title = "Pay on Delivery unavailable for orders over GH₵95";
+            }
+
+            // If POD was currently selected, force switch to Paystack
+            if (podInput.checked) {
+                podInput.checked = false;
+                if (paystackInput) {
+                    paystackInput.checked = true;
+                }
+            }
+        } else {
+            // Price is OK: Enable POD
+            podInput.disabled = false;
+            if (podInput.parentElement) {
+                podInput.parentElement.style.opacity = "1";
+                podInput.parentElement.title = "";
+            }
+        }
+    }
+    // --- NEW LOGIC END ---
   
     btn.disabled = false;  
-    btn.textContent = document.querySelector("input[name='pay']:checked").value==="paystack"   
+    
+    // Update button text based on what is now checked
+    const checkedOption = document.querySelector("input[name='pay']:checked");
+    btn.textContent = (checkedOption && checkedOption.value==="paystack")   
       ? "Pay Now"   
       : "Place Order";  
   }  
-}  
+}
 renderOrderSummary();  
   
 // Geolocation  
